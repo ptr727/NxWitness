@@ -1,13 +1,13 @@
 # Use Ubuntu Bionic
 FROM ubuntu:bionic
 
-# Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/31036/linux/metavms-server-4.1.0.31036-linux64.deb"
-ARG DOWNLOAD_VERSION="4.1.0.31036 R7"
-
 # Labels
 ARG LABEL_NAME="NxMeta"
 ARG LABEL_DESCRIPTION="Nx Meta VMS Docker"
+
+# Download URL and version
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/31036/linux/metavms-server-4.1.0.31036-linux64.deb"
+ARG DOWNLOAD_VERSION="4.1.0.31036 R7"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"
@@ -68,3 +68,4 @@ EXPOSE 7001
 # /media is for media recording
 # /archive is for media backups
 VOLUME /config /media /archive
+

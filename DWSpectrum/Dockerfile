@@ -1,13 +1,13 @@
 # Use Ubuntu Bionic
 FROM ubuntu:bionic
 
-# Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
-ARG DOWNLOAD_VERSION="4.0.0.30917"
-
 # Labels
 ARG LABEL_NAME="DWSpectrum"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
+
+# Download URL and version
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
+ARG DOWNLOAD_VERSION="4.0.0.30917"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -68,3 +68,4 @@ EXPOSE 7001
 # /media is for media recording
 # /archive is for media backups
 VOLUME /config /media /archive
+

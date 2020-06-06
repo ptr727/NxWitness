@@ -1,10 +1,9 @@
-include(`macros.m4')
-DONT_CHANGE(__file__)
+# Use Ubuntu Bionic
+FROM ubuntu:bionic
 
-FROM ubuntu:trusty
+# Labels
+ARG LABEL_NAME="DWSpectrum"
+ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
-ENV DEBIAN_FRONTEND noninteractive
-
-include(`build_tools.m4')
-include(`ruby_2_1_2.m4')
-include(`docker_latest.m4')
+include(`dwspectrum.docker')
+include(`body.docker')

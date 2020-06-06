@@ -1,15 +1,15 @@
 # Use LSIO Ubuntu Bionic
 FROM lsiobase/ubuntu:bionic
 
-# Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
-ARG DOWNLOAD_VERSION="4.0.0.30917"
-
 # Labels
 ARG LABEL_NAME="DWSpectrum-LSIO"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
-# Nx Witness (networkoptix) or DW Spectrum (digitalwatchdog) or Nx Meta (networkoptix-metavms)
+# Download URL and version
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
+ARG DOWNLOAD_VERSION="4.0.0.30917"
+
+# NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
 
 # The RUN wget command will be cached unless we change the cache tag
@@ -88,3 +88,4 @@ EXPOSE 7001
 # /media is for media recording
 # /archive is for media backups
 VOLUME /config /media /archive
+

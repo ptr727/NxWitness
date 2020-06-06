@@ -1,0 +1,6 @@
+# Download URL and version
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
+ARG DOWNLOAD_VERSION="4.0.0.30917"
+
+# NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
+ARG RUNTIME_NAME="networkoptix"
