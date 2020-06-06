@@ -4,6 +4,8 @@ echo "40-chown-files : COMPANY_NAME = ${COMPANY_NAME}"
 
 # Set directory ownership permissions
 # Test for current owner and only change if not currently owned by ${COMPANY_NAME}
+# Blindly changing permissions on many files takes too long
+# If files previously existed the permissions may have to be manually corrected
 
 # /config (recursive)
 if [ ! "$(stat -c %U /config)" = "${COMPANY_NAME}" ]

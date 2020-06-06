@@ -30,13 +30,13 @@ clean:
 replace:
 	cp DWSpectrum.dockerfile ../DWSpectrum/Dockerfile
 	cp DWSpectrum-LSIO.dockerfile ../DWSpectrum-LSIO/Dockerfile
-	cp -avr ../LSIO ../DWSpectrum-LSIO/root
+	cp -avrT ../LSIO ../DWSpectrum-LSIO/root
 	cp NxWitness.dockerfile ../NxWitness/Dockerfile
 	cp NxWitness-LSIO.dockerfile ../NxWitness-LSIO/Dockerfile
-	cp -avr ../LSIO ../NxWitness-LSIO/root
+	cp -avrT ../LSIO ../NxWitness-LSIO/root
 	cp NxMeta.dockerfile ../NxMeta/Dockerfile
 	cp NxMeta-LSIO.dockerfile ../NxMeta-LSIO/Dockerfile
-	cp -avr ../LSIO ../NxMeta-LSIO/root
+	cp -avrT ../LSIO ../NxMeta-LSIO/root
 
 build:
 	docker build --pull --rm -f ../DWSpectrum/Dockerfile -t dwspectrum:latest ../DWSpectrum
