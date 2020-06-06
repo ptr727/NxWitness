@@ -52,6 +52,7 @@ RUN apt-get update \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
+    # Root-tool is not used when running as root
     && rm -rf /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
