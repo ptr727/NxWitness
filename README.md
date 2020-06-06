@@ -141,10 +141,10 @@ services:
 
 ### Unraid Template
 
-- Add the template [URL](./Unraid) `https://github.com/ptr727/DWSpectrum-LSIO/tree/master/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
+- Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/master/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
 - Use the [Unassigned Devices](https://forums.unraid.net/topic/44104-unassigned-devices-managing-disk-drives-and-remote-shares-outside-of-the-unraid-array/) plugin and mount a SSD drive formatted as XFS. This is currently a required workaround for the mediaserver filesystem filtering.
-- Create a new container by clicking the "Add Container" button, select "DWSpectrumLSIO" from the Template dropdown.
-- Map the Unassigned Device SSD drive to the `/media` volume, using `RW/Slave` access mode.
+- Create a new container by clicking the "Add Container" button, select the desired product template from the dropdown.
+- Map the Unassigned Devices SSD drive to the `/media` volume, using `RW/Slave` access mode.
 - Use the `nobody` user and `users` group Id's, e.g. `PUID=99` and `PGID=100`.
 
 ## Product Releases
