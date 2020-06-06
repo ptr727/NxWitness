@@ -1,20 +1,27 @@
-SRCS := $(wildcard *.m4)
-DOCS := $(SRCS:%.m4=%)
+# How do I get wildcards working?
+#dockerfiles := $(addsuffix .dockerfile, $(basename $(wildcard *.m4)))
 
-all: ${DOCS}
+#%.m4 : %.dockerfile
+#	m4 $< > $@
+# How to create a directory name from the file base name
 
-%: %.m4
-	m4 $<
+#default: $(dockerfiles)
 
-dockerfile: *.m4
-	m4 DWSpectrum.m4 > ../DWSpectrum/Dockerfile
+dockerfile:
+	m4 DWSpectrum.m4 > DWSpectrum.dockerfile
+	cp DWSpectrum.dockerfile ../DWSpectrum/Dockerfile
 
-clean:
-	rm ../DWSpectrum/Dockerfile
-	rm ../DWSpectrum-LSIO/Dockerfile
-	rm ../NxMeta/Dockerfile
-	rm ../NxMeta-LSIO/Dockerfile
-	rm ../NxWitness/Dockerfile
-	rm ../NxWitness-LSIO/Dockerfile
+	m4 DWSpectrum-LSIO.m4 > DWSpectrum-LSIO.dockerfile
+	cp DWSpectrum-LSIO.dockerfile ../DWSpectrum-LSIO/Dockerfile
 
-build: dockerfile
+	m4 NxWitness.m4 > NxWitness.dockerfile
+	cp NxWitness.dockerfile ../NxWitness/Dockerfile
+
+	m4 NxWitness-LSIO.m4 > NxWitness-LSIO.dockerfile
+	cp NxWitness-LSIO.dockerfile ../NxWitness-LSIO/Dockerfile
+
+	m4 NxMeta.m4 > NxMeta.dockerfile
+	cp NxMeta.dockerfile ../NxMeta/Dockerfile
+
+	m4 NxMeta-LSIO.m4 > NxMeta-LSIO.dockerfile
+	cp NxMeta-LSIO.dockerfile ../NxMeta-LSIO/Dockerfile
