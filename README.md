@@ -33,23 +33,12 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ### Introduction
 
-My initial inspiration to convert my DW Spectrum system running on a VM to docker came from [The Home Repot NxWitness](https://github.com/thehomerepot/nxwitness) project.
-
-I started with one GitHub docker project repository, then two, then four, and by five I decided to consolidate the various, but very similar, repositories into a single project, supporting multiple product variants.  
-Unfortunately `Dockerfile` does not support `include` capabilities, so there is still some duplication between the docker build projects, but at least they are all in one place. I know I can use a CI pipeline to dynamically build the various containers, but static works and is easy.
-
-I use [Docker Hub Automated Builds](https://docs.docker.com/docker-hub/builds/) to automatically trigger, build, and publish images to [Docker Hub](https://hub.docker.com/u/ptr727). I kept the Docker Hub repositories and image names separate, but it would be possible to publish different products using different tags for one image, it just does not seem natural.
+My initial inspiration to convert my DW Spectrum system running on a VM to docker came from [The Home Repot NxWitness](https://github.com/thehomerepot/nxwitness) project. I started with one GitHub docker project repository, then two, then four, and by five I decided to consolidate the various, but very similar, repositories into a single project, supporting multiple product variants.  
 
 I try to keep my implementations in sync with the Network Optix [reference docker project](https://github.com/networkoptix/nx_open_integrations/tree/master/docker).  
 The Network Optix development team is receptive to feedback, and has made several improvements in support of docker. The most recent change allowed for the removal of the complicated `systemd` related modifications.
 
 The biggest outstanding docker challenges are hardware bound licensing, and lack of admin defined storage locations.
-
-The camera license keys are activated using hardware attributes of the server, that is not docker friendly, and occasionally results in activation failures. I would much prefer a modern approach to apply licenses to my cloud account, allowing me to run on whatever hardware I want. Living in the US, I have to buy my licenses from [Digital Watchdog](https://digital-watchdog.com/), and in my experience their license enforcement policy is "draconian", three activations and you have to buy a new license. That really means that the [Lifetime Upgrades and No Annual Agreements](https://digital-watchdog.com/dws/upgrades/) license is the lifetime of the hardware on which the license was activated. So let's say hardware is replaced every two years, three activations, lifetime is about six years, not much of a lifetime compared to other products that are license flexible but require maintenance or renewals.
-
-As for storage, the mediaserver attempts to automatically decide what storage to use, applies filesystem type and instance filtering, and blindly creates files on any storage it deems fit. This overly complicated logic does not work in docker, and a much simpler and reliable approach would be to allow an admin to be in control and specify exactly what storage to be used. I really do not understand what the reasons were for building complicated decision logic, instead of being like all other servers that use storage and let the admin define the storage locations.
-
-All in, Nx Witness is in my experience still the lightest on resources with good features VMS/NVR I've used, and with docker support, is great to run in my home lab.
 
 ### Products
 
@@ -84,15 +73,6 @@ I run [Unraid](https://unraid.net/) in my home lab, and I make sure the LSIO con
 - The LSIO images work well on Unraid, because I can specify user permissions for mapped shares, and I save some space because layers are shared between several other LSIO based images I run.
 - I include Unraid Docker Templates simplifying provisioning on Unraid.
 - There are still Nx Witness issues when using Unraid user shares for storage, see the various notes sections.
-
-## Network Optix Docker Wishlist
-
-My wishlist for better [docker support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker):
-
-- Publish always up to date and ready to use docker images on Docker Hub.
-- Use the cloud account for license enforcement, not the hardware that dynamically changes in docker environments.
-- Allow the administrator to specify and use any storage location, stop making incorrect automated storage decisions.
-- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes.
 
 ## Configuration
 
@@ -179,8 +159,39 @@ Product releases and updates can be found at the following locations:
 - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - The latest DW Spectrum versions are not listed, but can be downloaded.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
-    - http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb
-    - https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb
+    - [http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
+    - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
+
+## Build Process
+
+With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, but we [can use](http://bobbynorton.com/posts/includes-in-dockerfiles-with-m4-and-make/) a `Makefile` to dynamically create a `Dockerfile` for us.
+
+I use [Docker Hub Automated Builds](https://docs.docker.com/docker-hub/builds/) to automatically trigger, build, and publish images to [Docker Hub](https://hub.docker.com/u/ptr727). I kept the Docker Hub repositories and image names separate, but it would be possible to publish different products using different tags for one image, it just does not seem natural.
+
+I am considering using GitHub Actions to automatically build the containers, but I've not yet figured out how to have GitHub Actions automatically rebuild the container when the upstream base image changes, this functionality is included in Docker Hub Automated Builds.
+
+I should also figure out how to automatically detect newly released versions, and automatically rebuild when a new version is detected. This could possibly be done using page change notifiers and webhooks, with some code to extract the relevant version and URL attributes from the web pages. For now I'm manually updating as I notice the versions changing.
+
+## Network Optix and Docker
+
+### Issues
+
+The biggest outstanding docker challenges are hardware bound licensing, and lack of admin defined storage locations.
+
+The camera license keys are activated using hardware attributes of the server, that is not docker friendly, and occasionally results in activation failures. I would much prefer a modern approach to apply licenses to my cloud account, allowing me to run on whatever hardware I want. Living in the US, I have to buy my licenses from [Digital Watchdog](https://digital-watchdog.com/), and in my experience their license enforcement policy is "draconian", three activations and you have to buy a new license. That really means that the [Lifetime Upgrades and No Annual Agreements](https://digital-watchdog.com/dws/upgrades/) license is the lifetime of the hardware on which the license was activated. So let's say hardware is replaced every two years, three activations, lifetime is about six years, not much of a lifetime compared to other products that are license flexible but require maintenance or renewals.
+
+As for storage, the mediaserver attempts to automatically decide what storage to use, applies filesystem type and instance filtering, and blindly creates files on any storage it deems fit. This overly complicated logic does not work in docker, and a much simpler and reliable approach would be to allow an admin to be in control and specify exactly what storage to be used. I really do not understand what the reasons were for building complicated decision logic, instead of being like all other servers that use storage and let the admin define the storage locations.
+
+All in, Nx Witness is in my experience still the lightest on resources with good features VMS/NVR I've used, and with docker support, is great to run in my home lab.
+
+### Wishlist
+
+My wishlist for better [docker support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker):
+
+- Publish always up to date and ready to use docker images on Docker Hub.
+- Use the cloud account for license enforcement, not the hardware that dynamically changes in docker environments.
+- Allow the administrator to specify and use any storage location, stop making incorrect automated storage decisions.
+- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes.
 
 ## Notes
 
