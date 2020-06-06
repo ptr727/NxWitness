@@ -195,6 +195,8 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 
 ## Notes
 
+- The CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
+
 ### Version 4.0.0.30917
 
 - The mediaserver filters mapped storage volumes by filesystem type, and does not allow the admin to specify desired storage locations.

@@ -41,7 +41,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Download the DEB installer file
-RUN wget -nv -O ./vms_server.deb ${DOWNLOAD_URL}
+RUN wget --no-verbose --no-check-certificate --output-file=./vms_server.deb ${DOWNLOAD_URL}
 
 # LSIO: Replace the abc usernames with the mediaserver names
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime

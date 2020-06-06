@@ -1,5 +1,6 @@
 .DEFAULT_GOAL := check
 
+# Even if the m4 files changed make still reports up to date?
 INPUTS = $(wildcard ${CURDIR}/*.m4)
 OUTPUTS = $(addsuffix .dockerfile, $(basename $(INPUTS)))
 # Why does the output look funky?
