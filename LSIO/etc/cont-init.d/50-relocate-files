@@ -1,0 +1,35 @@
+#!/usr/bin/with-contenv bash
+
+echo "50-relocate-files : COMPANY_NAME = ${COMPANY_NAME}"
+
+# Make sure that /config/var and /config/etc exists
+if [[ ! -d /config/var ]]
+then
+  echo "/config/var does not exist, creating"
+    mkdir -p /config/var
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/var
+fi
+
+if [[ ! -d /config/etc ]]
+then
+  echo "/config/etc does not exist, creating"
+    mkdir -p /config/etc
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/etc
+fi
+
+# Make sure that the ../mediaserver/var and ../mediaserver/etc links to /config/var and /config/etc
+if [[ ! -h /opt/${COMPANY_NAME}/mediaserver/var ]]
+then
+  echo "../mediaserver/var is not a link, linking"
+    rm -rf /opt/${COMPANY_NAME}/mediaserver/var
+  ln -s /config/var /opt/${COMPANY_NAME}/mediaserver/var
+    chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/var
+fi
+
+if [[ ! -h /opt/${COMPANY_NAME}/mediaserver/etc ]]
+then
+  echo "../mediaserver/etc is not a link, linking"
+    rm -rf /opt/${COMPANY_NAME}/mediaserver/etc
+  ln -s /config/etc /opt/${COMPANY_NAME}/mediaserver/etc
+    chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/etc
+fi
