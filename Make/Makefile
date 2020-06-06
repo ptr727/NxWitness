@@ -28,3 +28,11 @@ replace:
 	cp NxWitness-LSIO.dockerfile ../NxWitness-LSIO/Dockerfile
 	cp NxMeta.dockerfile ../NxMeta/Dockerfile
 	cp NxMeta-LSIO.dockerfile ../NxMeta-LSIO/Dockerfile
+
+build:
+	docker build -f ../DWSpectrum/Dockerfile ../DWSpectrum
+	docker build -f ../DWSpectrum-LSIO/Dockerfile ../DWSpectrum-LSIO
+	docker build -f ../NxWitness/Dockerfile ../NxWitness
+	docker build -f ../NxWitness-LSIO/Dockerfile ../NxWitness-LSIO
+	docker build -f ../NxMeta/Dockerfile ../NxMeta
+	docker build -f ../NxMeta-LSIO/Dockerfile ../NxMeta-LSIO

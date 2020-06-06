@@ -6,7 +6,7 @@ ARG LABEL_NAME="DWSpectrum-LSIO"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 # Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb"
 ARG DOWNLOAD_VERSION="4.0.0.30917"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
@@ -41,7 +41,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Download the DEB installer file
-RUN wget --no-verbose --no-check-certificate --output-file=./vms_server.deb ${DOWNLOAD_URL}
+RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
 
 # LSIO: Replace the abc usernames with the mediaserver names
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
