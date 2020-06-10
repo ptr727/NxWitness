@@ -1,47 +1,37 @@
 .DEFAULT_GOAL := check
 
-# Even if the m4 files changed make still reports up to date?
-INPUTS = $(wildcard ${CURDIR}/*.m4)
-OUTPUTS = $(addsuffix .dockerfile, $(basename $(INPUTS)))
-# Why does the output look funky?
-TARGETS = $(abspath ${CURDIR}/..)/$(basename $(notdir $(INPUTS)))/Dockerfile
+lowercase = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
 
-%.dockerfile : %.m4
-	m4 $< > $@
+M4S := $(wildcard *.m4)
+#DIRS := DWSpectrum DWSpectrum-LSIO NxWitness NxWitness-LSIO NxMeta NxMeta-LSIO
+DIRS := $(basename $(M4S))
+LOWERDIRS := $(call lowercase,$(DIRS))
 
+%/.docker-build: %/Dockerfile
+	docker build -t $(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
+	touch "../$@"
+
+%/.docker-create: %/Dockerfile
+	touch "../$@"
+
+%/Dockerfile: %.m4
+	m4 $< >../$@
+
+.PHONY: check
 check:
-	@echo "INPUTS = $(INPUTS)"
-	@echo "OUTPUTS = $(OUTPUTS)"
-	@echo "TARGETS = $(TARGETS)"
+	@echo "M4S = $(M4S)"
+	@echo "DIRS = $(DIRS)"
+	@echo "LOWERDIRS = $(LOWERDIRS)"
 
-create: $(OUTPUTS)
+.PHONY: build
+build: $(DIRS:%=%/.docker-build)
 
+.PHONY: create
+create: $(DIRS:%=%/.docker-create)
+
+.PHONY: clean
 clean:
-	-rm *.dockerfile $(OUTPUTS)
-	-docker image rm dwspectrum
-	-docker image rm dwspectrum-lsio
-	-docker image rm nxwitness
-	-docker image rm nxwitness-lsio
-	-docker image rm nxmeta
-	-docker image rm nxmeta-lsio
-
-# Why does make report up to date even after clean?
-# $(foreach file, $(OUTPUTS), $(cp $(file) $(abspath ${CURDIR}/..)/$(basename $(notdir $(file)))/Dockerfile))
-replace:
-	cp DWSpectrum.dockerfile ../DWSpectrum/Dockerfile
-	cp DWSpectrum-LSIO.dockerfile ../DWSpectrum-LSIO/Dockerfile
-	cp -avrT ../LSIO ../DWSpectrum-LSIO/root
-	cp NxWitness.dockerfile ../NxWitness/Dockerfile
-	cp NxWitness-LSIO.dockerfile ../NxWitness-LSIO/Dockerfile
-	cp -avrT ../LSIO ../NxWitness-LSIO/root
-	cp NxMeta.dockerfile ../NxMeta/Dockerfile
-	cp NxMeta-LSIO.dockerfile ../NxMeta-LSIO/Dockerfile
-	cp -avrT ../LSIO ../NxMeta-LSIO/root
-
-build:
-	docker build --pull --rm -f ../DWSpectrum/Dockerfile -t dwspectrum:latest ../DWSpectrum
-	docker build --pull --rm -f ../DWSpectrum-LSIO/Dockerfile -t dwspectrum-lsio:latest ../DWSpectrum-LSIO
-	docker build --pull --rm -f ../NxWitness/Dockerfile -t nxwitness:latest ../NxWitness
-	docker build --pull --rm -f ../NxWitness-LSIO/Dockerfile -t nxwitness-lsio:latest ../NxWitness-LSIO
-	docker build --pull --rm -f ../NxMeta/Dockerfile -t nxmeta:latest ../NxMeta
-	docker build --pull --rm -f ../NxMeta-LSIO/Dockerfile -t nxmeta-lsio:latest ../NxMeta-LSIO
+	-rm -f $(DIRS:%=../%/.docker-build)
+	-rm -f $(DIRS:%=../%/.docker-create)
+	#-rm -f $(DIRS:%=../%/Dockerfile)
+	-docker image rm $(LOWERDIRS)
