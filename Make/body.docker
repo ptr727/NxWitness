@@ -38,8 +38,8 @@ RUN apt-get update \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
-    # Root-tool is not used when running as root
-    && rm -rf /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin \
+    # Do not delete the root-tool, it is required to get DMI information when not running as root
+    # && rm -rf /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 
