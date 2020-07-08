@@ -212,7 +212,7 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 - The calculation of `VMS_DIR=$(dirname $(dirname "${BASH_SOURCE[0]}"))` in `../bin/mediaserver` results in bad paths e.g. `start-stop-daemon: unable to stat ./bin/./bin/mediaserver-bin (No such file or directory)`.
 - The DEB installer does not reference all used dependencies. When trying to minimizing the size of the install by using `--no-install-recommends` we get a `OCI runtime create failed` error. We have to manually add the following required dependencies: `gdb gdbserver binutils lsb-release`.
 
-### Version 4.1.0.31036 R7 Beta
+### Version 4.1.0.31193 R8 RC
 
 - Follow the [discussion](https://support.networkoptix.com/hc/en-us/community/posts/360044241693-NxMeta-4-1-Beta-on-Docker) in the Developer Forum.
 - The recently updated, and moved from GitLab to GitHub, [Network Optix Docker project](https://github.com/networkoptix/nx_open_integrations/tree/master/docker) states that `systemd` is no longer required, and this project was modified to remove the `systemd` modifications, making ongoing maintenance much simpler.
