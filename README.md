@@ -197,7 +197,7 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 
 - The CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
 
-### Version 4.0.0.30917
+### Version 4.0.0.31274
 
 - The mediaserver filters mapped storage volumes by filesystem type, and does not allow the admin to specify desired storage locations.
   - Look for warning messages in the logs, e.g. `QnStorageManager(0x7f863c054bd0): No storage available for recording`.
@@ -228,3 +228,4 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - Some debugging shows the setting is stored in the `var/ecs.sqlite` DB file, in the `vms_kvpair` table, `name=additionalLocalFsTypes`, `value=fuse.grpcfuse,fuse.shfs,zfs`.
   - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
 - The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
+- The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to dsable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use.

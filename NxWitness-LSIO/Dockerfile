@@ -6,8 +6,8 @@ ARG LABEL_NAME="NxWitness-LSIO"
 ARG LABEL_DESCRIPTION="Nx Witness VMS Docker based on LinuxServer"
 
 # Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb"
-ARG DOWNLOAD_VERSION="4.0.0.30917"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/31274/linux/nxwitness-server-4.0.0.31274-linux64.deb"
+ARG DOWNLOAD_VERSION="4.0.0.31274"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
