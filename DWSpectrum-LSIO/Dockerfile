@@ -6,8 +6,8 @@ ARG LABEL_NAME="DWSpectrum-LSIO"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 # Download URL and version
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31274/linux/dwspectrum-server-4.0.0.31274-linux64.deb"
-ARG DOWNLOAD_VERSION="4.0.0.31274"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb"
+ARG DOWNLOAD_VERSION="4.1.0.31401"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"

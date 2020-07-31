@@ -152,12 +152,11 @@ services:
 Product releases and updates can be found at the following locations:
 
 - [Nx Witness Downloads](https://nxvms.com/download/linux)
-- [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default/)
-  - Look in the "patches" section.
-- [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
-- [Nx Meta Downloads](https://meta.nxvms.com/downloads/patches)
+- [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
+  - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
+  - Newer builds are sometimes listed in the [Patches](https://meta.nxvms.com/downloads/patches) or [Releases](https://meta.nxvms.com/downloads/releases) sections.
 - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
-  - The latest DW Spectrum versions are not listed, but can be downloaded.
+  - The latest DW Spectrum versions are often not listed, but sometimes do match the same version as used by Nx Witness.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
     - [http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
     - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
@@ -191,41 +190,24 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 - Publish always up to date and ready to use docker images on Docker Hub.
 - Use the cloud account for license enforcement, not the hardware that dynamically changes in docker environments.
 - Allow the administrator to specify and use any storage location, stop making incorrect automated storage decisions.
+- Allow the administrator to specify the bound network adapter, stop making incorrect automated storage decisions.
 - Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes.
 
 ## Notes
 
-- The CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
+### Version 4.1.0.31466
 
-### Version 4.0.0.31274
-
-- The mediaserver filters mapped storage volumes by filesystem type, and does not allow the admin to specify desired storage locations.
-  - Look for warning messages in the logs, e.g. `QnStorageManager(0x7f863c054bd0): No storage available for recording`.
-  - Because of filesystem type filtering, no mapped media storage is detected on [Unraid](https://unraid.net), [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop), or [ZFS](https://zfsonlinux.org/) storage volumes.
-  - Per Network Optix support, only the following filesystems are currently supported: `vfat, ecryptfs, fuseblk, fuse, fusectl, xfs, ext3, ext2, ext4, exfat, rootfs, nfs, nfs4, nfsd, cifs, fuse.osxfs`.
-  - Output from `cat /proc/mounts` for a few filesystems I tested:
-    - Unraid : `shfs /media fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0`
-    - Docker Desktop for Windows : `grpcfuse /media fuse.grpcfuse rw,nosuid,nodev,relatime,user_id=0,group_id=0,allow_other,max_read=1048576 0 0`
-    - Docker on Ubuntu Server EXT4 : `/dev/vda2 /media ext4 rw,relatime,data=ordered 0 0`
-    - Docker on Proxmox ZFS : `ssdpool/dwspectrum/media /media zfs rw,noatime,xattr,posixacl 0 0`
-- In Ubuntu Server, with a [non-root user](https://docs.docker.com/install/linux/linux-postinstall/), we get a runtime failure: `start-stop-daemon: unable to start /opt/digitalwatchdog/mediaserver/bin/mediaserver-bin (Invalid argument)`.
-- The calculation of `VMS_DIR=$(dirname $(dirname "${BASH_SOURCE[0]}"))` in `../bin/mediaserver` results in bad paths e.g. `start-stop-daemon: unable to stat ./bin/./bin/mediaserver-bin (No such file or directory)`.
-- The DEB installer does not reference all used dependencies. When trying to minimizing the size of the install by using `--no-install-recommends` we get a `OCI runtime create failed` error. We have to manually add the following required dependencies: `gdb gdbserver binutils lsb-release`.
-
-### Version 4.1.0.31193 R8 RC
-
-- Follow the [discussion](https://support.networkoptix.com/hc/en-us/community/posts/360044241693-NxMeta-4-1-Beta-on-Docker) in the Developer Forum.
-- The recently updated, and moved from GitLab to GitHub, [Network Optix Docker project](https://github.com/networkoptix/nx_open_integrations/tree/master/docker) states that `systemd` is no longer required, and this project was modified to remove the `systemd` modifications, making ongoing maintenance much simpler.
-- The upcoming version 4.1 will include the ability to specify additional storage filesystems.
-  - Access the server storage page, and verify that all mounted storage is listed, e.g. `http://localhost:7001/static/index.html#/info`.
-  - If storage is not listed, attach to the container and run `cat /proc/mounts` to get a list of all the filesystem types, make a note of the filesystem types that are not showing up in storage.
-  - Add `fuse.grpcfuse` for Docker for Windows and `fuse.shfs` for Unraid, and `zfs` for ZFS, e.g. `fuse.grpcfuse,fuse.shfs,zfs`.
+- Version 4.1 includes the ability to specify additional storage filesystem types. This is particularly useful when running on Unraid or ZFS storage that is by default not supported.
+  - Access the server storage page at `http://hostname:7001/static/index.html#/info` and verify that all mounted storage is listed.
+  - If storage is not listed, attach to the container console and run `cat /proc/mounts` to get a list of all the mounted filesystem types.
+  - Access the advanced settings page at `http://hostname:7001/static/index.html#/advanced` and set `additionalLocalFsTypes` to include the filesystem type.
+  - Add `fuse.grpcfuse` for Docker for Windows, `fuse.shfs` for Unraid, and `zfs` for ZFS, e.g. `fuse.grpcfuse,fuse.shfs,zfs`.
   - Save the settings, restart the server, and verify that storage is now available.
-- Python was removed from the dependencies list, and `config_helper.py` was replaced with `config_helper.sh`.
 - The [calculation](http://mywiki.wooledge.org/BashFAQ/028) of `VMS_DIR=$(dirname $(dirname "${BASH_SOURCE[0]}"))` in `../bin/mediaserver` can result in bad paths when called from the same directory, e.g. `start-stop-daemon: unable to stat ./bin/./bin/mediaserver-bin (No such file or directory)`.
-- The filesystem filter logic incorrectly considers some volumes to be duplicates, turn on verbose logging : `2020-05-18 10:13:55.964    422 VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate`.
-- There is no apparent way to configure the `additionalLocalFsTypes` types at deployment time, it can only be done post deployment from the `http://localhost:7001/static/index.html#/advanced` web interface or via `http://admin:<passsword>@localhost:7001/api/systemSettings?additionalLocalFsTypes=fuse.grpcfuse,fuse.shfs`.
+- The filesystem filter logic incorrectly considers some volumes to be duplicates, turn on verbose logging (logLevel=DEBUG2) : `2020-05-18 10:13:55.964    422 VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate`.
+- There is no way to configure the `additionalLocalFsTypes` types at deployment time, it can only be done post deployment from the `http://hostname:7001/static/index.html#/advanced` web interface or via `http://admin:<passsword>@hostname:7001/api/systemSettings?additionalLocalFsTypes=fuse.grpcfuse,fuse.shfs`.
   - Some debugging shows the setting is stored in the `var/ecs.sqlite` DB file, in the `vms_kvpair` table, `name=additionalLocalFsTypes`, `value=fuse.grpcfuse,fuse.shfs,zfs`.
   - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
 - The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
-- The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to dsable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use.
+- The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to disable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use due.
+- The download CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
