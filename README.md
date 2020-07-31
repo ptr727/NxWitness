@@ -33,10 +33,9 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ### Introduction
 
-My initial inspiration to convert my DW Spectrum system running on a VM to docker came from [The Home Repot NxWitness](https://github.com/thehomerepot/nxwitness) project. I started with one GitHub docker project repository, then two, then four, and by five I decided to consolidate the various, but very similar, repositories into a single project, supporting multiple product variants.  
+My initial inspiration to convert my DW Spectrum system running on a VM to docker came from [The Home Repot NxWitness](https://github.com/thehomerepot/nxwitness) project. I started with one GitHub docker project repository, then two, then four, and by five I decided to consolidate the various, but very similar, repositories into a single project.  
 
-I try to keep my implementations in sync with the Network Optix [reference docker project](https://github.com/networkoptix/nx_open_integrations/tree/master/docker).  
-The Network Optix development team is receptive to feedback, and has made several improvements in support of docker. The most recent change allowed for the removal of the complicated `systemd` related modifications.
+The Network Optix reference docker project is located [here](https://github.com/networkoptix/nx_open_integrations/tree/master/docker).  
 
 The biggest outstanding docker challenges are hardware bound licensing, and lack of admin defined storage locations.
 
@@ -66,14 +65,6 @@ The [LinuxServer (LSIO)](https://www.linuxserver.io/) base images provide valuab
 - This is [desired](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user) if we do not want to run as root, or required if we need user specific permissions when accessing mapped volumes.
 - We could achieve a similar outcome by using Docker's [--user](https://docs.docker.com/engine/reference/run/#user) option, but it is often more convenient to modify environment variables vs. controlling how a container runs.
 
-### Unraid
-
-I run [Unraid](https://unraid.net/) in my home lab, and I make sure the LSIO containers work on Unraid:
-
-- The LSIO images work well on Unraid, because I can specify user permissions for mapped shares, and I save some space because layers are shared between several other LSIO based images I run.
-- I include Unraid Docker Templates simplifying provisioning on Unraid.
-- There are still Nx Witness issues when using Unraid user shares for storage, see the various notes sections.
-
 ## Configuration
 
 The docker configuration is reasonably simple, requiring just two volume mappings for configuration files and media storage.
@@ -84,9 +75,11 @@ The docker configuration is reasonably simple, requiring just two volume mapping
 `/media` : Recording files.  
 `/archive` : Backup files. (Optional)
 
-Note, the current Nx Witness backup implementation is [not very useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy), as it only makes a copy of the recordings, it does not extend the retention period.
+The Nx Witness backup implementation is [not very useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy), as it only makes a copy of the recordings, it does not extend the retention period.
 
-Note, the mediaserver filters [filesystems](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage) by type, and the `/media` mapping must point to a supported filesytem. The upcoming version 4.1 [will support](https://support.networkoptix.com/hc/en-us/community/posts/360044241693-NxMeta-4-1-Beta-on-Docker) user defined filesystems. Unraid's FUSE filesystem is not supported, and requires the mapping of a physical device using the [Unassigned Devices](https://forums.unraid.net/topic/44104-unassigned-devices-managing-disk-drives-and-remote-shares-outside-of-the-unraid-array/) plugin.  
+The mediaserver filters [filesystems](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage) by type, and the `/media` mapping must point to a supported filesytem.  
+ZFS and Unraid's FUSE filesystems are by default not supported, and requires the advanced `additionalLocalFsTypes` setting to be configured, see the notes section for details.  
+An alternatively for Unraid is to use the Unassigned Devices plugin and assign storage to e.g. a XFS formatted SSD drive.
 
 ### Ports
 
@@ -142,10 +135,9 @@ services:
 ### Unraid Template
 
 - Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/master/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
-- Use the [Unassigned Devices](https://forums.unraid.net/topic/44104-unassigned-devices-managing-disk-drives-and-remote-shares-outside-of-the-unraid-array/) plugin and mount a SSD drive formatted as XFS. This is currently a required workaround for the mediaserver filesystem filtering.
 - Create a new container by clicking the "Add Container" button, select the desired product template from the dropdown.
-- Map the Unassigned Devices SSD drive to the `/media` volume, using `RW/Slave` access mode.
-- Use the `nobody` user and `users` group Id's, e.g. `PUID=99` and `PGID=100`.
+- If using Unassigned Devices for media storage, use `RW/Slave` access mode.
+- Use `nobody` and `users` identifiers, `PUID=99` and `PGID=100`.
 
 ## Product Releases
 
@@ -188,9 +180,9 @@ All in, Nx Witness is in my experience still the lightest on resources with good
 My wishlist for better [docker support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker):
 
 - Publish always up to date and ready to use docker images on Docker Hub.
-- Use the cloud account for license enforcement, not the hardware that dynamically changes in docker environments.
-- Allow the administrator to specify and use any storage location, stop making incorrect automated storage decisions.
-- Allow the administrator to specify the bound network adapter, stop making incorrect automated storage decisions.
+- Use the cloud account for license enforcement.
+- Allow the administrator to specify and use any storage location.
+- Allow the administrator to specify the bound network adapter.
 - Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes.
 
 ## Notes
