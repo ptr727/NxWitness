@@ -143,14 +143,17 @@ services:
 
 Product releases and updates can be found at the following locations:
 
+- I have not found a single location that lists the latest versions, nor a way to be automatically notified of a new versions.
 - [Nx Witness Downloads](https://nxvms.com/download/linux)
+- [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - Newer builds are sometimes listed in the "Patches" section.
 - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - Newer builds are sometimes listed in the [Patches](https://meta.nxvms.com/downloads/patches) or [Releases](https://meta.nxvms.com/downloads/releases) sections.
 - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - The latest DW Spectrum versions are often not listed, but sometimes do match the same version as used by Nx Witness.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
-    - [http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
+    - [https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
     - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
 
 ## Build Process

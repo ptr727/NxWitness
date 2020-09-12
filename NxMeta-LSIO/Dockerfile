@@ -6,8 +6,8 @@ ARG LABEL_NAME="NxMeta-LSIO"
 ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
 
 # Download URL and version
-ARG DOWNLOAD_URL="http://updates.networkoptix.com/metavms/31466/linux/metavms-server-4.1.0.31466-linux64.deb"
-ARG DOWNLOAD_VERSION="4.1.0.31466"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb"
+ARG DOWNLOAD_VERSION="4.1.0.31766"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"
