@@ -150,7 +150,7 @@ Product releases and updates can be found at the following locations:
 - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - The latest DW Spectrum versions are often not listed, but sometimes do match the same version as used by Nx Witness.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
-    - [http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](http://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
+    - [https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
     - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
 
 ## Build Process
