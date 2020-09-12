@@ -143,7 +143,10 @@ services:
 
 Product releases and updates can be found at the following locations:
 
+- I have not found a single location that lists the latest versions, nor a way to be automatically notified of a new versions.
 - [Nx Witness Downloads](https://nxvms.com/download/linux)
+- [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - Newer builds are sometimes listed in the "Patches" section.
 - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - Newer builds are sometimes listed in the [Patches](https://meta.nxvms.com/downloads/patches) or [Releases](https://meta.nxvms.com/downloads/releases) sections.
