@@ -29,6 +29,14 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 [DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio):  
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/dwspectrum-lsio?logo=docker)
 
+## Current Versions
+
+[Nx Meta 4.1.0.31766](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/31766/windows/metavms-client-4.1.0.31766-win64-patch.exe)
+
+[Nx Witness 4.1.0.31946](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/31946/linux/nxwitness-server-4.1.0.31946-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/31946/windows/nxwitness-client-4.1.0.31946-win64-patch.exe)
+
+[DW Spectrum 4.1.0.31401](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb)
+
 ## Overview
 
 ### Introduction
@@ -190,7 +198,7 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 
 ## Notes
 
-### Version 4.1.0.31466
+### Version 4.1
 
 - Version 4.1 includes the ability to specify additional storage filesystem types. This is particularly useful when running on Unraid or ZFS storage that is by default not supported.
   - Access the server storage page at `http://hostname:7001/static/index.html#/info` and verify that all mounted storage is listed.
