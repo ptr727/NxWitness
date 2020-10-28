@@ -31,9 +31,9 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ## Current Versions
 
-[Nx Meta 4.1.0.31766](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/31766/windows/metavms-client-4.1.0.31766-win64-patch.exe)
-
 [Nx Witness 4.1.0.31946](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/31946/linux/nxwitness-server-4.1.0.31946-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/31946/windows/nxwitness-client-4.1.0.31946-win64-patch.exe)
+
+[Nx Meta 4.1.0.31766](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/31766/windows/metavms-client-4.1.0.31766-win64-patch.exe)
 
 [DW Spectrum 4.1.0.31401](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb)
 
@@ -151,14 +151,17 @@ services:
 
 Product releases and updates can be found at the following locations:
 
-- I have not found a single location that lists the latest versions, nor a way to be automatically notified of a new versions.
-- [Nx Witness Downloads](https://nxvms.com/download/linux)
-- [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
-  - Newer builds are sometimes listed in the "Patches" section.
-- [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
+- Nx Witness:
+  - [JSON API](https://nxvms.com/api/utils/downloads)
+  - [Nx Witness Downloads](https://nxvms.com/download/linux)
+  - [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+- Nx Meta:
+  - [JSON API](https://meta.nxvms.com/api/utils/downloads)
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
-  - Newer builds are sometimes listed in the [Patches](https://meta.nxvms.com/downloads/patches) or [Releases](https://meta.nxvms.com/downloads/releases) sections.
-- [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
+  - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
+- DW Spectrum:
+  - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
+  - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - The latest DW Spectrum versions are often not listed, but sometimes do match the same version as used by Nx Witness.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
     - [https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
