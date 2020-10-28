@@ -160,6 +160,7 @@ Product releases and updates can be found at the following locations:
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
 - DW Spectrum:
+  - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
   - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - The latest DW Spectrum versions are often not listed, but sometimes do match the same version as used by Nx Witness.
   - Use the latest NX Witness URL, and substitute the "default" string for "digitalwatchdog", e.g.:
