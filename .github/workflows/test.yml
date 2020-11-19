@@ -45,9 +45,9 @@ jobs:
           platforms: linux/amd64
           push: false
           tags: |
-            ${{ secrets.DOCKER_USER }}/nxmeta-lsio:latest
-            ${{ secrets.DOCKER_USER }}/nxmeta-lsio:${{ github.sha }}
-            ${{ secrets.DOCKER_USER }}/nxmeta-lsio:4.1.0.31766
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ github.sha }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:4.1.0.31766
           build-args: |
             DOWNLOAD_VERSION=4.1.0.31766
             DOWNLOAD_URL=https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb
