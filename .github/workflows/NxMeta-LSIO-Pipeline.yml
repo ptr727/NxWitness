@@ -62,4 +62,4 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:4.1.0.32024
           build-args: |
             DOWNLOAD_VERSION=4.1.0.32024
-            DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-patch.deb
+            DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb
