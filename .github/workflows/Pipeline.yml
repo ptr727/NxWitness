@@ -75,10 +75,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ NXMETA_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:$NXMETA_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXMETA_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ NXMETA_LATEST_URL }}
+            DOWNLOAD_VERSION=$NXMETA_LATEST_VERSION
+            DOWNLOAD_URL=$NXMETA_LATEST_URL
       - name: 'Build and Push Stable NxMeta-LSIO'
         uses: docker/build-push-action@v2
         with:
@@ -88,10 +88,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ NXMETA_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:$NXMETA_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXMETA_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ NXMETA_STABLE_URL }}
+            DOWNLOAD_VERSION=$NXMETA_STABLE_VERSION
+            DOWNLOAD_URL=$NXMETA_STABLE_URL
 
       # NxMeta
       - name: 'Build and Push Latest NxMeta'
