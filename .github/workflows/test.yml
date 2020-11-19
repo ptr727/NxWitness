@@ -37,19 +37,29 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       # https://github.com/marketplace/actions/build-and-push-docker-images
-      - name: "Build and Push Docker Images"
+      - name: "Build and Push NxMeta-LSIO Latest"
         uses: docker/build-push-action@v2
         with:
           context: ./NxMeta-LSIO
           file: ./NxMeta-LSIO/Dockerfile
           platforms: linux/amd64
-          push: false
+          push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ github.sha }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:4.1.0.31766
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:4.1.0.32045
           build-args: |
-            DOWNLOAD_VERSION=4.1.0.31766
-            DOWNLOAD_URL=https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb
-      - name: "Docker Image Digest"
-        run: echo ${{ steps.docker_build.outputs.digest }}
+            DOWNLOAD_VERSION=4.1.0.32045
+            DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32045/linux/metavms-server-4.1.0.32045-linux64-patch.deb
+      - name: "Build and Push NxMeta-LSIO Stable"
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxMeta-LSIO
+          file: ./NxMeta-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:4.1.0.31398
+          build-args: |
+            DOWNLOAD_VERSION=4.1.0.31398
+            DOWNLOAD_URL=https://updates.networkoptix.com/metavms/31398/linux/metavms-server-4.1.0.31398-linux64-patch.deb
