@@ -103,7 +103,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:$NXMETA_LATEST_VERSION
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=$NXMETA_LATEST_VERSION
             DOWNLOAD_URL=$NXMETA_LATEST_URL
