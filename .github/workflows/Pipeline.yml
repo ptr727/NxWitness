@@ -4,19 +4,19 @@
 name: 'Build Pipeline'
 
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#env
-env: |
-  NXMETA_LATEST_VERSION=4.1.0.32044
-  NXMETA_LATEST_URL=https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb
-  NXMETA_STABLE_VERSION=4.1.0.32024
-  NXMETA_STABLE_URL=https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb
-  NXWITNESS_LATEST_VERSION=4.1.0.32045
-  NXWITNESS_LATEST_URL=https://updates.networkoptix.com/default/4.1.0.32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb
-  NXWITNESS_STABLE_VERSION=4.1.0.31398
-  NXWITNESS_STABLE_URL=https://updates.networkoptix.com/default/4.1.0.31398/linux/nxwitness-server-4.1.0.31398-linux64.deb
-  DWSPECTRUM_LATEST_VERSION=4.1.0.32045
-  DWSPECTRUM_LATEST_URL=https://updates.networkoptix.com/digitalwatchdog/4.1.0.32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb
-  DWSPECTRUM_STABLE_VERSION=4.1.0.31401
-  DWSPECTRUM_STABLE_URL=https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb
+env:
+  NXMETA_LATEST_VERSION: '4.1.0.32044'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb'
+  NXMETA_STABLE_VERSION: '4.1.0.32024'
+  NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb'
+  NXWITNESS_LATEST_VERSION: '4.1.0.32045'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.1.0.32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb'
+  NXWITNESS_STABLE_VERSION: '4.1.0.31398'
+  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.1.0.31398/linux/nxwitness-server-4.1.0.31398-linux64.deb'
+  DWSPECTRUM_LATEST_VERSION: '4.1.0.32045'
+  DWSPECTRUM_LATEST_URL: 'https://updates.networkoptix.com/digitalwatchdog/4.1.0.32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb'
+  DWSPECTRUM_STABLE_VERSION: '4.1.0.31401'
+  DWSPECTRUM_STABLE_URL: 'https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb'
 
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
 on:
