@@ -200,7 +200,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${ env.DWSPECTRUM_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
