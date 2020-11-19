@@ -22,10 +22,10 @@ env:
 on:
   push:
     branches:
-    - develop
+    - main
   pull_request:
     branches:
-      - develop
+      - main
   schedule:
     # https://crontab.guru/
     # Rebuild 2am every Monday, LSIO rebuilds on Friday's
