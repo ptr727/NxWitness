@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./NxMeta-LSIO
-          file: ./Dockerfile
+          file: ./NxMeta-LSIO/Dockerfile
           platforms: linux/amd64
           push: false
           tags: |
