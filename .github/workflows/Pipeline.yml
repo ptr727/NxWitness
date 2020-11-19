@@ -75,7 +75,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:$NXMETA_LATEST_VERSION
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=$NXMETA_LATEST_VERSION
             DOWNLOAD_URL=$NXMETA_LATEST_URL
@@ -88,10 +88,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:$NXMETA_STABLE_VERSION
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=$NXMETA_STABLE_VERSION
-            DOWNLOAD_URL=$NXMETA_STABLE_URL
+            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
 
       # NxMeta
       - name: 'Build and Push Latest NxMeta'
