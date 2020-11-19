@@ -103,10 +103,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ NXMETA_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:$NXMETA_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXMETA_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ NXMETA_LATEST_URL }}
+            DOWNLOAD_VERSION=$NXMETA_LATEST_VERSION
+            DOWNLOAD_URL=$NXMETA_LATEST_URL
       - name: 'Build and Push Stable NxMeta'
         uses: docker/build-push-action@v2
         with:
@@ -116,10 +116,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ NXMETA_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:$NXMETA_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXMETA_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ NXMETA_STABLE_URL }}
+            DOWNLOAD_VERSION=$NXMETA_STABLE_VERSION
+            DOWNLOAD_URL=$NXMETA_STABLE_URL
 
       # NxWitness-LSIO
       - name: 'Build and Push Latest NxWitness-LSIO'
@@ -131,10 +131,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ NXWITNESS_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:$NXWITNESS_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXWITNESS_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ NXWITNESS_LATEST_URL }}
+            DOWNLOAD_VERSION=$NXWITNESS_LATEST_VERSION
+            DOWNLOAD_URL=$NXWITNESS_LATEST_URL
       - name: 'Build and Push Stable NxWitness-LSIO'
         uses: docker/build-push-action@v2
         with:
@@ -144,10 +144,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ NXWITNESS_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:$NXWITNESS_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXWITNESS_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ NXWITNESS_STABLE_URL }}
+            DOWNLOAD_VERSION=$NXWITNESS_STABLE_VERSION
+            DOWNLOAD_URL=$NXWITNESS_STABLE_URL
 
       # NxWitness
       - name: 'Build and Push Latest NxWitness'
@@ -159,10 +159,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ NXWITNESS_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:$NXWITNESS_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXWITNESS_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ NXWITNESS_LATEST_URL }}
+            DOWNLOAD_VERSION=$NXWITNESS_LATEST_VERSION
+            DOWNLOAD_URL=$NXWITNESS_LATEST_URL
       - name: 'Build and Push Stable NxWitness'
         uses: docker/build-push-action@v2
         with:
@@ -172,10 +172,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ NXWITNESS_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:$NXWITNESS_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ NXWITNESS_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ NXWITNESS_STABLE_URL }}
+            DOWNLOAD_VERSION=$NXWITNESS_STABLE_VERSION
+            DOWNLOAD_URL=$NXWITNESS_STABLE_URL
 
       # DwSpectrum-LSIO
       - name: 'Build and Push Latest DwSpectrum-LSIO'
@@ -187,10 +187,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ DWSPECTRUM_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:$DWSPECTRUM_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ DWSPECTRUM_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ DWSPECTRUM_LATEST_URL }}
+            DOWNLOAD_VERSION=$DWSPECTRUM_LATEST_VERSION
+            DOWNLOAD_URL=$DWSPECTRUM_LATEST_URL
       - name: 'Build and Push Stable DwSpectrum-LSIO'
         uses: docker/build-push-action@v2
         with:
@@ -200,10 +200,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ DWSPECTRUM_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:$DWSPECTRUM_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ DWSPECTRUM_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ DWSPECTRUM_STABLE_URL }}
+            DOWNLOAD_VERSION=$DWSPECTRUM_STABLE_VERSION
+            DOWNLOAD_URL=$DWSPECTRUM_STABLE_URL
 
       # DwSpectrum
       - name: 'Build and Push Latest DwSpectrum'
@@ -215,10 +215,10 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ DWSPECTRUM_LATEST_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:$DWSPECTRUM_LATEST_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ DWSPECTRUM_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ DWSPECTRUM_LATEST_URL }}
+            DOWNLOAD_VERSION=$DWSPECTRUM_LATEST_VERSION
+            DOWNLOAD_URL=$DWSPECTRUM_LATEST_URL
       - name: 'Build and Push Stable DwSpectrum'
         uses: docker/build-push-action@v2
         with:
@@ -228,7 +228,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ DWSPECTRUM_STABLE_VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:$DWSPECTRUM_STABLE_VERSION
           build-args: |
-            DOWNLOAD_VERSION=${{ DWSPECTRUM_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ DWSPECTRUM_STABLE_URL }}
+            DOWNLOAD_VERSION=$DWSPECTRUM_STABLE_VERSION
+            DOWNLOAD_URL=$DWSPECTRUM_STABLE_URL
