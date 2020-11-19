@@ -10,32 +10,29 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 [Code](https://github.com/ptr727/NxWitness):  
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/ptr727/nxwitness?logo=github)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/nxwitness/pipeline?logo=github)
 
-[NxWitness](https://hub.docker.com/r/ptr727/nxwitness):  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/nxwitness?logo=docker)
+## Container Images
 
-[NxWitness-LSIO](https://hub.docker.com/r/ptr727/nxwitness-lsio):  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/nxwitness-lsio?logo=docker)
+[NxWitness](https://hub.docker.com/r/ptr727/nxwitness)
 
-[NxMeta](https://hub.docker.com/r/ptr727/nxmeta):  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/nxmeta?logo=docker)
+[NxWitness-LSIO](https://hub.docker.com/r/ptr727/nxwitness-lsio)
 
-[NxMeta-LSIO](https://hub.docker.com/r/ptr727/nxmeta-lsio):  
-![NxMetaDocker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/nxmeta-lsio?logo=docker)
+[NxMeta](https://hub.docker.com/r/ptr727/nxmeta)
 
-[DWSpectrum](https://hub.docker.com/r/ptr727/dwspectrum):  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/dwspectrum?logo=docker)
+[NxMeta-LSIO](https://hub.docker.com/r/ptr727/nxmeta-lsio)
 
-[DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio):  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ptr727/dwspectrum-lsio?logo=docker)
+[DWSpectrum](https://hub.docker.com/r/ptr727/dwspectrum)
+
+[DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)
 
 ## Current Versions
 
-[Nx Witness 4.1.0.31946](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/31946/linux/nxwitness-server-4.1.0.31946-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/31946/windows/nxwitness-client-4.1.0.31946-win64-patch.exe)
+[Nx Meta 4.1.0.32044](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/32044/windows/metavms-client-4.1.0.32044-win64-patch.exe)
 
-[Nx Meta 4.1.0.31766](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/31766/linux/metavms-server-4.1.0.31766-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/31766/windows/metavms-client-4.1.0.31766-win64-patch.exe)
+[Nx Witness 4.1.0.32045](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/32045/windows/nxwitness-client-4.1.0.32045-win64-patch.exe)
 
-[DW Spectrum 4.1.0.31401](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb)
+[DW Spectrum 4.1.0.32045](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb), [Client](https://updates.networkoptix.com/digitalwatchdog/32045/windows/dwspectrum-client-4.1.0.32045-win64-patch.exe)
 
 ## Overview
 
@@ -169,11 +166,9 @@ Product releases and updates can be found at the following locations:
 
 ## Build Process
 
-With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, but we [can use](http://bobbynorton.com/posts/includes-in-dockerfiles-with-m4-and-make/) a `Makefile` to dynamically create a `Dockerfile` for us.
+With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, so I [use](http://bobbynorton.com/posts/includes-in-dockerfiles-with-m4-and-make/) a `Makefile` to dynamically create a `Dockerfile` for every variant.
 
-I use [Docker Hub Automated Builds](https://docs.docker.com/docker-hub/builds/) to automatically trigger, build, and publish images to [Docker Hub](https://hub.docker.com/u/ptr727). I kept the Docker Hub repositories and image names separate, but it would be possible to publish different products using different tags for one image, it just does not seem natural.
-
-I am considering using GitHub Actions to automatically build the containers, but I've not yet figured out how to have GitHub Actions automatically rebuild the container when the upstream base image changes, this functionality is included in Docker Hub Automated Builds.
+I converted the build from Docker Hub automated builds to using GitHub Actions. I have yet to implement triggers that update images when the upstream images are updated, for now I build weekly picking up the latest upstream changes and applying patches.
 
 I should also figure out how to automatically detect newly released versions, and automatically rebuild when a new version is detected. This could possibly be done using page change notifiers and webhooks, with some code to extract the relevant version and URL attributes from the web pages. For now I'm manually updating as I notice the versions changing.
 

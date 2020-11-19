@@ -1,0 +1,234 @@
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#name
+name: 'Build Pipeline'
+
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#env
+env:
+  NXMETA_LATEST_VERSION: '4.1.0.32044'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb'
+  NXMETA_STABLE_VERSION: '4.1.0.32024'
+  NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb'
+  NXWITNESS_LATEST_VERSION: '4.1.0.32045'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb'
+  NXWITNESS_STABLE_VERSION: '4.1.0.31398'
+  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/31398/linux/nxwitness-server-4.1.0.31398-linux64.deb'
+  DWSPECTRUM_LATEST_VERSION: '4.1.0.32045'
+  DWSPECTRUM_LATEST_URL: 'https://updates.networkoptix.com/digitalwatchdog/32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb'
+  DWSPECTRUM_STABLE_VERSION: '4.1.0.31401'
+  DWSPECTRUM_STABLE_URL: 'https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb'
+
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # https://crontab.guru/
+    # Rebuild 2am every Monday, LSIO rebuilds on Friday's
+    - cron: '0 2 * * MON'
+
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobs
+jobs:
+  build:
+    name: 'Build and Publish Docker Images'
+    runs-on: ubuntu-latest
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+    steps:
+
+      # https://github.com/actions/checkout
+      - name: 'Checkout Code'
+        uses: actions/checkout@v2
+
+      # https://github.com/docker/setup-qemu-action
+      - name: 'Setup QEMU'
+        uses: docker/setup-qemu-action@v1
+
+      # https://github.com/docker/setup-buildx-action
+      - name: 'Setup Docker Buildx'
+        uses: docker/setup-buildx-action@v1
+
+      # https://github.com/marketplace/actions/docker-login
+      - name: 'Login to Docker Hub'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      # https://github.com/marketplace/actions/docker-hub-description
+      # Access tokens cannot update readme.md
+
+      # https://github.com/marketplace/actions/build-and-push-docker-images
+
+      # NxMeta-LSIO
+      - name: 'Build and Push Latest NxMeta-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxMeta-LSIO
+          file: ./NxMeta-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
+      - name: 'Build and Push Stable NxMeta-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxMeta-LSIO
+          file: ./NxMeta-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
+
+      # NxMeta
+      - name: 'Build and Push Latest NxMeta'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxMeta
+          file: ./NxMeta/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
+      - name: 'Build and Push Stable NxMeta'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxMeta
+          file: ./NxMeta/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
+
+      # NxWitness-LSIO
+      - name: 'Build and Push Latest NxWitness-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxWitness-LSIO
+          file: ./NxWitness-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
+      - name: 'Build and Push Stable NxWitness-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxWitness-LSIO
+          file: ./NxWitness-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
+
+      # NxWitness
+      - name: 'Build and Push Latest NxWitness'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxWitness
+          file: ./NxWitness/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
+      - name: 'Build and Push Stable NxWitness'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./NxWitness
+          file: ./NxWitness/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
+
+      # DWSpectrum-LSIO
+      - name: 'Build and Push Latest DWSpectrum-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./DWSpectrum-LSIO
+          file: ./DWSpectrum-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
+      - name: 'Build and Push Stable DWSpectrum-LSIO'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./DWSpectrum-LSIO
+          file: ./DWSpectrum-LSIO/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
+
+      # DwSpectrum
+      - name: 'Build and Push Latest DWSpectrum'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./DWSpectrum
+          file: ./DWSpectrum/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
+      - name: 'Build and Push Stable DWSpectrum'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./DWSpectrum
+          file: ./DWSpectrum/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:stable
+            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
