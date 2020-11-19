@@ -35,7 +35,7 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 [Nx Witness 4.1.0.32045](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/32045/windows/nxwitness-client-4.1.0.32045-win64-patch.exe)
 
-[DW Spectrum 4.1.0.32045](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/4.1.0.32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb), [Client](https://updates.networkoptix.com/digitalwatchdog/32045/windows/dwspectrum-client-4.1.0.32045-win64-patch.exe)
+[DW Spectrum 4.1.0.32045](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb), [Client](https://updates.networkoptix.com/digitalwatchdog/32045/windows/dwspectrum-client-4.1.0.32045-win64-patch.exe)
 
 ## Overview
 
