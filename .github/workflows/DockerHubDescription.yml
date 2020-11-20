@@ -15,6 +15,11 @@ jobs:
       matrix:
         repos: [ptr727/nxmeta, ptr727/nxmeta-lsio, ptr727/nxwitness, ptr727/nxwitness-lsio, ptr727/dwspectrum, ptr727/dwspectrum-lsio]
     steps:
+
+      # https://github.com/actions/checkout
+      - name: 'Checkout Code'
+        uses: actions/checkout@v2
+
       # https://github.com/marketplace/actions/docker-hub-description
       # Access tokens cannot update readme.md, we have to use the real password
       # Use a matrix to update descriptions of all repos
