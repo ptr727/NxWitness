@@ -76,7 +76,7 @@ jobs:
           context: ./NxMeta-LSIO
           file: ./NxMeta-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
@@ -89,7 +89,7 @@ jobs:
           context: ./NxMeta-LSIO
           file: ./NxMeta-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
@@ -104,7 +104,7 @@ jobs:
           context: ./NxMeta
           file: ./NxMeta/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
@@ -117,7 +117,7 @@ jobs:
           context: ./NxMeta
           file: ./NxMeta/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_STABLE_VERSION }}
@@ -132,7 +132,7 @@ jobs:
           context: ./NxWitness-LSIO
           file: ./NxWitness-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}
@@ -145,7 +145,7 @@ jobs:
           context: ./NxWitness-LSIO
           file: ./NxWitness-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}
@@ -160,7 +160,7 @@ jobs:
           context: ./NxWitness
           file: ./NxWitness/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}
@@ -173,7 +173,7 @@ jobs:
           context: ./NxWitness
           file: ./NxWitness/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}
@@ -188,7 +188,7 @@ jobs:
           context: ./DWSpectrum-LSIO
           file: ./DWSpectrum-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}
@@ -201,7 +201,7 @@ jobs:
           context: ./DWSpectrum-LSIO
           file: ./DWSpectrum-LSIO/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
@@ -216,7 +216,7 @@ jobs:
           context: ./DWSpectrum
           file: ./DWSpectrum/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}
@@ -229,7 +229,7 @@ jobs:
           context: ./DWSpectrum
           file: ./DWSpectrum/Dockerfile
           platforms: linux/amd64
-          push: ${{ DOCKER_PUSH }}
+          push: ${{ env.DOCKER_PUSH }}
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:stable
             ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}
