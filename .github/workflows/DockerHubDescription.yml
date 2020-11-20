@@ -1,0 +1,26 @@
+name: 'Update Docker Hub Description'
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+      - .github/workflows/DockerHubDescription.yml
+jobs:
+  description:
+    name: 'Update Docker Hub Descriptions'
+    runs-on: ubuntu-latest
+    strategy:
+      # https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+      matrix:
+        repos: [ptr727/nxmeta, ptr727/nxmeta-lsio, ptr727/nxwitness, ptr727/nxwitness-lsio, ptr727/dwspectrum, ptr727/dwspectrum-lsio]
+    steps:
+      # https://github.com/marketplace/actions/docker-hub-description
+      # Access tokens cannot update readme.md, we have to use the real password
+      # Use a matrix to update descriptions of all repos
+      - name: 'Update Docker Hub Description'
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          repository: ${{ matrix.repos }}
