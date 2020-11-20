@@ -8,31 +8,43 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ## Build Status
 
-[Code](https://github.com/ptr727/NxWitness):  
-![GitHub Last Commit](https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github)
+[Code and Pipeline is on GitHub](https://github.com/ptr727/NxWitness):  
+![GitHub Last Commit](https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github)  
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/NxWitness/Build%20Pipeline?logo=github)
 
 ## Container Images
 
-[NxWitness](https://hub.docker.com/r/ptr727/nxwitness)
+Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727).  
+Images are tagged using `latest` or `stable` and the specific build version number.  
+`latest` images use the latest patch release version.  
+`stable` images use the last stable release version.  
+This allows flexibility for deployments that want to pin to specifc release channels or versions.
 
-[NxWitness-LSIO](https://hub.docker.com/r/ptr727/nxwitness-lsio)
+Images are automatically rebuilt every Monday morning, picking up the latest base image fixes.
 
-[NxMeta](https://hub.docker.com/r/ptr727/nxmeta)
+[NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/stable?label=stable&logo=docker)
 
-[NxMeta-LSIO](https://hub.docker.com/r/ptr727/nxmeta-lsio)
+[NxWitness-LSIO](https://hub.docker.com/r/ptr727/nxwitness-lsio)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker)
 
-[DWSpectrum](https://hub.docker.com/r/ptr727/dwspectrum)
+[NxMeta](https://hub.docker.com/r/ptr727/nxmeta)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta/stable?label=stable&logo=docker)
 
-[DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)
+[NxMeta-LSIO](https://hub.docker.com/r/ptr727/nxmeta-lsio)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/stable?label=stable&logo=docker)
 
-## Current Versions
+[DWSpectrum](https://hub.docker.com/r/ptr727/dwspectrum)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum/stable?label=stable&logo=docker)
 
-[Nx Meta 4.1.0.32044](https://meta.nxvms.com/downloads/patches), [Server](https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb), [Client](https://updates.networkoptix.com/metavms/32044/windows/metavms-client-4.1.0.32044-win64-patch.exe)
-
-[Nx Witness 4.1.0.32045](https://beta.networkoptix.com/beta-builds/default/), [Server](https://updates.networkoptix.com/default/32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb), [Client](http://updates.networkoptix.com/default/32045/windows/nxwitness-client-4.1.0.32045-win64-patch.exe)
-
-[DW Spectrum 4.1.0.32045](https://dwspectrum.digital-watchdog.com/download/), [Server](https://updates.networkoptix.com/digitalwatchdog/32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb), [Client](https://updates.networkoptix.com/digitalwatchdog/32045/windows/dwspectrum-client-4.1.0.32045-win64-patch.exe)
+[DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)  
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker)
+![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker)
 
 ## Overview
 
