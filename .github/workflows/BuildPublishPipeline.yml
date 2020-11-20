@@ -40,6 +40,7 @@ jobs:
   build:
     name: 'Build and Publish Docker Images'
     runs-on: ubuntu-latest
+
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -63,9 +64,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      # https://github.com/marketplace/actions/docker-hub-description
-      # Access tokens cannot update readme.md
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
