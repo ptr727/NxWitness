@@ -10,7 +10,7 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 [Code and Pipeline is on GitHub](https://github.com/ptr727/NxWitness):  
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github)  
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/NxWitness/Build%20Pipeline?logo=github)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/NxWitness/Build%20and%20Publish%20Docker%20Images?logo=github)
 
 ## Container Images
 
