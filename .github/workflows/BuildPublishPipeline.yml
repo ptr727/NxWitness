@@ -12,8 +12,8 @@ env:
   NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/32044/linux/metavms-server-4.1.0.32044-linux64-patch.deb'
   NXMETA_STABLE_VERSION: '4.1.0.32024'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb'
-  NXWITNESS_LATEST_VERSION: '4.1.0.32045'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32045/linux/nxwitness-server-4.1.0.32045-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '4.1.0.32212'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32212/linux/nxwitness-server-4.1.0.32212-linux64-patch.deb'
   NXWITNESS_STABLE_VERSION: '4.1.0.31398'
   NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/31398/linux/nxwitness-server-4.1.0.31398-linux64.deb'
   DWSPECTRUM_LATEST_VERSION: '4.1.0.32045'
@@ -78,8 +78,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
+            ptr727/nxmeta-lsio:latest
+            ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
@@ -91,8 +91,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
+            ptr727/nxmeta-lsio:stable
+            ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
@@ -106,8 +106,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
+            ptr727/nxmeta:latest
+            ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
@@ -119,8 +119,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxmeta:${{ env.NXMETA_STABLE_VERSION }}
+            ptr727/nxmeta:stable
+            ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
@@ -134,8 +134,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}
+            ptr727/nxwitness-lsio:latest
+            ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
@@ -147,8 +147,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}
+            ptr727/nxwitness-lsio:stable
+            ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
@@ -162,8 +162,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}
+            ptr727/nxwitness:latest
+            ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
@@ -175,8 +175,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}
+            ptr727/nxwitness:stable
+            ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
@@ -190,8 +190,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}
+            ptr727/dwspectrum-lsio:latest
+            ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
@@ -203,8 +203,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
+            ptr727/dwspectrum-lsio:stable
+            ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
@@ -218,8 +218,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}
+            ptr727/dwspectrum:latest
+            ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
@@ -231,8 +231,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.DOCKER_PUSH }}
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:stable
-            ${{ secrets.DOCKER_HUB_USERNAME }}/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}
+            ptr727/dwspectrum:stable
+            ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
             DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
