@@ -17,7 +17,7 @@ ARG RUNTIME_NAME="digitalwatchdog"
 ARG CACHE_DATE=${DOWNLOAD_VERSION}
 
 # Prevent EULA and confirmation prompts in installers
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Media server user and directory name
 ENV COMPANY_NAME=${RUNTIME_NAME}
@@ -31,6 +31,7 @@ LABEL name=${LABEL_NAME} \
 
 # Install tools
 RUN apt-get update \
+    && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
         mc \
         nano \
