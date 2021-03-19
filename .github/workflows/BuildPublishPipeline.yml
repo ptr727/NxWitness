@@ -8,12 +8,12 @@ env:
   # Push main branch only, else just build
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   # Versions
-  NXMETA_LATEST_VERSION: '4.2.0.32350'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/32350/linux/metavms-server-4.2.0.32350-linux64-beta.deb'
+  NXMETA_LATEST_VERSION: '4.2.0.32515'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/32515/linux/metavms-server-4.2.0.32515-linux64-beta.deb'
   NXMETA_STABLE_VERSION: '4.1.0.32024'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb'
-  NXWITNESS_LATEST_VERSION: '4.1.0.32405'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32405/linux/nxwitness-server-4.1.0.32405-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '4.1.0.32602'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32602/linux/nxwitness-server-4.1.0.32602-linux64-patch.deb'
   NXWITNESS_STABLE_VERSION: '4.1.0.31398'
   NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/31398/linux/nxwitness-server-4.1.0.31398-linux64.deb'
   DWSPECTRUM_LATEST_VERSION: '4.1.0.32045'
