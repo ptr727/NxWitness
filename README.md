@@ -168,6 +168,7 @@ Product releases and updates can be found at the following locations:
   - [JSON API](https://meta.nxvms.com/api/utils/downloads)
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
+  - [Nx Meta Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
   - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
   - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)

@@ -7,15 +7,20 @@ name: 'Build and Publish Docker Images'
 env:
   # Push main branch only, else just build
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
-  # Versions
-  NXMETA_LATEST_VERSION: '4.2.0.32515'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/4.2.0.32515%20R2/linux/metavms-server-4.2.0.32515-linux64-rc.deb'
-  NXMETA_STABLE_VERSION: '4.1.0.32024'
-  NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/32024/linux/metavms-server-4.1.0.32024-linux64-beta-prod.deb'
-  NXWITNESS_LATEST_VERSION: '4.1.0.32602'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/32602/linux/nxwitness-server-4.1.0.32602-linux64-patch.deb'
-  NXWITNESS_STABLE_VERSION: '4.1.0.31398'
-  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/31398/linux/nxwitness-server-4.1.0.31398-linux64.deb'
+  
+  # https://meta.nxvms.com/downloads/patches
+  NXMETA_LATEST_VERSION: '4.3.0.32743'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/4.3.0.32743%20R1/linux/metavms-server-4.3.0.32743-linux_x64.deb'
+  NXMETA_STABLE_VERSION: '4.2.0.32657'
+  NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.32657%20R3/linux/metavms-server-4.2.0.32657-linux64.deb'
+  
+  # https://beta.networkoptix.com/beta-builds/default/
+  NXWITNESS_LATEST_VERSION: '4.2.0.32658'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.32658/linux/nxwitness-server-4.2.0.32658-linux64.deb'
+  NXWITNESS_STABLE_VERSION: '4.2.0.32658'
+  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.32658/linux/nxwitness-server-4.2.0.32658-linux64.deb'
+
+  # https://dwspectrum.digital-watchdog.com/download/linux
   DWSPECTRUM_LATEST_VERSION: '4.1.0.32045'
   DWSPECTRUM_LATEST_URL: 'https://updates.networkoptix.com/digitalwatchdog/32045/linux/dwspectrum-server-4.1.0.32045-linux64-patch.deb'
   DWSPECTRUM_STABLE_VERSION: '4.1.0.31401'
@@ -35,6 +40,7 @@ on:
   schedule:
     # https://crontab.guru/
     # Rebuild 2am every Monday, LSIO rebuilds on Friday's
+    # TODO: Figure out how to build main and develop vs. just the default branch
     - cron: '0 2 * * MON'
 
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobs
