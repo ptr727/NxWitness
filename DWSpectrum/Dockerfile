@@ -6,6 +6,7 @@ ARG LABEL_NAME="DWSpectrum"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
 # Download URL and version
+# Current values are defined by the build pipeline
 ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb"
 ARG DOWNLOAD_VERSION="4.1.0.31401"
 
