@@ -7,9 +7,11 @@
 # exec /opt/${COMPANY_NAME}/mediaserver/bin/mediaserver -e
 
 # Version 4.3 renamed the binary files, conditionally launch the mediaserver-bin else mediaserver
-if [[ ! -f '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin' ]]
+if [[ -f '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin' ]]
 then
+    echo "Launching mediaserver-bin"
     exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin -e'
 else
+    echo "Launching mediaserver"
     exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver -e'
 fi
