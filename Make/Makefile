@@ -4,7 +4,8 @@
 # Test in Docker container
 # docker run -it --rm ubuntu:bionic /bin/bash
 
-# Extract DEB file
+# Download and extract DEB file
+# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/4.3.0.32743%20R1/linux/metavms-server-4.3.0.32743-linux_x64.deb
 # dpkg-deb -R ./vms_server.deb ./vms_server
 
 .DEFAULT_GOAL := check

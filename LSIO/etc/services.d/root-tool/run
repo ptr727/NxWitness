@@ -2,4 +2,12 @@
 
 # Run as root
 # The root-tool is required to get DMI information when not running as root
-exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin
+# exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool
+
+# Version 4.3 renamed the binary files, conditionally launch the root-tool-bin else root-tool
+if [[ ! -f '/opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin' ]]
+then
+    exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin
+else
+    exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool
+fi

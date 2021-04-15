@@ -58,7 +58,6 @@ RUN usermod -l ${COMPANY_NAME} abc \
 
 # Install the mediaserver
 # Add missing dependencies (gdb)
-# Do not delete or disable the root-tool, it is required to get DMI information when not running as root
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \

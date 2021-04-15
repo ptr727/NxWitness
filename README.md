@@ -224,7 +224,11 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 - The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
 - The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to disable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use due.
 - The download CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
-- Windows Subsystem for Linux (WSL) is not supported.
+- Windows Subsystem for Linux v2 (WSL2) is not supported.
   - In the DEB installer `postinst` step the installer tries to start the service, and fails the install. `Detected runtime type: wsl.`, `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl`.
   - The logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
+- Version 4.3+ remove the shell scripts that used to launch the binary files.
+  - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
+  - The Nx Docker project launch [script](https://github.com/networkoptix/nx_open_integrations/blob/master/docker/entrypoint.sh), is still referring to the old names.
+  - The S6 services config was changed to launch the `foo-bin` variants if they exist, else just `foo`.
