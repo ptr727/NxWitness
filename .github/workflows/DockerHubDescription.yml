@@ -1,14 +1,14 @@
-name: 'Update Docker Hub Descriptions'
+name: 'Update Docker Hub Description'
+
 on:
   push:
-    branches:
-      - main
-    paths:
-      - README.md
-      - .github/workflows/DockerHubDescription.yml
+    # Only update main branch
+    branches: [main]
+    paths: [README.md, .github/workflows/DockerHubDescription.yml]
+
 jobs:
   description:
-    name: 'Update Docker Hub Descriptions'
+    name: 'Update Docker Hub Description'
     runs-on: ubuntu-latest
     strategy:
       # https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
