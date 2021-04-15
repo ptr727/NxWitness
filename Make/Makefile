@@ -29,6 +29,7 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 .PHONY: check
 check:
 	@echo "Usage:"
+	@echo "'make lsio' : Copy LSIO files"
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
@@ -38,8 +39,11 @@ check:
 	@echo "DIRS = $(DIRS)"
 	@echo "LOWERDIRS = $(LOWERDIRS)"
 
-.PHONY: build
-build: $(DIRS:%=%/.docker-build)
+.PHONY: lsio
+lsio:
+	cp -R ../LSIO/* ../DWSpectrum-LSIO/root
+	cp -R ../LSIO/* ../NxWitness-LSIO/root
+	cp -R ../LSIO/* ../NxMeta-LSIO/root
 
 .PHONY: create
 create: $(DIRS:%=%/.docker-create)
