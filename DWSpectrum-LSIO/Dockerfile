@@ -6,6 +6,7 @@ ARG LABEL_NAME="DWSpectrum-LSIO"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 # Download URL and version
+# Current values are defined by the build pipeline
 ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb"
 ARG DOWNLOAD_VERSION="4.1.0.31401"
 
@@ -57,15 +58,12 @@ RUN usermod -l ${COMPANY_NAME} abc \
 
 # Install the mediaserver
 # Add missing dependencies (gdb)
-# Remove the root tool to prevent it from being used in service mode
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
-    # Do not delete the root-tool, it is required to get DMI information when not running as root
-    # && rm -rf /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 

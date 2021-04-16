@@ -29,14 +29,10 @@ env:
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
 on:
   push:
-    branches:
-    - main
-    - develop
-    paths-ignore:
-      - 'README.md'
+    branches: [main, develop]
+    paths-ignore: [README.md]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   schedule:
     # https://crontab.guru/
     # Rebuild 2am every Monday, LSIO rebuilds on Friday's
@@ -74,6 +70,24 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
+
+      # Develop build of latest NxMeta-LSIO
+      - name: 'Build and Push Develop NxMeta-LSIO'
+        uses: docker/build-push-action@v2
+        # Enable for develop branch only
+        if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
+        with:
+          context: ./NxMeta-LSIO
+          file: ./NxMeta-LSIO/Dockerfile
+          platforms: linux/amd64
+          # Do not push pull requests
+          push: ${{ (github.event_name != 'pull_request') }}
+          tags: |
+            ptr727/nxmeta-lsio:develop
+            ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
 
       # NxMeta-LSIO
       - name: 'Build and Push Latest NxMeta-LSIO'
