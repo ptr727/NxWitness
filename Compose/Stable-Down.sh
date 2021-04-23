@@ -1,0 +1,1 @@
+docker-compose --file LSIO-Stable.yml down --volumes 
