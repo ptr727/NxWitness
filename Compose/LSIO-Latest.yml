@@ -1,0 +1,53 @@
+version: "3.7"
+
+volumes:
+  dwspectrum-lsio_config:
+  dwspectrum-lsio_media:
+  nxwitness-lsio_config:
+  nxwitness-lsio_media:
+  nxmeta-lsio_config:
+  nxmeta-lsio_media:
+
+services:
+  dwspectrum-lsio:
+    image: ptr727/dwspectrum-lsio:latest
+    container_name: dwspectrum-lsio-test-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - dwspectrum-lsio_config:/config
+      - dwspectrum-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7101:7001
+  nxwitness-lsio:
+    image: ptr727/nxwitness-lsio:latest
+    container_name: nxwitness-lsio-test-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - nxwitness-lsio_config:/config
+      - nxwitness-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7102:7001
+  nxmeta-lsio:
+    image: ptr727/nxmeta-lsio:latest
+    container_name: nxmeta-lsio-test-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - nxmeta-lsio_config:/config
+      - nxmeta-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7103:7001
+
+# docker-compose --file LSIO-Latest.yml up --detach
+# http://[server]:7101
+# http://[server]:7102
+# http://[server]:7103
+# docker-compose --file LSIO-Latest.yml down

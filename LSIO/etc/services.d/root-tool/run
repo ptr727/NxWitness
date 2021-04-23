@@ -5,7 +5,7 @@
 # exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool
 
 # Version 4.3 renamed the binary files, conditionally launch the root-tool-bin else root-tool
-if [[ -f '/opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin' ]]
+if [[ -e /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin ]]
 then
     echo "Launching root-tool-bin"
     exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin

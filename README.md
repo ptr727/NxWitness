@@ -118,17 +118,17 @@ Any network mode can be used, but due to the hardware bound licensing, `host` mo
 
 ```console
 docker create \
-  --name=dwspectrum-lsio-test-container \
-  --hostname=dwspectrum-lsio-test-host \
+  --name=nxwitness-lsio-test-container \
+  --hostname=nxwitness-lsio-test-host \
   --domainname=foo.bar.net \
   --restart=unless-stopped \
   --network=host \
   --env TZ=Americas/Los_Angeles \
-  --volume /mnt/dwspectrum/config:/config:rw \
-  --volume /mnt/dwspectrum/media:/media:rw \
-  ptr727/dwspectrum-lsio
+  --volume /mnt/nxwitness/config:/config:rw \
+  --volume /mnt/nxwitness/media:/media:rw \
+  ptr727/nxwitness-lsio:stable
 
-docker start dwspectrum-lsio-test-container
+docker start nxwitness-lsio-test-container
 ```
 
 ### Docker Compose
@@ -137,16 +137,16 @@ docker start dwspectrum-lsio-test-container
 version: "3.7"
 
 services:
-  dwspectrum:
-    image: ptr727/dwspectrum-lsio
-    container_name: dwspectrum-lsio-test-container
+  nxwitness:
+    image: ptr727/nxwitness-lsio:stable
+    container_name: nxwitness-lsio-test-container
     restart: unless-stopped
     network_mode: host
     environment:
       - TZ=Americas/Los_Angeles
     volumes:
-      - /mnt/dwspectrum/config:/config
-      - /mnt/dwspectrum/media:/media
+      - /mnt/nxwitness/config:/config
+      - /mnt/nxwitness/media:/media
 ```
 
 ### Unraid Template

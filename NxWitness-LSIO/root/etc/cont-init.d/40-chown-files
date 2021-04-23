@@ -8,35 +8,35 @@ echo "40-chown-files : COMPANY_NAME = ${COMPANY_NAME}"
 # If files previously existed the permissions may have to be manually corrected
 
 # /config (recursive)
-if [ ! "$(stat -c %U /config)" = "${COMPANY_NAME}" ]
+if [[ ! "$(stat -c %U /config)" = "${COMPANY_NAME}" ]]
 then
     echo "Changing ownership on /config"
     chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config
 fi
 
 # /media (recursive)
-if [ ! "$(stat -c %U /media)" = "${COMPANY_NAME}" ]
+if [[ ! "$(stat -c %U /media)" = "${COMPANY_NAME}" ]]
 then
     echo "Changing ownership on /media"
     chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /media
 fi
 
 # /archive (recursive)
-if [ ! "$(stat -c %U /archive)" = "${COMPANY_NAME}" ]
+if [[ ! "$(stat -c %U /archive)" = "${COMPANY_NAME}" ]]
 then
     echo "Changing ownership on /archive"
     chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /archive
 fi
 
 # /opt/${COMPANY_NAME}/mediaserver/bin
-if [ ! "$(stat -c %U /opt/${COMPANY_NAME}/mediaserver/bin)" = "${COMPANY_NAME}" ]
+if [[ ! "$(stat -c %U /opt/${COMPANY_NAME}/mediaserver/bin)" = "${COMPANY_NAME}" ]]
 then
     echo "Changing ownership on ../mediaserver/bin"
     chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin
 fi
 
 # /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
-if [ ! "$(stat -c %U /opt/${COMPANY_NAME}/mediaserver/bin/external.dat)" = "${COMPANY_NAME}" ]
+if [[ ! "$(stat -c %U /opt/${COMPANY_NAME}/mediaserver/bin/external.dat)" = "${COMPANY_NAME}" ]]
 then
     echo "Changing ownership on ../mediaserver/bin/external.dat"
     chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
