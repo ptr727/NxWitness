@@ -45,9 +45,3 @@ services:
     network_mode: bridge
     ports:
       - 7103:7001
-
-# docker-compose --file LSIO-Stable.yml up --detach
-# http://[server]:7101
-# http://[server]:7102
-# http://[server]:7103
-# docker-compose --file LSIO-Stable.yml down

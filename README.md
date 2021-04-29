@@ -228,7 +228,8 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - In the DEB installer `postinst` step the installer tries to start the service, and fails the install. `Detected runtime type: wsl.`, `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl`.
   - The logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- Version 4.3+ remove the shell scripts that used to launch the binary files.
+- Version 4.3+ removed the shell scripts that used to launch the binary files.
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
   - The Nx Docker project launch [script](https://github.com/networkoptix/nx_open_integrations/blob/master/docker/entrypoint.sh), is still referring to the old names.
-  - The S6 services config was changed to launch the `foo-bin` variants if they exist, else just `foo`.
+  - The LSIO S6 services config was changed to launch the `foo-bin` variants if they exist, else just `foo`.
+  - The iOS NxWitness client crashes when viewing single camera feeds from 4.3 R1 server.
