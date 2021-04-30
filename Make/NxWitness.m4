@@ -1,5 +1,5 @@
-# Use Ubuntu Bionic
-FROM ubuntu:bionic
+# Use Ubuntu Focal Fossa 20.04 LTS
+FROM ubuntu:focal
 
 # Labels
 ARG LABEL_NAME="NxMeta"

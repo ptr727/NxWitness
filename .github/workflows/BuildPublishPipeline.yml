@@ -72,7 +72,7 @@ jobs:
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
       # Develop build of latest NxMeta-LSIO
-      - name: 'Build and Push Develop NxMeta-LSIO'
+      - name: 'Build and Push Develop Latest NxMeta-LSIO'
         uses: docker/build-push-action@v2
         # Enable for develop branch only
         if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
@@ -84,10 +84,27 @@ jobs:
           push: ${{ (github.event_name != 'pull_request') }}
           tags: |
             ptr727/nxmeta-lsio:develop
+            ptr727/nxmeta-lsio:develop-latest
             ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}
           build-args: |
             DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
             DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
+      - name: 'Build and Push Develop Stable NxMeta-LSIO'
+        uses: docker/build-push-action@v2
+        # Enable for develop branch only
+        if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
+        with:
+          context: ./NxMeta-LSIO
+          file: ./NxMeta-LSIO/Dockerfile
+          platforms: linux/amd64
+          # Do not push pull requests
+          push: ${{ (github.event_name != 'pull_request') }}
+          tags: |
+            ptr727/nxmeta-lsio:develop-stable
+            ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }}
+          build-args: |
+            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
+            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
 
       # NxMeta-LSIO
       - name: 'Build and Push Latest NxMeta-LSIO'

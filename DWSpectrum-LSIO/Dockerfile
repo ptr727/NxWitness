@@ -1,5 +1,5 @@
-# Use LSIO Ubuntu Bionic
-FROM lsiobase/ubuntu:bionic
+# Use LSIO Ubuntu Focal Fossa 20.04 LTS
+FROM lsiobase/ubuntu:focal
 
 # Labels
 ARG LABEL_NAME="DWSpectrum-LSIO"

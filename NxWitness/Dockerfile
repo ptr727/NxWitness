@@ -1,5 +1,5 @@
-# Use Ubuntu Bionic
-FROM ubuntu:bionic
+# Use Ubuntu Focal Fossa 20.04 LTS
+FROM ubuntu:focal
 
 # Labels
 ARG LABEL_NAME="NxMeta"
@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.32658/linux/nxwitness-server-4.2.0.32658-linux64.deb"
-ARG DOWNLOAD_VERSION="4.2.0.32658"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.32840/linux/nxwitness-server-4.2.0.32840-linux64.deb"
+ARG DOWNLOAD_VERSION="4.2.0.32840"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"

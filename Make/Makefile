@@ -48,6 +48,9 @@ lsio:
 .PHONY: create
 create: $(DIRS:%=%/.docker-create)
 
+.PHONY: build
+build: $(DIRS:%=%/.docker-build)
+
 .PHONY: clean
 clean:
 	-rm -f $(DIRS:%=../%/.docker-build)
