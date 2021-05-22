@@ -56,16 +56,22 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 
+# TODO: Consider matching the Nx docker config
+# https://github.com/networkoptix/nx_open_integrations/blob/master/docker/Dockerfile
+# For now we'll just bypass the systemd dependency but still run as root
+
+# Copy the entrypoint.sh launch script
+# entrypoint.sh will run the mediaserver and root-tool
+COPY root/entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
+
+# Runs entrypoint.sh on container start
+ENTRYPOINT ["/opt/entrypoint.sh"]
+
 # Expose port 7001
 EXPOSE 7001
 
-# Create mount points
-# Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
-# /config is for configuration
-# /media is for media recording
-# /archive is for media backups
-VOLUME /config /media /archive
+# Mount points
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config
+# /opt/${COMPANY_NAME}/mediaserver/var -> /media
 

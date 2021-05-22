@@ -81,9 +81,9 @@ EXPOSE 7001
 
 # Create mount points
 # Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
+# /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
+# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
 # /config is for configuration
 # /media is for media recording
 # /archive is for media backups

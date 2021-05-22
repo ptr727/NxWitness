@@ -2,11 +2,31 @@
 # sudo apt install make m4
 
 # Test in Docker container
-# docker run -it --rm ubuntu:bionic /bin/bash
-
-# Download and extract DEB file
+# docker run -it --rm ubuntu:focal /bin/bash
+# export DEBIAN_FRONTEND=noninteractive
+# apt-get update
+# apt-get upgrade --yes
+# apt-get install --no-install-recommends --yes mc nano strace wget gdb
 # wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/4.3.0.32743%20R1/linux/metavms-server-4.3.0.32743-linux_x64.deb
+# apt-get install --no-install-recommends --yes ./vms_server.deb
+
+# Extract DEB installer:
 # dpkg-deb -R ./vms_server.deb ./vms_server
+
+# Delete all unused images
+# docker image prune --all
+
+# Steps:
+# ../Compose/Down.sh
+# make clean
+# make entrypoint
+# make create
+# make build
+# ../Compose/Up.sh
+# Test
+# ../Compose/Down.sh
+# make clean
+
 
 .DEFAULT_GOAL := check
 
@@ -17,19 +37,23 @@ DIRS := $(basename $(M4S))
 LOWERDIRS := $(call lowercase,$(DIRS))
 
 %/.docker-build: %/Dockerfile
-	docker build -t $(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
+	docker build -t test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
 	touch "../$@"
+
+%/.docker-clean: %/Dockerfile
+	-docker image rm test_$(call lowercase,$(patsubst %/,%,$(basename $@)))
 
 %/.docker-create: %/Dockerfile
 	touch "../$@"
 
 %/Dockerfile: %.m4
+	-rm ../$@
 	m4 $< >../$@
 
 .PHONY: check
 check:
 	@echo "Usage:"
-	@echo "'make lsio' : Copy LSIO files"
+	@echo "'make entrypoint' : Copy entrypoint files"
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
@@ -39,11 +63,26 @@ check:
 	@echo "DIRS = $(DIRS)"
 	@echo "LOWERDIRS = $(LOWERDIRS)"
 
-.PHONY: lsio
-lsio:
+.PHONY: entrypoint
+entrypoint:
+	-rm -rf ../DWSpectrum-LSIO/root
+	-mkdir ../DWSpectrum-LSIO/root
 	cp -R ../LSIO/* ../DWSpectrum-LSIO/root
+	-rm -rf ../NxWitness-LSIO/root
+	-mkdir ../NxWitness-LSIO/root
 	cp -R ../LSIO/* ../NxWitness-LSIO/root
+	-rm -rf ../NxMeta-LSIO/root
+	-mkdir ../NxMeta-LSIO/root
 	cp -R ../LSIO/* ../NxMeta-LSIO/root
+	-rm -rf ../DWSpectrum/root
+	-mkdir ../DWSpectrum/root
+	cp -R ../Entrypoint/* ../DWSpectrum/root/
+	-rm -rf ../NxWitness/root
+	-mkdir ../NxWitness/root
+	cp -R ../Entrypoint/* ../NxWitness/root/
+	-rm -rf ../NxMeta/root
+	-mkdir ../NxMeta/root
+	cp -R ../Entrypoint/* ../NxMeta/root/
 
 .PHONY: create
 create: $(DIRS:%=%/.docker-create)
@@ -52,8 +91,4 @@ create: $(DIRS:%=%/.docker-create)
 build: $(DIRS:%=%/.docker-build)
 
 .PHONY: clean
-clean:
-	-rm -f $(DIRS:%=../%/.docker-build)
-	-rm -f $(DIRS:%=../%/.docker-create)
-	#-rm -f $(DIRS:%=../%/Dockerfile)
-	-docker image rm $(LOWERDIRS)
+clean: $(DIRS:%=%/.docker-clean)

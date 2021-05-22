@@ -18,7 +18,7 @@ Docker container images are published on [Docker Hub](https://hub.docker.com/u/p
 Images are tagged using `latest` or `stable` and the specific build version number.  
 `latest` images use the latest patch release version.  
 `stable` images use the last stable release version.  
-This allows flexibility for deployments that want to pin to specifc release channels or versions.
+This allows flexibility for deployments that want to pin to specific release channels or versions.
 
 Images are automatically rebuilt every Monday morning, picking up the latest base image fixes.
 
@@ -110,7 +110,7 @@ An alternative for Unraid is to use the Unassigned Devices plugin and assign sto
 
 ### Network Mode
 
-Any network mode can be used, but due to the hardware bound licensing, `host` mode is [preferred](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#networking).
+Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#networking).
 
 ## Examples
 
@@ -149,6 +149,24 @@ services:
       - /mnt/nxwitness/media:/media
 ```
 
+### Non-LSIO Docker Compose
+
+The LSIO images re-link internal paths, while the non-LSIO images needs to map volumes directly to the installed folders.
+
+```yaml
+version: "3.7"
+
+services:
+  nxwitness:
+    image: ptr727/nxwitness:stable
+    container_name: nxwitness-test-container
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /mnt/nxwitness/config/etc:/opt/networkoptix/mediaserver/etc
+      - /mnt/nxwitness/media:/opt/networkoptix/mediaserver/var/
+```
+
 ### Unraid Template
 
 - Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/master/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
@@ -177,7 +195,7 @@ Product releases and updates can be found at the following locations:
     - [https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
     - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
 
-Note, updating the mediaserver inside docker is not supported, to update server version pull a new docker container, it is the docker way.
+Note, updating the mediaserver inside docker is not supported, to update the server version pull a new docker container, it is the docker way.
 
 ## Build Process
 
@@ -212,18 +230,8 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 
 ## Notes
 
-- Version 4.1+ includes the ability to specify additional storage filesystem types.
-  - This is particularly useful when Unraid, ZFS, or Docker Desktop storage is by default not supported.
-  - Access the server storage page at `https://hostname:7001/static/index.html#/info` and verify that all mounted storage is listed.
-  - If storage is not listed, attach to the container console and run `cat /proc/mounts` to get a list of all the mounted filesystem types.
-  - Access the advanced settings page at `https://hostname:7001/static/index.html#/advanced` and set `additionalLocalFsTypes` to include the filesystem type.
-  - Add `fuse.grpcfuse` for Docker for Windows, `fuse.shfs` for Unraid, and `zfs` for ZFS, e.g. `fuse.grpcfuse,fuse.shfs,zfs`.
-  - Save the settings, restart the server, and verify that storage is now available.
-  - Alternatively call the API directly e.g. `wget --user=admin --password=password https://hostname:7001/api/systemSettings?additionalLocalFsTypes=zfs --no-check-certificate`.
-- There is no way to configure the `additionalLocalFsTypes` types at deployment time.
-  - Some debugging shows the setting is stored in the `var/ecs.sqlite` DB file, in the `vms_kvpair` table, `name=additionalLocalFsTypes`, `value=fuse.grpcfuse,fuse.shfs,zfs`.
-  - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
-- The [calculation](http://mywiki.wooledge.org/BashFAQ/028) of `VMS_DIR=$(dirname $(dirname "${BASH_SOURCE[0]}"))` in `../bin/mediaserver` can result in bad paths when called from the same directory, e.g. `start-stop-daemon: unable to stat ./bin/./bin/mediaserver-bin (No such file or directory)`.
+- I do recommend running the LSIO images, I run NxMeta-LSIO:stable in my home lab, but please feel free to report any issues with other images.
+- The non-LSIO images do not rely on systemd and instead launch an `entrypoint.sh` script, but they do not follow the [reference](https://github.com/networkoptix/nx_open_integrations/blob/master/docker/Dockerfile) pattern, specifically they can only run as root. For non-root usage I recommend the LSIO images.
 - The filesystem filter logic incorrectly considers some volumes to be duplicates, turn on verbose logging (`logLevel=DEBUG2`). `VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate`.
 - The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
 - The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to disable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use due to no visible labels.
@@ -232,9 +240,18 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - In the DEB installer `postinst` step the installer tries to start the service, and fails the install. `Detected runtime type: wsl.`, `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl`.
   - The logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- Version 4.3+ removed the shell scripts that used to launch the binary files.
+- Version 4.1+ added the ability to specify additional storage filesystem [types](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage).
+  - This is particularly useful because Unraid, ZFS, and Docker Desktop storage is by default not supported.
+  - Access the server storage page at `https://hostname:7001/static/index.html#/info` and verify that all mounted storage is listed.
+  - If storage is not listed, attach to the container console and run `cat /proc/mounts` to get a list of all the mounted filesystem types.
+  - Access the advanced settings page at `https://hostname:7001/static/index.html#/advanced` and set `additionalLocalFsTypes` to include the filesystem type.
+  - Add `fuse.grpcfuse` for Docker for Windows, `fuse.shfs` for Unraid, and `zfs` for ZFS, e.g. `fuse.grpcfuse,fuse.shfs,zfs`.
+  - Save the settings, restart the server, and verify that storage is now available.
+  - Alternatively call the API directly e.g. `wget --user=admin --password=password https://hostname:7001/api/systemSettings?additionalLocalFsTypes=zfs --no-check-certificate`.
+  - There is no way to configure the `additionalLocalFsTypes` types at deployment time.
+  - Some debugging shows the setting is stored in the `var/ecs.sqlite` DB file, in the `vms_kvpair` table, `name=additionalLocalFsTypes`, `value=fuse.grpcfuse,fuse.shfs,zfs`.
+  - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
+- Beta version 4.3:
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
-  - The Nx Docker project launch [script](https://github.com/networkoptix/nx_open_integrations/blob/master/docker/entrypoint.sh), is still referring to the old names.
-  - The LSIO S6 services config was changed to launch the `foo-bin` variants if they exist, else just `foo`.
-  - The iOS NxWitness client crashes when viewing single camera feeds from 4.3 R1 server.
+  - The iOS NxWitness client crashes when viewing single camera feeds from 4.3 R1 and R2 server.
   - After upgrading to 4.3, reverting to 4.2 is no longer possible, be sure to make a copy of the server configuration before upgrading. `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`

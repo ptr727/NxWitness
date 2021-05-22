@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb"
-ARG DOWNLOAD_VERSION="4.1.0.31401"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+ARG DOWNLOAD_VERSION="4.2.0.32842"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -81,9 +81,9 @@ EXPOSE 7001
 
 # Create mount points
 # Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
+# /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
+# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
 # /config is for configuration
 # /media is for media recording
 # /archive is for media backups
