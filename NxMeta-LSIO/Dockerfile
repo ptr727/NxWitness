@@ -1,6 +1,7 @@
 # Use LSIO Ubuntu Focal Fossa 20.04 LTS
 FROM lsiobase/ubuntu:focal
 
+
 # Labels
 ARG LABEL_NAME="NxMeta-LSIO"
 ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
@@ -30,10 +31,11 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools
+# Install tools and pre-requisites
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        gdb \
         mc \
         nano \
         strace \
@@ -57,10 +59,8 @@ RUN usermod -l ${COMPANY_NAME} abc \
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/cont-init.d/10-adduser
 
 # Install the mediaserver
-# Add missing dependencies (gdb)
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \

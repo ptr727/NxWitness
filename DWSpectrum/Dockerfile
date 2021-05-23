@@ -1,6 +1,7 @@
 # Use Ubuntu Focal Fossa 20.04 LTS
 FROM ubuntu:focal
 
+
 # Labels
 ARG LABEL_NAME="DWSpectrum"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
@@ -30,10 +31,11 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools
+# Install tools and pre-requisites
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        gdb \
         mc \
         nano \
         strace \
@@ -46,10 +48,8 @@ RUN apt-get update \
 RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
 
 # Install the mediaserver
-# Add missing dependencies (gdb)
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
@@ -74,4 +74,3 @@ EXPOSE 7001
 # Mount points
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config
 # /opt/${COMPANY_NAME}/mediaserver/var -> /media
-

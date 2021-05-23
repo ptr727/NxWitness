@@ -1,9 +1,9 @@
-# Use LSIO Ubuntu Focal Fossa 20.04 LTS
-FROM lsiobase/ubuntu:focal
+include(`base-lsio.docker')
 
 # Labels
 ARG LABEL_NAME="DWSpectrum-LSIO"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 include(`dwspectrum.docker')
+include(`body.docker')
 include(`body-lsio.docker')

@@ -1,0 +1,2 @@
+# Use LSIO Ubuntu Focal Fossa 20.04 LTS
+FROM lsiobase/ubuntu:focal
