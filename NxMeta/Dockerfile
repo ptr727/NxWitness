@@ -1,5 +1,8 @@
 # Use Ubuntu Focal Fossa 20.04 LTS
-FROM ubuntu:focal
+# FROM ubuntu:focal
+
+# Use Ubuntu Bionic Beaver 18.04 LTS
+FROM ubuntu:bionic
 
 
 # Labels

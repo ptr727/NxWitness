@@ -1,5 +1,8 @@
 # Use LSIO Ubuntu Focal Fossa 20.04 LTS
-FROM lsiobase/ubuntu:focal
+# FROM lsiobase/ubuntu:focal
+
+# Use LSIO Ubuntu Bionic Beaver 18.04 LTS
+FROM lsiobase/ubuntu:bionic
 
 
 # Labels
