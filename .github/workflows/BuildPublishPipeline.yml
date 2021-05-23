@@ -75,7 +75,7 @@ jobs:
       - name: 'Build and Push Develop Latest NxMeta-LSIO'
         uses: docker/build-push-action@v2
         # Enable for develop branch only
-        if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
+        if: false # ${{ endsWith(github.ref, 'refs/heads/develop') }}
         with:
           context: ./NxMeta-LSIO
           file: ./NxMeta-LSIO/Dockerfile
