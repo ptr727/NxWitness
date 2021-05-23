@@ -78,9 +78,10 @@ Note, smaller base images, like [alpine](https://hub.docker.com/_/alpine), are n
 The [LinuxServer (LSIO)](https://www.linuxserver.io/) base images provide valuable functionality:
 
 - The LSIO images are based on [s6-overlay](https://github.com/just-containers/s6-overlay), and LSIO [produces](https://fleet.linuxserver.io/) containers for many popular open source applications.
-- LSIO allows us to [specify](https://docs.linuxserver.io/general/understanding-puid-and-pgid) the user account to use when running the container process.
+- LSIO allows us to [specify](https://docs.linuxserver.io/general/understanding-puid-and-pgid) the user account to use when running the container mediaserver process.
 - This is [desired](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user) if we do not want to run as root, or required if we need user specific permissions when accessing mapped volumes.
-- We could achieve a similar outcome by using Docker's [--user](https://docs.docker.com/engine/reference/run/#user) option, but the mediaserver's `root-tool` (used for e.g. license enforcement) requires running as `root`.
+- We could achieve a similar outcome by using Docker's [`--user`](https://docs.docker.com/engine/reference/run/#user) option, but the mediaserver's `root-tool` (used for license enforcement) requires running as `root`, thus the container must still be executed with `root` rights, and we cannot use the `--user` option.
+- The non-LSIO image variants do run the mediaserver as a non-root user, granting `sudo` rights to run the `root-tool` as `root`, but the user account (`${COMPANY_NAME}`) does not map to a user on the host account.
 
 ## Configuration
 
@@ -230,18 +231,18 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
 
 ## Notes
 
-- I do recommend running the LSIO images, I run NxMeta-LSIO:stable in my home lab, but please feel free to report any issues with other images.
-- The non-LSIO images do not rely on systemd and instead launch an `entrypoint.sh` script, but they do not follow the [reference](https://github.com/networkoptix/nx_open_integrations/blob/master/docker/Dockerfile) pattern, specifically they can only run as root. For non-root usage I recommend the LSIO images.
-- The filesystem filter logic incorrectly considers some volumes to be duplicates, turn on verbose logging (`logLevel=DEBUG2`). `VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate`.
-- The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
-- The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to disable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use due to no visible labels.
-- The download CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
+- I only run NxMeta-LSIO:stable in my home lab, so other images get very little to no testing, please test accordingly.
+- Nx Issues:
+  - The filesystem filter logic incorrectly considers some volumes to be duplicates (why?), turn on verbose logging (`logLevel=DEBUG2`). `VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate`.
+  - The mediaserver pollutes the filesystem by blindly creating a `Nx MetaVMS Media` folder and DB files in any storage it finds.
+  - The mediaserver will bind to any network adapter it discovers, including virtual adapters used by other containers. There is no way to disable auto binding. All the bound network adapters are displayed in the performance graph, and makes it near impossible to use due to no visible labels.
+  - The download CDN SSL certificates are not trusted on all systems, and we need to disable certificate checks when using HTTPS for downloads. `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
 - Windows Subsystem for Linux v2 (WSL2) is not supported.
   - In the DEB installer `postinst` step the installer tries to start the service, and fails the install. `Detected runtime type: wsl.`, `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl`.
   - The logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
 - Version 4.1+ added the ability to specify additional storage filesystem [types](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage).
-  - This is particularly useful because Unraid, ZFS, and Docker Desktop storage is by default not supported.
+  - This is particularly useful because Unraid, ZFS, and Docker Desktop storage is by default not supported (why?).
   - Access the server storage page at `https://hostname:7001/static/index.html#/info` and verify that all mounted storage is listed.
   - If storage is not listed, attach to the container console and run `cat /proc/mounts` to get a list of all the mounted filesystem types.
   - Access the advanced settings page at `https://hostname:7001/static/index.html#/advanced` and set `additionalLocalFsTypes` to include the filesystem type.

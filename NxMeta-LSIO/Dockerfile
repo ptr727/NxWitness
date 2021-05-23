@@ -1,7 +1,4 @@
-# Use LSIO Ubuntu Focal Fossa 20.04 LTS
-# FROM lsiobase/ubuntu:focal
-
-# Use LSIO Ubuntu Bionic Beaver 18.04 LTS
+# TODO #32 BuildX error when using Ubuntu Focal Fossa 20.04 base image
 FROM lsiobase/ubuntu:bionic
 
 
@@ -34,14 +31,12 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools and pre-requisites
+# Install tools
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         mc \
         nano \
-        strace \
         wget \
     && apt-get clean \
     && apt-get autoremove --purge \
@@ -50,7 +45,7 @@ RUN apt-get update \
 # Download the DEB installer file
 RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
 
-# LSIO: Replace the abc usernames with the mediaserver names
+# LSIO maps the host PUID and PGID environment variables to "abc" in the container.
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
 # https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/10-adduser
@@ -61,21 +56,21 @@ RUN usermod -l ${COMPANY_NAME} abc \
 # Replace "abc" with ${COMPANY_NAME}
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/cont-init.d/10-adduser
 
-# Install the mediaserver
+# Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
+        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 
-# LSIO : Set ownership permissions
+# Set ownership permissions
 RUN chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin \
     && chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
 
-# LSIO: Copy etc init and services files
-# The scripts are using the ${COMPANY_NAME} global environment variable
+# Copy etc init and services files
 # https://github.com/just-containers/s6-overlay#container-environment
 COPY root/etc /etc
 

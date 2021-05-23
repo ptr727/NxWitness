@@ -16,17 +16,19 @@
 # Delete all unused images
 # docker image prune --all
 
-# Steps:
-# ../Compose/Down.sh
+# Buil Steps:
+# ./Down.sh
 # make clean
 # make entrypoint
 # make create
 # make build
-# ../Compose/Up.sh
-# Test
-# ../Compose/Down.sh
+# ./Up.sh
+# Test images
+# ./Down.sh
 # make clean
 
+# Debug built container:
+# docker run -it --rm test_nxwitness /bin/bash
 
 .DEFAULT_GOAL := check
 

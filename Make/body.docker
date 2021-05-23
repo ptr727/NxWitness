@@ -15,14 +15,12 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools and pre-requisites
+# Install tools
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         mc \
         nano \
-        strace \
         wget \
     && apt-get clean \
     && apt-get autoremove --purge \
