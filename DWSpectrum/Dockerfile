@@ -1,7 +1,4 @@
-# Use Ubuntu Focal Fossa 20.04 LTS
-# FROM ubuntu:focal
-
-# Use Ubuntu Bionic Beaver 18.04 LTS
+# TODO #32 BuildX error when using Ubuntu Focal Fossa 20.04 base image
 FROM ubuntu:bionic
 
 
@@ -34,14 +31,12 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools and pre-requisites
+# Install tools
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         mc \
         nano \
-        strace \
         wget \
     && apt-get clean \
     && apt-get autoremove --purge \
@@ -50,23 +45,30 @@ RUN apt-get update \
 # Download the DEB installer file
 RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
 
-# Install the mediaserver
+# Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
+        gdb \
+        sudo \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 
-# TODO: Consider matching the Nx docker config
-# https://github.com/networkoptix/nx_open_integrations/blob/master/docker/Dockerfile
-# For now we'll just bypass the systemd dependency but still run as root
+# Add the mediaserver ${COMPANY_NAME} user to the sudoers group
+# Only allow sudo no password access to the root-tool
+# Add v4.2 and v4.3 flavors of the root tool naming
+RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool, /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin" > /etc/sudoers.d/${COMPANY_NAME}
 
 # Copy the entrypoint.sh launch script
 # entrypoint.sh will run the mediaserver and root-tool
 COPY root/entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
+
+# Run the entrypoint as the mediaserver ${COMPANY_NAME} user
+# Note that this user exists in the container and does not directly map to a user on the host
+USER ${COMPANY_NAME}
 
 # Runs entrypoint.sh on container start
 ENTRYPOINT ["/opt/entrypoint.sh"]
@@ -77,3 +79,4 @@ EXPOSE 7001
 # Mount points
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config
 # /opt/${COMPANY_NAME}/mediaserver/var -> /media
+

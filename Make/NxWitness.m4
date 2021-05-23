@@ -1,4 +1,4 @@
-include(`base.docker')
+include(`base-entrypoint.docker')
 
 # Labels
 ARG LABEL_NAME="NxMeta"
