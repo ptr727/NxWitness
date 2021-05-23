@@ -1,5 +1,9 @@
-# Use Ubuntu Bionic
+# Use Ubuntu Focal Fossa 20.04 LTS
+# FROM ubuntu:focal
+
+# Use Ubuntu Bionic Beaver 18.04 LTS
 FROM ubuntu:bionic
+
 
 # Labels
 ARG LABEL_NAME="DWSpectrum"
@@ -7,8 +11,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/31401/linux/dwspectrum-server-4.1.0.31401-linux64.deb"
-ARG DOWNLOAD_VERSION="4.1.0.31401"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+ARG DOWNLOAD_VERSION="4.2.0.32842"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -30,10 +34,11 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools
+# Install tools and pre-requisites
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        gdb \
         mc \
         nano \
         strace \
@@ -46,26 +51,29 @@ RUN apt-get update \
 RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
 
 # Install the mediaserver
-# Add missing dependencies (gdb)
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ./vms_server.deb
 
+# TODO: Consider matching the Nx docker config
+# https://github.com/networkoptix/nx_open_integrations/blob/master/docker/Dockerfile
+# For now we'll just bypass the systemd dependency but still run as root
+
+# Copy the entrypoint.sh launch script
+# entrypoint.sh will run the mediaserver and root-tool
+COPY root/entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
+
+# Runs entrypoint.sh on container start
+ENTRYPOINT ["/opt/entrypoint.sh"]
+
 # Expose port 7001
 EXPOSE 7001
 
-# Create mount points
-# Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
-# /config is for configuration
-# /media is for media recording
-# /archive is for media backups
-VOLUME /config /media /archive
-
+# Mount points
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config
+# /opt/${COMPANY_NAME}/mediaserver/var -> /media

@@ -1,35 +1,3 @@
-# The RUN wget command will be cached unless we change the cache tag
-# Use the download version for the cache tag
-ARG CACHE_DATE=${DOWNLOAD_VERSION}
-
-# Prevent EULA and confirmation prompts in installers
-ARG DEBIAN_FRONTEND=noninteractive
-
-# Media server user and directory name
-ENV COMPANY_NAME=${RUNTIME_NAME}
-
-# Labels
-LABEL name=${LABEL_NAME} \
-    description=${LABEL_DESCRIPTION} \
-    version=${DOWNLOAD_VERSION} \
-    download=${DOWNLOAD_URL} \
-    maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
-
-# Install tools
-RUN apt-get update \
-    && apt-get upgrade --yes \
-    && apt-get install --no-install-recommends --yes \
-        mc \
-        nano \
-        strace \
-        wget \
-    && apt-get clean \
-    && apt-get autoremove --purge \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download the DEB installer file
-RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
-
 # LSIO: Replace the abc usernames with the mediaserver names
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
@@ -42,10 +10,8 @@ RUN usermod -l ${COMPANY_NAME} abc \
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/cont-init.d/10-adduser
 
 # Install the mediaserver
-# Add missing dependencies (gdb)
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
@@ -66,9 +32,9 @@ EXPOSE 7001
 
 # Create mount points
 # Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
+# /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
+# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
 # /config is for configuration
 # /media is for media recording
 # /archive is for media backups

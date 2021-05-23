@@ -1,5 +1,9 @@
-# Use LSIO Ubuntu Bionic
+# Use LSIO Ubuntu Focal Fossa 20.04 LTS
+# FROM lsiobase/ubuntu:focal
+
+# Use LSIO Ubuntu Bionic Beaver 18.04 LTS
 FROM lsiobase/ubuntu:bionic
+
 
 # Labels
 ARG LABEL_NAME="NxWitness-LSIO"
@@ -7,8 +11,8 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.32658/linux/nxwitness-server-4.2.0.32658-linux64.deb"
-ARG DOWNLOAD_VERSION="4.2.0.32658"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.32840/linux/nxwitness-server-4.2.0.32840-linux64.deb"
+ARG DOWNLOAD_VERSION="4.2.0.32840"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
@@ -30,10 +34,11 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools
+# Install tools and pre-requisites
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        gdb \
         mc \
         nano \
         strace \
@@ -57,10 +62,8 @@ RUN usermod -l ${COMPANY_NAME} abc \
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/cont-init.d/10-adduser
 
 # Install the mediaserver
-# Add missing dependencies (gdb)
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        gdb \
         ./vms_server.deb \
     && apt-get clean \
     && apt-get autoremove --purge \
@@ -81,9 +84,9 @@ EXPOSE 7001
 
 # Create mount points
 # Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
-# /opt/digitalwatchdog/mediaserver/etc -> /config/etc
-# /opt/digitalwatchdog/mediaserver/var -> /config/var
-# /opt/digitalwatchdog/mediaserver/var/data -> /media
+# /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
+# /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
+# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
 # /config is for configuration
 # /media is for media recording
 # /archive is for media backups

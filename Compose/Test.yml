@@ -1,0 +1,101 @@
+version: "3.7"
+
+volumes:
+
+  test_dwspectrum_config:
+  test_dwspectrum_media:
+
+  test_dwspectrum-lsio_config:
+  test_dwspectrum-lsio_media:
+
+  test_nxwitness_config:
+  test_nxwitness_media:
+
+  test_nxwitness-lsio_config:
+  test_nxwitness-lsio_media:
+
+  test_nxmeta_config:
+  test_nxmeta_media:
+
+  test_nxmeta-lsio_config:
+  test_nxmeta-lsio_media:
+
+services:
+
+  dwspectrum:
+    image: test_dwspectrum
+    container_name: test_dwspectrum-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_dwspectrum_config:/opt/digitalwatchdog/mediaserver/etc
+      - test_dwspectrum_media:/opt/digitalwatchdog/mediaserver/var
+    network_mode: bridge
+    ports:
+      - 7101:7001
+
+  dwspectrum-lsio:
+    image: test_dwspectrum-lsio
+    container_name: test_dwspectrum-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_dwspectrum-lsio_config:/config
+      - test_dwspectrum-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7111:7001
+
+  nxwitness:
+    image: test_nxwitness
+    container_name: test-nxwitness-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxwitness_config:/opt/networkoptix/mediaserver/etc
+      - test_nxwitness_media:/opt/networkoptix/mediaserver/var
+    network_mode: bridge
+    ports:
+      - 7102:7001
+
+  nxwitness-lsio:
+    image: test_nxwitness-lsio
+    container_name: test_nxwitness-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxwitness-lsio_config:/config
+      - test_nxwitness-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7112:7001
+
+  nxmeta:
+    image: test_nxmeta
+    container_name: test_nxmeta-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxmeta_config:/opt/networkoptix-metavms/mediaserver/etc
+      - test_nxmeta_media:/opt/networkoptix-metavms/mediaserver/var
+    network_mode: bridge
+    ports:
+      - 7103:7001
+
+  nxmeta-lsio:
+    image: test_nxmeta-lsio
+    container_name: test_nxmeta-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxmeta-lsio_config:/config
+      - test_nxmeta-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7113:7001
