@@ -13,6 +13,9 @@
 # Extract DEB installer:
 # dpkg-deb -R ./vms_server.deb ./vms_server
 
+# Debug install errors
+# dpkg --debug=72200 --install ./vms_server.deb
+
 # Delete all unused images
 # docker image prune --all
 
