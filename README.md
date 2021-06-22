@@ -80,8 +80,8 @@ The [LinuxServer (LSIO)](https://www.linuxserver.io/) base images provide valuab
 - The LSIO images are based on [s6-overlay](https://github.com/just-containers/s6-overlay), and LSIO [produces](https://fleet.linuxserver.io/) containers for many popular open source applications.
 - LSIO allows us to [specify](https://docs.linuxserver.io/general/understanding-puid-and-pgid) the user account to use when running the container mediaserver process.
 - This is [desired](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user) if we do not want to run as root, or required if we need user specific permissions when accessing mapped volumes.
-- We could achieve a similar outcome by using Docker's [`--user`](https://docs.docker.com/engine/reference/run/#user) option, but the mediaserver's `root-tool` (used for license enforcement) requires running as `root`, thus the container must still be executed with `root` rights, and we cannot use the `--user` option.
-- The non-LSIO image variants do run the mediaserver as a non-root user, granting `sudo` rights to run the `root-tool` as `root`, but the user account (`${COMPANY_NAME}`) does not map to a user on the host account.
+- We could achieve a similar outcome by using Docker's [`--user`](https://docs.docker.com/engine/reference/run/#user) option, but the mediaserver's `root-tool` (used for license enforcement) requires running as `root`, thus the container must still be executed with `root` privileges, and we cannot use the `--user` option.
+- The non-LSIO images do run the mediaserver as a non-root user, granting `sudo` rights to run the `root-tool` as `root`, but the user account (`${COMPANY_NAME}`) does not map to a user on the host system.
 
 ## Configuration
 
@@ -256,3 +256,4 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
   - The iOS NxWitness client crashes when viewing single camera feeds from 4.3 R1 and R2 server.
   - After upgrading to 4.3, reverting to 4.2 is no longer possible, be sure to make a copy of the server configuration before upgrading. `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`
+  - Ubuntu 20.04 Focal is not [supported](https://github.com/ptr727/NxWitness/issues/32) as a base image, `sysctl: setting key "kernel.core_pattern": Read-only file system`.
