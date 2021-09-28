@@ -1,5 +1,5 @@
 # Dependencies:
-# sudo apt install make m4
+# sudo apt install make m4 docker-compose
 
 # Test in Docker container
 # docker run -it --rm ubuntu:focal /bin/bash
