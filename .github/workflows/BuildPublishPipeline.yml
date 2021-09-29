@@ -9,14 +9,14 @@ env:
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
   # https://meta.nxvms.com/downloads/patches
-  NXMETA_LATEST_VERSION: '4.3.0.32924'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/4.3.0.32924%20R2/linux/metavms-server-4.3.0.32924-linux_x64-patch.deb'
+  NXMETA_LATEST_VERSION: '5.0.0.33560'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.33560%20R3/linux/metavms-server-5.0.0.33560-linux_x64-patch.deb'
   NXMETA_STABLE_VERSION: '4.2.0.33313'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb'
   
   # https://beta.networkoptix.com/beta-builds/default/
-  NXWITNESS_LATEST_VERSION: '4.2.0.33306'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.33306/linux/nxwitness-server-4.2.0.33306-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '4.2.0.33579'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.33579/linux/nxwitness-server-4.2.0.33579-linux64-patch.deb'
   NXWITNESS_STABLE_VERSION: '4.2.0.32840'
   NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.32840/linux/nxwitness-server-4.2.0.32840-linux64.deb'
 
