@@ -1,5 +1,4 @@
-# TODO #32 BuildX error when using Ubuntu Focal Fossa 20.04 base image
-FROM lsiobase/ubuntu:bionic
+FROM lsiobase/ubuntu:focal
 
 
 # Labels
@@ -8,8 +7,8 @@ ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/4.3.0.32924%20R2/linux/metavms-server-4.3.0.32924-linux_x64-patch.deb"
-ARG DOWNLOAD_VERSION="4.3.0.32924"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/5.0.0.33560%20R3/linux/metavms-server-5.0.0.33560-linux_x64-patch.deb"
+ARG DOWNLOAD_VERSION="5.0.0.33560"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"
