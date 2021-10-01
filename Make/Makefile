@@ -1,37 +1,31 @@
 # Dependencies:
 # sudo apt install make m4 docker-compose
 
-# Test in Docker container
+# Test in Docker container:
 # docker run -it --rm ubuntu:focal /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update
 # apt-get upgrade --yes
 # apt-get install --no-install-recommends --yes mc nano strace wget gdb
-# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/4.3.0.32743%20R1/linux/metavms-server-4.3.0.32743-linux_x64.deb
+# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/5.0.0.33560%20R3/linux/metavms-server-5.0.0.33560-linux_x64-patch.deb
+# Install:
 # apt-get install --no-install-recommends --yes ./vms_server.deb
-
-# Extract DEB installer:
+# Extract DEB package:
 # dpkg-deb -R ./vms_server.deb ./vms_server
-
-# Debug install errors
+# Debug install errors:
 # dpkg --debug=72200 --install ./vms_server.deb
 
-# Delete all unused images
+# Debug built container, names come from Test.yml:
+# docker run -it --rm test_nxwitness /bin/bash
+
+# Delete all unused container images:
 # docker image prune --all
 
 # Buil Steps:
-# ./Down.sh
-# make clean
-# make entrypoint
-# make create
-# make build
+# make all
 # ./Up.sh
-# Test images
-# ./Down.sh
+# Test images by openeing the browser links
 # make clean
-
-# Debug built container:
-# docker run -it --rm test_nxwitness /bin/bash
 
 .DEFAULT_GOAL := check
 
@@ -55,6 +49,17 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 	-rm ../$@
 	m4 $< >../$@
 
+.PHONY: all
+all: down entrypoint create build
+
+.PHONY: down
+down:
+	./Down.sh
+
+.PHONY: up
+up:
+	./Up.sh
+
 .PHONY: check
 check:
 	@echo "Usage:"
@@ -62,6 +67,7 @@ check:
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
+	@echo "'make all' : Runs all steps"
 	@echo ""
 	@echo "Variables:"
 	@echo "M4S = $(M4S)"
@@ -96,4 +102,4 @@ create: $(DIRS:%=%/.docker-create)
 build: $(DIRS:%=%/.docker-build)
 
 .PHONY: clean
-clean: $(DIRS:%=%/.docker-clean)
+clean: down $(DIRS:%=%/.docker-clean)

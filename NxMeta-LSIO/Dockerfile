@@ -1,5 +1,4 @@
-# TODO #32 BuildX error when using Ubuntu Focal Fossa 20.04 base image
-FROM lsiobase/ubuntu:bionic
+FROM lsiobase/ubuntu:focal
 
 
 # Labels
