@@ -254,6 +254,5 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
 - Beta version 4.3:
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
-  - The iOS NxWitness client crashes when viewing single camera feeds from 4.3 R1 and R2 server.
+  - The iOS NxWitness client crashes when viewing single camera feeds.
   - After upgrading to 4.3, reverting to 4.2 is no longer possible, be sure to make a copy of the server configuration before upgrading. `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`
-  - Ubuntu 20.04 Focal is not [supported](https://github.com/ptr727/NxWitness/issues/32) as a base image, `sysctl: setting key "kernel.core_pattern": Read-only file system`.
