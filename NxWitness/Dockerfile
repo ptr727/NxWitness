@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.32840/linux/nxwitness-server-4.2.0.32840-linux64.deb"
-ARG DOWNLOAD_VERSION="4.2.0.32840"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/4.2.0.33579/linux/nxwitness-server-4.2.0.33579-linux64-patch.deb"
+ARG DOWNLOAD_VERSION="4.2.0.33579"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
