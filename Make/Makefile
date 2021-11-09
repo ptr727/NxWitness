@@ -23,8 +23,8 @@
 
 # Buil Steps:
 # make all
-# ./Up.sh
-# Test images by openeing the browser links
+# make up
+# Test images by ctrl-click opening the browser links
 # make clean
 
 SHELL := /bin/bash
