@@ -15,10 +15,10 @@ env:
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb'
   
   # https://beta.networkoptix.com/beta-builds/default/
-  NXWITNESS_LATEST_VERSION: '4.2.0.33832'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.33832/linux/nxwitness-server-4.2.0.33832-linux64-patch.deb'
-  NXWITNESS_STABLE_VERSION: '4.2.0.33832'
-  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.33832/linux/nxwitness-server-4.2.0.33832-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '4.2.0.34125'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.34125/linux/nxwitness-server-4.2.0.34125-linux64-patch.deb'
+  NXWITNESS_STABLE_VERSION: '4.2.0.34125'
+  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.34125/linux/nxwitness-server-4.2.0.34125-linux64-patch.deb'
 
   # https://dwspectrum.digital-watchdog.com/download/linux
   DWSPECTRUM_LATEST_VERSION: '4.2.0.32842'
