@@ -9,6 +9,7 @@ env:
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
   # https://meta.nxvms.com/downloads/patches
+  # Wait for R6 fix: https://support.networkoptix.com/hc/en-us/community/posts/4521083650583-NxMeta-5-0-0-34326-R6-fails-to-install-on-Ubuntu
   NXMETA_LATEST_VERSION: '5.0.0.34326'
   NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34326%20R6/linux/metavms-server-5.0.0.34326-linux_x64-patch.deb'
   NXMETA_STABLE_VERSION: '4.2.0.33313'

@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="Nx Meta VMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/5.0.0.34201%20R5/linux/metavms-server-5.0.0.34201-linux_x64-patch.deb"
-ARG DOWNLOAD_VERSION="5.0.0.34201"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/5.0.0.34326%20R6/linux/metavms-server-5.0.0.34326-linux_x64-patch.deb"
+ARG DOWNLOAD_VERSION="5.0.0.34326"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"
