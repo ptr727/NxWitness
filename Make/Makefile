@@ -1,7 +1,7 @@
 # Dependencies:
 # sudo apt install make m4 docker-compose
 
-# Test in Docker container:
+# Test installing in container:
 # docker run -it --rm ubuntu:focal /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update
@@ -15,7 +15,7 @@
 # Debug install errors:
 # dpkg --debug=72200 --install ./vms_server.deb
 
-# Debug built container, names come from Test.yml:
+# Run shell in container, names come from Test.yml:
 # docker run -it --rm test_nxwitness /bin/bash
 
 # Delete all unused container images:
