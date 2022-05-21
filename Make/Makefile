@@ -1,13 +1,13 @@
 # Dependencies:
 # sudo apt install make m4 docker-compose
 
-# Test in Docker container:
+# Test installing in container:
 # docker run -it --rm ubuntu:focal /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update
 # apt-get upgrade --yes
 # apt-get install --no-install-recommends --yes mc nano strace wget gdb
-# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/5.0.0.33560%20R3/linux/metavms-server-5.0.0.33560-linux_x64-patch.deb
+# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/5.0.0.34326%20R6/linux/metavms-server-5.0.0.34326-linux_x64-patch.deb
 # Install:
 # apt-get install --no-install-recommends --yes ./vms_server.deb
 # Extract DEB package:
@@ -15,7 +15,7 @@
 # Debug install errors:
 # dpkg --debug=72200 --install ./vms_server.deb
 
-# Debug built container, names come from Test.yml:
+# Run shell in container, names come from Test.yml:
 # docker run -it --rm test_nxwitness /bin/bash
 
 # Delete all unused container images:

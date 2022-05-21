@@ -5,5 +5,7 @@
 		}
 	],
 	"remoteAuthority": "wsl+ubuntu-20.04",
-	"settings": {}
+	"settings": {
+		"makefile.extensionOutputFolder": "./.vscode"
+	}
 }
