@@ -9,17 +9,16 @@ env:
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
   # https://meta.nxvms.com/downloads/patches
-  # Wait for R7, 5.0.0.34326 R6 fails to install: https://support.networkoptix.com/hc/en-us/community/posts/4521083650583-NxMeta-5-0-0-34326-R6-fails-to-install-on-Ubuntu
-  NXMETA_LATEST_VERSION: '5.0.0.34201'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34201%20R5/linux/metavms-server-5.0.0.34201-linux_x64-patch.deb'
+  NXMETA_LATEST_VERSION: '5.0.0.34744'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34744%20R7/linux/metavms-server-5.0.0.34744-linux_x64-beta.deb'
   NXMETA_STABLE_VERSION: '4.2.0.33313'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb'
   
   # https://beta.networkoptix.com/beta-builds/default/
-  NXWITNESS_LATEST_VERSION: '4.2.0.34633'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.34633/linux/nxwitness-server-4.2.0.34633-linux64-patch.deb'
-  NXWITNESS_STABLE_VERSION: '4.2.0.34633'
-  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.34633/linux/nxwitness-server-4.2.0.34633-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '4.2.0.34860'
+  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb'
+  NXWITNESS_STABLE_VERSION: '4.2.0.34860'
+  NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb'
 
   # https://dwspectrum.digital-watchdog.com/download/linux
   DWSPECTRUM_LATEST_VERSION: '4.2.0.32842'
