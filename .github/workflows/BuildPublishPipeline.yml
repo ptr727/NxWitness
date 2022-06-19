@@ -9,8 +9,8 @@ env:
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
   # https://meta.nxvms.com/downloads/patches
-  NXMETA_LATEST_VERSION: '5.0.0.34744'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34744%20R7/linux/metavms-server-5.0.0.34744-linux_x64-beta.deb'
+  NXMETA_LATEST_VERSION: '5.0.0.34968'
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34968%20R8/linux/metavms-server-5.0.0.34968-linux_x64-rc.deb'
   NXMETA_STABLE_VERSION: '4.2.0.33313'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb'
   
