@@ -14,6 +14,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \
         ./vms_server.deb \
+# Cleanup        
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
