@@ -30,16 +30,13 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools
+# Install tools, don't cleanup, do cleanup after install mediaserver
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
         mc \
         nano \
-        wget \
-    && apt-get clean \
-    && apt-get autoremove --purge \
-    && rm -rf /var/lib/apt/lists/*
+        wget
 
 # Download the DEB installer file
 RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
@@ -57,7 +54,7 @@ RUN apt-get update \
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool
-# Add v4.2 and v4.3 flavors of the root tool naming
+# Add v4.2 and v5.0 flavors of the root tool naming
 RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool, /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin" > /etc/sudoers.d/${COMPANY_NAME}
 
 # Copy the entrypoint.sh launch script

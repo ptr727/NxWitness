@@ -18,9 +18,16 @@ Docker container images are published on [Docker Hub](https://hub.docker.com/u/p
 Images are tagged using `latest` or `stable` and the specific build version number.  
 `latest` images use the latest patch release version.  
 `stable` images use the last stable release version.  
-This allows flexibility for deployments that want to pin to specific release channels or versions.
+This allows flexibility for deployments that want to pin to specific release channels or versions.  
+E.g.
 
-Images are automatically rebuilt every Monday morning, picking up the latest base image fixes.
+```console
+docker pull ptr727/nxwitness-lsio:latest
+docker pull ptr727/nxwitness-lsio:stable
+docker pull ptr727/nxwitness-lsio:4.2.0.33313
+```
+
+Images are automatically rebuilt every Monday morning, picking up the latest upstream updates.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
@@ -54,7 +61,7 @@ My initial inspiration to convert my DW Spectrum system running on a VM to docke
 
 The Network Optix reference docker project is located [here](https://github.com/networkoptix/nx_open_integrations/tree/master/docker).  
 
-The biggest outstanding docker challenges are hardware bound licensing, and lack of admin defined storage locations.
+The biggest outstanding docker challenges are hardware bound licensing and lack of admin defined storage locations.
 
 ### Products
 
@@ -71,7 +78,7 @@ The project creates two variants of each product using different base images:
 - [Ubuntu](https://ubuntu.com/) using [ubuntu:focal](https://hub.docker.com/_/ubuntu) base image.
 - [LinuxServer](https://www.linuxserver.io/) using [lsiobase/ubuntu:focal](https://hub.docker.com/r/lsiobase/ubuntu) base image.
 
-Note, smaller base images, like [alpine](https://hub.docker.com/_/alpine), are not [supported](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) by the mediaserver.
+Note, smaller base images, like [alpine](https://hub.docker.com/_/alpine), and the current Ubuntu 22.04 LTS (Jammy Jellyfish) are not [supported](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) by the mediaserver.
 
 ### LinuxServer
 
@@ -175,7 +182,7 @@ services:
 - If using Unassigned Devices for media storage, use `RW/Slave` access mode.
 - Use `nobody` and `users` identifiers, `PUID=99` and `PGID=100`.
 
-## Product Releases
+## Release Tracking
 
 Product releases and updates can be found at the following locations:
 
@@ -186,6 +193,7 @@ Product releases and updates can be found at the following locations:
 - Nx Meta:
   - [JSON API](https://meta.nxvms.com/api/utils/downloads)
   - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
+  - [Nx Meta Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
   - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
   - [Nx Meta Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
@@ -196,15 +204,15 @@ Product releases and updates can be found at the following locations:
     - [https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/default/30917/linux/nxwitness-server-4.0.0.30917-linux64.deb)
     - [https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb](https://updates.networkoptix.com/digitalwatchdog/30917/linux/dwspectrum-server-4.0.0.30917-linux64.deb)
 
-Note, updating the mediaserver inside docker is not supported, to update the server version pull a new docker container, it is the docker way.
+Updating the mediaserver inside docker is not supported, to update the server version pull a new docker container, it is "the docker way".
+
+There is currently no support to automatically detect newly released versions, and then automatically rebuild when a new version is detected. This could possibly be done using page change notifiers and webhooks, with some code to extract the relevant version and URL attributes from the web pages. For now I'm manually updating as I notice the versions changing.
 
 ## Build Process
 
 With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, so I [use](http://bobbynorton.com/posts/includes-in-dockerfiles-with-m4-and-make/) a `Makefile` to dynamically create a `Dockerfile` for every variant.
 
-I converted the build from Docker Hub automated builds to using GitHub Actions. I have yet to implement triggers that update images when the upstream images are updated, for now I build weekly picking up the latest upstream changes and applying patches.
-
-I should also figure out how to automatically detect newly released versions, and automatically rebuild when a new version is detected. This could possibly be done using page change notifiers and webhooks, with some code to extract the relevant version and URL attributes from the web pages. For now I'm manually updating as I notice the versions changing.
+The images are updated weekly using GitHub Actions and picks up the latest upstream changes.
 
 ## Network Optix and Docker
 
@@ -212,11 +220,13 @@ I should also figure out how to automatically detect newly released versions, an
 
 The biggest outstanding docker challenges are hardware bound licensing, and lack of admin defined storage locations.
 
-The camera license keys are activated using hardware attributes of the server, that is not docker friendly, and occasionally results in activation failures. I would much prefer a modern approach to apply licenses to my cloud account, allowing me to run on whatever hardware I want. Living in the US, I have to buy my licenses from [Digital Watchdog](https://digital-watchdog.com/), and in my experience their license enforcement policy is "draconian", three activations and you have to buy a new license. That really means that the [Lifetime Upgrades and No Annual Agreements](https://digital-watchdog.com/dws/upgrades/) license is the lifetime of the hardware on which the license was activated. So let's say hardware is replaced every two years, three activations, lifetime is about six years, not much of a lifetime compared to other products that are license flexible but require maintenance or renewals.
+The camera license keys are activated using hardware attributes of the server, that is not docker friendly, and occasionally results in activation failures. I would much prefer a modern approach to apply licenses to my cloud account, allowing me to run on whatever hardware I want.
+
+Living in the US, I have to buy my licenses from [Digital Watchdog](https://digital-watchdog.com/), and in my experience their license enforcement policy is inflexible, three activations and you have to buy a new license. That really means that the [Lifetime Upgrades and No Annual Agreements](https://digital-watchdog.com/dws/upgrades/) license is the lifetime of the hardware on which the license was activated. So let's say hardware is replaced every two years, three activations, lifetime is about six years, not much of a lifetime compared to other products that are license flexible but require maintenance or renewals. In my personal opinion commercial software development is not sustainable without periodic support or upgrade fees that covers the ongoing cost of maintenance and support.
 
 As for storage, the mediaserver attempts to automatically decide what storage to use, applies filesystem type and instance filtering, and blindly creates files on any storage it deems fit. This overly complicated logic does not work in docker, and a much simpler and reliable approach would be to allow an admin to be in control and specify exactly what storage to be used. I really do not understand what the reasons were for building complicated decision logic, instead of being like all other servers that use storage and let the admin define the storage locations.
 
-All in, Nx Witness is in my experience still the lightest on resources with good features VMS/NVR I've used, and with docker support, is great to run in my home lab.
+All in, Nx Witness is in my experience the lightest on resources, has good features VMS/NVR, with docker support, and is great to run in my home lab.
 
 ### Wishlist
 
@@ -252,7 +262,6 @@ My wishlist for better [docker support](https://support.networkoptix.com/hc/en-u
   - There is no way to configure the `additionalLocalFsTypes` types at deployment time.
   - Some debugging shows the setting is stored in the `var/ecs.sqlite` DB file, in the `vms_kvpair` table, `name=additionalLocalFsTypes`, `value=fuse.grpcfuse,fuse.shfs,zfs`.
   - This DB table contains lots of other information, so it seems unfeasible to pre-seed the system with this DB file, and modifying it at runtime is as complex as calling the web service.
-- Beta version 4.3:
+- Version 5.0:
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
-  - The iOS NxWitness client crashes when viewing single camera feeds.
-  - After upgrading to 4.3, reverting to 4.2 is no longer possible, be sure to make a copy of the server configuration before upgrading. `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`
+  - After upgrading to 5.0, reverting to 4.2 is no longer possible, be sure to make a copy of the server configuration before upgrading. `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`

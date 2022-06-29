@@ -8,15 +8,16 @@ env:
   # Push main branch only, else just build
   DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
+  # R8 is broken again: https://support.networkoptix.com/hc/en-us/community/posts/6885914922903-5-0-0-34968-R8-fails-to-install-on-Ubuntu-Focal-Docker
   # https://meta.nxvms.com/downloads/patches
-  NXMETA_LATEST_VERSION: '5.0.0.34968'
-  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.34968%20R8/linux/metavms-server-5.0.0.34968-linux_x64-rc.deb'
+  NXMETA_LATEST_VERSION: '5.0.0.35062' # R9
+  NXMETA_LATEST_URL: 'https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb'
   NXMETA_STABLE_VERSION: '4.2.0.33313'
   NXMETA_STABLE_URL: 'https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb'
   
   # https://beta.networkoptix.com/beta-builds/default/
-  NXWITNESS_LATEST_VERSION: '4.2.0.34860'
-  NXWITNESS_LATEST_URL: 'https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb'
+  NXWITNESS_LATEST_VERSION: '5.0.0.35064'
+  NXWITNESS_LATEST_URL: 'http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb'
   NXWITNESS_STABLE_VERSION: '4.2.0.34860'
   NXWITNESS_STABLE_URL: 'https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb'
 
