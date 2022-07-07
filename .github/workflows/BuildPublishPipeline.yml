@@ -5,8 +5,6 @@ name: 'Build and Publish Docker Images'
 
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#env
 env:
-  # Push main branch only, else just build
-  DOCKER_PUSH: ${{ github.ref == 'refs/heads/main' }}
   
   # https://meta.nxvms.com/downloads/patches
   NXMETA_LATEST_VERSION: '5.0.0.35062'
@@ -46,6 +44,126 @@ jobs:
     name: 'Build and Publish Docker Images'
     runs-on: ubuntu-latest
 
+    strategy:
+      # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+      # https://stackoverflow.com/questions/66025220/paired-values-in-github-actions-matrix
+      matrix:
+        # TODO: Generate the matrix as JSON in the Makefile
+        # https://stackoverflow.com/questions/61919141/read-json-file-in-github-actions
+        containers: [ { 
+                        name: "NxMeta-LSIO Latest Develop",
+                        enable: ${{ (github.ref == 'refs/heads/develop') }},
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta-LSIO, 
+                        tags: [ ptr727/nxmeta-lsio:develop, ptr727/nxmeta-lsio:develop-latest, ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "NxMeta-LSIO Stable Develop",
+                        enable: ${{ (github.ref == 'refs/heads/develop') }}, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta-LSIO, 
+                        tags: [ ptr727/nxmeta-lsio:develop-stable, ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "NxMeta-LSIO Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta-LSIO, 
+                        tags: [ ptr727/nxmeta-lsio:latest, ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "NxMeta-LSIO Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta-LSIO, 
+                        tags: [ ptr727/nxmeta-lsio:stable, ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "NxMeta Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta, 
+                        tags: [ ptr727/nxmeta:latest, ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "NxMeta Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxMeta, 
+                        tags: [ ptr727/nxmeta:stable, ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "NxWitness-LSIO Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxWitness-LSIO, 
+                        tags: [ ptr727/nxwitness-lsio:latest, ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "NxWitness-LSIO Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxWitness-LSIO, 
+                        tags: [ ptr727/nxwitness-lsio:stable, ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "NxWitness Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxWitness, 
+                        tags: [ ptr727/nxwitness:latest, ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "NxWitness Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./NxWitness, 
+                        tags: [ ptr727/nxwitness:stable, ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "DWSpectrum-LSIO Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./DWSpectrum-LSIO, 
+                        tags: [ ptr727/dwspectrum-lsio:latest, ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "DWSpectrum-LSIO Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./DWSpectrum-LSIO, 
+                        tags: [ ptr727/dwspectrum-lsio:stable, ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }} ] 
+                      },
+                      { 
+                        name: "DWSpectrum Latest",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./DWSpectrum, 
+                        tags: [ ptr727/dwspectrum:latest, ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}, DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }} ] 
+                      },
+                      { 
+                        name: "DWSpectrum Stable",
+                        enable: true, 
+                        push: ${{ (github.event_name != 'pull_request') }},
+                        context: ./DWSpectrum, 
+                        tags: [ ptr727/dwspectrum:stable, ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }} ], 
+                        args: [ DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }} ] 
+                      }
+                    ]
+
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -69,208 +187,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
-
-      # Develop build of latest NxMeta-LSIO
-      - name: 'Build and Push Develop Latest NxMeta-LSIO'
+      - name: 'Build and Push ${{ matrix.containers.name }}'
         uses: docker/build-push-action@v2
-        # Enable for develop branch only
-        if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
+        if: ${{ matrix.containers.enable }}
         with:
-          context: ./NxMeta-LSIO
-          file: ./NxMeta-LSIO/Dockerfile
+          context: ${{ matrix.containers.context }}
+          file: ${{ matrix.containers.context }}/Dockerfile
           platforms: linux/amd64
-          # Do not push pull requests
-          push: ${{ (github.event_name != 'pull_request') }}
-          tags: |
-            ptr727/nxmeta-lsio:develop
-            ptr727/nxmeta-lsio:develop-latest
-            ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
-      - name: 'Build and Push Develop Stable NxMeta-LSIO'
-        uses: docker/build-push-action@v2
-        # Enable for develop branch only
-        if: ${{ endsWith(github.ref, 'refs/heads/develop') }}
-        with:
-          context: ./NxMeta-LSIO
-          file: ./NxMeta-LSIO/Dockerfile
-          platforms: linux/amd64
-          # Do not push pull requests
-          push: ${{ (github.event_name != 'pull_request') }}
-          tags: |
-            ptr727/nxmeta-lsio:develop-stable
-            ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
-
-      # NxMeta-LSIO
-      - name: 'Build and Push Latest NxMeta-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxMeta-LSIO
-          file: ./NxMeta-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxmeta-lsio:latest
-            ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
-      - name: 'Build and Push Stable NxMeta-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxMeta-LSIO
-          file: ./NxMeta-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxmeta-lsio:stable
-            ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
-
-      # NxMeta
-      - name: 'Build and Push Latest NxMeta'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxMeta
-          file: ./NxMeta/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxmeta:latest
-            ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}
-      - name: 'Build and Push Stable NxMeta'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxMeta
-          file: ./NxMeta/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxmeta:stable
-            ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}
-
-      # NxWitness-LSIO
-      - name: 'Build and Push Latest NxWitness-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxWitness-LSIO
-          file: ./NxWitness-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxwitness-lsio:latest
-            ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
-      - name: 'Build and Push Stable NxWitness-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxWitness-LSIO
-          file: ./NxWitness-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxwitness-lsio:stable
-            ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
-
-      # NxWitness
-      - name: 'Build and Push Latest NxWitness'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxWitness
-          file: ./NxWitness/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxwitness:latest
-            ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}
-      - name: 'Build and Push Stable NxWitness'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./NxWitness
-          file: ./NxWitness/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/nxwitness:stable
-            ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}
-
-      # DWSpectrum-LSIO
-      - name: 'Build and Push Latest DWSpectrum-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./DWSpectrum-LSIO
-          file: ./DWSpectrum-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/dwspectrum-lsio:latest
-            ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
-      - name: 'Build and Push Stable DWSpectrum-LSIO'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./DWSpectrum-LSIO
-          file: ./DWSpectrum-LSIO/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/dwspectrum-lsio:stable
-            ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
-
-      # DWSpectrum
-      - name: 'Build and Push Latest DWSpectrum'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./DWSpectrum
-          file: ./DWSpectrum/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/dwspectrum:latest
-            ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}
-            DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}
-      - name: 'Build and Push Stable DWSpectrum'
-        uses: docker/build-push-action@v2
-        with:
-          context: ./DWSpectrum
-          file: ./DWSpectrum/Dockerfile
-          platforms: linux/amd64
-          push: ${{ env.DOCKER_PUSH }}
-          tags: |
-            ptr727/dwspectrum:stable
-            ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}
-          build-args: |
-            DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}
-            DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}
+          push: ${{ matrix.containers.push }}
+          tags: ${{ matrix.containers.tags }}
+          build-args: ${{ matrix.containers.args }}

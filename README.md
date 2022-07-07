@@ -299,6 +299,14 @@ Enable debug logging in the mediaserver:
 Edit `/config/etc/mediaserver.conf`, set `logLevel=DEBUG2`, restart the server.  
 Look for clues in `/config/var/log/log_file.log`.
 
+E.g.
+
+```log
+VERBOSE nx::vms::server::fs: shfs /media fuse.shfs - duplicate
+VERBOSE nx::vms::server::fs: /dev/sdb8 /media btrfs - duplicate
+DEBUG QnStorageSpaceRestHandler(0x7f85043b0b00): Return 0 storages and 1 protocols
+```
+
 Get a list of the mapped volume mounts in the running container, and verify that `/config` and `/media` is in the JSON `Mounts` section:
 
 ```console
