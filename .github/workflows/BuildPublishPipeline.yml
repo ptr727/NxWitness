@@ -167,9 +167,17 @@ jobs:
                 } \
               ]'
         echo "::set-output name=matrix::${JSON//'%'/'%25'}"
-        
-  build:
+
+  verifymatrix:
     needs: setmatrix
+    name: 'Verify Matrix'
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Print Matrix'
+      run: echo "${{fromJson(needs.setmatrix.outputs.matrix)}}"
+
+  build:
+    needs: verifymatrix
     name: 'Build and Publish Docker Images'
     runs-on: ubuntu-latest
 
