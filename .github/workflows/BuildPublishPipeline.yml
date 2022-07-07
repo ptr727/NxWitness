@@ -286,7 +286,7 @@ jobs:
     - name: 'MultiLine Tags'
       run: |
         MLTags="${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
-        MLTags="$(echo "$MLTags" | sed 's/[[],]//g')"
+        MLTags="$(echo "$MLTags" | sed 's/[][,]//g'')"
         MLTags="$(echo "$MLTags" | sed '/^[[:space:]]*$/d')"
         echo "ML Tags:"
         echo "$MLTags"
