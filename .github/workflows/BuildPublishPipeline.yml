@@ -259,7 +259,7 @@ jobs:
         echo "JSON:"
         echo "$JSON"
         echo "Flat JSON:"
-        FJSON=$(echo $JSON | jq '--compact-output')
+        FJSON=$(echo "$JSON" | jq --compact-output)
         echo "$FJSON"
         echo "::set-output name=matrix::${FJSON}"
 
@@ -288,7 +288,7 @@ jobs:
         echo "JSON Args:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
         echo "Flat:"
-        echo ${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }} | jq '--compact-output')
+        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}" | jq --compact-output)
 
   # Build and publish docker images
   buildpublish:
