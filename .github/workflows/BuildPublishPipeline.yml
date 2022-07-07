@@ -50,7 +50,8 @@ jobs:
       matrix:
         # TODO: Generate the matrix as JSON in the Makefile
         # https://stackoverflow.com/questions/61919141/read-json-file-in-github-actions
-        containers: [ { 
+        containers: |
+                   [ { 
                         name: "NxMeta-LSIO Latest Develop",
                         enable: ${{ (github.ref == 'refs/heads/develop') }},
                         push: ${{ (github.event_name != 'pull_request') }},
