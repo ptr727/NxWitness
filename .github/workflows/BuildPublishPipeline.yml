@@ -281,8 +281,17 @@ jobs:
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
     - name: 'Print JSON Array'
       run: |
-        echo "Tags:"
+        echo "JSON Tags:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
+    - name: 'MultiLine Tags'
+      run: |
+        Tags="${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
+        MLTags=$Tags
+        MLTags="${MLTags//'['/''}"
+        MLTags="${MLTags//']'/''}"
+        MLTags="${MLTags//','/''}"
+        echo "ML Tags:"
+        echo: "$MLTags"
 
   build:
     needs: [ verifymatrix, setmatrix ]
