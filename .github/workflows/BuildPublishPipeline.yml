@@ -1,9 +1,9 @@
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#name
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#name
 name: 'Build and Publish Docker Images'
 
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#env
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#env
 env:
   
   # https://meta.nxvms.com/downloads/patches
@@ -24,7 +24,7 @@ env:
   DWSPECTRUM_STABLE_VERSION: '4.2.0.32842'
   DWSPECTRUM_STABLE_URL: 'https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb'
 
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 on:
   push:
     branches: [main, develop]
@@ -38,14 +38,19 @@ on:
     # TODO: Figure out how to build main and develop vs. just the default branch
     - cron: '0 2 * * MON'
 
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobs
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
+
+  # Set the build matrix from ./Make/Matrix.json
+  # Use a build step to allow environment variable substitution
   setmatrix:
-    name: 'Set Build Matrix'
+    name: 'Set Matrix'
     runs-on: ubuntu-latest
-    # Set the matrix from a build step to allow environment variable substitution
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idoutputs
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+    
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps      
     steps:
     - name: "Set Matrix JSON"
       id: set-matrix
@@ -252,24 +257,25 @@ jobs:
               ]
             }
           ]'
-        echo ""
-        echo "Raw:"
+        echo "JSON:"
         echo "$JSON"
-        echo ""
-        echo "Escape:"
-        JSONEscaped=$JSON
-        JSONEscaped="${JSONEscaped//'%'/'%25'}"
-        JSONEscaped="${JSONEscaped//$'\n'/'%0A'}"
-        JSONEscaped="${JSONEscaped//$'\r'/'%0D'}"
-        echo "$JSONEscaped"
-        echo ""
-        echo "set-output:"
-        echo "::set-output name=matrix::${JSONEscaped}"
+        EJSON=$JSON
+        EJSON="${EJSON//'%'/'%25'}"
+        EJSON="${EJSON//$'\n'/'%0A'}"
+        EJSON="${EJSON//$'\r'/'%0D'}"
+        echo "Escaped JSON:"
+        echo "$EJSON"
+        echo "::set-output name=matrix::${EJSON}"
+        FJSON=$(echo $JSON | jq '--compact-output')
+        echo "Flat JSON:"
+        echo "$FJSON"
 
+  # Verify integrity of the JSON Matrix
   verifymatrix:
     needs: setmatrix
     name: 'Verify Matrix'
     runs-on: ubuntu-latest
+    
     steps:
     - name: 'Print Raw Matrix'
       run: |
@@ -279,11 +285,12 @@ jobs:
       run: |
         echo "JSON"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
-    - name: 'Print JSON Array'
+    - name: 'Print JSON Tags Array'
       run: |
         echo "JSON Tags:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
-    - name: 'MultiLine Tags'
+    - name: 'Print MultiLine Tags'
+      # Convert JSON array to multiline
       run: |
         MLTags="${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
         MLTags="$(echo "$MLTags" | sed 's/[][,]//g')"
@@ -291,22 +298,17 @@ jobs:
         echo "ML Tags:"
         echo "$MLTags"
 
-  build:
+  # Build and publish docker images
+  buildpublish:
     needs: [ verifymatrix, setmatrix ]
     name: 'Build and Publish Docker Images'
     runs-on: ubuntu-latest
 
     strategy:
       # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-      # https://stackoverflow.com/questions/66025220/paired-values-in-github-actions-matrix
       matrix:
-        # TODO: Generate the matrix as JSON in the Makefile
-        # https://stackoverflow.com/questions/61919141/read-json-file-in-github-actions
         containers: ${{ fromJson(needs.setmatrix.outputs.matrix) }}
 
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsrun
     steps:
 
       # https://github.com/actions/checkout
@@ -327,14 +329,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: 'Login to GitHub Container Registry'
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # TODO: Publish to GHCR
 
       # Convert JSON array to multiline string
+      # Encode multiline variables to allow cross step transfer
       - name: 'Array to MultiLine'
         id: array_to_multiline
         run: |
@@ -378,5 +377,6 @@ jobs:
           file: ${{ matrix.containers.context }}/Dockerfile
           platforms: linux/amd64
           push: ${{ matrix.containers.push }}
+          # Use the converted multiline values
           tags: ${{ steps.array_to_multiline.outputs.tags }}
           build-args: ${{ steps.array_to_multiline.outputs.args }}
