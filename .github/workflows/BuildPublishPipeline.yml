@@ -282,7 +282,7 @@ jobs:
     - name: 'Print JSON Array'
       run: |
         echo "Tags:"
-        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}
+        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
 
   build:
     needs: [ verifymatrix, setmatrix ]
