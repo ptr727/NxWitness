@@ -257,10 +257,11 @@ jobs:
         echo "$JSON"
         echo ""
         echo "Escape:"
-        JSONEscaped=JSON
+        JSONEscaped=$JSON
         JSONEscaped="${JSONEscaped//'%'/'%25'}"
         JSONEscaped="${JSONEscaped//$'\n'/'%0A'}"
         JSONEscaped="${JSONEscaped//$'\r'/'%0D'}"
+        echo "$JSONEscaped"
         echo ""
         echo "set-output:"
         echo "::set-output name=matrix::${JSONEscaped}"
