@@ -339,17 +339,35 @@ jobs:
         id: array_to_multiline
         run: |
           echo "Tags:"
-          TAGS="${{ toJson(matrix.containers.tags) }}"
-          echo $TAGS
-          TAGS="$(echo "$TAGS" | sed 's/[][,]//g')"
-          TAGS="$(echo "$TAGS" | sed '/^[[:space:]]*$/d')"
-          echo "::set-output name=tags::${TAGS}"
+          Tags="${{ toJson(matrix.containers.tags) }}"
+          echo $Tags
+          MLTags=$Tags
+          MLTags="$(echo "$MLTags" | sed 's/[][,]//g')"
+          MLTags="$(echo "$MLTags" | sed '/^[[:space:]]*$/d')"
+          echo "MLTags:"
+          echo $MLTags
+          ETags=$MLTags
+          ETags="${ETags//'%'/'%25'}"
+          ETags="${ETags//$'\n'/'%0A'}"
+          ETags="${ETags//$'\r'/'%0D'}"
+          echo "ETags:"
+          echo $ETags
+          echo "::set-output name=tags::${ETags}"
           echo "Args:"
-          ARGS="${{ toJson(matrix.containers.args) }}"
-          echo $ARGS
-          ARGS="$(echo "$ARGS" | sed 's/[][,]//g')"
-          ARGS="$(echo "$ARGS" | sed '/^[[:space:]]*$/d')"
-          echo "::set-output name=args::${ARGS}"
+          Args="${{ toJson(matrix.containers.args) }}"
+          echo $Args
+          MLArgs=$Args
+          MLArgs="$(echo "$MLArgs" | sed 's/[][,]//g')"
+          MLArgs="$(echo "$MLArgs" | sed '/^[[:space:]]*$/d')"
+          echo "MLArgs:"
+          echo $MLArgs
+          EArgs=$MLArgs
+          EArgs="${EArgs//'%'/'%25'}"
+          EArgs="${EArgs//$'\n'/'%0A'}"
+          EArgs="${EArgs//$'\r'/'%0D'}"
+          echo "EArgs:"
+          echo $EArgs
+          echo "::set-output name=args::${EArgs}"
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: 'Build and Push'
