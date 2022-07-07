@@ -281,7 +281,7 @@ jobs:
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
 
   build:
-    needs: verifymatrix
+    needs: [ verifymatrix, setmatrix ]
     name: 'Build and Publish Docker Images'
     runs-on: ubuntu-latest
 
