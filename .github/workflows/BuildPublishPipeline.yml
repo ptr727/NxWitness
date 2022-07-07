@@ -53,7 +53,7 @@ jobs:
       # line 1: {: command not found
       # https://github.com/ptr727/NxWitness/runs/7227049661?check_suite_focus=true#step:2:132
       run: |
-        JSON=[ { \
+        JSON='[ { \
                   "name": "NxMeta-LSIO Latest Develop", \
                   "enable": ${{ (github.ref == 'refs/heads/develop') }}, \
                   "push": ${{ (github.event_name != 'pull_request') }}, \
@@ -165,7 +165,7 @@ jobs:
                   "tags": [ ptr727/dwspectrum:stable, ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }} ], \
                   "args": [ DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}, DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }} ] \
                 } \
-              ]
+              ]'
         echo "::set-output name=matrix::${JSON//'%'/'%25'}"
         
   build:
