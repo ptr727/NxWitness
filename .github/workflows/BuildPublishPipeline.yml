@@ -288,7 +288,7 @@ jobs:
         echo "JSON Args:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
         echo "Flat:"
-        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}" | jq --compact-output)
+        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}" | jq --compact-output
 
   # Build and publish docker images
   buildpublish:
