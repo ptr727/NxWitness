@@ -43,221 +43,226 @@ jobs:
   setmatrix:
     name: 'Set Build Matrix'
     runs-on: ubuntu-latest
-    # Need a way to set env from env in matrix friendly format
-    # https://stackoverflow.com/questions/61919141/read-json-file-in-github-actions
+    # Set the matrix from a build step to allow environment variable substitution
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-    - id: set-matrix
-      # Hmm, how is this multiline supposed to be set?
-      # line 1: {: command not found
-      # https://github.com/ptr727/NxWitness/runs/7227049661?check_suite_focus=true#step:2:132
+    - name: "Set Matrix JSON"
+      id: set-matrix
+      # Multiline passed between steps must be escaped
+      # https://github.community/t/set-output-truncates-multiline-strings/16852/2
       run: |
-        JSON='[
-              {
-                "name": "NxMeta-LSIO Latest Develop",
-                "enable": "${{ (github.ref == 'refs/heads/develop') }}",
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:develop",
-                  "ptr727/nxmeta-lsio:develop-latest",
-                  "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Stable Develop",
-                "enable": "${{ (github.ref == 'refs/heads/develop') }}",
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:develop-stable",
-                  "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:latest",
-                  "ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:stable",
-                  "ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta",
-                "tags": [
-                  "ptr727/nxmeta:latest",
-                  "ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta",
-                "tags": [
-                  "ptr727/nxmeta:stable",
-                  "ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxWitness-LSIO",
-                "tags": [
-                  "ptr727/nxwitness-lsio:latest",
-                  "ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxWitness-LSIO",
-                "tags": [
-                  "ptr727/nxwitness-lsio:stable",
-                  "ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxWitness",
-                "tags": [
-                  "ptr727/nxwitness:latest",
-                  "ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxWitness",
-                "tags": [
-                  "ptr727/nxwitness:stable",
-                  "ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./DWSpectrum-LSIO",
-                "tags": [
-                  "ptr727/dwspectrum-lsio:latest",
-                  "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./DWSpectrum-LSIO",
-                "tags": [
-                  "ptr727/dwspectrum-lsio:stable",
-                  "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./DWSpectrum",
-                "tags": [
-                  "ptr727/dwspectrum:latest",
-                  "ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./DWSpectrum",
-                "tags": [
-                  "ptr727/dwspectrum:stable",
-                  "ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
-                ]
-              }
-              ]'
+        JSON='
+          [
+            {
+              "name": "NxMeta-LSIO Latest Develop",
+              "enable": "${{ (github.ref == 'refs/heads/develop') }}",
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta-LSIO",
+              "tags": [
+                "ptr727/nxmeta-lsio:develop",
+                "ptr727/nxmeta-lsio:develop-latest",
+                "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "NxMeta-LSIO Stable Develop",
+              "enable": "${{ (github.ref == 'refs/heads/develop') }}",
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta-LSIO",
+              "tags": [
+                "ptr727/nxmeta-lsio:develop-stable",
+                "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "NxMeta-LSIO Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta-LSIO",
+              "tags": [
+                "ptr727/nxmeta-lsio:latest",
+                "ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "NxMeta-LSIO Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta-LSIO",
+              "tags": [
+                "ptr727/nxmeta-lsio:stable",
+                "ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "NxMeta Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta",
+              "tags": [
+                "ptr727/nxmeta:latest",
+                "ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "NxMeta Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxMeta",
+              "tags": [
+                "ptr727/nxmeta:stable",
+                "ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "NxWitness-LSIO Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxWitness-LSIO",
+              "tags": [
+                "ptr727/nxwitness-lsio:latest",
+                "ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "NxWitness-LSIO Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxWitness-LSIO",
+              "tags": [
+                "ptr727/nxwitness-lsio:stable",
+                "ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "NxWitness Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxWitness",
+              "tags": [
+                "ptr727/nxwitness:latest",
+                "ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "NxWitness Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./NxWitness",
+              "tags": [
+                "ptr727/nxwitness:stable",
+                "ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "DWSpectrum-LSIO Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./DWSpectrum-LSIO",
+              "tags": [
+                "ptr727/dwspectrum-lsio:latest",
+                "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "DWSpectrum-LSIO Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./DWSpectrum-LSIO",
+              "tags": [
+                "ptr727/dwspectrum-lsio:stable",
+                "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
+              ]
+            },
+            {
+              "name": "DWSpectrum Latest",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./DWSpectrum",
+              "tags": [
+                "ptr727/dwspectrum:latest",
+                "ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
+                "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
+              ]
+            },
+            {
+              "name": "DWSpectrum Stable",
+              "enable": true,
+              "push": "${{ (github.event_name != 'pull_request') }}",
+              "context": "./DWSpectrum",
+              "tags": [
+                "ptr727/dwspectrum:stable",
+                "ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}"
+              ],
+              "args": [
+                "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
+                "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
+              ]
+            }
+          ]'
         echo ""
         echo "Raw:"
         echo "$JSON"
         echo ""
+        echo "Escape:"
+        JSONEscaped="${JSON//'%'/'%25'}"
+        JSONEscaped="${JSON//$'\n'/'%0A'}"
+        JSONEscaped="${JSON//$'\r'/'%0D'}"
+        echo ""
         echo "set-output:"
-        echo "::set-output name=matrix::${JSON//'%'/'%25'}"
+        echo "::set-output name=matrix::${JSONEscaped}"
 
   verifymatrix:
     needs: setmatrix
