@@ -338,11 +338,15 @@ jobs:
       - name: 'Array to MultiLine'
         id: array_to_multiline
         run: |
+          echo "Tags:"
           TAGS="${{ toJson(fromJson(matrix.containers.tags) }}"
+          echo $TAGS
           TAGS="$(echo "$TAGS" | sed 's/[][,]//g'')"
           TAGS="$(echo "$TAGS" | sed '/^[[:space:]]*$/d')"
           echo "::set-output name=tags::${TAGS}"
+          echo "Args:"
           ARGS="${{ toJson(fromJson(matrix.containers.args) }}"
+          echo $ARGS
           ARGS="$(echo "$ARGS" | sed 's/[][,]//g'')"
           ARGS="$(echo "$ARGS" | sed '/^[[:space:]]*$/d')"
           echo "::set-output name=args::${ARGS}"
