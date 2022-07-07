@@ -289,7 +289,7 @@ jobs:
         MLTags="${MLTags//'['/''}"
         MLTags="${MLTags//']'/''}"
         MLTags="${MLTags//','/''}"
-        MLTags=(echo $MLTags | sed '/^[[:space:]]*$/d')
+        MLTags=(echo "$MLTags" | sed '/^[[:space:]]*$/d')
         echo "ML Tags:"
         echo "$MLTags"
 
