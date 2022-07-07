@@ -287,8 +287,6 @@ jobs:
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
         echo "JSON Args:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
-        echo "Flat:"
-        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}" | jq --compact-output
 
   # Build and publish docker images
   buildpublish:
@@ -324,7 +322,9 @@ jobs:
 
       # TODO: Publish to GHCR
 
-      # Convert JSON array to multiline string
+      # Convert JSON array to a string
+      # Replace ] [ , with space: sed 's/[][,]/ /g'
+      # Remove empty lines: sed '/^[[:space:]]*$/d'
       # Encode multiline variables to allow cross step transfer
       # https://github.community/t/set-output-truncates-multiline-strings/16852/2
       - name: 'Array to MultiLine'
@@ -334,7 +334,7 @@ jobs:
           Tags="${{ toJson(matrix.containers.tags) }}"
           echo $Tags
           MLTags=$Tags
-          MLTags="$(echo "$MLTags" | sed 's/[][,]//g')"
+          MLTags="$(echo "$MLTags" | sed 's/[][,]/ /g')"
           MLTags="$(echo "$MLTags" | sed '/^[[:space:]]*$/d')"
           echo "MLTags:"
           echo $MLTags
@@ -349,7 +349,7 @@ jobs:
           Args="${{ toJson(matrix.containers.args) }}"
           echo $Args
           MLArgs=$Args
-          MLArgs="$(echo "$MLArgs" | sed 's/[][,]//g')"
+          MLArgs="$(echo "$MLArgs" | sed 's/[][,]/ /g')"
           MLArgs="$(echo "$MLArgs" | sed '/^[[:space:]]*$/d')"
           echo "MLArgs:"
           echo $MLArgs
