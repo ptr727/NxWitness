@@ -6,6 +6,14 @@
 	],
 	"remoteAuthority": "wsl+ubuntu-20.04",
 	"settings": {
-		"makefile.extensionOutputFolder": "./.vscode"
+		"makefile.extensionOutputFolder": "./.vscode",
+		"cSpell.words": [
+			"filesystems",
+			"Optix",
+			"Unraid"
+		],
+		"cSpell.ignoreWords": [
+			"Repot"
+		]
 	}
 }
