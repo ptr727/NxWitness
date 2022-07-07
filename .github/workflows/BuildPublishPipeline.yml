@@ -258,9 +258,7 @@ jobs:
         echo "Raw:"
         echo "$JSON"
         echo ""
-        echo "Stripped:"
-        echo "${JSON//'%'/'%25'}"
-        echo ""
+        echo "set-output:"
         echo "::set-output name=matrix::${JSON//'%'/'%25'}"
 
   verifymatrix:
@@ -268,10 +266,13 @@ jobs:
     name: 'Verify Matrix'
     runs-on: ubuntu-latest
     steps:
-    - name: 'Print Raw Matrix'
-      run: echo "${{ needs.setmatrix.outputs.matrix }}"
-    - name: 'Print JSON Matrix'
-      run: echo "${{ fromJson(needs.setmatrix.outputs.matrix) }}"
+    - name: 'Print Matrix'
+      run: |
+        echo "Raw:"
+        echo "${{ needs.setmatrix.outputs.matrix }}"
+        echo ""
+        echo "JSON"
+        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
 
   build:
     needs: verifymatrix
