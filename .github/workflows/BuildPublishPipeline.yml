@@ -173,8 +173,10 @@ jobs:
     name: 'Verify Matrix'
     runs-on: ubuntu-latest
     steps:
-    - name: 'Print Matrix'
-      run: echo "${{fromJson(needs.setmatrix.outputs.matrix)}}"
+    - name: 'Print Raw Matrix'
+      run: echo "${{ needs.setmatrix.outputs.matrix }}"
+    - name: 'Print JSON Matrix'
+      run: echo "${{ fromJson(needs.setmatrix.outputs.matrix) }}"
 
   build:
     needs: verifymatrix
@@ -187,7 +189,7 @@ jobs:
       matrix:
         # TODO: Generate the matrix as JSON in the Makefile
         # https://stackoverflow.com/questions/61919141/read-json-file-in-github-actions
-        containers: ${{fromJson(needs.setmatrix.outputs.matrix)}}
+        containers: ${{ fromJson(needs.setmatrix.outputs.matrix) }}
 
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
