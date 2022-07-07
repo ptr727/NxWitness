@@ -54,8 +54,7 @@ jobs:
     steps:
     - name: "Set Matrix JSON"
       id: set-matrix
-      # Multiline passed between steps must be escaped
-      # https://github.community/t/set-output-truncates-multiline-strings/16852/2
+      # Convert the JSON to a single flat line to avoid having to escape the multiline output
       run: |
         JSON='
           [
@@ -259,16 +258,10 @@ jobs:
           ]'
         echo "JSON:"
         echo "$JSON"
-        EJSON=$JSON
-        EJSON="${EJSON//'%'/'%25'}"
-        EJSON="${EJSON//$'\n'/'%0A'}"
-        EJSON="${EJSON//$'\r'/'%0D'}"
-        echo "Escaped JSON:"
-        echo "$EJSON"
-        echo "::set-output name=matrix::${EJSON}"
-        FJSON=$(echo $JSON | jq '--compact-output')
         echo "Flat JSON:"
+        FJSON=$(echo $JSON | jq '--compact-output')
         echo "$FJSON"
+        echo "::set-output name=matrix::${FJSON}"
 
   # Verify integrity of the JSON Matrix
   verifymatrix:
@@ -278,25 +271,24 @@ jobs:
     
     steps:
     - name: 'Print Raw Matrix'
+      # As received
       run: |
         echo "Raw:"
         echo "${{ needs.setmatrix.outputs.matrix }}"
     - name: 'Print JSON Matrix'
+      # Converted from JSON and back to JSON
       run: |
         echo "JSON"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
     - name: 'Print JSON Tags Array'
+      # Tags and Args of the first element
       run: |
         echo "JSON Tags:"
         echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
-    - name: 'Print MultiLine Tags'
-      # Convert JSON array to multiline
-      run: |
-        MLTags="${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
-        MLTags="$(echo "$MLTags" | sed 's/[][,]//g')"
-        MLTags="$(echo "$MLTags" | sed '/^[[:space:]]*$/d')"
-        echo "ML Tags:"
-        echo "$MLTags"
+        echo "JSON Args:"
+        echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
+        echo "Flat:"
+        echo ${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }} | jq '--compact-output')
 
   # Build and publish docker images
   buildpublish:
@@ -334,6 +326,7 @@ jobs:
 
       # Convert JSON array to multiline string
       # Encode multiline variables to allow cross step transfer
+      # https://github.community/t/set-output-truncates-multiline-strings/16852/2
       - name: 'Array to MultiLine'
         id: array_to_multiline
         run: |
