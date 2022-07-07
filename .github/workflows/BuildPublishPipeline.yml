@@ -334,8 +334,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Convert JSON array to multiline string
+      - name: 'Array to MultiLine'
+        id: array_to_multiline
+        run: |
+          TAGS="${{ toJson(fromJson(matrix.containers.tags) }}"
+          TAGS="$(echo "$TAGS" | sed 's/[][,]//g'')"
+          TAGS="$(echo "$TAGS" | sed '/^[[:space:]]*$/d')"
+          echo "::set-output name=tags::${TAGS}"
+          ARGS="${{ toJson(fromJson(matrix.containers.args) }}"
+          ARGS="$(echo "$ARGS" | sed 's/[][,]//g'')"
+          ARGS="$(echo "$ARGS" | sed '/^[[:space:]]*$/d')"
+          echo "::set-output name=args::${ARGS}"
+
       # https://github.com/marketplace/actions/build-and-push-docker-images
-      - name: 'Build and Push ${{ matrix.containers.name }}'
+      - name: 'Build and Push'
         uses: docker/build-push-action@v2
         if: ${{ matrix.containers.enable }}
         with:
@@ -343,5 +356,5 @@ jobs:
           file: ${{ matrix.containers.context }}/Dockerfile
           platforms: linux/amd64
           push: ${{ matrix.containers.push }}
-          tags: ${{ matrix.containers.tags }}
-          build-args: ${{ matrix.containers.args }}
+          tags: ${{ steps.array_to_multiline.outputs.tags }}
+          build-args: ${{ steps.array_to_multiline.outputs.args }}
