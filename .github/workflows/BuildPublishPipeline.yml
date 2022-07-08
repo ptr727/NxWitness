@@ -313,50 +313,39 @@ jobs:
 
       # TODO: Publish to GHCR
 
-      # Convert JSON array to a string
-      # Join using ',' as separator, join() does not work with '\n'
-      # Replace ',' with '\n' using sed
-      # Replace ] [ , with space: sed 's/[][,]/ /g'
-      # Remove empty lines: sed '/^[[:space:]]*$/d'
+      # Convert JSON array to a multiline string
+      # Join using ',' as separator, join() function does not work with '\n'
+      # https://github.community/t/how-to-convert-json-string-array-to-multiple-strings/260525/4
+      # Replace ',' with '\n' using tr
       # Encode multiline variables to allow cross step transfer
       # https://github.community/t/set-output-truncates-multiline-strings/16852/2
       - name: "Array to MultiLine"
         id: array_to_multiline
         run: |
-          echo "Tags:"
-          Tags="${{ toJson(matrix.containers.tags) }}"
-          echo $Tags
-          MLTags=$Tags
-          MLTags="$(echo "$MLTags" | sed 's/[][,]/ /g')"
-          MLTags="$(echo "$MLTags" | sed '/^[[:space:]]*$/d')"
-          echo "MLTags:"
-          echo $MLTags
-          ETags=$MLTags
-          ETags="${ETags//'%'/'%25'}"
-          ETags="${ETags//$'\n'/'%0A'}"
-          ETags="${ETags//$'\r'/'%0D'}"
-          echo "ETags:"
-          echo $ETags
-          echo "::set-output name=tags::${ETags}"
-          echo "Args:"
-          Args="${{ toJson(matrix.containers.args) }}"
-          echo $Args
-          MLArgs=$Args
-          MLArgs="$(echo "$MLArgs" | sed 's/[][,]/ /g')"
-          MLArgs="$(echo "$MLArgs" | sed '/^[[:space:]]*$/d')"
-          echo "MLArgs:"
-          echo $MLArgs
-          EArgs=$MLArgs
-          EArgs="${EArgs//'%'/'%25'}"
-          EArgs="${EArgs//$'\n'/'%0A'}"
-          EArgs="${EArgs//$'\r'/'%0D'}"
-          echo "EArgs:"
-          echo $EArgs
-          echo "::set-output name=args::${EArgs}"
-          echo "Join:"
-          JTags="${{ join(toJson(matrix.containers.tags), ',') }}"
-          JTags="$(echo "$JTags" | tr , '\n')"
+          # Convert tags
+          echo "JSON Tags:"
+          echo "${{ toJson(matrix.containers.tags) }}"
+          echo "Joined Tags"
+          JTags="${{ join(matrix.containers.tags, ',') }}"
           echo $JTags
+          echo "MultiLine Tags:"
+          MLTags=$JTags
+          MLTags="${MLTags//'%'/'%25'}"
+          MLTags="${MLTags//$'\n'/'%0A'}"
+          MLTags="${MLTags//$'\r'/'%0D'}"
+          echo "::set-output name=tags::${MLTags}"
+          # Convert args
+          echo "JSON Args:"
+          echo "${{ toJson(matrix.containers.args) }}"
+          echo "Joined Args"
+          JArgs="${{ join(matrix.containers.args, ',') }}"
+          echo $JArgs
+          echo "MultiLine Args:"
+          MLArgs=$JArgs
+          MLArgs="${MLArgs//'%'/'%25'}"
+          MLArgs="${MLArgs//$'\n'/'%0A'}"
+          MLArgs="${MLArgs//$'\r'/'%0D'}"
+          echo "::set-output name=tags::${MLArgs}"
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push"
