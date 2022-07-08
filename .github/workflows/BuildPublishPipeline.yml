@@ -354,7 +354,7 @@ jobs:
           echo $EArgs
           echo "::set-output name=args::${EArgs}"
           echo "Join:"
-          JTags=join(toJson(matrix.containers.tags), ',')
+          JTags="${{ join(toJson(matrix.containers.tags), ',') }}"
           JTags="$(echo "$JTags" | tr , '\n')"
           echo $JTags
 
