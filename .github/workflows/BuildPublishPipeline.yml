@@ -349,7 +349,7 @@ jobs:
           MLArgs="${MLArgs//$'\n'/'%0A'}"
           MLArgs="${MLArgs//$'\r'/'%0D'}"
           echo $MLArgs
-          echo "::set-output name=tags::${MLArgs}"
+          echo "::set-output name=args::${MLArgs}"
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push"
