@@ -327,7 +327,7 @@ jobs:
           echo "${{ toJson(matrix.containers.tags) }}"
           echo "Joined Tags"
           JTags="${{ join(matrix.containers.tags, ',') }}"
-          JTags=$"(echo "$JTags" | tr ',' '\n')"
+          JTags="$(echo "$JTags" | tr ',' '\n')"
           echo $JTags
           echo "MultiLine Tags:"
           MLTags=$JTags
@@ -341,7 +341,7 @@ jobs:
           echo "${{ toJson(matrix.containers.args) }}"
           echo "Joined Args"
           JArgs="${{ join(matrix.containers.args, ',') }}"
-          JArgs=$"(echo "$JArgs" | tr ',' '\n')"
+          JArgs="$(echo "$JArgs" | tr ',' '\n')"
           echo $JArgs
           echo "MultiLine Args:"
           MLArgs=$JArgs
