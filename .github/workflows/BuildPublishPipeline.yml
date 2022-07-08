@@ -286,6 +286,8 @@ jobs:
           echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
           echo "JSON Args:"
           echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
+          echo "Join"
+          echo "${{ join(fromJson(needs.setmatrix.outputs.matrix)[0].args, '\n') }}"
 
   # Build and publish docker images
   buildpublish:
