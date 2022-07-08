@@ -361,5 +361,11 @@ jobs:
           platforms: linux/amd64
           push: ${{ matrix.containers.push }}
           # Use the converted multiline values
-          tags: ${{ steps.array_to_multiline.outputs.tags }}
-          build-args: ${{ steps.array_to_multiline.outputs.args }}
+          # tags: ${{ steps.array_to_multiline.outputs.tags }}
+          tags: |-
+            ${{ join(matrix.containers.tags, '
+            ') }}
+          # build-args: ${{ steps.array_to_multiline.outputs.args }}
+          build_args: |-
+            ${{ join(matrix.containers.args, '
+            ') }}
