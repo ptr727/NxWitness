@@ -39,8 +39,11 @@ on:
 
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
-  # Set the build matrix from ./Make/Matrix.json
-  # Use a build step to allow environment variable substitution
+
+  # Set the build matrix
+  # Use copy-n-paste and a build step to allow environment variable substitution
+  # TODO: How to load the file and then perform evaluation on the file content, as if it had been part of yaml?
+  # https://github.community/t/how-to-perform-dynamic-variable-substitution-from-dynamically-loaded-text-file/260662/2
   setmatrix:
     name: "Set Matrix"
     runs-on: ubuntu-latest
@@ -51,9 +54,8 @@ jobs:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps
     steps:
       - name: "Set Matrix JSON"
-        id: set-matrix
-        # Convert the JSON to a single flat line to avoid having to escape the multiline output
-        # TODO: How to load a JSON file and perform variable substitution?
+        id: setmatrix
+        # Paste the JSON from ./Make/Matrix.json
         run: |
           JSON='
             [
@@ -257,32 +259,20 @@ jobs:
             ]'
           echo "JSON:"
           echo "$JSON"
+          # Convert the JSON to a single flat line to avoid having to escape the multiline output
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
           echo "::set-output name=matrix::${FJSON}"
 
-  # Verify correctness of the JSON Matrix
-  verifymatrix:
-    needs: setmatrix
-    name: "Verify Matrix"
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: "Print Raw Matrix"
-        # As received
+      - name: "Verify JSON Matrix"
         run: |
-          echo "Raw:"
-          echo "${{ needs.setmatrix.outputs.matrix }}"
-      - name: "Print JSON Matrix"
-        # Converted from JSON and back to JSON
-        run: |
-          echo "JSON"
-          echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
+          echo "JSON:"
+          echo "${{ toJson(fromJson(steps.setmatrix.outputs.matrix)) }}"
 
   # Build and publish docker images
   buildpublish:
-    needs: [verifymatrix, setmatrix]
+    needs: setmatrix
     name: "Build and Publish Docker Images"
     runs-on: ubuntu-latest
 
@@ -313,44 +303,6 @@ jobs:
 
       # TODO: Publish to GHCR
 
-      # Convert JSON array to a multiline string
-      # Join using ',' as separator, join() function does not work with '\n'
-      # https://github.community/t/how-to-convert-json-string-array-to-multiple-strings/260525/4
-      # Replace ',' with '\n' using tr
-      # Encode multiline variables to allow cross step transfer
-      # https://github.community/t/set-output-truncates-multiline-strings/16852/2
-      - name: "Array to MultiLine"
-        id: array_to_multiline
-        run: |
-          # Convert tags
-          echo "JSON Tags:"
-          echo "${{ toJson(matrix.containers.tags) }}"
-          echo "Joined Tags"
-          JTags="${{ join(matrix.containers.tags, ',') }}"
-          JTags="$(echo "$JTags" | tr ',' '\n')"
-          echo $JTags
-          echo "MultiLine Tags:"
-          MLTags=$JTags
-          MLTags="${MLTags//'%'/'%25'}"
-          MLTags="${MLTags//$'\n'/'%0A'}"
-          MLTags="${MLTags//$'\r'/'%0D'}"
-          echo $MLTags
-          echo "::set-output name=tags::${MLTags}"
-          # Convert args
-          echo "JSON Args:"
-          echo "${{ toJson(matrix.containers.args) }}"
-          echo "Joined Args"
-          JArgs="${{ join(matrix.containers.args, ',') }}"
-          JArgs="$(echo "$JArgs" | tr ',' '\n')"
-          echo $JArgs
-          echo "MultiLine Args:"
-          MLArgs=$JArgs
-          MLArgs="${MLArgs//'%'/'%25'}"
-          MLArgs="${MLArgs//$'\n'/'%0A'}"
-          MLArgs="${MLArgs//$'\r'/'%0D'}"
-          echo $MLArgs
-          echo "::set-output name=args::${MLArgs}"
-
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push"
         uses: docker/build-push-action@v2
@@ -360,12 +312,10 @@ jobs:
           file: ${{ matrix.containers.context }}/Dockerfile
           platforms: linux/amd64
           push: ${{ matrix.containers.push }}
-          # Use the converted multiline values
-          # tags: ${{ steps.array_to_multiline.outputs.tags }}
+          # Convert tag and args from array to multiline strings
           tags: |-
             ${{ join(matrix.containers.tags, '
             ') }}
-          # build-args: ${{ steps.array_to_multiline.outputs.args }}
           build-args: |-
             ${{ join(matrix.containers.args, '
             ') }}
