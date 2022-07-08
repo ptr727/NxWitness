@@ -327,24 +327,28 @@ jobs:
           echo "${{ toJson(matrix.containers.tags) }}"
           echo "Joined Tags"
           JTags="${{ join(matrix.containers.tags, ',') }}"
+          JTags="(echo $JTags | tr ',' '\n')"
           echo $JTags
           echo "MultiLine Tags:"
           MLTags=$JTags
           MLTags="${MLTags//'%'/'%25'}"
           MLTags="${MLTags//$'\n'/'%0A'}"
           MLTags="${MLTags//$'\r'/'%0D'}"
+          echo $MLTags
           echo "::set-output name=tags::${MLTags}"
           # Convert args
           echo "JSON Args:"
           echo "${{ toJson(matrix.containers.args) }}"
           echo "Joined Args"
           JArgs="${{ join(matrix.containers.args, ',') }}"
+          JArgs="(echo $JArgs | tr ',' '\n')"
           echo $JArgs
           echo "MultiLine Args:"
           MLArgs=$JArgs
           MLArgs="${MLArgs//'%'/'%25'}"
           MLArgs="${MLArgs//$'\n'/'%0A'}"
           MLArgs="${MLArgs//$'\r'/'%0D'}"
+          echo $MLArgs
           echo "::set-output name=tags::${MLArgs}"
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
