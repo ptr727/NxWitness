@@ -366,6 +366,6 @@ jobs:
             ${{ join(matrix.containers.tags, '
             ') }}
           # build-args: ${{ steps.array_to_multiline.outputs.args }}
-          build_args: |-
+          build-args: |-
             ${{ join(matrix.containers.args, '
             ') }}
