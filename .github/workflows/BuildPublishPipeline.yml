@@ -262,7 +262,7 @@ jobs:
           echo "$FJSON"
           echo "::set-output name=matrix::${FJSON}"
 
-  # Verify integrity of the JSON Matrix
+  # Verify correctness of the JSON Matrix
   verifymatrix:
     needs: setmatrix
     name: "Verify Matrix"
@@ -279,17 +279,6 @@ jobs:
         run: |
           echo "JSON"
           echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)) }}"
-      - name: "Print JSON Tags Array"
-        # Tags and Args of the first element
-        run: |
-          echo "JSON Tags:"
-          echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].tags) }}"
-          echo "JSON Args:"
-          echo "${{ toJson(fromJson(needs.setmatrix.outputs.matrix)[0].args) }}"
-          echo "Join OA"
-          echo "${{ join(fromJson(needs.setmatrix.outputs.matrix)[0].args, '%0A') }}"
-          echo "Join n"
-          echo "${{ join(fromJson(needs.setmatrix.outputs.matrix)[0].args, '\n') }}"
 
   # Build and publish docker images
   buildpublish:
@@ -325,6 +314,8 @@ jobs:
       # TODO: Publish to GHCR
 
       # Convert JSON array to a string
+      # Join using ',' as separator, join() does not work with '\n'
+      # Replace ',' with '\n' using sed
       # Replace ] [ , with space: sed 's/[][,]/ /g'
       # Remove empty lines: sed '/^[[:space:]]*$/d'
       # Encode multiline variables to allow cross step transfer
@@ -362,6 +353,10 @@ jobs:
           echo "EArgs:"
           echo $EArgs
           echo "::set-output name=args::${EArgs}"
+          echo "Join:"
+          JTags=join(toJson(matrix.containers.tags), ',')
+          JTags="$(echo "$JTags" | tr , '\n')"
+          echo $JTags
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push"
@@ -373,6 +368,5 @@ jobs:
           platforms: linux/amd64
           push: ${{ matrix.containers.push }}
           # Use the converted multiline values
-          # tags: ${{ steps.array_to_multiline.outputs.tags }}
-          tags: ${{ join(matrix.containers.tags, '\n') }}
+          tags: ${{ steps.array_to_multiline.outputs.tags }}
           build-args: ${{ steps.array_to_multiline.outputs.args }}
