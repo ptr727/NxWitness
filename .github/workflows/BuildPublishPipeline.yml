@@ -39,7 +39,6 @@ on:
 
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
-
   # Set the build matrix
   # Use copy-n-paste and a build step to allow environment variable substitution
   # TODO: How to load the file and then perform evaluation on the file content, as if it had been part of yaml?
@@ -91,7 +90,7 @@ jobs:
               {
                 "name": "NxMeta-LSIO Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxMeta-LSIO",
                 "tags": [
                   "ptr727/nxmeta-lsio:latest",
@@ -105,7 +104,7 @@ jobs:
               {
                 "name": "NxMeta-LSIO Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxMeta-LSIO",
                 "tags": [
                   "ptr727/nxmeta-lsio:stable",
@@ -119,7 +118,7 @@ jobs:
               {
                 "name": "NxMeta Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxMeta",
                 "tags": [
                   "ptr727/nxmeta:latest",
@@ -133,7 +132,7 @@ jobs:
               {
                 "name": "NxMeta Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxMeta",
                 "tags": [
                   "ptr727/nxmeta:stable",
@@ -147,7 +146,7 @@ jobs:
               {
                 "name": "NxWitness-LSIO Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxWitness-LSIO",
                 "tags": [
                   "ptr727/nxwitness-lsio:latest",
@@ -161,7 +160,7 @@ jobs:
               {
                 "name": "NxWitness-LSIO Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxWitness-LSIO",
                 "tags": [
                   "ptr727/nxwitness-lsio:stable",
@@ -175,7 +174,7 @@ jobs:
               {
                 "name": "NxWitness Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxWitness",
                 "tags": [
                   "ptr727/nxwitness:latest",
@@ -189,7 +188,7 @@ jobs:
               {
                 "name": "NxWitness Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./NxWitness",
                 "tags": [
                   "ptr727/nxwitness:stable",
@@ -203,7 +202,7 @@ jobs:
               {
                 "name": "DWSpectrum-LSIO Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./DWSpectrum-LSIO",
                 "tags": [
                   "ptr727/dwspectrum-lsio:latest",
@@ -217,7 +216,7 @@ jobs:
               {
                 "name": "DWSpectrum-LSIO Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./DWSpectrum-LSIO",
                 "tags": [
                   "ptr727/dwspectrum-lsio:stable",
@@ -231,7 +230,7 @@ jobs:
               {
                 "name": "DWSpectrum Latest",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./DWSpectrum",
                 "tags": [
                   "ptr727/dwspectrum:latest",
@@ -245,7 +244,7 @@ jobs:
               {
                 "name": "DWSpectrum Stable",
                 "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') }}",
+                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
                 "context": "./DWSpectrum",
                 "tags": [
                   "ptr727/dwspectrum:stable",

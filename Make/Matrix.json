@@ -31,7 +31,7 @@
   {
     "name": "NxMeta-LSIO Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxMeta-LSIO",
     "tags": [
       "ptr727/nxmeta-lsio:latest",
@@ -45,7 +45,7 @@
   {
     "name": "NxMeta-LSIO Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxMeta-LSIO",
     "tags": [
       "ptr727/nxmeta-lsio:stable",
@@ -59,7 +59,7 @@
   {
     "name": "NxMeta Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxMeta",
     "tags": [
       "ptr727/nxmeta:latest",
@@ -73,7 +73,7 @@
   {
     "name": "NxMeta Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxMeta",
     "tags": [
       "ptr727/nxmeta:stable",
@@ -87,7 +87,7 @@
   {
     "name": "NxWitness-LSIO Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxWitness-LSIO",
     "tags": [
       "ptr727/nxwitness-lsio:latest",
@@ -101,7 +101,7 @@
   {
     "name": "NxWitness-LSIO Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxWitness-LSIO",
     "tags": [
       "ptr727/nxwitness-lsio:stable",
@@ -115,7 +115,7 @@
   {
     "name": "NxWitness Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxWitness",
     "tags": [
       "ptr727/nxwitness:latest",
@@ -129,7 +129,7 @@
   {
     "name": "NxWitness Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./NxWitness",
     "tags": [
       "ptr727/nxwitness:stable",
@@ -143,7 +143,7 @@
   {
     "name": "DWSpectrum-LSIO Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./DWSpectrum-LSIO",
     "tags": [
       "ptr727/dwspectrum-lsio:latest",
@@ -157,7 +157,7 @@
   {
     "name": "DWSpectrum-LSIO Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./DWSpectrum-LSIO",
     "tags": [
       "ptr727/dwspectrum-lsio:stable",
@@ -171,7 +171,7 @@
   {
     "name": "DWSpectrum Latest",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./DWSpectrum",
     "tags": [
       "ptr727/dwspectrum:latest",
@@ -185,7 +185,7 @@
   {
     "name": "DWSpectrum Stable",
     "enable": true,
-    "push": "${{ (github.event_name != 'pull_request') }}",
+    "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
     "context": "./DWSpectrum",
     "tags": [
       "ptr727/dwspectrum:stable",
