@@ -10,10 +10,12 @@ jobs:
   description:
     name: 'Update Docker Hub Description'
     runs-on: ubuntu-latest
+
     strategy:
-      # https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+      # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         repos: [ptr727/nxmeta, ptr727/nxmeta-lsio, ptr727/nxwitness, ptr727/nxwitness-lsio, ptr727/dwspectrum, ptr727/dwspectrum-lsio]
+
     steps:
 
       # https://github.com/actions/checkout

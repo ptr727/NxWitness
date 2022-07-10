@@ -27,6 +27,8 @@
 # Test images by ctrl-click opening the browser links
 # make clean
 
+# TODO: Build the Matrix.json file from parts
+
 SHELL := /bin/bash
 
 .DEFAULT_GOAL := check
