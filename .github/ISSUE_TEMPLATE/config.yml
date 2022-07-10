@@ -3,3 +3,6 @@ contact_links:
   - name: Network Optix Support
     url: https://support.networkoptix.com/hc/en-us/community/topics
     about: Please report product issues to Network Optix.
+  - name: Missing Storage
+    url: https://github.com/ptr727/NxWitness/tree/main#missing-storage
+    about: Troubleshoot missing storage.
