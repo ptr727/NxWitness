@@ -266,7 +266,7 @@ My wishlist for better docker support:
 - Do not filter storage filesystems, allow the administrator to specify and use any storage location.
 - Do not pollute the filesystem by blindly creating folders in any detected storage.
 - Do not bind to any discovered network adapter, allow the administrator to specify the bound network adapter, or add an option to opt-out/opt-in to auto-binding.
-- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtext VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
+- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
 
 Please do [contact](https://support.networkoptix.com/hc/en-us/community/topics) Network Optix and ask for better [docker support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker).
 
