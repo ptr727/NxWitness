@@ -211,33 +211,40 @@ Images are built using GitHub Actions.
 
 ## Network Optix and Docker
 
-There are issues, but compared to other VMS/NVR software I've paid for and used, Nx Witness is the lightest on system resources, has a good feature set, and with added docker support runs great in my home lab.
+There are annoying and serious issues, but compared to other VMS/NVR software I've paid for and used, Nx Witness is the lightest on system resources, has a good feature set, and with added docker support runs great in my home lab.
 
 ### Licensing
 
+**Issue:**  
 The camera recording license keys are activated and bound to hardware attributes of the host server.  
 Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
 
+**Possible Solution:**  
 A portable approach could apply licenses to the [Cloud Account](https://www.networkoptix.com/nx-witness/nx-witness-cloud/), allowing runtime enforcement that is not hardware bound.
 
 ### Storage Management
 
+**Issue:**  
 The mediaserver attempts to automatically decide what storage to use.  
 Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common ZFS is not supported.  
 Duplicate filesystems are ignored, e.g. multiple logical mounts on the same physical storage are ignored.  
 The server blindly creates database files on any writable storage it discovers, regardless of if that storage was assigned for use or not.
 
-Remove the elaborate and prone to failure filesystem discovery and filtering logic, I am the administrator, I will decide what storage to use, use what I specify, and only what I specify.
+**Possible Solution:**  
+Remove the elaborate and prone to failure filesystem discovery and filtering logic, use the specified storage, and only the specified storage.
 
 ### Network Binding
 
+**Issue:**  
 The mediaserver binds to any discovered network adapter.
 On docker this means the server binds to all docker networks of all running containers, there could be hundreds or thousands, making the network graph useless, and consuming unnecessary resources.
 
+**Possible Solution:**  
 Remove the auto-bind functionality, or make it configurable with the default disabled, and allow the administrator to define the specific networks to bind with.
 
 ### Lifetime Upgrades
 
+**Issue:**  
 This section is personal opinion, I've worked in the ISV industry for many years, and I've taken perpetually licensed products to SaaS.
 
 Living in the US, I have to buy my licenses from [Digital Watchdog](https://digital-watchdog.com/), and in my experience their license enforcement policy is inflexible, three activations and you have to buy a new license.  
@@ -247,7 +254,8 @@ There is no such thing as free of cost software, at minimum somebody pays for ti
 Add in ongoing costs of cloud hosting, cost of development of new features, and providing support, where does the money come from?  
 Will we eventually see a license scheme change, or is it a customer [acquisition](https://www.crunchbase.com/organization/network-optix) and sell or go public play, but hopefully not a cash out and bail scheme?
 
-I'd be happy to pay a reasonable yearly subscription or maintenance fee knowing I get ongoing fixes, features, and support.
+**Possible Solution:**  
+I'd be happy to pay a reasonable yearly subscription or maintenance fee, knowing I get ongoing fixes, features, and support, and my licenses being tied to my cloud account.
 
 ### Wishlist
 
@@ -258,7 +266,7 @@ My wishlist for better docker support:
 - Do not filter storage filesystems, allow the administrator to specify and use any storage location.
 - Do not pollute the filesystem by blindly creating folders in any detected storage.
 - Do not bind to any discovered network adapter, allow the administrator to specify the bound network adapter, or add an option to opt-out/opt-in to auto-binding.
-- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtext VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
+- Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
 
 Please do [contact](https://support.networkoptix.com/hc/en-us/community/topics) Network Optix and ask for better [docker support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker).
 

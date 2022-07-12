@@ -9,7 +9,16 @@
 		"makefile.extensionOutputFolder": "./.vscode",
 		"cSpell.words": [
 			"filesystems",
+			"IPVMS",
+			"lsio",
+			"mediaserver",
+			"networkoptix",
+			"NXMETA",
+			"NXWITNESS",
 			"Optix",
+			"PGID",
+			"PUID",
+			"shfs",
 			"Unraid"
 		],
 		"cSpell.ignoreWords": [
