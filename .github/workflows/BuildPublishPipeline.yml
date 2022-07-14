@@ -70,22 +70,28 @@ jobs:
       matrix:
         images: ${{ fromJson(needs.setmatrix.outputs.matrix).images }}
 
+    # Enable only if the current branch matches the matrix branch
+    # TODO: How to conditionally skip all steps vs. if in every step?
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout Code"
         uses: actions/checkout@v3
+        if: ${{ github.ref_name == matrix.images.branch }}
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: "Setup QEMU"
         uses: docker/setup-qemu-action@v2
+        if: ${{ github.ref_name == matrix.images.branch }}
 
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: "Setup Docker Buildx"
         uses: docker/setup-buildx-action@v2
+        if: ${{ github.ref_name == matrix.images.branch }}
 
       # https://github.com/marketplace/actions/docker-login
       - name: "Login to Docker Hub"
         uses: docker/login-action@v2
+        if: ${{ github.ref_name == matrix.images.branch }}
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -94,6 +100,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-login
       - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v2
+        if: ${{ github.ref_name == matrix.images.branch }}
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -102,13 +109,12 @@ jobs:
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push Containers"
         uses: docker/build-push-action@v3
-        # Build if the current branch matches the matrix branch
         if: ${{ github.ref_name == matrix.images.branch }}
         with:
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
-          # Push if not a pull request
+          # Push only if not a pull request
           push: "${{ (github.event_name != 'pull_request') }}"
           # Convert tag and args from array to multiline strings
           tags: |-
