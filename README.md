@@ -14,7 +14,7 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ## Container Images
 
-Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727).  
+Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
 Images are tagged using `latest` or `stable` and the specific build version number.  
 `latest` images use the latest patch release version.  
 `stable` images use the last stable release version.  
@@ -52,6 +52,8 @@ The images are updated weekly, picking up the latest upstream OS updates.
 [DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker)
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker)
+
+Current product build versions are defined in the [Version.json](./Make/Version.json) file.
 
 ## Overview
 
@@ -207,7 +209,9 @@ There is currently no support to automatically detect newly released versions, u
 
 With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
 
-Images are built using GitHub Actions.
+Updating the product versions and download URL's are done using the `CreateMatrix` .NET Core console utility app.  
+The app takes a [Version.json](./Make/Version.json) file as input, creates permutations for product, base image, latest version, and stable version, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
+All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
 
 ## Network Optix and Docker
 
