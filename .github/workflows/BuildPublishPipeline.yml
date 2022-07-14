@@ -48,8 +48,8 @@ jobs:
       # Load Matrix.json from file
       - name: "Load Matrix JSON"
         id: setmatrix
-        # Paste the JSON from ./Make/Matrix.json
         run: |
+          # Load JSON from file
           JSON=$(cat ./Make/Matrix.json)
           echo "JSON:"
           echo "$JSON"
@@ -58,11 +58,6 @@ jobs:
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
           echo "::set-output name=matrix::${FJSON}"
-
-      - name: "Verify JSON Matrix"
-        run: |
-          echo "JSON:"
-          echo "${{ toJson(fromJson(steps.setmatrix.outputs.matrix)) }}"
 
   # Build and publish docker images
   buildpublish:
@@ -73,7 +68,7 @@ jobs:
     strategy:
       # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
-        images: ${{ fromJson(needs.setmatrix.outputs.matrix.images) }}
+        images: ${{ fromJson(needs.setmatrix.outputs.matrix).images }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -110,7 +105,7 @@ jobs:
         # Build if the current branch matches the matrix branch
         if: ${{ github.ref_name == matrix.images.branch }}
         with:
-          context: ${{ matrix.containers.name }}
+          context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
           # Push if not a pull request
