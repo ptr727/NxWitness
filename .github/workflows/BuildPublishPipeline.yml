@@ -3,26 +3,6 @@
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#name
 name: "Build and Publish Docker Images"
 
-# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#env
-env:
-  # https://meta.nxvms.com/downloads/patches
-  NXMETA_LATEST_VERSION: "5.0.0.35062"
-  NXMETA_LATEST_URL: "https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
-  NXMETA_STABLE_VERSION: "4.2.0.33313"
-  NXMETA_STABLE_URL: "https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
-
-  # https://beta.networkoptix.com/beta-builds/default/
-  NXWITNESS_LATEST_VERSION: "5.0.0.35064"
-  NXWITNESS_LATEST_URL: "http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
-  NXWITNESS_STABLE_VERSION: "4.2.0.34860"
-  NXWITNESS_STABLE_URL: "https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
-
-  # https://dwspectrum.digital-watchdog.com/download/linux
-  DWSPECTRUM_LATEST_VERSION: "4.2.0.32842"
-  DWSPECTRUM_LATEST_URL: "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-  DWSPECTRUM_STABLE_VERSION: "4.2.0.32842"
-  DWSPECTRUM_STABLE_URL: "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 on:
   push:
@@ -40,9 +20,6 @@ on:
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
   # Set the build matrix
-  # Use copy-n-paste and a build step to allow environment variable substitution
-  # TODO: How to load the file and then perform evaluation on the file content, as if it had been part of yaml?
-  # https://github.community/t/how-to-perform-dynamic-variable-substitution-from-dynamically-loaded-text-file/260662/2
   setmatrix:
     name: "Set Matrix"
     runs-on: ubuntu-latest
@@ -52,210 +29,28 @@ jobs:
 
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps
     steps:
-      - name: "Set Matrix JSON"
+      # Install .NET SDK
+      # https://github.com/marketplace/actions/setup-net-core-sdk
+      - name: "Setup .NET SDK 6.0"
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "6.0.x"
+
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout Code"
+        uses: actions/checkout@v3
+
+      # Run CreateMatrix tool
+      # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-run
+      - name: "Run CreateMatrix Tool"
+        run: dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- ./Make/Version.json ./Make/Matrix.json
+
+      # Load Matrix.json from file
+      - name: "Load Matrix JSON"
         id: setmatrix
         # Paste the JSON from ./Make/Matrix.json
         run: |
-          JSON='
-            [
-              {
-                "name": "NxMeta-LSIO Latest Develop",
-                "enable": "${{ (github.ref == 'refs/heads/develop') }}",
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:develop",
-                  "ptr727/nxmeta-lsio:develop-latest",
-                  "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Stable Develop",
-                "enable": "${{ (github.ref == 'refs/heads/develop') }}",
-                "push": "${{ (github.event_name != 'pull_request') }}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:develop-stable",
-                  "ptr727/nxmeta-lsio:develop-${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:latest",
-                  "ptr727/nxmeta-lsio:${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxMeta-LSIO",
-                "tags": [
-                  "ptr727/nxmeta-lsio:stable",
-                  "ptr727/nxmeta-lsio:${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxMeta",
-                "tags": [
-                  "ptr727/nxmeta:latest",
-                  "ptr727/nxmeta:${{ env.NXMETA_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxMeta Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxMeta",
-                "tags": [
-                  "ptr727/nxmeta:stable",
-                  "ptr727/nxmeta:${{ env.NXMETA_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXMETA_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXMETA_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxWitness-LSIO",
-                "tags": [
-                  "ptr727/nxwitness-lsio:latest",
-                  "ptr727/nxwitness-lsio:${{ env.NXWITNESS_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxWitness-LSIO",
-                "tags": [
-                  "ptr727/nxwitness-lsio:stable",
-                  "ptr727/nxwitness-lsio:${{ env.NXWITNESS_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxWitness",
-                "tags": [
-                  "ptr727/nxwitness:latest",
-                  "ptr727/nxwitness:${{ env.NXWITNESS_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "NxWitness Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./NxWitness",
-                "tags": [
-                  "ptr727/nxwitness:stable",
-                  "ptr727/nxwitness:${{ env.NXWITNESS_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.NXWITNESS_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.NXWITNESS_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum-LSIO Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./DWSpectrum-LSIO",
-                "tags": [
-                  "ptr727/dwspectrum-lsio:latest",
-                  "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum-LSIO Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./DWSpectrum-LSIO",
-                "tags": [
-                  "ptr727/dwspectrum-lsio:stable",
-                  "ptr727/dwspectrum-lsio:${{ env.DWSPECTRUM_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum Latest",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./DWSpectrum",
-                "tags": [
-                  "ptr727/dwspectrum:latest",
-                  "ptr727/dwspectrum:${{ env.DWSPECTRUM_LATEST_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_LATEST_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_LATEST_URL }}"
-                ]
-              },
-              {
-                "name": "DWSpectrum Stable",
-                "enable": true,
-                "push": "${{ (github.event_name != 'pull_request') && (github.ref == 'refs/heads/main')}}",
-                "context": "./DWSpectrum",
-                "tags": [
-                  "ptr727/dwspectrum:stable",
-                  "ptr727/dwspectrum:${{ env.DWSPECTRUM_STABLE_VERSION }}"
-                ],
-                "args": [
-                  "DOWNLOAD_VERSION=${{ env.DWSPECTRUM_STABLE_VERSION }}",
-                  "DOWNLOAD_URL=${{ env.DWSPECTRUM_STABLE_URL }}"
-                ]
-              }
-            ]'
+          JSON=$(cat ./Make/Matrix.json)
           echo "JSON:"
           echo "$JSON"
           # Convert the JSON to a single flat line to avoid having to escape the multiline output
@@ -281,36 +76,45 @@ jobs:
         containers: ${{ fromJson(needs.setmatrix.outputs.matrix) }}
 
     steps:
-      # https://github.com/actions/checkout
+      # https://github.com/marketplace/actions/checkout
       - name: "Checkout Code"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # https://github.com/docker/setup-qemu-action
+      # https://github.com/marketplace/actions/docker-setup-qemu
       - name: "Setup QEMU"
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
-      # https://github.com/docker/setup-buildx-action
+      # https://github.com/marketplace/actions/docker-setup-buildx
       - name: "Setup Docker Buildx"
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       # https://github.com/marketplace/actions/docker-login
       - name: "Login to Docker Hub"
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
+          registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # TODO: Publish to GHCR
+      # https://github.com/marketplace/actions/docker-login
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
-      - name: "Build and Push"
-        uses: docker/build-push-action@v2
-        if: ${{ matrix.containers.enable }}
+      - name: "Build and Push Containers"
+        uses: docker/build-push-action@v3
+        # Build if the current branch matches the matrix branch
+        if: ${{ github.ref_name == matrix.containers.branch }}
         with:
-          context: ${{ matrix.containers.context }}
-          file: ${{ matrix.containers.context }}/Dockerfile
+          context: ${{ matrix.containers.name }}
+          file: ${{ matrix.containers.name }}/Dockerfile
           platforms: linux/amd64
-          push: ${{ matrix.containers.push }}
+          # Push if not a pull request
+          push: "${{ (github.event_name != 'pull_request') }}"
           # Convert tag and args from array to multiline strings
           tags: |-
             ${{ join(matrix.containers.tags, '

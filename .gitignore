@@ -1,3 +1,5 @@
 **/.mount
 **/*.docker-build
 **/*.docker-create
+**/bin
+**/obj

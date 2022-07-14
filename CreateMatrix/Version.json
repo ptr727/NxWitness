@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json",
+  "SchemaVersion": 1,
+  "Products": [
+    {
+      "Name": "NxMeta",
+      "Stable": {
+        "Version": "4.2.0.33313",
+        "Uri": "https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+      },
+      "Latest": {
+        "Version": "5.0.0.35062",
+        "Uri": "https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
+      }
+    },
+    {
+      "Name": "NxWitness",
+      "Stable": {
+        "Version": "4.2.0.34860",
+        "Uri": "https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
+      },
+      "Latest": {
+        "Version": "5.0.0.35064",
+        "Uri": "http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
+      }
+    },
+    {
+      "Name": "DWSpectrum",
+      "Stable": {
+        "Version": "4.2.0.32842",
+        "Uri": "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+      },
+      "Latest": {
+        "Version": "4.2.0.32842",
+        "Uri": "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+      }
+    }
+  ]
+}
