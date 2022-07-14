@@ -74,7 +74,7 @@ public class ImageInfo
         imageInfo.AddArgs(productVersion.Latest);
 
         // If stable and latest version is the same combine the tags
-        if (productVersion.Latest.Equals(productVersion.Stable))
+        if (productVersion.Latest.Version.Equals(productVersion.Stable.Version))
         {
             // Add stable tag to same image
             imageInfo.AddTag("stable", tagPrefix);

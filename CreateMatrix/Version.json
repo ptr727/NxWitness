@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json",
   "SchemaVersion": 1,
   "Products": [
+    // https://meta.nxvms.com/downloads/patches
     {
       "Name": "NxMeta",
       "Stable": {
@@ -13,6 +14,7 @@
         "Uri": "https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
       }
     },
+    // https://beta.networkoptix.com/beta-builds/default/
     {
       "Name": "NxWitness",
       "Stable": {
@@ -24,6 +26,7 @@
         "Uri": "http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
       }
     },
+    // https://dwspectrum.digital-watchdog.com/download/linux
     {
       "Name": "DWSpectrum",
       "Stable": {
