@@ -73,7 +73,7 @@ jobs:
     strategy:
       # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
-        containers: ${{ fromJson(needs.setmatrix.outputs.matrix) }}
+        images: ${{ fromJson(needs.setmatrix.outputs.matrix.images) }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -108,17 +108,17 @@ jobs:
       - name: "Build and Push Containers"
         uses: docker/build-push-action@v3
         # Build if the current branch matches the matrix branch
-        if: ${{ github.ref_name == matrix.containers.branch }}
+        if: ${{ github.ref_name == matrix.images.branch }}
         with:
           context: ${{ matrix.containers.name }}
-          file: ${{ matrix.containers.name }}/Dockerfile
+          file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
           # Push if not a pull request
           push: "${{ (github.event_name != 'pull_request') }}"
           # Convert tag and args from array to multiline strings
           tags: |-
-            ${{ join(matrix.containers.tags, '
+            ${{ join(matrix.images.tags, '
             ') }}
           build-args: |-
-            ${{ join(matrix.containers.args, '
+            ${{ join(matrix.images.args, '
             ') }}
