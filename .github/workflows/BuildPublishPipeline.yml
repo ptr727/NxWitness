@@ -107,7 +107,7 @@ jobs:
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
           # Push only if not a pull request and branch name matches current branch
-          push: "${{ (github.event_name != 'pull_request') }} && ${{ github.ref_name == matrix.images.branch }}"
+          push: "${{ (github.event_name != 'pull_request') && (github.ref_name == matrix.images.branch) }}"
           # Convert tag and args from array to multiline strings
           tags: |-
             ${{ join(matrix.images.tags, '
