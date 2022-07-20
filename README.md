@@ -188,17 +188,20 @@ Product releases and updates can be found at the following locations:
 
 - Nx Witness:
   - [JSON API](https://nxvms.com/api/utils/downloads)
-  - [Nx Witness Downloads](https://nxvms.com/download/linux)
-  - [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - [Downloads](https://nxvms.com/download/linux)
+  - [Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - [Release Notes](https://www.networkoptix.com/all-nx-witness-release-notes)
 - Nx Meta:
   - [JSON API](https://meta.nxvms.com/api/utils/downloads)
-  - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
-  - [Nx Meta Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
-  - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
-  - [Nx Meta Beta Downloads](https://meta.nxvms.com/downloads/patches)
+  - [Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
+  - [Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
+  - [Downloads](https://meta.nxvms.com/download/linux)
+  - [Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
   - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
-  - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
+  - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
+  - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
+
   - DW Spectrum versions often lag Nx Witness releases, or are not published.
 
 Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".

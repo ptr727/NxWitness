@@ -1,0 +1,291 @@
+{
+    "version": "4.2.0.32842",
+    "releaseNotes": "https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html",
+    "product": "dwspectrum",
+    "productDescription": "Video Management System",
+    "date": "27 Apr 2021",
+    "buildNumber": "32842",
+    "password": "hkh1td",
+    "type": "release",
+    "installers": [
+        {
+            "platform": "linux64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-client-4.2.0.32842-linux64.deb",
+            "path": "linux/dwspectrum-client-4.2.0.32842-linux64.deb",
+            "niceName": "Ubuntu x64 - Client installer"
+        },
+        {
+            "platform": "linux64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-server-4.2.0.32842-linux64.deb",
+            "path": "linux/dwspectrum-server-4.2.0.32842-linux64.deb",
+            "niceName": "Ubuntu x64 - Server installer"
+        },
+        {
+            "platform": "win64",
+            "appType": "bundle",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-bundle-4.2.0.32842-win64.exe",
+            "path": "windows/dwspectrum-bundle-4.2.0.32842-win64.exe",
+            "niceName": "Windows x64 - Client & Server"
+        },
+        {
+            "platform": "win64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-client-4.2.0.32842-win64.exe",
+            "path": "windows/dwspectrum-client-4.2.0.32842-win64.exe",
+            "niceName": "Windows x64 - Client installer"
+        },
+        {
+            "platform": "Net2v5",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-paxton_plugin-4.2.0.32842-Net2v5.exe",
+            "path": "windows/dwspectrum-paxton_plugin-4.2.0.32842-Net2v5.exe",
+            "niceName": "Paxton Net2 Pro v5 - plugin installer"
+        },
+        {
+            "platform": "Net2v6",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-paxton_plugin-4.2.0.32842-Net2v6.exe",
+            "path": "windows/dwspectrum-paxton_plugin-4.2.0.32842-Net2v6.exe",
+            "niceName": "Paxton Net2 Pro v6 - plugin installer"
+        },
+        {
+            "platform": "win64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-server-4.2.0.32842-win64.exe",
+            "path": "windows/dwspectrum-server-4.2.0.32842-win64.exe",
+            "niceName": "Windows x64 - Server installer"
+        },
+        {
+            "platform": "win64",
+            "appType": "testcamera",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-testcamera-4.2.0.32842-win64.zip",
+            "path": "windows/dwspectrum-testcamera-4.2.0.32842-win64.zip",
+            "niceName": "Windows x64 - Test camera"
+        },
+        {
+            "platform": "mac",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-client-4.2.0.32842-mac.dmg",
+            "path": "macos/dwspectrum-client-4.2.0.32842-mac.dmg",
+            "niceName": "Mac OS - Client installer"
+        },
+        {
+            "platform": "edge1",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-server-4.2.0.32842-edge1.zip",
+            "path": "arm/dwspectrum-server-4.2.0.32842-edge1.zip",
+            "niceName": "Edge - Server installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-client-4.2.0.32842-linux_arm64.deb",
+            "path": "arm/dwspectrum-client-4.2.0.32842-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Client installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-server-4.2.0.32842-linux_arm64.deb",
+            "path": "arm/dwspectrum-server-4.2.0.32842-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Server installer"
+        },
+        {
+            "platform": "linux_arm32",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-server-4.2.0.32842-linux_arm32.deb",
+            "path": "arm/dwspectrum-server-4.2.0.32842-linux_arm32.deb",
+            "niceName": "Raspberry Pi / ARM32 - Server installer"
+        },
+        {
+            "platform": "universal",
+            "appType": "metadata_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-metadata_sdk-4.2.0.32842-universal.zip",
+            "path": "sdk/dwspectrum-metadata_sdk-4.2.0.32842-universal.zip",
+            "niceName": "Cross-platform - SDK: Metadata"
+        },
+        {
+            "platform": "universal",
+            "appType": "storage_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-storage_sdk-4.2.0.32842-universal.zip",
+            "path": "sdk/dwspectrum-storage_sdk-4.2.0.32842-universal.zip",
+            "niceName": "Cross-platform - SDK: Storage"
+        },
+        {
+            "platform": "universal",
+            "appType": "video_source_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "dwspectrum-video_source_sdk-4.2.0.32842-universal.zip",
+            "path": "sdk/dwspectrum-video_source_sdk-4.2.0.32842-universal.zip",
+            "niceName": "Cross-platform - SDK: Camera"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "linux",
+            "files": [
+                {
+                    "platform": "linux64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-client-4.2.0.32842-linux64.deb",
+                    "path": "linux/dwspectrum-client-4.2.0.32842-linux64.deb",
+                    "niceName": "Ubuntu x64 - Client installer"
+                },
+                {
+                    "platform": "linux64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-server-4.2.0.32842-linux64.deb",
+                    "path": "linux/dwspectrum-server-4.2.0.32842-linux64.deb",
+                    "niceName": "Ubuntu x64 - Server installer"
+                }
+            ]
+        },
+        {
+            "name": "windows",
+            "files": [
+                {
+                    "platform": "Net2v5",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-paxton_plugin-4.2.0.32842-Net2v5.exe",
+                    "path": "windows/dwspectrum-paxton_plugin-4.2.0.32842-Net2v5.exe",
+                    "niceName": "Paxton Net2 Pro v5 - plugin installer"
+                },
+                {
+                    "platform": "Net2v6",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-paxton_plugin-4.2.0.32842-Net2v6.exe",
+                    "path": "windows/dwspectrum-paxton_plugin-4.2.0.32842-Net2v6.exe",
+                    "niceName": "Paxton Net2 Pro v6 - plugin installer"
+                },
+                {
+                    "platform": "win64",
+                    "appType": "bundle",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-bundle-4.2.0.32842-win64.exe",
+                    "path": "windows/dwspectrum-bundle-4.2.0.32842-win64.exe",
+                    "niceName": "Windows x64 - Client & Server"
+                },
+                {
+                    "platform": "win64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-client-4.2.0.32842-win64.exe",
+                    "path": "windows/dwspectrum-client-4.2.0.32842-win64.exe",
+                    "niceName": "Windows x64 - Client installer"
+                },
+                {
+                    "platform": "win64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-server-4.2.0.32842-win64.exe",
+                    "path": "windows/dwspectrum-server-4.2.0.32842-win64.exe",
+                    "niceName": "Windows x64 - Server installer"
+                },
+                {
+                    "platform": "win64",
+                    "appType": "testcamera",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-testcamera-4.2.0.32842-win64.zip",
+                    "path": "windows/dwspectrum-testcamera-4.2.0.32842-win64.zip",
+                    "niceName": "Windows x64 - Test camera"
+                }
+            ]
+        },
+        {
+            "name": "macos",
+            "files": [
+                {
+                    "platform": "mac",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-client-4.2.0.32842-mac.dmg",
+                    "path": "macos/dwspectrum-client-4.2.0.32842-mac.dmg",
+                    "niceName": "Mac OS - Client installer"
+                }
+            ]
+        },
+        {
+            "name": "sdk",
+            "files": [
+                {
+                    "platform": "universal",
+                    "appType": "video_source_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-video_source_sdk-4.2.0.32842-universal.zip",
+                    "path": "sdk/dwspectrum-video_source_sdk-4.2.0.32842-universal.zip",
+                    "niceName": "Cross-platform - SDK: Camera"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "metadata_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-metadata_sdk-4.2.0.32842-universal.zip",
+                    "path": "sdk/dwspectrum-metadata_sdk-4.2.0.32842-universal.zip",
+                    "niceName": "Cross-platform - SDK: Metadata"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "storage_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "dwspectrum-storage_sdk-4.2.0.32842-universal.zip",
+                    "path": "sdk/dwspectrum-storage_sdk-4.2.0.32842-universal.zip",
+                    "niceName": "Cross-platform - SDK: Storage"
+                }
+            ]
+        }
+    ],
+    "backwardsCompatible": true,
+    "cloudGroup": "prod",
+    "beta": false,
+    "dismissed": false,
+    "releaseUrl": "https://updates.networkoptix.com/digitalwatchdog/32842/"
+}

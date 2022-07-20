@@ -1,8 +1,6 @@
-﻿using System.Security.AccessControl;
+﻿namespace CreateMatrix;
 
-namespace CreateMatrix;
-
-public class BuildInfo
+public static class BuildInfo
 {
     public static List<ImageInfo> CreateImages(List<ProductVersion> productList)
     {
@@ -11,7 +9,7 @@ public class BuildInfo
         foreach (var productVersion in productList)
         {
             // Iterate through base names
-            foreach (var baseName in BuildInfo.BaseNames)
+            foreach (var baseName in BaseNames)
             {
                 // Create images
                 imageList.AddRange(ImageInfo.CreateImages(productVersion, baseName, ""));
@@ -27,7 +25,7 @@ public class BuildInfo
         ArgumentNullException.ThrowIfNull(nxMeta);
 
         // Iterate through base names
-        foreach (var baseName in BuildInfo.BaseNames)
+        foreach (var baseName in BaseNames)
         {
             // Create images
             developList.AddRange(ImageInfo.CreateImages(nxMeta, baseName, "develop"));

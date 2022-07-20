@@ -10,14 +10,7 @@ public class ImageInfo
     public void SetName(string productName, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
-        if (string.IsNullOrEmpty(baseName))
-        {
-            Name = productName;
-        }
-        else
-        {
-            Name = $"{productName}-{baseName}";
-        }
+        Name = string.IsNullOrEmpty(baseName) ? productName : $"{productName}-{baseName}";
     }
 
     public string Name { get; set; } = "";
@@ -34,15 +27,7 @@ public class ImageInfo
     public void AddTag(string tag, string tagPrefix)
     {
         // E.g. latest, develop-latest
-        string prefixTag;
-        if (string.IsNullOrEmpty(tagPrefix))
-        {
-            prefixTag = tag;
-        }
-        else
-        {
-            prefixTag = $"{tagPrefix}-{tag}";
-        }
+        var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
         // Docker Hub
         Tags.Add($"docker.io/ptr727/{Name.ToLower()}:{prefixTag}");
@@ -91,7 +76,7 @@ public class ImageInfo
         imageList.Add(imageInfo);
 
         // Crate stable image
-        imageInfo = new();
+        imageInfo = new ImageInfo();
         imageInfo.SetName(productVersion.Name, baseName);
 
         // Stable args
@@ -124,48 +109,33 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     [Required]
     public List<ImageInfo> Images { get; set; } = new();
 
-    public void Create(List<ProductVersion> products)
-    {
-    }
-
     public static MatrixJsonSchema FromFile(string path)
     {
-        Log.Logger.Information("Reading matrix from {path}", path);
         return FromJson(File.ReadAllText(path));
     }
 
-    public static void ToFile(string path, MatrixJsonSchema json)
+    public static void ToFile(string path, MatrixJsonSchema jsonSchema)
     {
-        Log.Logger.Information("Writing matrix to {path}", path);
-        json.SchemaVersion = Version;
-        File.WriteAllText(path, ToJson(json));
+        jsonSchema.SchemaVersion = Version;
+        File.WriteAllText(path, ToJson(jsonSchema));
     }
 
-    private static string ToJson(MatrixJsonSchema settings)
+    private static string ToJson(MatrixJsonSchema jsonSchema)
     {
-        return JsonConvert.SerializeObject(settings, Settings);
+        return JsonConvert.SerializeObject(jsonSchema, Settings);
     }
 
-    private static MatrixJsonSchema FromJson(string json)
+    private static MatrixJsonSchema FromJson(string jsonString)
     {
-        var VersionJsonSchemaBase = JsonConvert.DeserializeObject<VersionJsonSchemaBase>(json, Settings);
-        if (VersionJsonSchemaBase == null)
-        {
-            Log.Logger.Error("Failed to deserialize");
-            ArgumentNullException.ThrowIfNull(VersionJsonSchemaBase);
-        }
-
-        int schemaVersion = VersionJsonSchemaBase.SchemaVersion;
-
-        // Deserialize the correct version
+        var versionJsonSchemaBase = JsonConvert.DeserializeObject<VersionJsonSchemaBase>(jsonString, Settings);
+        ArgumentNullException.ThrowIfNull(versionJsonSchemaBase);
+        var schemaVersion = versionJsonSchemaBase.SchemaVersion;
         switch (schemaVersion)
         {
-            // Current version
             case Version:
-                var schema = JsonConvert.DeserializeObject<MatrixJsonSchema>(json, Settings);
+                var schema = JsonConvert.DeserializeObject<MatrixJsonSchema>(jsonString, Settings);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
-            // Unknown version
             default:
                 Log.Logger.Error("Unknown schema version : {SchemaVersion}", schemaVersion);
                 throw new NotSupportedException(nameof(schemaVersion));
@@ -177,10 +147,6 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
         Formatting = Formatting.Indented,
         StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
         NullValueHandling = NullValueHandling.Ignore,
-        // We expect containers to be cleared before deserializing
-        // Make sure that collections are not read-only (get; set;) else deserialized values will be appended
-        // https://stackoverflow.com/questions/35482896/clear-collections-before-adding-items-when-populating-existing-objects
         ObjectCreationHandling = ObjectCreationHandling.Replace
-        // TODO: Add TraceWriter to log to Serilog
     };
 }

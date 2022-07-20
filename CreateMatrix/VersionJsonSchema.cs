@@ -6,6 +6,14 @@ using Serilog;
 
 namespace CreateMatrix;
 
+public enum ProductType 
+{ 
+    NxMeta, 
+    NxWitness, 
+    // ReSharper disable once InconsistentNaming
+    DWSpectrum 
+}
+
 public class VersionUri
 {
     public string Version { get; set; } = "";
@@ -44,36 +52,43 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     public void SetDefaults()
     {
-        Products = new() { 
+        Products = new List<ProductVersion>
+        { 
             new() { 
-                Name = "NxMeta", 
-                Stable = new() { 
+                Name = nameof(ProductType.NxMeta), 
+                Stable = new VersionUri
+                { 
                     Version = "4.2.0.33313", 
                     Uri = @"https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
                 },
-                Latest = new() {
+                Latest = new VersionUri
+                {
                     Version = "5.0.0.35062",
                     Uri = @"https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
                 }
             },
             new () {
-                Name = "NxWitness",
-                Stable = new() {
+                Name = nameof(ProductType.NxWitness),
+                Stable = new VersionUri
+                {
                     Version = "4.2.0.34860",
                     Uri = @"https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
                 },
-                Latest = new() {
+                Latest = new VersionUri
+                {
                     Version = "5.0.0.35064",
                     Uri = @"http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
                 }
             },
             new () {
-                Name = "DWSpectrum",
-                Stable = new() {
+                Name = nameof(ProductType.DWSpectrum),
+                Stable = new VersionUri
+                {
                     Version = "4.2.0.32842",
                     Uri = @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
                 },
-                Latest = new() {
+                Latest = new VersionUri
+                {
                     Version = "4.2.0.32842",
                     Uri = @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
                 }
@@ -81,9 +96,25 @@ public class VersionJsonSchema : VersionJsonSchemaBase
         };
     }
 
+    public void GetOnlineVersions()
+    {
+        foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+        {
+            // Load version from JSON
+            var productVersion = Products.First(item => item.Name.Equals(productType.ToString()));
+            Log.Logger.Information("Getting latest version of {ProductType}", productType);
+            LatestVersion.GetVersion(productType, out var versionUri);
+
+            // Set stable version if different
+            if (productVersion.Stable.Version.Equals(versionUri.Version)) continue;
+            Log.Logger.Information("Version Updated: Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}", productVersion.Stable.Version, versionUri.Version, versionUri.Uri);
+            productVersion.Stable = versionUri;
+        }
+    }
+
     public static void WriteDefaultsToFile(string path)
     {
-        Log.Logger.Information("Writeing defaults to {path}", path);
+        Log.Logger.Information("Writing defaults to {Path}", path);
         VersionJsonSchema config = new();
         config.SetDefaults();
         ToFile(path, config);
@@ -91,39 +122,32 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     public static VersionJsonSchema FromFile(string path)
     {
-        Log.Logger.Information("Reading version from {path}", path);
         return FromJson(File.ReadAllText(path));
     }
 
-    public static void ToFile(string path, VersionJsonSchema json)
+    public static void ToFile(string path, VersionJsonSchema jsonSchema)
     {
-        Log.Logger.Information("Writing version to {path}", path);
-        json.SchemaVersion = Version;
-        File.WriteAllText(path, ToJson(json));
+        jsonSchema.SchemaVersion = Version;
+        File.WriteAllText(path, ToJson(jsonSchema));
     }
 
-    private static string ToJson(VersionJsonSchema settings)
+    private static string ToJson(VersionJsonSchema jsonSchema)
     {
-        return JsonConvert.SerializeObject(settings, Settings);
+        return JsonConvert.SerializeObject(jsonSchema, Settings);
     }
 
-    private static VersionJsonSchema FromJson(string json)
+    private static VersionJsonSchema FromJson(string jsonString)
     {
-        var VersionJsonSchemaBase = JsonConvert.DeserializeObject<VersionJsonSchemaBase>(json, Settings);
-        if (VersionJsonSchemaBase == null)
-        {
-            Log.Logger.Error("Failed to deserialize");
-            ArgumentNullException.ThrowIfNull(VersionJsonSchemaBase);
-        }
-
-        int schemaVersion = VersionJsonSchemaBase.SchemaVersion;
+        var versionJsonSchemaBase = JsonConvert.DeserializeObject<VersionJsonSchemaBase>(jsonString, Settings);
+        ArgumentNullException.ThrowIfNull(versionJsonSchemaBase);
 
         // Deserialize the correct version
+        var schemaVersion = versionJsonSchemaBase.SchemaVersion;
         switch (schemaVersion)
         {
             // Current version
             case Version:
-                var schema = JsonConvert.DeserializeObject<VersionJsonSchema>(json, Settings);
+                var schema = JsonConvert.DeserializeObject<VersionJsonSchema>(jsonString, Settings);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
             // Unknown version
@@ -147,18 +171,18 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     public static void GenerateSchema(string path)
     {
-        Log.Logger.Information("Writing schema to {path}", path);
+        Log.Logger.Information("Writing schema to {Path}", path);
 
         // Create JSON schema
         var generator = new JSchemaGenerator
         {
             // TODO: How can I make the default schema required, and just mark individual items as not required?
-            DefaultRequired = Newtonsoft.Json.Required.Default
+            DefaultRequired = Required.Default
         };
         var schema = generator.Generate(typeof(VersionJsonSchema));
         schema.Title = "CreateMatrix Version Schema";
         schema.SchemaVersion = new Uri("http://json-schema.org/draft-06/schema");
-        schema.Id = new Uri(VersionJsonSchemaBase.SchemaUri);
+        schema.Id = new Uri(SchemaUri);
         File.WriteAllText(path, schema.ToString());
     }
 }
