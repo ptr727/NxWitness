@@ -11,7 +11,7 @@ public static class LatestVersion
     {
         switch (productType)
         {
-            case ProductType.NxMeta: 
+            case ProductType.NxMeta:
                 GetVersion(new Uri("https://meta.nxvms.com/api/utils/downloads"), out versionUri);
                 break;
             case ProductType.NxWitness:
@@ -62,6 +62,7 @@ public static class LatestVersion
             {
                 product = "default";
             }
+
             // DWSpectrum is 404 when using dwspectrum, use digitalwatchdog
             if (product.Equals("dwspectrum", StringComparison.OrdinalIgnoreCase))
             {
@@ -78,24 +79,25 @@ public static class LatestVersion
             // "appType": "server"
             // "path": "linux/metavms-server-5.0.0.35134-linux_x64.deb",
             Debug.Assert(jsonSchema.Installers.Count > 0);
-            var installer = jsonSchema.Installers.First(item => 
-                item.Platform.StartsWith("linux", StringComparison.OrdinalIgnoreCase) && 
+            var installer = jsonSchema.Installers.First(item =>
+                item.Platform.StartsWith("linux", StringComparison.OrdinalIgnoreCase) &&
                 item.AppType.Equals("server", StringComparison.OrdinalIgnoreCase));
             ArgumentNullException.ThrowIfNull(installer);
-            
+
             // https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb
             // http://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb
             // https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb
             versionUri.Uri = $"https://updates.networkoptix.com/{product}/{buildNumber}/{installer.Path}";
-            Log.Logger.Information("Version: {Version}, File Name: {FileName}, Uri: {Uri}", versionUri.Version, installer.FileName, versionUri.Uri);
+            Log.Logger.Information("Version: {Version}, File Name: {FileName}, Uri: {Uri}", versionUri.Version,
+                installer.FileName, versionUri.Uri);
 
             // Verify URL
             Log.Logger.Information("Verifying Uri: {Uri}", versionUri.Uri);
             var httpResponse = httpClient.GetAsync(versionUri.Uri).Result;
             httpResponse.EnsureSuccessStatusCode();
-            Log.Logger.Information("File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}", 
-                installer.FileName, 
-                httpResponse.Content.Headers.ContentLength, 
+            Log.Logger.Information("File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}",
+                installer.FileName,
+                httpResponse.Content.Headers.ContentLength,
                 httpResponse.Content.Headers.LastModified);
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))

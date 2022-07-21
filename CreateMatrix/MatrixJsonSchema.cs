@@ -106,8 +106,7 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
 {
     public const int Version = 1;
 
-    [Required]
-    public List<ImageInfo> Images { get; set; } = new();
+    [Required] public List<ImageInfo> Images { get; set; } = new();
 
     public static MatrixJsonSchema FromFile(string path)
     {

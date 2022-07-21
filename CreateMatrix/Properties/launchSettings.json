@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Matrix": {
+      "commandName": "Project",
+      "commandLineArgs": "matrix --online=true"
+    },
+    "Defaults": {
+      "commandName": "Project",
+      "commandLineArgs": "defaults --online=true"
+    }
+  }
+}

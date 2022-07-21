@@ -6,12 +6,13 @@ using Serilog;
 
 namespace CreateMatrix;
 
-public enum ProductType 
-{ 
-    NxMeta, 
-    NxWitness, 
+public enum ProductType
+{
+    NxMeta,
+    NxWitness,
+
     // ReSharper disable once InconsistentNaming
-    DWSpectrum 
+    DWSpectrum
 }
 
 public class VersionUri
@@ -40,63 +41,72 @@ public class VersionJsonSchemaBase
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate, Order = -2)]
     public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
 
-    public const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json";
+    public const string SchemaUri =
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json";
 }
 
 public class VersionJsonSchema : VersionJsonSchemaBase
 {
     public const int Version = 1;
 
-    [Required]
-    public List<ProductVersion> Products { get; set; } = new ();
+    [Required] public List<ProductVersion> Products { get; set; } = new();
 
     public void SetDefaults()
     {
         Products = new List<ProductVersion>
-        { 
-            new() { 
-                Name = nameof(ProductType.NxMeta), 
+        {
+            new()
+            {
+                Name = nameof(ProductType.NxMeta),
                 Stable = new VersionUri
-                { 
-                    Version = "4.2.0.33313", 
-                    Uri = @"https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+                {
+                    Version = "5.0.0.35134",
+                    Uri =
+                        @"https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
                 },
                 Latest = new VersionUri
                 {
-                    Version = "5.0.0.35062",
-                    Uri = @"https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
+                    Version = "5.0.0.35134",
+                    Uri =
+                        @"https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
                 }
             },
-            new () {
+            new()
+            {
                 Name = nameof(ProductType.NxWitness),
                 Stable = new VersionUri
                 {
-                    Version = "4.2.0.34860",
-                    Uri = @"https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
+                    Version = "5.0.0.35136",
+                    Uri =
+                        @"https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
                 },
                 Latest = new VersionUri
                 {
-                    Version = "5.0.0.35064",
-                    Uri = @"http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
+                    Version = "5.0.0.35136",
+                    Uri =
+                        @"https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
                 }
             },
-            new () {
+            new()
+            {
                 Name = nameof(ProductType.DWSpectrum),
                 Stable = new VersionUri
                 {
                     Version = "4.2.0.32842",
-                    Uri = @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+                    Uri =
+                        @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
                 },
                 Latest = new VersionUri
                 {
                     Version = "4.2.0.32842",
-                    Uri = @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
+                    Uri =
+                        @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
                 }
             }
         };
     }
 
-    public void GetOnlineVersions()
+    public void GetOnlineUpdates()
     {
         foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
         {
@@ -105,16 +115,33 @@ public class VersionJsonSchema : VersionJsonSchemaBase
             Log.Logger.Information("Getting latest version of {ProductType}", productType);
             LatestVersion.GetVersion(productType, out var versionUri);
 
-            // Set stable version if different
-            if (productVersion.Stable.Version.Equals(versionUri.Version)) continue;
-            Log.Logger.Information("Version Updated: Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}", productVersion.Stable.Version, versionUri.Version, versionUri.Uri);
-            productVersion.Stable = versionUri;
+            // Did the stable version change
+            if (!productVersion.Stable.Version.Equals(versionUri.Version))
+            {
+                // Update stable version
+                Log.Logger.Information(
+                    "Stable Version Updated : Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}",
+                    productVersion.Stable.Version, versionUri.Version, versionUri.Uri);
+                productVersion.Stable = versionUri;
+            }
+
+            // Is the stable version greater than the latest version
+            var stableVersion = new Version(productVersion.Stable.Version);
+            var latestVersion = new Version(productVersion.Latest.Version);
+            if (stableVersion.CompareTo(latestVersion) > 0)
+            {
+                Log.Logger.Warning("Stable Version > Latest Version : Stable: {Stable}, Latest: {Latest}",
+                    productVersion.Stable.Version, productVersion.Latest.Version);
+                Log.Logger.Information(
+                    "Latest Version Updated : Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}",
+                    productVersion.Latest.Version, productVersion.Stable.Version, productVersion.Stable.Uri);
+                productVersion.Latest = productVersion.Stable;
+            }
         }
     }
 
     public static void WriteDefaultsToFile(string path)
     {
-        Log.Logger.Information("Writing defaults to {Path}", path);
         VersionJsonSchema config = new();
         config.SetDefaults();
         ToFile(path, config);
@@ -171,8 +198,6 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     public static void GenerateSchema(string path)
     {
-        Log.Logger.Information("Writing schema to {Path}", path);
-
         // Create JSON schema
         var generator = new JSchemaGenerator
         {
