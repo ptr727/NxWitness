@@ -1,5 +1,4 @@
 {
-  "SchemaVersion": 1,
   "Images": [
     {
       "Name": "NxMeta",
@@ -7,26 +6,14 @@
       "Tags": [
         "docker.io/ptr727/nxmeta:latest",
         "ghcr.io/ptr727/nxmeta:latest",
-        "docker.io/ptr727/nxmeta:5.0.0.35062",
-        "ghcr.io/ptr727/nxmeta:5.0.0.35062"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35062",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxMeta",
-      "Branch": "main",
-      "Tags": [
+        "docker.io/ptr727/nxmeta:5.0.0.35134",
+        "ghcr.io/ptr727/nxmeta:5.0.0.35134",
         "docker.io/ptr727/nxmeta:stable",
-        "ghcr.io/ptr727/nxmeta:stable",
-        "docker.io/ptr727/nxmeta:4.2.0.33313",
-        "ghcr.io/ptr727/nxmeta:4.2.0.33313"
+        "ghcr.io/ptr727/nxmeta:stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.33313",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35134",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
       ]
     },
     {
@@ -35,26 +22,14 @@
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:latest",
         "ghcr.io/ptr727/nxmeta-lsio:latest",
-        "docker.io/ptr727/nxmeta-lsio:5.0.0.35062",
-        "ghcr.io/ptr727/nxmeta-lsio:5.0.0.35062"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35062",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxMeta-LSIO",
-      "Branch": "main",
-      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:5.0.0.35134",
+        "ghcr.io/ptr727/nxmeta-lsio:5.0.0.35134",
         "docker.io/ptr727/nxmeta-lsio:stable",
-        "ghcr.io/ptr727/nxmeta-lsio:stable",
-        "docker.io/ptr727/nxmeta-lsio:4.2.0.33313",
-        "ghcr.io/ptr727/nxmeta-lsio:4.2.0.33313"
+        "ghcr.io/ptr727/nxmeta-lsio:stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.33313",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35134",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
       ]
     },
     {
@@ -63,26 +38,14 @@
       "Tags": [
         "docker.io/ptr727/nxwitness:latest",
         "ghcr.io/ptr727/nxwitness:latest",
-        "docker.io/ptr727/nxwitness:5.0.0.35064",
-        "ghcr.io/ptr727/nxwitness:5.0.0.35064"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35064",
-        "DOWNLOAD_URL=http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxWitness",
-      "Branch": "main",
-      "Tags": [
+        "docker.io/ptr727/nxwitness:5.0.0.35136",
+        "ghcr.io/ptr727/nxwitness:5.0.0.35136",
         "docker.io/ptr727/nxwitness:stable",
-        "ghcr.io/ptr727/nxwitness:stable",
-        "docker.io/ptr727/nxwitness:4.2.0.34860",
-        "ghcr.io/ptr727/nxwitness:4.2.0.34860"
+        "ghcr.io/ptr727/nxwitness:stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.34860",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35136",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
       ]
     },
     {
@@ -91,26 +54,14 @@
       "Tags": [
         "docker.io/ptr727/nxwitness-lsio:latest",
         "ghcr.io/ptr727/nxwitness-lsio:latest",
-        "docker.io/ptr727/nxwitness-lsio:5.0.0.35064",
-        "ghcr.io/ptr727/nxwitness-lsio:5.0.0.35064"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35064",
-        "DOWNLOAD_URL=http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxWitness-LSIO",
-      "Branch": "main",
-      "Tags": [
+        "docker.io/ptr727/nxwitness-lsio:5.0.0.35136",
+        "ghcr.io/ptr727/nxwitness-lsio:5.0.0.35136",
         "docker.io/ptr727/nxwitness-lsio:stable",
-        "ghcr.io/ptr727/nxwitness-lsio:stable",
-        "docker.io/ptr727/nxwitness-lsio:4.2.0.34860",
-        "ghcr.io/ptr727/nxwitness-lsio:4.2.0.34860"
+        "ghcr.io/ptr727/nxwitness-lsio:stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.34860",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/default/4.2.0.34860/linux/nxwitness-server-4.2.0.34860-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35136",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
       ]
     },
     {
@@ -151,28 +102,16 @@
       "Tags": [
         "docker.io/ptr727/nxmeta:develop-latest",
         "ghcr.io/ptr727/nxmeta:develop-latest",
-        "docker.io/ptr727/nxmeta:develop-5.0.0.35062",
-        "ghcr.io/ptr727/nxmeta:develop-5.0.0.35062",
+        "docker.io/ptr727/nxmeta:develop-5.0.0.35134",
+        "ghcr.io/ptr727/nxmeta:develop-5.0.0.35134",
         "docker.io/ptr727/nxmeta:develop",
-        "ghcr.io/ptr727/nxmeta:develop"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35062",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxMeta",
-      "Branch": "develop",
-      "Tags": [
+        "ghcr.io/ptr727/nxmeta:develop",
         "docker.io/ptr727/nxmeta:develop-stable",
-        "ghcr.io/ptr727/nxmeta:develop-stable",
-        "docker.io/ptr727/nxmeta:develop-4.2.0.33313",
-        "ghcr.io/ptr727/nxmeta:develop-4.2.0.33313"
+        "ghcr.io/ptr727/nxmeta:develop-stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.33313",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35134",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
       ]
     },
     {
@@ -181,28 +120,16 @@
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:develop-latest",
         "ghcr.io/ptr727/nxmeta-lsio:develop-latest",
-        "docker.io/ptr727/nxmeta-lsio:develop-5.0.0.35062",
-        "ghcr.io/ptr727/nxmeta-lsio:develop-5.0.0.35062",
+        "docker.io/ptr727/nxmeta-lsio:develop-5.0.0.35134",
+        "ghcr.io/ptr727/nxmeta-lsio:develop-5.0.0.35134",
         "docker.io/ptr727/nxmeta-lsio:develop",
-        "ghcr.io/ptr727/nxmeta-lsio:develop"
-      ],
-      "Args": [
-        "DOWNLOAD_VERSION=5.0.0.35062",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/5.0.0.35062%20R9/linux/metavms-server-5.0.0.35062-linux_x64.deb"
-      ]
-    },
-    {
-      "Name": "NxMeta-LSIO",
-      "Branch": "develop",
-      "Tags": [
+        "ghcr.io/ptr727/nxmeta-lsio:develop",
         "docker.io/ptr727/nxmeta-lsio:develop-stable",
-        "ghcr.io/ptr727/nxmeta-lsio:develop-stable",
-        "docker.io/ptr727/nxmeta-lsio:develop-4.2.0.33313",
-        "ghcr.io/ptr727/nxmeta-lsio:develop-4.2.0.33313"
+        "ghcr.io/ptr727/nxmeta-lsio:develop-stable"
       ],
       "Args": [
-        "DOWNLOAD_VERSION=4.2.0.33313",
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/4.2.0.33313%20P2/linux/metavms-server-4.2.0.33313-linux64-patch.deb"
+        "DOWNLOAD_VERSION=5.0.0.35134",
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
       ]
     }
   ]

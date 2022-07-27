@@ -1,0 +1,332 @@
+{
+    "version": "5.0.0.35134 R10",
+    "releaseNotes": "https://meta.nxvms.com/",
+    "product": "metavms",
+    "productDescription": "Video Management System",
+    "date": "08 Jul 2022",
+    "buildNumber": "35134",
+    "password": "9xxc4b",
+    "type": "release",
+    "installers": [
+        {
+            "platform": "linux_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-client-5.0.0.35134-linux_x64.deb",
+            "path": "linux/metavms-client-5.0.0.35134-linux_x64.deb",
+            "niceName": "Ubuntu x64 - Client installer"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-server-5.0.0.35134-linux_x64.deb",
+            "path": "linux/metavms-server-5.0.0.35134-linux_x64.deb",
+            "niceName": "Ubuntu x64 - Server installer"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "vms_benchmark",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-vms_benchmark-5.0.0.35134-linux_x64.zip",
+            "path": "linux/metavms-vms_benchmark-5.0.0.35134-linux_x64.zip",
+            "niceName": "Ubuntu x64 - VMS Benchmark Tool"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "bundle",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-bundle-5.0.0.35134-windows_x64.exe",
+            "path": "windows/metavms-bundle-5.0.0.35134-windows_x64.exe",
+            "niceName": "Windows x64 - Client & Server"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-client-5.0.0.35134-windows_x64.exe",
+            "path": "windows/metavms-client-5.0.0.35134-windows_x64.exe",
+            "niceName": "Windows x64 - Client installer"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-server-5.0.0.35134-windows_x64.exe",
+            "path": "windows/metavms-server-5.0.0.35134-windows_x64.exe",
+            "niceName": "Windows x64 - Server installer"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "testcamera",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-testcamera-5.0.0.35134-windows_x64.zip",
+            "path": "windows/metavms-testcamera-5.0.0.35134-windows_x64.zip",
+            "niceName": "Windows x64 - Test camera"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "vms_benchmark",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-vms_benchmark-5.0.0.35134-windows_x64.zip",
+            "path": "windows/metavms-vms_benchmark-5.0.0.35134-windows_x64.zip",
+            "niceName": "Windows x64 - VMS Benchmark Tool"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-client-5.0.0.35134-macos_x64.dmg",
+            "path": "macos/metavms-client-5.0.0.35134-macos_x64.dmg",
+            "niceName": "Mac OS - Client installer"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-client-5.0.0.35134-macos_arm64.dmg",
+            "path": "macos/metavms-client-5.0.0.35134-macos_arm64.dmg",
+            "niceName": "Mac OS ARM64 - Client installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-server-5.0.0.35134-linux_arm64.deb",
+            "path": "arm/metavms-server-5.0.0.35134-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Server installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-client-5.0.0.35134-linux_arm64.deb",
+            "path": "arm/metavms-client-5.0.0.35134-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Client installer"
+        },
+        {
+            "platform": "linux_arm32",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-server-5.0.0.35134-linux_arm32.deb",
+            "path": "arm/metavms-server-5.0.0.35134-linux_arm32.deb",
+            "niceName": "Raspberry Pi / ARM32 - Server installer"
+        },
+        {
+            "platform": "universal",
+            "appType": "metadata_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-metadata_sdk-5.0.0.35134-universal.zip",
+            "path": "sdk/metavms-metadata_sdk-5.0.0.35134-universal.zip",
+            "niceName": "Cross-platform - SDK: Metadata"
+        },
+        {
+            "platform": "universal",
+            "appType": "storage_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-storage_sdk-5.0.0.35134-universal.zip",
+            "path": "sdk/metavms-storage_sdk-5.0.0.35134-universal.zip",
+            "niceName": "Cross-platform - SDK: Storage"
+        },
+        {
+            "platform": "universal",
+            "appType": "video_source_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "metavms-video_source_sdk-5.0.0.35134-universal.zip",
+            "path": "sdk/metavms-video_source_sdk-5.0.0.35134-universal.zip",
+            "niceName": "Cross-platform - SDK: Camera"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "linux",
+            "files": [
+                {
+                    "platform": "linux_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-client-5.0.0.35134-linux_x64.deb",
+                    "path": "linux/metavms-client-5.0.0.35134-linux_x64.deb",
+                    "niceName": "Ubuntu x64 - Client installer"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-server-5.0.0.35134-linux_x64.deb",
+                    "path": "linux/metavms-server-5.0.0.35134-linux_x64.deb",
+                    "niceName": "Ubuntu x64 - Server installer"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "vms_benchmark",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-vms_benchmark-5.0.0.35134-linux_x64.zip",
+                    "path": "linux/metavms-vms_benchmark-5.0.0.35134-linux_x64.zip",
+                    "niceName": "Ubuntu x64 - VMS Benchmark Tool"
+                }
+            ]
+        },
+        {
+            "name": "windows",
+            "files": [
+                {
+                    "platform": "windows_x64",
+                    "appType": "bundle",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-bundle-5.0.0.35134-windows_x64.exe",
+                    "path": "windows/metavms-bundle-5.0.0.35134-windows_x64.exe",
+                    "niceName": "Windows x64 - Client & Server"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-client-5.0.0.35134-windows_x64.exe",
+                    "path": "windows/metavms-client-5.0.0.35134-windows_x64.exe",
+                    "niceName": "Windows x64 - Client installer"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-server-5.0.0.35134-windows_x64.exe",
+                    "path": "windows/metavms-server-5.0.0.35134-windows_x64.exe",
+                    "niceName": "Windows x64 - Server installer"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "testcamera",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-testcamera-5.0.0.35134-windows_x64.zip",
+                    "path": "windows/metavms-testcamera-5.0.0.35134-windows_x64.zip",
+                    "niceName": "Windows x64 - Test camera"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "vms_benchmark",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-vms_benchmark-5.0.0.35134-windows_x64.zip",
+                    "path": "windows/metavms-vms_benchmark-5.0.0.35134-windows_x64.zip",
+                    "niceName": "Windows x64 - VMS Benchmark Tool"
+                }
+            ]
+        },
+        {
+            "name": "macos",
+            "files": [
+                {
+                    "platform": "macos_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-client-5.0.0.35134-macos_x64.dmg",
+                    "path": "macos/metavms-client-5.0.0.35134-macos_x64.dmg",
+                    "niceName": "Mac OS - Client installer"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-client-5.0.0.35134-macos_arm64.dmg",
+                    "path": "macos/metavms-client-5.0.0.35134-macos_arm64.dmg",
+                    "niceName": "Mac OS ARM64 - Client installer"
+                }
+            ]
+        },
+        {
+            "name": "arm",
+            "files": [
+                {
+                    "platform": "linux_arm64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-client-5.0.0.35134-linux_arm64.deb",
+                    "path": "arm/metavms-client-5.0.0.35134-linux_arm64.deb",
+                    "niceName": "NVIDIA Jetson / ARM64 - Client installer"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-server-5.0.0.35134-linux_arm64.deb",
+                    "path": "arm/metavms-server-5.0.0.35134-linux_arm64.deb",
+                    "niceName": "NVIDIA Jetson / ARM64 - Server installer"
+                },
+                {
+                    "platform": "linux_arm32",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-server-5.0.0.35134-linux_arm32.deb",
+                    "path": "arm/metavms-server-5.0.0.35134-linux_arm32.deb",
+                    "niceName": "Raspberry Pi / ARM32 - Server installer"
+                }
+            ]
+        },
+        {
+            "name": "sdk",
+            "files": [
+                {
+                    "platform": "universal",
+                    "appType": "video_source_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-video_source_sdk-5.0.0.35134-universal.zip",
+                    "path": "sdk/metavms-video_source_sdk-5.0.0.35134-universal.zip",
+                    "niceName": "Cross-platform - SDK: Camera"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "metadata_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-metadata_sdk-5.0.0.35134-universal.zip",
+                    "path": "sdk/metavms-metadata_sdk-5.0.0.35134-universal.zip",
+                    "niceName": "Cross-platform - SDK: Metadata"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "storage_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "metavms-storage_sdk-5.0.0.35134-universal.zip",
+                    "path": "sdk/metavms-storage_sdk-5.0.0.35134-universal.zip",
+                    "niceName": "Cross-platform - SDK: Storage"
+                }
+            ]
+        }
+    ],
+    "backwardsCompatible": true,
+    "cloudGroup": "prod",
+    "beta": false,
+    "dismissed": false,
+    "releaseUrl": "https://updates.networkoptix.com/metavms/35134/"
+}

@@ -43,7 +43,7 @@ jobs:
       # Run CreateMatrix tool
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-run
       - name: "Run CreateMatrix Tool"
-        run: dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- ./Make/Version.json ./Make/Matrix.json
+        run: dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --online=true
 
       # Load Matrix.json from file
       - name: "Load Matrix JSON"
@@ -92,7 +92,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # https://github.com/marketplace/actions/docker-login
-      - name: 'Login to GitHub Container Registry'
+      - name: "Login to GitHub Container Registry"
         uses: docker/login-action@v2
         with:
           registry: ghcr.io

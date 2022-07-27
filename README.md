@@ -22,12 +22,12 @@ This allows flexibility for deployments that want to pin to specific release cha
 E.g.
 
 ```console
-docker pull ptr727/nxwitness-lsio:latest
-docker pull ptr727/nxwitness-lsio:stable
-docker pull ptr727/nxwitness-lsio:4.2.0.33313
+docker pull docker.io/ptr727/nxmeta-lsio:latest
+docker pull ghcr.io/ptr727/dwspectrum:stable
+docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
-The images are updated weekly, picking up the latest upstream OS updates.
+The images are updated weekly, picking up the latest upstream OS updates, and stable build version updates.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
@@ -52,8 +52,6 @@ The images are updated weekly, picking up the latest upstream OS updates.
 [DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker)
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker)
-
-Current product build versions are defined in the [Version.json](./Make/Version.json) file.
 
 ## Overview
 
@@ -184,34 +182,38 @@ services:
 
 ## Release Tracking
 
-Product releases and updates can be found at the following locations:
+Product releases, updates, and information can be found at the following locations:
 
 - Nx Witness:
   - [JSON API](https://nxvms.com/api/utils/downloads)
-  - [Nx Witness Downloads](https://nxvms.com/download/linux)
-  - [Nx Witness Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - [Downloads](https://nxvms.com/download/linux)
+  - [Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
+  - [Release Notes](https://www.networkoptix.com/all-nx-witness-release-notes)
 - Nx Meta:
   - [JSON API](https://meta.nxvms.com/api/utils/downloads)
-  - [Nx Meta Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
-  - [Nx Meta Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
-  - [Nx Meta Downloads](https://meta.nxvms.com/download/linux)
-  - [Nx Meta Beta Downloads](https://meta.nxvms.com/downloads/patches)
+  - [Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
+  - [Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
+  - [Downloads](https://meta.nxvms.com/download/linux)
+  - [Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
   - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
-  - [DW Spectrum Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
-  - DW Spectrum versions often lag Nx Witness releases, or are not published.
+  - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
+  - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
+  - Note that DW Spectrum versions often lag Nx Witness releases.
 
 Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
 
-There is currently no support to automatically detect newly released versions, updates are manual when I notice a version change, or when I get a change notification via [VisualPing](https://visualping.io/).
-
 ## Build Process
 
-With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) an `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
+With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
 
-Updating the product versions and download URL's are done using the `CreateMatrix` .NET Core console utility app.  
-The app takes a [Version.json](./Make/Version.json) file as input, creates permutations for product, base image, latest version, and stable version, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
-All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
+Updating the product versions and download URL's are done using the custom `CreateMatrix`  utility app.  
+The app takes a [Version.json](./Make/Version.json) file as input, creates permutations for products, base images, latest versions, stable versions, develop builds, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
+All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy derived from the `Matrix.json` file.
+
+The `CreateMatrix` utility will optionally query the latest `stable` product versions using the Network Optix online JSON API, and automatically build with the latest stable versions. In case the `stable` version is greater than the `latest` version, the `latest` version will be updated to match the `stable` version.
+
+Pre-release or Beta versions are not publish via the JSON API and are thus not automatically discoverable. I do monitor the NxMeta downloads page using [VisualPing](https://visualping.io/) but it is not always reliable. In case of new versions that are not yet building, feel free to create an issue with pointers to the downloads.
 
 ## Network Optix and Docker
 
@@ -285,7 +287,7 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
 - Windows Subsystem for Linux v2 (WSL2) is not supported.
   - The DEB installer `postinst` step the installer tries to start the service, and fails the install.
     - `Detected runtime type: wsl.`
-    - `System has not been booted with systemd as init system (PID 1). Can't operate.`  
+    - `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
   - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
 - The download CDN SSL certificates are not trusted on all systems.
@@ -357,7 +359,7 @@ shfs /media fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0
 shfs /archive fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0
 ```
 
-In this case there are two issues, the device is `/shfs` for all three mounts and will be filtered, and the filesystem type is `fuse.shfs` that is not supported and needs to be registered.  
+In this case there are two issues, the device is `/shfs` for all three mounts and will be filtered, and the filesystem type is `fuse.shfs` that is not supported and needs to be registered.
 
 Log file output for Unraid FUSE:
 
@@ -386,7 +388,7 @@ VERBOSE nx::vms::server::fs: /dev/sdb8 /media btrfs - duplicate
 VERBOSE nx::vms::server::fs: /dev/sdb8 /archive btrfs - duplicate
 ```
 
-In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.  
+In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.
 
 Add the required filesystem types in the advanced configuration menu, and restart the server:  
 Open the advanced configuration web admin page at `https://[hostname]:7001/static/index.html#/advanced`.  
