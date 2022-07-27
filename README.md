@@ -287,7 +287,7 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
 - Windows Subsystem for Linux v2 (WSL2) is not supported.
   - The DEB installer `postinst` step the installer tries to start the service, and fails the install.
     - `Detected runtime type: wsl.`
-    - `System has not been booted with systemd as init system (PID 1). Can't operate.`  
+    - `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
   - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
 - The download CDN SSL certificates are not trusted on all systems.
@@ -359,7 +359,7 @@ shfs /media fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0
 shfs /archive fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0
 ```
 
-In this case there are two issues, the device is `/shfs` for all three mounts and will be filtered, and the filesystem type is `fuse.shfs` that is not supported and needs to be registered.  
+In this case there are two issues, the device is `/shfs` for all three mounts and will be filtered, and the filesystem type is `fuse.shfs` that is not supported and needs to be registered.
 
 Log file output for Unraid FUSE:
 
@@ -388,7 +388,7 @@ VERBOSE nx::vms::server::fs: /dev/sdb8 /media btrfs - duplicate
 VERBOSE nx::vms::server::fs: /dev/sdb8 /archive btrfs - duplicate
 ```
 
-In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.  
+In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.
 
 Add the required filesystem types in the advanced configuration menu, and restart the server:  
 Open the advanced configuration web admin page at `https://[hostname]:7001/static/index.html#/advanced`.  

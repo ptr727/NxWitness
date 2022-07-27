@@ -11,6 +11,10 @@
     "Defaults": {
       "commandName": "Project",
       "commandLineArgs": "defaults --online=true"
+    },
+    "Schema": {
+      "commandName": "Project",
+      "commandLineArgs": "schema"
     }
   }
 }

@@ -1,7 +1,7 @@
-﻿using Serilog;
+﻿using System.CommandLine;
+using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
-using System.CommandLine;
 
 namespace CreateMatrix;
 
@@ -9,14 +9,18 @@ internal static class Program
 {
     private static int Main(string[] args)
     {
-        // Configure serilog console logging
-        SelfLog.Enable(Console.Error);
-        LoggerConfiguration loggerConfiguration = new();
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code,
-            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
-        Log.Logger = loggerConfiguration.CreateLogger();
+        // Configure logger
+        ConfigureLogger();
 
-        // Configure CLI options
+        // Create command line options
+        var rootCommand = CreateCommandLine();
+
+        // Run
+        return rootCommand.Invoke(args);
+    }
+
+    private static RootCommand CreateCommandLine()
+    {
         var versionOption = new Option<string>(
             name: "--version",
             description: "Version JSON file.",
@@ -68,9 +72,17 @@ internal static class Program
                 matrixCommand,
                 schemaCommand
             };
+        return rootCommand;
+    }
 
-        // Run
-        return rootCommand.Invoke(args);
+    private static void ConfigureLogger()
+    {
+        // Configure serilog console logging
+        SelfLog.Enable(Console.Error);
+        LoggerConfiguration loggerConfiguration = new();
+        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code,
+            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
+        Log.Logger = loggerConfiguration.CreateLogger();
     }
 
     private static Task<int> SchemaHandler(string schemaPath)
@@ -96,7 +108,7 @@ internal static class Program
         if (onlineUpdate)
         {
             Log.Logger.Information("Getting latest stable version information online...");
-            versionSchema.GetOnlineUpdates();
+            ProductInfo.GetLatestVersion(versionSchema.Products);
         }
 
         // Write to file
@@ -114,33 +126,29 @@ internal static class Program
 
         // Load versions
         Log.Logger.Information("Reading versions from {Path}", versionPath);
-        var versionJson = VersionJsonSchema.FromFile(versionPath);
-        Log.Logger.Information("Loaded {Count} products from {Path}", versionJson.Products.Count, versionPath);
-        foreach (var productVersion in versionJson.Products)
-        {
+        var versionSchema = VersionJsonSchema.FromFile(versionPath);
+        Log.Logger.Information("Loaded {Count} products from {Path}", versionSchema.Products.Count, versionPath);
+        foreach (var productVersion in versionSchema.Products)
             Log.Logger.Information(
                 "Product: {Product}, Stable Version: {StableVersion}, Latest Version: {LatestVersion}",
-                productVersion.Name, productVersion.Stable.Version, productVersion.Latest.Version);
-        }
+                productVersion.Product, productVersion.Stable.Version, productVersion.Latest.Version);
 
         // Replace stable versions with online version information
         if (onlineUpdate)
         {
             Log.Logger.Information("Getting latest stable version information online...");
-            versionJson.GetOnlineUpdates();
+            ProductInfo.GetLatestVersion(versionSchema.Products);
         }
 
         // Create matrix
         MatrixJsonSchema matrixJson = new()
         {
-            Images = BuildInfo.CreateImages(versionJson.Products)
+            Images = ImageInfo.CreateImages(versionSchema.Products)
         };
         Log.Logger.Information("Created {Count} images in matrix", matrixJson.Images.Count);
         foreach (var image in matrixJson.Images)
-        {
             Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", image.Name,
                 image.Branch, image.Tags.Count, image.Args.Count);
-        }
 
         // Write matrix
         Log.Logger.Information("Writing matrix to {Path}", matrixPath);
