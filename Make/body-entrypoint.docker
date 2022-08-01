@@ -1,5 +1,3 @@
-# body.docker is included
-
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
@@ -10,7 +8,7 @@ RUN apt-get update \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf ./vms_server.deb
+    && rm -rf /temp
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool

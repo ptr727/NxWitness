@@ -1,5 +1,3 @@
-# body.docker is included
-
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
@@ -20,7 +18,7 @@ RUN apt-get update \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf ./vms_server.deb
+    && rm -rf /temp
 
 # Set ownership permissions
 RUN chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin \

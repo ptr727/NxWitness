@@ -55,7 +55,7 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 
 
 .PHONY: all
-all: down entrypoint create build
+all: down copy create build
 
 .PHONY: down
 down:
@@ -68,7 +68,7 @@ up:
 .PHONY: check
 check:
 	@echo "Usage:"
-	@echo "'make entrypoint' : Copy entrypoint files"
+	@echo "'make copy' : Copy files"
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
@@ -79,8 +79,8 @@ check:
 	@echo "DIRS = $(DIRS)"
 	@echo "LOWERDIRS = $(LOWERDIRS)"
 
-.PHONY: entrypoint
-entrypoint:
+.PHONY: copy
+copy:
 	-rm -rf ../DWSpectrum-LSIO/root
 	-mkdir ../DWSpectrum-LSIO/root
 	cp -R ../LSIO/* ../DWSpectrum-LSIO/root
@@ -99,6 +99,12 @@ entrypoint:
 	-rm -rf ../NxMeta/root
 	-mkdir ../NxMeta/root
 	cp -R ../Entrypoint/* ../NxMeta/root/
+	cp Download.sh ../DWSpectrum-LSIO/Download.sh
+	cp Download.sh ../DWSpectrum/Download.sh
+	cp Download.sh ../NxWitness-LSIO/Download.sh
+	cp Download.sh ../NxWitness/Download.sh
+	cp Download.sh ../NxMeta-LSIO/Download.sh
+	cp Download.sh ../NxMeta/Download.sh
 
 .PHONY: create
 create: $(DIRS:%=%/.docker-create)

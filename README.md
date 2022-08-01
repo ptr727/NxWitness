@@ -31,7 +31,8 @@ docker pull ghcr.io/ptr727/dwspectrum:stable
 docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
-The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.
+The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.  
+See the [Build Process](#build-process) section for more details on how versions and builds are managed.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
@@ -292,9 +293,6 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
     - `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
   - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- The download CDN SSL certificates are not trusted on all systems.
-  - `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
-  - When downloading use `wget --no-verbose --no-check-certificate` to ignore the SSL error.
 - Upgrading from v4.x to v5.0:
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
   - After upgrading to 5.0, reverting to 4.2 is no longer possible.
