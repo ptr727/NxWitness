@@ -1,3 +1,5 @@
+# body.docker is included
+
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames

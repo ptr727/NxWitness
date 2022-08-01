@@ -1,9 +1,12 @@
+# body.docker is included
+
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \
         sudo \
         ./vms_server.deb \
+# Cleanup        
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

@@ -9,7 +9,7 @@ namespace CreateMatrix;
 public class VersionJsonSchemaBase
 {
     protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json";
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
 
     // Schema reference
     [JsonProperty(PropertyName = "$schema", Order = -3)]
@@ -34,61 +34,6 @@ public class VersionJsonSchema : VersionJsonSchemaBase
     };
 
     [Required] public List<ProductInfo> Products { get; set; } = new();
-
-    public void SetDefaults()
-    {
-        Products = new List<ProductInfo>
-        {
-            new()
-            {
-                Product = ProductInfo.ProductType.NxMeta,
-                Stable = new ProductInfo.VersionUri
-                {
-                    Version = "5.0.0.35134",
-                    Uri =
-                        @"https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
-                },
-                Latest = new ProductInfo.VersionUri
-                {
-                    Version = "5.0.0.35134",
-                    Uri =
-                        @"https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb"
-                }
-            },
-            new()
-            {
-                Product = ProductInfo.ProductType.NxWitness,
-                Stable = new ProductInfo.VersionUri
-                {
-                    Version = "5.0.0.35136",
-                    Uri =
-                        @"https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
-                },
-                Latest = new ProductInfo.VersionUri
-                {
-                    Version = "5.0.0.35136",
-                    Uri =
-                        @"https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb"
-                }
-            },
-            new()
-            {
-                Product = ProductInfo.ProductType.DWSpectrum,
-                Stable = new ProductInfo.VersionUri
-                {
-                    Version = "4.2.0.32842",
-                    Uri =
-                        @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-                },
-                Latest = new ProductInfo.VersionUri
-                {
-                    Version = "4.2.0.32842",
-                    Uri =
-                        @"https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-                }
-            }
-        };
-    }
 
     public static VersionJsonSchema FromFile(string path)
     {
@@ -122,8 +67,7 @@ public class VersionJsonSchema : VersionJsonSchemaBase
                 return schema;
             // Unknown version
             default:
-                Log.Logger.Error("Unknown schema version : {SchemaVersion}", schemaVersion);
-                throw new NotSupportedException(nameof(schemaVersion));
+                throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");
         }
     }
 

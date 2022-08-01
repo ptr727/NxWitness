@@ -1,0 +1,155 @@
+{
+    "version": "5.0.0.35271",
+    "cloudHost": "dwspectrum.digital-watchdog.com",
+    "releaseNotesUrl": "https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html",
+    "description": "Support for Ubuntu 16.04 will be discontinued in the next release version and Systems on Ubuntu 16.04 will be blocked from updating to the next release version.",
+    "eula": "<!DOCTYPE html>\n<html>\n<head>\n    <meta content=\"text/html; charset=utf-8\"/>\n    <title>DW Spectrum IPVMS EULA</title>\n</head>\n<body>\n\t<p style=\"text-align: center;\"><strong>DW SPECTRUM IPVMS END USER LICENSE AGREEMENT</strong></p>\n<p><strong><span style=\"text-decoration: underline;\">IMPORTANT &ndash; PLEASE READ CAREFULLY</span></strong><strong>:</strong>&nbsp;This End User License Agreement (the &ldquo;EULA&rdquo;) is a legally enforceable contract between You (either an individual or an entity) and Digital Watchdog. (the &ldquo;Company&rdquo;) regarding the use of the Company&rsquo;s software programs accompanying or provided under this Agreement together with the SDK made available by the Company, associated media, corresponding Documentation, technical configurations, and technical data (collectively, the &ldquo;Software&rdquo;). &ldquo;Documentation&rdquo; means the user&rsquo;s guide and other documentation (including print and online), if any, provided to you with the Software.</p>\n<p>BY CLICKING &ldquo;I ACCEPT&rdquo; BUTTON BELOW OR BY DOWNLOADING, INSTALLING OR OTHERWISE USING THE SOFTWARE, YOU CONSENT TO BE LEGALLY BOUND BY ALL THE TERMS AND CONDITIONS OF THE AGREEMENT. IF YOU ARE ENTERING INTO THE AGREEMENT ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE AUTHORITY TO BIND SUCH ENTITY AND ITS AFFILIATES TO THE AGREEMENT, IN WHICH CASE THE TERMS \"YOU\" OR \"YOUR\" SHALL REFER TO SUCH ENTITY AND ITS AFFILIATES. IF YOU DO NOT HAVE SUCH AUTHORITY, OR IF YOU DO NOT AGREE WITH ANY OF THE TERMS OF THE AGREEMENT, YOU MUST NOT ACCEPT THE AGREEMENT AND MAY NOT USE THE SOFTWARE.</p>\n<p>In addition, certain third party programs or code (&ldquo;Third Party Software&rdquo;) are being provided to you under the terms and conditions of a separate end user license accompanying such Third Party Software (&ldquo;Third Party Software Licenses&rdquo;), which will be provided to you by the Company as part of the Documentation or may be made available for viewing by the Company at the website or webpage at https://dwspectrum.digital-watchdog.com/content/libraries(the &ldquo;Third Party Site&rdquo;). If required by any Third Party Software License, the Companywill make such Third Party Software, and the Company&rsquo;s modifications to that Third Party Software, available to you on the Third Party Site. The Company may be required or wish to provide you with certain notices or information about Third Party Software or Third Party Software Licenses and you acknowledge that such notices and information may be provided to you by the posting of such notices and information on the Third Party Site. BY INSTALLING, COPYING OR OTHERWISE USING THE SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT AS WELL AS THE TERMS OF THIRD PARTY SOFTWARE LICENSES. IF YOU DO NOT AGREE TO ALL SUCH TERMS, DO NOT INSTALL OR USE THE SOFTWARE.</p>\n<ol>\n<li><strong> License Grant.</strong>Subject to the terms and conditions of this Agreement, the Company grants you a non-exclusive, non-transferable, non-sublicensable, limited license to install and use the Software, in object code version only, for your own use subject to the restrictions contained in this Agreement.</li>\n<li><strong> Backup Copies.</strong>You may make one backup copy of the Software, provided your backup copy is not installed or used on any computer and further provided that all such copies shall bear the original and unmodified copyright, patent and other intellectual property markings that appear on or in the Software. You may not transfer the rights to a backup copy unless you transfer all rights in the Software as provided in this Agreement.</li>\n<li><strong> Ownership.</strong>You acknowledge that the Software and any copies that you are authorized by the Company to make are the intellectual property of, and are owned by, the Company and its licensors. The structure, sequence and organization of the Software are the valuable trade secrets and confidential information of the Company and its licensors. The Software is protected by copyright, including without limitation by United States copyright law, international treaty provisions and applicable laws in the country in which it is used. You acknowledge that the Company, or its licensors, retain the ownership of all patents, copyrights, trade secrets, trademarks and other intellectual property rights pertaining to the Software. You will take no actions which adversely affect the Company&rsquo;s intellectual property rights in the Software. This Agreement is a license and not an agreement for sale. No title to, or ownership of, the Software, or any intellectual property rights subsisting therein, is transferred to you.</li>\n<li><strong> Restrictions.</strong>The Software is licensed solely for your own use. The Company and its licensors reserve all rights not expressly granted to you in this Agreement. Without limiting the generality of the foregoing, you shall not nor shall you permit any other party to: (i) make copies of the Software except as expressly set forth in this Agreement, or (ii) disassemble, decompile or translate any part of the Software, or otherwise attempt to reconstruct or discover the source code of the Software, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation, or (iii) modify or create derivative works based upon the Software, or (iv) externally distribute, sublicense, resell, encumber or otherwise transfer the Software, or (v) rent, lease, lend, or use the Software, or any part thereof, for timesharing or bureau use, or (vi) allow a third party to copy, access, or use the Software (except as expressly provided in this Agreement), or (vii) alter or remove any copyright, trademark or other proprietary notice which may appear on the Software, (viii) take any action that would cause the Software to be placed in the public domain or become subject to open source license agreement, or (ix) use the Software in any manner that violates any statute, law, rule, regulation, directive, guideline, bylaw whether presently in force or may be implemented by federal, state or local authorities.</li>\n<li><strong> Paid Features.</strong>The Software is made available to you at no charge or fees. However, the Company may offer certain premium features to you upon payment of a license fees determined by the Company in its sole discretion (&ldquo;Paid Features&rdquo;). In order to use Paid Features, you must agree to pay the license fees plus any applicable taxes through one of the payment methods accepted by the Company. Upon receipt of the license fees, the Company will either provide you a license key to activate the Paid Features or allow you to download the Software with the Paid Features. Activation of Paid Features may also be regulated through the use of transferrable license keys, and such license keys may only be transferred within your organization subject to the limitations listed in your purchase order or other documentation describing the Software and/or license rights obtained in the Software.You expressly acknowledge and agree that this Agreement will govern your use of the Paid Features.</li>\n<li><strong> Updates.</strong>Except as otherwise expressly provided herein, this Agreement will govern any updates and upgrades to the Software that may be provided to you in accordance with the Company&rsquo;s then-current maintenance and support policies, unless such updates and upgrades are provided under a separate license agreement. You may use such updates or upgrades only in conjunction with your then-existing the Software licensed under this Agreement. The Software and all updates and upgrades are licensed as a single product and such updates and upgrades may not be separated from the Software to exceed the scope of your original license. Any other software that may be provided with the Software that is associated with a separate end-user license agreement is licensed to you under the terms of that separate license agreement.</li>\n<li><strong> No Support.</strong>Except as expressly required by applicable law, nothing in this Agreement entitles you to any support, maintenance or new versions of the Software. You may contact the Company to determine the availability of support, maintenance, and new versions, and the fees terms and conditions that would apply.</li>\n<li><strong> Disclaimer of Warranties.</strong>THE SOFTWARE IS PROVIDED &ldquo;AS IS,&rdquo; WITHOUT WARRANTY OR REPRESENTATION OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING WITHOUT LIMITATION, ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE. NEITHER THE COMPANY NOR ITS LICENSORS REPRESENT OR WARRANT THAT THE SOFTWARE WILL SATISFY YOUR REQUIREMENTS OR THAT IT IS WITHOUT DEFECT OR ERROR OR THAT THE OPERATION THEREOF WILL BE UNINTERRUPTED OR ERROR FREE. The Company does not warrant that functions contained in the Software will meet your requirements or that the operation of the Software will be error-free or uninterrupted. The Company is not responsible for problems caused by changes in, or modifications to, the operating characteristics of any computer hardware or operating system for which the Software or any upgrade or update is procured, nor is the Company responsible for problems which occur as a result of the use of the Software in conjunction with software of third parties or with hardware, which does not meet the Company&rsquo;s specific requirements. Some jurisdictions do not allow certain disclaimers or limitations of warranties, so some of these may not apply to you.</li>\n<li><strong> Limitation of Liability.</strong>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW EVEN IF A REMEDY FAILS ITS ESSENTIAL PURPOSE, IN NO EVENT SHALL THE COMPANY OR ITS LICENSORS BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE OR THE PROVISION OF OR FAILURE TO PROVIDE SUPPORT SERVICES, EVEN IF THE COMPANY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. IN ANY CASE, THE COMPANY&rsquo;S ENTIRE LIABILITY TO YOU OR ANY OTHER PARTY FOR LOSS OR DAMAGE RESULTING FROM ANY CLAIMS, DEMANDS OR ACTIONS ARISING OUT OF THIS AGREEMENT SHALL NOT EXCEED THE FEE ACTUALLY PAID BY YOU TO THE COMPANY FOR THE SOFTWARE, IF ANY, NOTWITHSTANDING ANY FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY. Because some states and jurisdictions do not allow the exclusion or limitation of liability, the above limitation may not apply to you. In such states and jurisdictions, the Company&rsquo;s liability shall be limited to the greatest extent permitted by law.</li>\n<li><strong> Sole Remedy and Allocation of Risk.</strong>YOUR SOLE AND EXCLUSIVE REMEDY AND THE COMPANY&rsquo;S SOLE AND EXCLUSIVE LIABILITY ARE SET FORTH IN THIS AGREEMENT. This Agreement defines a mutually agreed-upon allocation of risk.</li>\n<li><strong> Third Party Software Licenses.</strong> Third Party Software included with the Software is licensed under the terms of Third Party Software Licenses. You understand and agree that, although provided to you by the Company with the Software, your use of Third Party Software shall be and is governed by such Third Party Software Licenses. You understand and acknowledge that Third Party Software is being provided &ldquo;AS IS&rdquo; WITHOUT ANY WARRANTY, INCLUDING BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. If there is a conflict between this Agreement and any Third Party Software Licensewith respect to Third Party Software, the provisions of such Third Party Software Licenseshall prevail.</li>\n<li><strong> Export Restrictions.</strong>You agree to comply with all export and re-export restrictions and regulations (&ldquo;Export Restrictions&rdquo;) imposed by the United States or any other country in which you conduct business. Without limiting the generality of the foregoing, and regardless of any disclosure made by you to the Company regarding an ultimate destination of the Software, you represent and warrant that you understand the U.S. law currently prohibits the export or re-export, directly or indirectly (including via remote access) of U.S. origin products and technology to certain proscribed countries (including Cuba, Iran, Sudan, North Korea and Syria and/or any other country that may become subject to an embargo by the United States), entities, organizations and individuals, without prior authorization from the U.S. Government. You will not commit any act or omission that will result in a breach of any such Export Restrictions. Your breach of this clause shall constitute cause for immediate termination of this Agreement.</li>\n<li><strong> High Risk Activities.</strong>The Software is not designed, manufactured or intended for use or resale as on-line control equipment in hazardous environments requiring fail-safe performance, such as in the operation of nuclear facilities, aircraft navigation or communication systems, air traffic control, direct life support machines, or weapons systems, in which the failure of the Software could lead directly to death, personal injury, or severe physical or environmental damage (&ldquo;High Risk Activities&rdquo;). The Company specifically disclaims any express or implied warranty of fitness for High Risk Activities.</li>\n<li><strong> Consent to Collect Data.</strong>You consent Company to collect and use technical data and information from the installed application anonymously. The collected information include but not limited to the version of the Software, Software configuration, devices added or connected to the Software, total session time, Internet/network usage, and hardware specification. The information is gathered to provision the Software usage, updates, devices and configuration so developers can enhance and improve the Software.</li>\n</ol>\n<p>The data collection can be disabled from the Software if you do not want the data to be sent.</p>\n<ol start=\"15\">\n<li><strong> Termination.</strong>The licenses granted herein shall automatically terminate without notice if you fail to comply with any material provision of this Agreement. In such event, you must immediately uninstall and return the Software, including all Documentation and original media, to the Company. This shall not limit or affect any remedy available to the Company for your breach of this Agreement.</li>\n<li><strong> Miscellaneous.</strong></li>\n</ol>\n<p>(a) If you are a unit or agency of the United States Government, the following applies: The Software is provided with RESTRICTED RIGHTS. Use, duplication or disclosure by the Government is subject to restrictions as set forth in Subparagraphs (a) through (d) of the Commercial Computer-Restricted Rights clause at FAR 52.227-19 when applicable, or in Subparagraph 252.227-7013 (c)(1)(ii) of the Rights in Technical Data and Computer Software at DFARS, and in similar clauses in the NASA FAR Supplement. Contractor/manufacturer is Digital Watchdog.</p>\n<p>(b) This Agreement shall be governed by the laws of the State of California, exclusive of its choice of law rules. Any dispute between you and the Company regarding this Agreement will be subject to the exclusive jurisdiction of the state and federal courts sitting in the County of Los Angeles in the State of California. In any such action, the prevailing party will be entitled to costs and attorneys&rsquo; fees.</p>\n<p>(c) You may not assign, sublicense, or transfer this Agreement, the Software, or any rights or obligations hereunder without prior written consent of the Company. Any such attempted assignment, sublicense, or transfer will be null and void. The Company may terminate this Agreement in the event of any such attempted assignment, sublicense, or transfer.</p>\n<p>(d) This Agreement is in the English language only, and will only be provided in the English language, which language will be controlling in all respects, and all versions hereof in any other language will not be binding on the parties hereto. All communications and notices to be made or given pursuant to this Agreement must be in the English language.</p>\n<p>(e) The Agreement constitutes the final and complete understanding between you and the Company with respect to the subject matter of this Agreement. Any modifications or waivers of this Agreement must be in writing and signed by both parties hereto.</p>\n<p>(f) If any provision in this Agreement is invalid or unenforceable or contrary to applicable law, such provision shall be construed, limited, or altered, as necessary, to eliminate the invalidity or unenforceability or the conflict with applicable law, and all other provisions of this Agreement shall remain in effect.</p>\n<p>(g) Failure or delay on the part of the Company to exercise any right, power, privilege, or remedy will not constitute a waiver of, or bar the later exercise of, that or any other right, power, privilege, or remedy of the Company.</p>\n<p>(h) No rule of strict construction shall apply against or in favor of either party in the construction and interpretation of this Agreement.</p>\n</body>\n</html>\n",
+    "eulaVersion": 1,
+    "packages": [
+        {
+            "component": "server",
+            "platform": "linux_x64",
+            "file": "dwspectrum-server_update-5.0.0.35271-linux_x64.zip",
+            "size": 88614643,
+            "md5": "e027ae6b5f4420ac77dfd76f4e502f99",
+            "signature": "DF54oM/oYcBZ6h6gamUt/QfGoV+yxA/yfkrDZyqqhhXdg3uALI5kRYQy7A32EvmThB1DQ2pi/5Y7s4EHAg4kJWOgPZiwaO1cQ8++gai4YVes2duzLFqkUHCFAvoD61QQSps+Wbtq/agcH9nR0RrnhvYdvG0kRkcuOrESWN3XkuC0g+LxczUpuDXYtZ3SMjuoQ60UTkrQDcMsb/kcfFEzyIL+aRlV2u1tBbdYjADP1opQjPAtbVjrfzlTXTz75Hn1HldtXdO8vByIm9ljhKFETs0FFjXj6YUn0TdzLffw0Bs/IFyrZ7KcvQW7M62rKN8z+1u0KvwQKatrh8+ZFCEZAFx8MH+gUy5sTcyRrvInrmvDnL1r7WVmXv7p3gWFLSewtMDlcBOK7X+rW4+c5pk5ltQWM5G2V50lYsVOOPjjFvoDSpkdAOksXRWg06unS3tU2jDRlFEEE46HLLueuFH7a2fTG/IX8LcRE/Pcfn0kDHEzjB3lZnwDahGwH42CynzaZUXRW6KH73MwcwYDPO/fjBzB7YrXhBicMCHxASPjDMD3ml/7lbOdqGPeeknbNhnfVkgze+S0nr9OIaTQ2CcVfIHRmmjtbMG2cIo7X+3wgdUaSfSBOGoZA/8yIyAJehiz9XlpjOEpFD2P+ndGQsIsIIExXhNfOxUmdjsFLye31IA=",
+            "variants": [
+                {
+                    "name": "ubuntu",
+                    "minimumVersion": "16.04"
+                }
+            ]
+        },
+        {
+            "component": "server",
+            "platform": "windows_x64",
+            "file": "dwspectrum-server_update-5.0.0.35271-windows_x64.zip",
+            "size": 97987920,
+            "md5": "c809fdd6cd162e368a8593b211c35e5f",
+            "signature": "AmCSSckelnzgMzganq9H/m8Ekwg+fmbVGByxGDXIvQljFWw2D/B17nnEVdfH8vE5NVPO4Co7qW3xdJMSGJrJCaHEf5ijs5SJe3LEGDAiNjZEsGH9MFMJNnOPyS3W9PysLDL/5SFSHYcXkgeug+erlnuC8MAkVtb/GDq9s/8nqIY/KWKQ3hNn67uq5lJe+8i4A9GK5jailev355JnGvGrs3+9Hu47+dSWMl2dYq2IYsNsO2bDbknaUpIctkTxhQ/RDBuyazOHT/67P5IwedTemzWvo5/oJqPaU7khx82qKqEgifmZXLD8eZX3aPwTq3NtXbdBmrqcHEmdpG0s+pVhWHYUUjlPpyQ0p+VqeJKqC1PvecGdZpMVkj7Ix8/FlJbu5TtO+0SY6bg/h1hgQHD2Vtf8PqapeyrKigprPONz6JVYIvmkOTLIrfaEOrFhsIF1cNzYXxuQI1T/U/q6Okisr4P88Wkcd/ZDAbj3Z95fyRxFEozsWOa2s6WA27+0NRKoNR08GzhR0LIc1HqKOL9pwgNAwcDnqPca0R35tqDDGOUj+Czt5mE6dgnTSG4XNPr0G1tsU9Xt5+4dhYRIfkqFYyML42kq9SVfZLCL3GbLbL1Lpo09RKbUwu0zJllCk8itRb6FASevcZPpDNOYhWo08ijABEiYIdhUcOdKhyt9IWw=",
+            "variants": []
+        },
+        {
+            "component": "server",
+            "platform": "edge1",
+            "file": "dwspectrum-server_update-5.0.0.35271-edge1.zip",
+            "size": 85437501,
+            "md5": "018f57ac6160f849c7eaf51ceea7d258",
+            "signature": "mkWJRgn+t1e+5811FaPMSSokpwRrtc4L0UcIBDvdpVBTEzhtBcl7FzJBJHP9ljhHW71eEnev4j269C/S4FNn59m01+WsGdiiqd29ReH7zw8mL+YUjjitlzpCNSnSh3fwcvAQ5piLyNcMgdEXFkoZE/A8T8BzKgw6dSfkLhM/5LFftdB8BS1QG4poA83fl1XJqCCDzXt0mgDcCQGwj6s9fEnCe56eB8dDFwoA8M4LpAdojdbKuvxXSi/VRa7CYwvyvwQQaeqSJ44PLD/NrNjL68vl8Mm2HW95goIovE1MpycUCoB7Hb9anfxnP5diWsA/537FhWUSABEjml4L2j6ncGZC3ZatXBpC4Jr2ewPuUBaBJQMFY64fYMPy5jcL2GdiX4Kjl8S0XDUDHmywxl7eFTjuB9LPOjLUWWHd9D3w8vi40OefwIbHfGpE2gNKCb6pkvmNgRvwn6a47hNJ1iTNGuOigq0b/pug/8WxZDSdHkMuq3M61l0MPeucydD3AGWbpMv+teceYTd3DH/gYksM8++jRccErGPH5LOpzlHwZnHorHfyp1/iVoKVL77I5aOzU2vgpiv+sJNHvEj2PIPg7pyUjAZbHvFMwusfm2w1fCGla9Df/lmiDAEogVG4qqBJuKn8lYe1/xZwYH/L4oQ3+zSHc/+JeXwmo2ynaekZzYk=",
+            "variants": []
+        },
+        {
+            "component": "server",
+            "platform": "linux_arm64",
+            "file": "dwspectrum-server_update-5.0.0.35271-linux_arm64.zip",
+            "size": 143427373,
+            "md5": "589df20cab8d54a1eb1c909cfd703f75",
+            "signature": "RuCn/6jOR5z5wf6JEspzPB1HyDMTYauUKxqBkIrxbS8YEO8MVpd2jrRd5hkd0u58fZ/9CZIXHFplc9887K3MPkjgn1YoDSO6lv5sieLxO8lM7LYtaFQs6H8/YIv7QZnooyOv1cgLLkRvb/LcLmEkbIBPHKLQ8ChDUJD6bmFyolxcGRjFfiAyFRzEsqBIwiK/gr6JmyC5DBqFbz5MyBafMt/BwWXrH4e0e9zgDSulBJC2FLoUKnewEtCN6TUDD248d2hGrUz4Q8JXIzcGjSxt0jwnc3c7TNpkVxfuy0e5Ob7KCTWnjX/LNzvD6bimMBWzxPQXIlvn1OmLsv4fMm5Qzz4ZX0FWTOxZsZO8B5VWfVBYJaGtwPhXOZhNt3IsS9ffTKG8K9C0taTQTi8JQVbZHgwjzRY87fuC9NxGYXYJ3HXriaQ/VB8s6mvy7GOee+cqux145B09pkndJIy46QF0VTypmDZC6G8fCCY8tT9tOtJcksgizh0QchwNNik+KInx1wgxds4vTN8ld9CmtWoJEfB0ydmBGHL0/vZksj+o9+ds8nD7gfTfdo+4RuMiDmzQX5sOehg8u1fAHuGVUOydqOGzgHa9WPKdtQ3CpzipKLnu4BRJRqpE5LJ0KXAM1yTxmskINIzODrlZPRkeCG63uarbJSlQlhEHajLGONyRJNk=",
+            "variants": [
+                {
+                    "name": "ubuntu",
+                    "minimumVersion": "16.04"
+                }
+            ]
+        },
+        {
+            "component": "server",
+            "platform": "linux_arm32",
+            "file": "dwspectrum-server_update-5.0.0.35271-linux_arm32.zip",
+            "size": 169064419,
+            "md5": "39e11cb1c489b0993380dd8b2a2e99a4",
+            "signature": "Kd2gdCR7oFSNLfrqb8XZPf0NmuNZ6LpHznAtNoDL6DqpnWBXsZ2YdqtAvYmpWX0EoqJZ7TRoyjyEKiu06kalgOXE+xFyEhAYTaQp50MIpkq3kutZ8l5rnkum99WvCW0NnHPBIF1OlO7xBFEQMWWDSSmooVaR9EqxhajIsYBj+8mzBTvOnNCn5cDgv1/4V+GCSIjHAeDiLE3CB0hr8yprzKKhKfdZQMTYfHziVspjDLTgeSx07cehEhYqn9uJb35QZN4ily4e3htbXPPLbPNMP2/Sn97mJYFRm7tMs8xzUImUE5gGV5Fc6SFmiYK/otpYtxUyuexRTZU5w7dHQXuRksIE3b8BQQ8CRFhRd0zN534hm9whNRI0IYnBPOG2oaEA1mWsTEvAj+9Gzp8WsIKCHXRE1Ybicqa8D7tdO781sBgrW5ltiEZEmZWOo/p5Z/boC87UTib1s3aQG10lccW8srL4skirydboipFPE3QYAjcnOc3eocRN4A9LHtDbgCTmME2cRAAAvIYDCwiVSfnbuWWrkOSGDXv+A06OwCB1l+OS2qUecaHg+QoiFYGXffBStNCU0RyVg8QWbeOjxBD2xcpFquypyo6+jxXO/ZPZ5AUXepBB1iS5iIWpqpGc0RHtlDQSRdse1xFVshc6CCOvk1H0EO9RqDq1oxmv+PATo7g=",
+            "variants": [
+                {
+                    "name": "debian",
+                    "minimumVersion": "9"
+                },
+                {
+                    "name": "ubuntu",
+                    "minimumVersion": "16.04"
+                },
+                {
+                    "name": "raspbian",
+                    "minimumVersion": "9"
+                }
+            ]
+        },
+        {
+            "component": "client",
+            "platform": "linux_x64",
+            "file": "dwspectrum-client_update-5.0.0.35271-linux_x64.zip",
+            "size": 268837878,
+            "md5": "265a473af3a8bda35984e924d3783e05",
+            "signature": "MLGEe7AcSZbch2+Bvh2RUhdydCbuFXOnRjpm9rJWsp/eOYVq2ZXsyOwoEV6sZexCAxfQS3LZg8xPnGTklJE6V1FP2Qc7GnxW/jPAhRKoWeP931+m//ZRfvkg4adLTLId9fVgvtX95btqrqdqLUUBSoWHAZoO/XrliHh0JsnSACbF1umv1l6byhxJAEHVKWEFzc7aTX/ibsfnZljDI1qLONtRWIOE8Gg+gct65B0uq/FLr8FcLfocD1v4nkRQkAtBB4mk1TjOsIyKMweOhnuvwNE5XUnx6IjBUDuxMFYAkyRfsZ1IbydMUzwcZHUnCAwbo6XbloJsu1yH55jYwnJNlHGJnPC+xCyThJiWvXfypgp/1WqS35yMFH2e3TSZxKK7SUiF7f8Hxkjc7iYM/Ba71KvsoU07Q+nE7if1EEUOiHqeUCrwYZg0R/cSUiMfqfx0A3OuuVeQTQKTPZ35VI/Wgry7I0buV9kpugHNshQ2U2ZTZYG8ipMC0HdoXaS//5Tfh+iK0xqhdTjzWjZeNwDPs9F+ap4ICzkWK27qgtszNM0XgFczkGE6g+I/V5oJH3f32qn+fi2YGJOLGer2samoy8lnLzNamLszUSuUojLvlEIAdR5cjsErwln/srjIFQb1Wuy8+sMqaV2DYHSexuM7oQKK5LMaNdlACZ89O+XXZzs=",
+            "variants": [
+                {
+                    "name": "ubuntu",
+                    "minimumVersion": "16.04"
+                }
+            ]
+        },
+        {
+            "component": "client",
+            "platform": "windows_x64",
+            "file": "dwspectrum-client_update-5.0.0.35271-windows_x64.zip",
+            "size": 153542461,
+            "md5": "2ce20c6bb040a39c2c76d63b5e072c08",
+            "signature": "GNdBfjjZKscX1+wya6AgEkCTfM9fg0H/T+MW6QtAINhGI+iaAyJfAKF9/6KZ2KiotkUud9mnmr3gi2Bkq/GdxpTbv6EOidkzgcvbSJTEATf6CDI7F1aJH19wQFzor05Y31y9TyMJWYHIO8Yue9DH5xoVUAZptbOxHyil3gXuQVk8LAZZWd6pNoA8ABQS5V8WBf2zzt4cSvxMlc1aKf2PPiimyk4Sklq/ZEt0N5TqWkxTnReA/32IoZGAbYFeaWAhpuZhP+BixYuDEdLoR/3WZ/SRPZei4hg7/g4gUPB3+isIpiE+3LWY3O/BkBQm1ZQuayCbeJwHiUGlUfQ+gQwVbPJAEUbJ6TaOYgUeIao+pBXPFa0LQtG/ISJcbsG0xKbGcOox1NRT81WGMynjrfxLGiNPGkU+YurDF3CN8Cctmd1wkqbY32g4XWw4BsaHwTCRKRdJdaoowbYBSsjiCYQ/X/FJChcVFcKcQNhLVc/aVSdy9PTp4kfWWpAdPzaXI7TgSSEWBGatKkE0av6xshWCMZT0lbk1aQr8iyq/LjamUJwPVDsxtTas4ppfJDV5VgqVfvEazf4TyMlbHyi4Db776caZWFSQto6szh2JTMIfq35oaJTL+nCXnD8AkTS3jot/qLAUFBY4hCV0FM2W5U7G4+kM4dotVxbTdaK4o1UhnwI=",
+            "variants": []
+        },
+        {
+            "component": "client",
+            "platform": "macos_x64",
+            "file": "dwspectrum-client_update-5.0.0.35271-macos_x64.zip",
+            "size": 158000043,
+            "md5": "4bb2e9498267f51fc7057c2695bc417d",
+            "signature": "TCxNIKAlgbVKXXUessdjx0manmIFgYuKPjbnLMhe05MQ1Gg7nhUtfthQipJ8R+ewiy487L1KxSfu5uUCBAu7zcMnckjtM2t/owYv7PLb00HnqLzXfY6ZhfGQ9gVHJbHhANZDtsRlzAdFX+263+l3O3Uh/5Ci7rkIsjW7KmiIlC5yePipK3Pnp7R9VR8G4Bp2ZVlPoseRD4ovg+HGN4xABCZk7A784KE66/nEnXGUuUFofij6O30+YZYvgk4GTzQ5CX4iwko2y/eXFSUm7ftCN+FV55YQuShwgocV/uTmVD2git+mR4cBELBIfVOkTkwKiwMij+h3DhJPZnzvUC3qcQbiejRN+6sVA48z6+RcI0nmG+HVvkOesceqNQ+UeG7kRFsgBQXM9f2twy2f5ui8u7eh4/YXenCvzk7tOzjHeAcTjuorWJsL5f7dd4bl7EZVwo7itS0jmKitSmQvaUBxEAfMEjRTpgmZnk0PH3wHT75WyE9Bu9mVG0rFA5E1HUcOmQg5qyzv9C9mPohUSMfZSRbBNcrBr2kcikzdZS3bj/TsGhP6c10SFts5M0npdtNZiBMIrTInRKaPVfihG3wYaCNAjJO0yR7PpXet5qkAP0bUWh0E4yEWdm3vKyFrLMfkui7Xr8r108n4TlZflYOmY6hK7+o9rIJU+LqvFZyo8hc=",
+            "variants": []
+        },
+        {
+            "component": "client",
+            "platform": "macos",
+            "file": "dwspectrum-client_update-5.0.0.35271-macos.zip",
+            "size": 158000038,
+            "md5": "c3b126cb6d4558f5c38b52e423269dd0",
+            "signature": "bHJUbQtwFm/PkkFpAAbIjnw/iWPDZX8GMkmUmJSXB8VGkxy5kITi9iV9P1iHc2GhBM7hXV2ihYuEhDoRfI2p79oe/a4Aa1lT/iIS7x1EA6hQ3VeD5DwWVfP3OvDFv98h0F/6QAvxbCDAdF12YTMLWn/DBQ1kgL4dZz0wgkxrrvDwSuaRp2Z2RGJGnX85A4CyNrgujWYRMtAhZ9TusVqF5LSVE2BZoBqGa/p26v3SbKy7b5KpHu94xyKtFvL0JTSzL0LBZj3BfupSXJMuGKdaLnlbZlN5L+aoEO1+uKuht7qMVKI3fiXVlAoH0ZjadBAcyb+NEsYnz970TGq2tUm0RXpQkGdF5f/QW8xE2sEDZEDCER66jRceIqig6e2OChECYRJ4m8s93hwcNm0lc9IfqkfsN/V2c/S4D9pOCx0L2fwGpEVawqTAFAwJnUqiOgDwWut3iTXair22ani67d6wreulqQyEBoh9wkNph21toaFq3FX9+ChRGXW8oe63m4WdgZD/n9zdlgyhbg03HbO8CUJI5OyiMdrQxhkyyPlz+7r3y2RXL+GrnKlX3mvXtDvC4cFQ4Fz+9mKZ72A6yX/NN72C+ca73Or4XWOPrFwrR0z98oWLozoAaFiexYz2+gIibNW4uPoVUk9f62Zdb7mMJsnmTcMouRjAun9xOF1SAig=",
+            "variants": []
+        },
+        {
+            "component": "client",
+            "platform": "macos_arm64",
+            "file": "dwspectrum-client_update-5.0.0.35271-macos_arm64.zip",
+            "size": 144560236,
+            "md5": "c2cc87a5915d02d9b74354838236a083",
+            "signature": "zBV4SXYDfpq9+veBn3wV4NyzSQtt6b7h0kIKgNOyUYXxilQEnjqxkAoqEe6YZPBdifQrJT7OSzLUD11zxWg2tHpsQB/jsX2QaItZO7AWYaMxRotbZ25yzcmCW/Tx+cHDyG0xNP5R6tE/3MQR+8FepnoLP+DgAFFyrCl+U3kuW74H6hYSS3RlsTVoz4/41wxc/jkleYKEQHO/LRd2j3+T+DQTGAPaBBTeRPR4GcOpdTzSMtNm6QA6bZQmj3Wh5wuKQc8fw5k5Ixjcc+TAj7gYMLBvf4jWgD+4soYqv/XftVbr9FL+WwBTYjKTjJA89n/MHXuYTV4rsU8xYGMiBloWZQwO/4kVLEJcbSKy7NpEP61qcgGj19TUK/aEhD3a12sgcaUzvP3sOc8c65yy66CkqKZWIUcPiGYjvweltvWBmpSBG2dH92GDBO9tU9Ivoi9PPrnoxxN2YcVghDZVmirXi+WlIJy9NDH2xONN87im4bsMZB1V4dMrbhQSTXIq0rKzVKWU37JrgXml1qsjl2zqUt4xl30DxPwYoH9AIxk++uhMlGmH16kgVywlOBUjyV6/NEc1MM0ac3zwqTYgy6edpGufLRjttg6oKLMZ6Xc55XMvILkzU7V3AQqW1L0qJJSHuwUWhERhQzLE7sIKgMQBNFtte0MxjpseEJ0xxg/4wSY=",
+            "variants": []
+        },
+        {
+            "component": "client",
+            "platform": "linux_arm64",
+            "file": "dwspectrum-client_update-5.0.0.35271-linux_arm64.zip",
+            "size": 273433878,
+            "md5": "e6b7170ff2557c6b34f76761d16a6794",
+            "signature": "m1KZMp1DTuD7vwKhnUzMlL827EhQHYs1Y5Hmg/ufvfw0fgCCES+b2j4XWUGv2Y1L+MZWVc5lhrydcTCooVL57pESub8SSaKd8BIqjrjv4ZitOWzSPlN/kaOylV84NM8Zf6PTPl+/hxkjwFGqlI3RPp6nw1AmUIJOJLNM1YxfnRE8COBCKqfey5kWLclGnqGvfRcyQ8BSAiL4o1rnewm0773faeX7JKoQTJ5xwPxqVyinIjZxzXZK5DEuC9QHj+b/uwiATAzhcObij3xmq5BR8xTg3EboaKHeAMu8zDQhTHLhdnVwyeRZtLo961GbuavaMYJ+nxEd6Nb8/WiM8dUUAL0eVo6ngHJFxJ9ChtFe6Bz55cZNsCxZdkhSzmrVk3uH9puWJ98HBQYlCe2GEx/9W+Lm10qOhpQ1B3BdCYqK6JcMvtnfZMYtvYlaJ2UuDm+tFWCJhidjVbGDRJ9DQ/q+BoiknslPndfYZvARtOP8/CxB9gUhD820yAzjKhjmx2NeiO/TEg37w8oWjdaaXegmWq2fmq3Hue13RQSh52pgwLqHEeikunxo36TgKe0aY+3lpANzSgzIzyO7ngbiJgTgsd9kCnXRuyLfGVmXGZcpFeK5ptIAU5bU5nmcQm628JH/Cjeln+WhQFFThM0w3fP0DrQ84KbuCYvp5keuue8j+D8=",
+            "variants": [
+                {
+                    "name": "ubuntu",
+                    "minimumVersion": "16.04"
+                }
+            ]
+        },
+        {
+            "component": "server",
+            "platform": "nx1",
+            "file": "",
+            "size": 0,
+            "md5": "",
+            "variants": [
+                {
+                    "name": "",
+                    "minimumVersion": "3000"
+                }
+            ]
+        }
+    ]
+}
