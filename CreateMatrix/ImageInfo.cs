@@ -1,4 +1,8 @@
-﻿namespace CreateMatrix;
+﻿using System;
+using System.Collections.Immutable;
+using System.Diagnostics;
+
+namespace CreateMatrix;
 
 public class ImageInfo
 {
@@ -8,103 +12,19 @@ public class ImageInfo
     public List<string> Tags { get; } = new();
     public List<string> Args { get; } = new();
 
-    public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
-    {
-        // Iterate through products and base names and create images
-        List<ImageInfo> imageList = new();
-        foreach (var productInfo in productList)
-            foreach (var baseName in BaseNames)
-                imageList.AddRange(CreateImages(productInfo, baseName, ""));
-
-        // Set branch as main
-        imageList.ForEach(item => item.Branch = "main");
-
-        // Create develop builds of NxMeta
-        List<ImageInfo> developList = new();
-        var nxMeta = productList.Find(item => item.Product == ProductInfo.ProductType.NxMeta);
-        ArgumentNullException.ThrowIfNull(nxMeta);
-
-        // Iterate through base names and create images
-        foreach (var baseName in BaseNames)
-            developList.AddRange(CreateImages(nxMeta, baseName, "develop"));
-
-        // Set branch as develop
-        developList.ForEach(item => item.Branch = "develop");
-
-        // Add to list
-        imageList.AddRange(developList);
-
-        return imageList;
-    }
-
-    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string tagPrefix)
-    {
-        List<ImageInfo> imageList = new();
-
-        // Create latest image
-        ImageInfo imageInfo = new();
-        imageInfo.SetName(productInfo.Product, baseName);
-
-        // Latest tags
-        imageInfo.AddTag("latest", tagPrefix);
-        imageInfo.AddTag(productInfo.Latest.Version, tagPrefix);
-
-        // If a prefix is set add it as a primary tag to the latest image
-        // E.g. develop-latest, develop
-        if (!string.IsNullOrEmpty(tagPrefix))
-            imageInfo.AddTag(tagPrefix, "");
-
-        // Latest args
-        imageInfo.AddArgs(productInfo.Latest);
-
-        // If stable and latest version is the same combine the tags
-        if (productInfo.Latest.Version.Equals(productInfo.Stable.Version))
-        {
-            // Add stable tag to same image
-            imageInfo.AddTag("stable", tagPrefix);
-
-            // Add combined image
-            imageList.Add(imageInfo);
-
-            // Done
-            return imageList;
-        }
-        // Latest and stable are different versions
-
-        // Add latest image
-        imageList.Add(imageInfo);
-
-        // Crate stable image
-        imageInfo = new ImageInfo();
-        imageInfo.SetName(productInfo.Product, baseName);
-
-        // Stable args
-        imageInfo.AddArgs(productInfo.Stable);
-
-        // Stable tags
-        imageInfo.AddTag("stable", tagPrefix);
-        imageInfo.AddTag(productInfo.Stable.Version, tagPrefix);
-
-        // Add stable image
-        imageList.Add(imageInfo);
-
-        // Done
-        return imageList;
-    }
-
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
         Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType.ToString()}-{baseName}";
     }
 
-    private void AddArgs(ProductInfo.VersionUri versionUri)
+    private void AddArgs(VersionUri versionUri)
     {
         Args.Add($"DOWNLOAD_VERSION={versionUri.Version}");
         Args.Add($"DOWNLOAD_URL={versionUri.Uri}");
     }
 
-    private void AddTag(string tag, string tagPrefix)
+    private void AddTag(string tag, string? tagPrefix = null)
     {
         // E.g. latest, develop-latest
         var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
@@ -114,5 +34,69 @@ public class ImageInfo
 
         // GitHub Container Registry
         Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
+    }
+
+    public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
+    {
+        // Iterate through products and base names and create images
+        List<ImageInfo> imageList = new();
+        foreach (var productInfo in productList)
+            foreach (var baseName in BaseNames)
+                imageList.AddRange(CreateImages(productInfo, baseName));
+
+        // Set branch as "main" on all images
+        imageList.ForEach(item => item.Branch = "main");
+
+        // Create develop builds of NxMeta
+        List<ImageInfo> developList = new();
+        var nxMeta = productList.Find(item => item.Product == ProductInfo.ProductType.NxMeta);
+        Debug.Assert(nxMeta != default(ProductInfo));
+        foreach (var baseName in BaseNames)
+            developList.AddRange(CreateImages(nxMeta, baseName, "develop"));
+
+        // Set branch as "develop"
+        developList.ForEach(item => item.Branch = "develop");
+
+        // Add images to list
+        imageList.AddRange(developList);
+
+        return imageList;
+    }
+
+    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName,
+        string? tagPrefix = null)
+    {
+        // Create a set by unique versions
+        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionUriComparer());
+        Debug.Assert(versionSet.Count == productInfo.Versions.Count);
+        
+        // Create images for each version
+        List<ImageInfo> imageList = new();
+        foreach (var versionUri in versionSet)
+        {
+            // Create image
+            ImageInfo imageInfo = new();
+            imageInfo.SetName(productInfo.Product, baseName);
+
+            // Add a tag for the version
+            imageInfo.AddTag(versionUri.Version, tagPrefix);
+
+            // Add tags for all labels
+            versionUri.Labels.ForEach(item => imageInfo.AddTag(item, tagPrefix));
+
+            // Add prefix as a standalone tag when the label is latest
+            if (!string.IsNullOrEmpty(tagPrefix) &&
+                versionUri.Labels.FindIndex(item => item.Contains(VersionUri.LatestLabel)) != -1)
+                imageInfo.AddTag(tagPrefix);
+
+            // Add args
+            imageInfo.AddArgs(versionUri);
+
+            // Add image to list
+            imageList.Add(imageInfo);
+        }
+
+        // Done
+        return imageList;
     }
 }

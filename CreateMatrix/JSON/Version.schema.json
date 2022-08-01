@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft-06/schema",
-  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/Version.schema.json",
+  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
   "title": "CreateMatrix Version Schema",
   "definitions": {
     "ProductInfo": {
@@ -10,11 +10,14 @@
       ],
       "properties": {
         "Product": {},
-        "Stable": {
-          "$ref": "#/definitions/VersionUri"
-        },
-        "Latest": {
-          "$ref": "#/definitions/VersionUri"
+        "Versions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/VersionUri"
+          }
         }
       }
     },
@@ -35,6 +38,18 @@
             "string",
             "null"
           ]
+        },
+        "Labels": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     }

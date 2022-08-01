@@ -1,0 +1,146 @@
+{
+    "version": "5.0.0.35134 R10",
+    "cloudHost": "meta.nxvms.com",
+    "releaseNotesUrl": "https://meta.nxvms.com/",
+    "description": "Support for Ubuntu 16.04 will be discontinued in the next release version and Systems on Ubuntu 16.04 will be blocked from updating to the next release version.",
+    "eula": "<!DOCTYPE html>\n<html>\n<head>\n    <meta content=\"text/html; charset=utf-8\"/>\n    <title>Nx Witness EULA</title>\n</head>\n<body>\n\t<p align=\"CENTER\"><span style=\"text-decoration: underline;\"><strong>NETWORK OPTIX, INC.</strong></span></p>\n<p align=\"CENTER\"><span style=\"text-decoration: underline;\"><strong>END USER LICENSE AGREEMENT</strong></span></p>\n<p><span style=\"text-decoration: underline;\"><strong>IMPORTANT &ndash; PLEASE READ CAREFULLY</strong></span><strong>:</strong> This End User License Agreement (the &ldquo;Agreement&rdquo;) is a legally enforceable contract between You (either an individual or an entity) and Network Optix, Inc. (the &ldquo;Company&rdquo;) regarding the use of the Company&rsquo;s software programs accompanying or provided under this Agreement together with the SDK made available by the Company, associated media, corresponding Documentation, technical configurations, and technical data (collectively, the &ldquo;Software&rdquo;). &ldquo;Documentation&rdquo; means the user&rsquo;s guide and other documentation (including print and online), if any, provided to you with the Software.</p>\n<p>BY CLICKING &ldquo;I ACCEPT&rdquo; BUTTON BELOW OR BY DOWNLOADING, INSTALLING OR OTHERWISE USING THE SOFTWARE, YOU CONSENT TO BE LEGALLY BOUND BY ALL THE TERMS AND CONDITIONS OF THE AGREEMENT. IF YOU ARE ENTERING INTO THE AGREEMENT ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE AUTHORITY TO BIND SUCH ENTITY AND ITS AFFILIATES TO THE AGREEMENT, IN WHICH CASE THE TERMS \"YOU\" OR \"YOUR\" SHALL REFER TO SUCH ENTITY AND ITS AFFILIATES. IF YOU DO NOT HAVE SUCH AUTHORITY, OR IF YOU DO NOT AGREE WITH ANY OF THE TERMS OF THE AGREEMENT, YOU MUST NOT ACCEPT THE AGREEMENT AND MAY NOT USE THE SOFTWARE.</p>\n<p>In addition, certain third party programs or code (&ldquo;Third Party Software&rdquo;) are being provided to you under the terms and conditions of a separate end user license accompanying such Third Party Software (&ldquo;Third Party Software Licenses&rdquo;), which will be provided to you by the Company as part of the Documentation or may be made available for viewing by the Company at the website or webpage at https://meta.nxvms.com/content/libraries (the &ldquo;Third Party Site&rdquo;). If required by any Third Party Software License, the Company will make such Third Party Software, and the Company&rsquo;s modifications to that Third Party Software, available to you on the Third Party Site. The Company may be required or wish to provide you with certain notices or information about Third Party Software or Third Party Software Licenses and you acknowledge that such notices and information may be provided to you by the posting of such notices and information on the Third Party Site.. BY INSTALLING, COPYING OR OTHERWISE USING THE SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT AS WELL AS THE TERMS OF THIRD PARTY SOFTWARE LICENSES. IF YOU DO NOT AGREE TO ALL SUCH TERMS, DO NOT INSTALL OR USE THE SOFTWARE.</p>\n<p><strong>1. License Grant.</strong> Subject to the terms and conditions of this Agreement, the Company grants you a non-exclusive, non-transferable, non-sublicensable, limited license to install and use the Software, in object code version only, for your own use subject to the restrictions contained in this Agreement.</p>\n<p><strong>2. Backup Copies.</strong> You may make one backup copy of the Software, provided your backup copy is not installed or used on any computer and further provided that all such copies shall bear the original and unmodified copyright, patent and other intellectual property markings that appear on or in the Software. You may not transfer the rights to a backup copy unless you transfer all rights in the Software as provided in this Agreement.</p>\n<p><strong>3. Ownership.</strong> You acknowledge that the Software and any copies that you are authorized by the Company to make are the intellectual property of, and are owned by, the Company and its licensors. The structure, sequence and organization of the Software are the valuable trade secrets and confidential information of the Company and its licensors. The Software is protected by copyright, including without limitation by United States copyright law, international treaty provisions and applicable laws in the country in which it is used. You acknowledge that the Company, or its licensors, retain the ownership of all patents, copyrights, trade secrets, trademarks and other intellectual property rights pertaining to the Software. You will take no actions which adversely affect the Company&rsquo;s intellectual property rights in the Software. This Agreement is a license and not an agreement for sale. No title to, or ownership of, the Software, or any intellectual property rights subsisting therein, is transferred to you.</p>\n<p><strong>4. Restrictions.</strong> The Software is licensed solely for your own use. The Company and its licensors reserve all rights not expressly granted to you in this Agreement. Without limiting the generality of the foregoing, you shall not nor shall you permit any other party to: (i) make copies of the Software except as expressly set forth in this Agreement, or (ii) disassemble, decompile or translate any part of the Software, or otherwise attempt to reconstruct or discover the source code of the Software, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation, or (iii) modify or create derivative works based upon the Software, or (iv) externally distribute, sublicense, resell, encumber or otherwise transfer the Software, or (v) rent, lease, lend, or use the Software, or any part thereof, for timesharing or bureau use, or (vi) allow a third party to copy, access, or use the Software (except as expressly provided in this Agreement), or (vi) alter or remove any copyright, trademark or other proprietary notice which may appear on the Software, (vii) take any action that would cause the Software to be placed in the public domain or become subject to open source license agreement, or (viii) use the Software in any manner that violates any statute, law, rule, regulation, directive, guideline, bylaw whether presently in force or may be implemented by federal, state or local authorities.</p>\n<p><strong>5. Paid Features.</strong> The Software is made available to you at no charge or fees. However, the Company may offer certain premium features to you upon payment of a license fees determined by the Company in its sole discretion (&ldquo;Paid Features&rdquo;). In order to use Paid Features, you must agree to pay the license fees plus any applicable taxes through one of the payment methods accepted by the Company. Upon receipt of the license fees, the Company will either provide you a license key to activate the Paid Features or allow you to download the Software with the Paid Features. Activation of Paid Features may also be regulated through the use of transferrable license keys, and such license keys may only be transferred within your organization subject to the limitations listed in your purchase order or other documentation describing the Software and/or license rights obtained in the Software. You expressly acknowledge and agree that this Agreement will govern your use of the Paid Features.</p>\n<p><strong>6. Updates.</strong> Except as otherwise expressly provided herein, this Agreement will govern any updates and upgrades to the Software that may be provided to you in accordance with the Company&rsquo;s then-current maintenance and support policies, unless such updates and upgrades are provided under a separate license agreement. You may use such updates or upgrades only in conjunction with your then-existing the Software licensed under this Agreement. The Software and all updates and upgrades are licensed as a single product and such updates and upgrades may not be separated from the Software to exceed the scope of your original license. Any other software that may be provided with the Software that is associated with a separate end-user license agreement is licensed to you under the terms of that separate license agreement.</p>\n<p><strong>7. No Support.</strong> Except as expressly required by applicable law, nothing in this Agreement entitles you to any support, maintenance or new versions of the Software. You may contact the Company to determine the availability of support, maintenance, and new versions, and the fees terms and conditions that would apply.</p>\n<p><strong>8. Disclaimer of Warranties.</strong> THE SOFTWARE IS PROVIDED &ldquo;AS IS,&rdquo; WITHOUT WARRANTY OR REPRESENTATION OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING WITHOUT LIMITATION, ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE. NEITHER THE COMPANY NOR ITS LICENSORS REPRESENT OR WARRANT THAT THE SOFTWARE WILL SATISFY YOUR REQUIREMENTS OR THAT IT IS WITHOUT DEFECT OR ERROR OR THAT THE OPERATION THEREOF WILL BE UNINTERRUPTED OR ERROR FREE. The Company does not warrant that functions contained in the Software will meet your requirements or that the operation of the Software will be error-free or uninterrupted. The Company is not responsible for problems caused by changes in, or modifications to, the operating characteristics of any computer hardware or operating system for which the Software or any upgrade or update is procured, nor is the Company responsible for problems which occur as a result of the use of the Software in conjunction with software of third parties or with hardware, which does not meet the Company&rsquo;s specific requirements. Some jurisdictions do not allow certain disclaimers or limitations of warranties, so some of these may not apply to you.</p>\n<p><strong>9. Limitation Of Liability.</strong> TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW EVEN IF A REMEDY FAILS ITS ESSENTIAL PURPOSE, IN NO EVENT SHALL THE COMPANY OR ITS LICENSORS BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE OR THE PROVISION OF OR FAILURE TO PROVIDE SUPPORT SERVICES, EVEN IF THE COMPANY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. IN ANY CASE, THE COMPANY&rsquo;S ENTIRE LIABILITY TO YOU OR ANY OTHER PARTY FOR LOSS OR DAMAGE RESULTING FROM ANY CLAIMS, DEMANDS OR ACTIONS ARISING OUT OF THIS AGREEMENT SHALL NOT EXCEED THE FEE ACTUALLY PAID BY YOU TO THE COMPANY FOR THE SOFTWARE, IF ANY, NOTWITHSTANDING ANY FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY. Because some states and jurisdictions do not allow the exclusion or limitation of liability, the above limitation may not apply to you. In such states and jurisdictions, the Company&rsquo;s liability shall be limited to the greatest extent permitted by law.</p>\n<p><strong>10. Sole Remedy and Allocation of Risk.</strong> YOUR SOLE AND EXCLUSIVE REMEDY AND THE COMPANY&rsquo;S SOLE AND EXCLUSIVE LIABILITY ARE SET FORTH IN THIS AGREEMENT. This Agreement defines a mutually agreed-upon allocation of risk.</p>\n<p><strong>11. Third Party Software Licenses.</strong> Third Party Software included with the Software is licensed under the terms of Third Party Software Licenses. You understand and agree that, although provided to you by the Company with the Software, your use of Third Party Software shall be and is governed by such Third Party Software Licenses. You understand and acknowledge that Third Party Software is being provided &ldquo;AS IS&rdquo; WITHOUT ANY WARRANTY, INCLUDING BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. If there is a conflict between this Agreement and any Third Party Software License with respect to Third Party Software, the provisions of such Third Party Software License shall prevail.</p>\n<p><strong>12. Export Restrictions.</strong> You agree to comply with all export and re-export restrictions and regulations (&ldquo;Export Restrictions&rdquo;) imposed by the United States or any other country in which you conduct business. Without limiting the generality of the foregoing, and regardless of any disclosure made by you to the Company regarding an ultimate destination of the Software, you represent and warrant that you understand the U.S. law currently prohibits the export or re-export, directly or indirectly (including via remote access) of U.S. origin products and technology to certain proscribed countries (including Cuba, Iran, Sudan, North Korea and Syria and/or any other country that may become subject to an embargo by the United States), entities, organizations and individuals, without prior authorization from the U.S. Government. You will not commit any act or omission that will result in a breach of any such Export Restrictions. Your breach of this clause shall constitute cause for immediate termination of this Agreement.</p>\n<p><strong>13. High Risk Activities.</strong> The Software is not designed, manufactured or intended for use or resale as on-line control equipment in hazardous environments requiring fail-safe performance, such as in the operation of nuclear facilities, aircraft navigation or communication systems, air traffic control, direct life support machines, or weapons systems, in which the failure of the Software could lead directly to death, personal injury, or severe physical or environmental damage (&ldquo;High Risk Activities&rdquo;). The Company specifically disclaims any express or implied warranty of fitness for High Risk Activities.</p>\n<p><strong>14. Termination.</strong> The licenses granted herein shall automatically terminate without notice if you fail to comply with any material provision of this Agreement. In such event, you must immediately uninstall and return the Software, including all Documentation and original media, to the Company. This shall not limit or affect any remedy available to the Company for your breach of this Agreement.</p>\n<p><strong>15. Miscellaneous.</strong></p>\n<p>(a) If you are a unit or agency of the United States Government, the following applies: The Software is provided with RESTRICTED RIGHTS. Use, duplication or disclosure by the Government is subject to restrictions as set forth in Subparagraphs (a) through (d) of the Commercial Computer-Restricted Rights clause at FAR 52.227-19 when applicable, or in Subparagraph 252.227-7013 (c)(1)(ii) of the Rights in Technical Data and Computer Software at DFARS, and in similar clauses in the NASA FAR Supplement. Contractor/manufacturer is Network Optix, Inc.</p>\n<p>(b) This Agreement shall be governed by the laws of the State of California, exclusive of its choice of law rules. Any dispute between you and the Company regarding this Agreement will be subject to the exclusive jurisdiction of the state and federal courts sitting in the County of Los Angeles in the State of California. In any such action, the prevailing party will be entitled to costs and attorneys&rsquo; fees.</p>\n<p>(c) You may not assign, sublicense, or transfer this Agreement, the Software, or any rights or obligations hereunder without prior written consent of the Company. Any such attempted assignment, sublicense, or transfer will be null and void. The Company may terminate this Agreement in the event of any such attempted assignment, sublicense, or transfer.</p>\n<p>(d) This Agreement is in the English language only, and will only be provided in the English language, which language will be controlling in all respects, and all versions hereof in any other language will not be binding on the parties hereto. All communications and notices to be made or given pursuant to this Agreement must be in the English language.</p>\n<p>(e) The Agreement constitutes the final and complete understanding between you and the Company with respect to the subject matter of this Agreement. Any modifications or waivers of this Agreement must be in writing and signed by both parties hereto.</p>\n<p>(f) If any provision in this Agreement is invalid or unenforceable or contrary to applicable law, such provision shall be construed, limited, or altered, as necessary, to eliminate the invalidity or unenforceability or the conflict with applicable law, and all other provisions of this Agreement shall remain in effect.</p>\n<p>(g) Failure or delay on the part of the Company to exercise any right, power, privilege, or remedy will not constitute a waiver of, or bar the later exercise of, that or any other right, power, privilege, or remedy of the Company.</p>\n<p>(h) No rule of strict construction shall apply against or in favor of either party in the construction and interpretation of this Agreement.</p>\n<p>(i) This document was originally written in the English language, and the English text&nbsp;of this document shall prevail over any translation hereof.</p>\n</body>\n</html>\n",
+    "eulaVersion": 1,
+    "packages": [
+      {
+        "component": "server",
+        "platform": "linux_x64",
+        "file": "metavms-server_update-5.0.0.35134-linux_x64.zip",
+        "size": 87524389,
+        "md5": "c0d4a9a8fcac833638ddadf70b9bd66a",
+        "signature": "XfJUVC4lLDWFXI2GKl/b8Dwg4LjQ6R5wp4yPm8S8LkgJJ9PjyIiUfKjLE4Gb8+UIK0uiPNVOt3BoHiE4fgzq/zOHWV+AKPQtJCzAX0pN8ju+gH6t/fso5DvW+DgrKD2ymXWHPaeaed2bCklhoKvPmoVPQwwIN8c8aaUunsZH3dhxHueqy1o3j1g0xrcZre0iGy/+2VmeyEkqFGa9KTGizntIvY/U2gVnbPJFhDr6myJkLLOCjh/HtsFMt3+7uNcARSoIzogo438Tk30VQO3DYjBki68U8dyn6P9P0uC9JjG62gkS68oL9e/hIP4mpfaBVuexFQWCdMbBA2UY5Rx+u37SgLSmlBxEXRm8pDFcyhQ3wVhfgme6LcVVj0vTcdnENe1fR/MQxGh5oAwRqiBISj/ZOzYWyas/SpwrIvKwNLxN9SeBEwHCil6ZGz0POzckICtNA6eoj7SqI4slv2IDoG4BEzMFk711ARDMpBLYiSfxSPbYPdahBFCGpt50xFZpynr0k2f1Waox34Vy8bv3TPjGOlxbLzIE/mgyfDkMVr84nFWAMDaTK4s1dyYDcBwIkhpOU/Rmqp/Sxq9kFZ/iwavx3tM4oh2gYRV5pV/n93qOB8NJALVlUsq0qE+fgdnnSGh3opiRmsAIrZ9qa928oLwCMVoSlnUhul9/q/GYmOs=",
+        "variants": [
+          {
+            "name": "ubuntu",
+            "minimumVersion": "16.04"
+          }
+        ]
+      },
+      {
+        "component": "server",
+        "platform": "windows_x64",
+        "file": "metavms-server_update-5.0.0.35134-windows_x64.zip",
+        "size": 112190650,
+        "md5": "b01f798e2ac0140198dd92b6f7586dd5",
+        "signature": "NEn2SNTjpqAzTG6d0EIh7P+HCO8R6PL9FAMiVhpg7qsWlbfOVKiDLknkYVNoHL79FqCfN07szh3l5zDfl0ZatBKYiH4TiuuczOVskebE2cBDYQfs9PCjggF6KDwsYPgw6/3H+T50UBv3g8jlI6+nBbpwwALyzZ/zQlgbZoyZRMB6TxucohELuwa8kp9fOVi2QYvDYG/7Ufe35L2HBldJv8yUe5vw3Sc1asMCxWv/jk2FJ/FY3S+aApiARIx96YYukoiMi0+apZmVRHqzaXs6SCrXaEt6yIW33hOAhubE/hLjY8D7qWSPsnhivA8Hv/1go7+rXSrZ1AHH1LNL+lrYWkV+QRjxmtH5APo+sGrAQJFaOFhRAotQaD9GHpK6XUEq/xasOH/QiRmrHptxKhU77OFONLUejo5dN/dMS5kpeRAFz91zXChMEU7R150av+dmQs/DT8PYbOPbg4dSlgeNGoF+kmQHYZC25E++YttNMyvE5krgDeMywOXyCAxCdZxKHWp/cmILj8l6d1IhvoXkYIBEtOJRAEd7hkLEEZfmAPTxCXzP7rO/uW/TxMxuynNAYX9IPbai6bwBRJ4Eo/d5os6P9YaYateAu9RmFwBneRfCiMaHfH7GufpnxWo3i7UFGlzBhvZKaZSc4EURzBnkZR1eTCawVY2noMDMwHitEik=",
+        "variants": []
+      },
+      {
+        "component": "server",
+        "platform": "linux_arm64",
+        "file": "metavms-server_update-5.0.0.35134-linux_arm64.zip",
+        "size": 146017403,
+        "md5": "c94ca4574d29a9b28ba5b9f6fcdf901c",
+        "signature": "h6aDeH8S7eKcczw8fexJKUT0aic/rpvbV7qu0+Pz5WAAAFla9knvUpG4fFy16c+xywKsq211BeW55n1cqzaARgYShxqkQQ+xjU2Gmx0A0I/lfGuuU9EQif70k2CQI5uAtvjU1kbjrpD/PqwlGJvp1eFx5TteIrLiK53V5+0xusyb5j1MY/HNNbaUgihxqlXXniMEI/EkgeLisGhrRvGuxEdMFm68Q1jAkBvI4kh+9o20DU1qyOt4RHs45mRmgarApm/a+nvVMsIM9dOmQy5YhoEwjlM+MjuxVQIWOS30AjttCiUJA/vPLiGgOYnwhZoZzvXqHfDnL97J64kJ5WBTK9K42VGr8RPNmGSvDyCG/DhwG7Qaj2IjY95fj5Seo4AVvj4IcsoHmziwRaE8muXYkz3wNXB3GtwpxsY6Dibek9BUB6/Auf4Aq2U7cK/YZu8bEhWsKCk6+Tnv2FumsU+2/WWnqslLTMfWcLXvbBQdbniRxmiVXJjjeM4TggmJiLKoFcKqcrWAfdVHgzQ5TU3CdapMknulrWW7HgH0KCY+/JYic3E1ekCln39bmWtxflg1pEoprvP/INUzw8i9yVOlwVmRGSsIHGZYtHNmn2ZaLXt4kRklgD9++g3NrIL1cHDiUPxaL4dQ0Q+LQQZ2cY2OvRzZdotqZjeGuMvcxxhfMeY=",
+        "variants": [
+          {
+            "name": "ubuntu",
+            "minimumVersion": "16.04"
+          }
+        ]
+      },
+      {
+        "component": "server",
+        "platform": "linux_arm32",
+        "file": "metavms-server_update-5.0.0.35134-linux_arm32.zip",
+        "size": 171679049,
+        "md5": "fe1b1c3e19f44743b27aa6753337fac6",
+        "signature": "YPYp8XXLD1bfgn+ovTnY5uvh6XEhYqI8BFm+qXgEx0u15SGI0DPuRnTyv9mq7lcoN1MbIifnlWjaQXq0Bxpdf7ckxSY4u3NVvjcwFGH7uK2RsW2F6aIeIwbmvGMLIL/hk0Nexaiofgh8Db2K0oRpk51QgB6Q4op7u93BL3m9TyC3OjyppKMk/wjY1+iygNZCboS0f+ebnoZW45EB2Wm2LnivcmJTOkZDGmEs3Hsj35iH5M1NUYPp1p4800CZfhBSCgcvWhekRhEZ5s0E8mA8uvgj4KmdwvEcpvQIXPcsiht2CpVyiiaGn+zy6XDUBH8SSxN1OAk9r3OaSKXQxpSoryYY0MUF/j0Bd7oZ9KtZrmSXLLxOb8+hFKUsg8SC27FPvC9qOlv+RiHO99PLjIWoFEORBJ2JSw+zYRwLbrA46eSvTsqZo9hm3SPLxgYzEaFij3/Ux/ReXYvQ2nElgCRvX6S0dyhcnjBmbeokZvFPokdy1lF4Xq7R5J4UvutugxhqsBV0lufEVVF5k4sjF2uRPREZri8FpS50eVe5VTAd6UEQBt64vQAcZ3zhamPoKYhT6zNegmc4u3cRLf1xegaepHktNR+4fI7g26Y+P8x6DzkYN9UEIV4PhvLePioa+VUtMLTIAEDSc14VRGIecCjpm1fw2PTpNh8BeWsd3fIL4y8=",
+        "variants": [
+          {
+            "name": "debian",
+            "minimumVersion": "9"
+          },
+          {
+            "name": "ubuntu",
+            "minimumVersion": "16.04"
+          },
+          {
+            "name": "raspbian",
+            "minimumVersion": "9"
+          }
+        ]
+      },
+      {
+        "component": "client",
+        "platform": "linux_x64",
+        "file": "metavms-client_update-5.0.0.35134-linux_x64.zip",
+        "size": 271361250,
+        "md5": "b045f9c43bb54503b49d543b0dec5866",
+        "signature": "bXn2AWSAuGBrlQ8UMkr8hvalwemAfyM9CMv5y68ogqncdMpfccRmVAwLhHNwAwHEOwzwMPkBerbO62vyGZMhLEJ7mrrOo6aN/efh5e0qkH34hWSy8q3GeSozS7pwSsryz4z9qwjnGsTWYe41+MM26/Ob3lDvhRNwByb41q7OGAiZvc1BewEGR/Z5VjTnUm3t0+eNjWQ87SiEPBUATj3o0Zw5guOMIarf74ZjsySj85Vxcw7d6+f+xLuntjnUhqMl89enAMeak5P6mmkQsvOtKZsKgTHZghoMq16QaD3I2ewHx2soUUkOPu8GKaR8Qz4dTrpaZ+D00kP3zPAvKm9V2mNsZlug0CwY7Xx64ZAWxsD9OOL87RvfypcXDfz8/N8xdMNFUOyIe58AdMnKzUv3vrkKrzb4B13i50e9iFfUO3Sj4J70npYda7BwT2ey2PuG6Qqrt6TBNCZL6B5NM/uK1DTN9ILxGs2YplsyRHO2hTa3rM1HR3/3Qq5B2X4La0IPGJtUP7jhRpTqNFTne+wsx8FaTzZeYSa3EK2gH1GHE0y6oKEqobAdLbiOE+gJQxquX2x9VYyIeq15OLQ2Ggh8QjLFNYyAJP9rMwVCGQkf205lKYFDPM7RfbmKlRi+WJhoafhtFeoOaTg+jZUeHD5VEj7O15+YWDNU0y/HfGD0vko=",
+        "variants": [
+          {
+            "name": "ubuntu",
+            "minimumVersion": "16.04"
+          }
+        ]
+      },
+      {
+        "component": "client",
+        "platform": "windows_x64",
+        "file": "metavms-client_update-5.0.0.35134-windows_x64.zip",
+        "size": 156095302,
+        "md5": "5013f2006b194ee146e6ae6225606007",
+        "signature": "cTCTsBRgLp3moJqCeMjux/IhDGvtIMT4E0Mt3rmfwfaBEdAcERP8bGKOAcIdS49ZaQ7FRxvXJKddQ8XjkYS+mM9reyhiuE8UBpeU6xxhCJ74zYWk1XPjoleJvakiXIKl/J/jEghSB2cxTk9wouaNzZd+t6LwkDrVtTFV1sD2HtjNnmQpqqcvK4OdLb5JJFztNz++4iY4+0yzQcSlr+xbApu8LKj0ZKloU3U0nsVYtWOW21b4n2Upzre7ikWvhKjG2gvSrZ8tRrHhpX+kKgYYVPw4qY8BrUg0Lvt5WPRVJi5qCdRo15eUYxdB0q48cfIfialCe86FWjJGGS5/g9yFDTvkyz2yrZnlceDiQiHAdpVe7rVHDjUtU9zEowM3HaOTV9psuDdH/68urGkN7g6fZBrIx3gm5lv3gBrZIGgEQTSP3a0TqbqHwhZ+z0PcTUB2TtDDz3J45lgCbAVetNnd49cfWTJqsL5LzwEp+fCosdCxgRmJ9x/6vIQ80SgbLopFl/0Fs8LX/0a44U2k//JO/njP6TJ4FbuHoHGzU6RkBQcCfTIbmyWQh+IfLIaFysmStBe1dyVZp8G1W8TFaPz+gpsgUF9VwcoTup2rcASODUHg2bqsJOM3vS0IKaemyUQL0hqm8HlW0T5KHEzGe196znz2PzdGcQiAatu4xbT4DuE=",
+        "variants": []
+      },
+      {
+        "component": "client",
+        "platform": "macos_x64",
+        "file": "metavms-client_update-5.0.0.35134-macos_x64.zip",
+        "size": 160323521,
+        "md5": "46cd8b222e31461b7c82ffbddbf0a730",
+        "signature": "dQhf51EZXEhl5kXlLGW5NV4FElCeY+WtBRIO7Vcc02wWgwpxyTI0Ogsqxr3B+zyt4TqIq6FO6Yme2WxLvQOK1aNbVk4G5iSopdQaYDnbKl/Qqh5zSyIqLLAju1chFVqEIR2EpktefCJ7awZfCuISYMVeNq+m27wHAXOjLLXCgJGG9MKYJMnkDZmByhTGPnug/i4ZVH5Lt3BhpYmK63dx5WRHJLmcxbuP19PcLTRAaU+v5ViS1K2me98y9fef8WZ6p7vsEqoA/ChQbjrOFHXUiRTNF7CNiZ4cV+8HOT4VgdFTwSQmZ2BN1n94lwMVCBm5xilr+W4iBlK5QojctjEaKvI96apX01hIOHQ/oHTYfAu6pWTk2gm9gOkWY5FZ9TvJoAqW2qlvancOx9FfC4L7Uvec6WqDjFl6ltWF3pHPWAjBhvocX1Hqj9crYlpc+OzIc8YqwMoBkDmKCXcsvMr9xQ7/w9xODvialx2qLaD6APKIY1uZZPGS2C6yM0k9VJ8CIVVwWbI2UmPMNt4gGno4RzyF91qOQwV0AvXdQb3O4PcJX5yoDiEKM58jthI1tkTRAl4rtJwlDTA29GxED0LnJSIP31Ks98CrfJVanrpf9KVxpy032tm8tvN0YbuRO1puBtamKwDNU2DWBufIViMlhz6PjZWjUM2eRYrFPpd5UNg=",
+        "variants": []
+      },
+      {
+        "component": "client",
+        "platform": "macos",
+        "file": "metavms-client_update-5.0.0.35134-macos.zip",
+        "size": 160323516,
+        "md5": "2493ecd45eacbcbbbdaca5a8abe36ccf",
+        "signature": "fqFDK/pzTArHWCM8Xk9xoCbfNb/om5uGgtHp+A2mLLokzvFtngMi9wTC8kI9MpJ+OUuBG/DK7f3lZrgNULesMad97k9iXiGZCuVye/5ga1GG/Z5IIXIyK5OoFsbr4/+z7DvuF4TK9usXQmwCqXekdiBqPcyBinusKw2zIa6ELYxAB38YGANYEliN0nZvMLTPkMiG/HE1PiAVtzYIObZmRO1QPMjMIW2RVzBtZ4viyeZJL1j4XzdxvQmzX2n6ApKoY9ESBafsPVp483DD3Ash21utafMRp06FNWJdiRVu3Qpn9qaClQ87TsEuKGEtV0LCsMXnO4KdRk6gXHidLH+0RqFtad9W0HluA9BNRKpcXZbz4Vq7+nEr9g8MZ2WVE3ZqjWt3ldXZjFK5VQmcy7p+il5g5EctgbirFu+ynX3FZbPQUx/W+t5iWjO2udCv/mgrOzm/TiZdjk5cgJylQAOn4dBRgRwdyEAeCAI4fVazvxQA2RVgCZGap5997L/XNhZvQd2EsoEaBUFYyOXizIm5ZVOy336eyeJ+LCh7cwv5O97ZTUkjZ+tG77JxMiPNH6rch9MHN9cTn2I2oAC/63NEQIKr1Yt9iaDLd0ifQRqkkbg/2BWBWtBT/S+Cwo4FZH8XMZhyhY2GhRqNkd/yUteS/sfn2z9+PZJQzvbdWhSl8lg=",
+        "variants": []
+      },
+      {
+        "component": "client",
+        "platform": "macos_arm64",
+        "file": "metavms-client_update-5.0.0.35134-macos_arm64.zip",
+        "size": 146575745,
+        "md5": "5baa7b1d9245f690a048986e26210093",
+        "signature": "k2v8KRuO5jIuNbd1eRuad4a6Rekj5VQWJiRBgho7+MDkVNC2Sw+sC7CtS+K7HYOi71gRa/IqTAvLRTc1N3yHxPhLD0ozrnLYaGmNDehdTJWCU8tjTnFNcy0IR3eO8ztg1HlFo+YN7cGssSyngQf8c6moDUjzmNgPflBOrKCqDCsG5Tg/liKvV/Y+h/c048gq5Opz+Qi7hbnF1IH6KWt+cBjx9rte4ZGuAQSGgKu2EJZ4WU7GReM2+M465QTFc455YXYUeIBRQuh57wUPrjrhNbFAdOnchgWDyF1uQ5Wz3gSRyqINu7r5D7UdoRnp9TVTjivYY32nePFRzS17xciLiYIid4jdTls0jERayPZiEPEGE+bSEMB39VLZfwtvF0air6dIw6OPjrjkmH4PF3oBkTgqIFiisYgH0pArEeKA/4DVirz/Fm5FIlGi9OvgHeRzYvyRfAScVvGLem57O1o8VjSHAV38kIOCvf3jR2sG9KHfwNEAhZsbeyEtNUUrwq8z1vATTQSAwzCBd66S7LO4/A+yGQwsd+JttI7K9t55a0rt5ICnFGD0wlaYZDLJkETf1bq3AXi12cinbzLI4YTMTueY1Z/C1NOMr6GSmdpNu0tw/42khUnp9t36BMf/YXLi4pURgiLJ8TZzASbaRV0rz6eZqB1dHJWuTe+2TkSEh+M=",
+        "variants": []
+      },
+      {
+        "component": "client",
+        "platform": "linux_arm64",
+        "file": "metavms-client_update-5.0.0.35134-linux_arm64.zip",
+        "size": 275957085,
+        "md5": "084b7b4528d973fb72c4a9d14c4c8b1d",
+        "signature": "zZRbO/E0PIjre/GFoyvKo9F6qmrD5JPCSO9h/fVx9DqCJlczoQDw4Zsi79FxQhke6r+z5xk+qTFUl6+vt9ZolBxbbfu8ym1LnQzOAAfAr5HvJfCwtThaUlK9tDWF+UQA0UyjdWwEAb6vDjMwjbJFaqxG2DKriglq/bARueL4mVxPcFY1UEcZFSdP0zCtqN6PkO1AxJQ7x+MUSSKVdW1oMPM6vQnVRCtooHHc4Wl5WWex/wDww4ReLE5H3wMxbOqTQ66aQ/Jpetayff+LaEilNvLLJTFCLbf0YgTe6p/4vaJ1kuFbpdEd51nyYV+CNx1SE7rygaqSICtrQwHmRLHMIOPPzQWkVGrgW6CyX/ECVSnVO8mg8f7fCObGr82SoNwFKP/4FtfFltHcjsvghpG5Ap7KI1CSxfoIbGd/37RJrPjXkhaNdmB7sLLIU/I+mS4yS0LoaUQtxrduza6QEQJ0PEJFEbgKvlVcUUDk9rnNJ+H5LbRAKGeD5I9NkQGMU1uwK1GYyE2zUA28MoWBokd05FchVSpGcQjYnJv0rNdZV78ssEH9Z6+HtgszRKmtlbYyrz1ZOpkFp3/cPHok0rkuIn6E9iPeKd5LLpZxz34dn4DBNGpO/Z7W4Du9hEJ1O+pOxiGzvtX0/Wq+oyZBkFlg7KwQh8dxWbKBWzhm7DThfQA=",
+        "variants": [
+          {
+            "name": "ubuntu",
+            "minimumVersion": "16.04"
+          }
+        ]
+      },
+      {
+        "component": "server",
+        "platform": "nx1",
+        "file": "",
+        "size": 0,
+        "md5": "",
+        "variants": [
+          {
+            "name": "",
+            "minimumVersion": "3000"
+          }
+        ]
+      }
+    ]
+  }

@@ -1,8 +1,15 @@
-﻿using Newtonsoft.Json;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace CreateMatrix;
 
-public class ReleaseJsonSchema
+// https://{cloudportal}/api/utils/downloads
+// https://meta.nxvms.com/api/utils/downloads
+// https://nxvms.com/api/utils/downloads
+// https://dwspectrum.digital-watchdog.com/api/utils/downloads
+
+public class DownloadsJsonSchema
 {
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -42,9 +49,9 @@ public class ReleaseJsonSchema
 
     [JsonProperty("releaseUrl")] public string ReleaseUrl { get; set; } = "";
 
-    public static ReleaseJsonSchema FromJson(string jsonString)
+    public static DownloadsJsonSchema FromJson(string jsonString)
     {
-        var jsonSchema = JsonConvert.DeserializeObject<ReleaseJsonSchema>(jsonString, Settings);
+        var jsonSchema = JsonConvert.DeserializeObject<DownloadsJsonSchema>(jsonString, Settings);
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
@@ -71,5 +78,21 @@ public class ReleaseJsonSchema
         [JsonProperty("name")] public string Name { get; set; } = "";
 
         [JsonProperty("files")] public List<Installer> Files { get; set; } = new();
+    }
+    
+    internal static DownloadsJsonSchema GetDownloads(HttpClient httpClient, string cloudHost)
+    {
+        // Load downloads JSON
+        // https://{cloudhost}/api/utils/downloads
+        Uri downloadsUri = new($"{cloudHost}/api/utils/downloads");
+        Log.Logger.Information("Getting download information from {Uri}", downloadsUri);
+        var jsonString = httpClient.GetStringAsync(downloadsUri).Result;
+        var downloadsSchema = FromJson(jsonString);
+        ArgumentNullException.ThrowIfNull(downloadsSchema);
+        ArgumentNullException.ThrowIfNull(downloadsSchema.Installers);
+        Debug.Assert(downloadsSchema.Installers.Count > 0);
+
+        // Return releases
+        return downloadsSchema;
     }
 }

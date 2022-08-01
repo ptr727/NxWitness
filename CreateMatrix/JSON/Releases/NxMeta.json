@@ -1,0 +1,24 @@
+{
+    "packages_urls": [
+        "https://updates.networkoptix.com/metavms",
+        "http://beta.networkoptix.com/beta-builds/metavms"
+    ],
+    "releases": [
+        {
+            "product": "vms",
+            "version": "5.1.0.35151 R1",
+            "protocol_version": 5105,
+            "publication_type": "beta",
+            "release_date": null,
+            "release_delivery_days": null
+        },
+        {
+            "product": "vms",
+            "version": "5.0.0.35134 R10",
+            "protocol_version": 5002,
+            "publication_type": "release",
+            "release_date": "1657918998520",
+            "release_delivery_days": null
+        }
+    ]
+}

@@ -15,19 +15,24 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 ## Container Images
 
 Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
-Images are tagged using `latest` or `stable` and the specific build version number.  
-`latest` images use the latest patch release version.  
-`stable` images use the last stable release version.  
-This allows flexibility for deployments that want to pin to specific release channels or versions.  
+Images are tagged using `latest`, `stable`, and the specific version number.  
+The `latest` tag uses the latest release version.  
+The `stable` tag uses the stable release version, `stable` and `latest` may be the same version.  
+Development branch and beta builds use the `develop` and `beta` tags, not to be used other than for testing purposes.
+
 E.g.
 
 ```console
+# Latest NxMeta-LSIO from Docker
 docker pull docker.io/ptr727/nxmeta-lsio:latest
+# Stable DWSpectrum from GitHub
 docker pull ghcr.io/ptr727/dwspectrum:stable
+# 5.0.0.35136 NxWitness-LSIO from Docker
 docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
-The images are updated weekly, picking up the latest upstream OS updates, and stable build version updates.
+The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.  
+See the [Build Process](#build-process) section for more details on how versions and builds are managed.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
@@ -185,21 +190,23 @@ services:
 Product releases, updates, and information can be found at the following locations:
 
 - Nx Witness:
-  - [JSON API](https://nxvms.com/api/utils/downloads)
+  - [Downloads API](https://nxvms.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/default/releases.json)
   - [Downloads](https://nxvms.com/download/linux)
   - [Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
   - [Release Notes](https://www.networkoptix.com/all-nx-witness-release-notes)
 - Nx Meta:
-  - [JSON API](https://meta.nxvms.com/api/utils/downloads)
+  - [Downloads API](https://meta.nxvms.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/metavms/releases.json)
   - [Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - [Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
   - [Downloads](https://meta.nxvms.com/download/linux)
   - [Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
-  - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
+  - [Downloads API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/digitalwatchdog/releases.json)
   - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
-  - Note that DW Spectrum versions often lag Nx Witness releases.
 
 Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
 
@@ -208,12 +215,8 @@ Updating the mediaserver inside docker is not supported, to update the server ve
 With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
 
 Updating the product versions and download URL's are done using the custom `CreateMatrix`  utility app.  
-The app takes a [Version.json](./Make/Version.json) file as input, creates permutations for products, base images, latest versions, stable versions, develop builds, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
+The app downloads the current product release information using the [release API](https://updates.vmsproxy.com/default/releases.json), or uses a [Version.json](./Make/Version.json) file as input, and creates permutations for products, base images, latest versions, stable versions, develop builds, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
 All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy derived from the `Matrix.json` file.
-
-The `CreateMatrix` utility will optionally query the latest `stable` product versions using the Network Optix online JSON API, and automatically build with the latest stable versions. In case the `stable` version is greater than the `latest` version, the `latest` version will be updated to match the `stable` version.
-
-Pre-release or Beta versions are not publish via the JSON API and are thus not automatically discoverable. I do monitor the NxMeta downloads page using [VisualPing](https://visualping.io/) but it is not always reliable. In case of new versions that are not yet building, feel free to create an issue with pointers to the downloads.
 
 ## Network Optix and Docker
 
@@ -290,9 +293,6 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
     - `System has not been booted with systemd as init system (PID 1). Can't operate.`
   - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
   - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- The download CDN SSL certificates are not trusted on all systems.
-  - `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
-  - When downloading use `wget --no-verbose --no-check-certificate` to ignore the SSL error.
 - Upgrading from v4.x to v5.0:
   - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
   - After upgrading to 5.0, reverting to 4.2 is no longer possible.
