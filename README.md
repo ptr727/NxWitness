@@ -212,15 +212,34 @@ Updating the mediaserver inside docker is not supported, to update the server ve
 
 ## Build Process
 
-With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
+The build is divided into the following parts:
 
-Updating the product versions and download URL's are done using the custom `CreateMatrix`  utility app.  
-The app downloads the current product release information using the [release API](https://updates.vmsproxy.com/default/releases.json), or uses a [Version.json](./Make/Version.json) file as input, and creates permutations for products, base images, latest versions, stable versions, develop builds, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
-All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy derived from the `Matrix.json` file.
+- A [Makefile](./Make/Makefile) is used to create the `Dockerfile`'s for permutations of "Entrypoint" and "LSIO" variants, and for each of "NxMeta", "NxWitness" and "DWSpectrum" products.
+  - There is similarity between the container variants, and to avoid code duplication the `Dockerfile` is dynamically constructed using file snippets.
+  - Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble the snippets.
+  - The various docker project directories are created by running `make create`.
+  - The project directories could be created at build time, but they are currently created and checked into source control to simplify change review.
+- The `Dockerfile` downloads and installs the mediaserver installer at build time using the `DOWNLOAD_URL` environment variable.
+  - The download URL's (as published by Network Optix) can be a DEB file or a ZIP file containing a DEB file, and the DEB file in the ZIP file may not be the same name as the ZIP file.
+  - To disambiguate the [Download.sh](./Make/Download.sh) script handles the variances making the DEB file available to install.
+  - It is possible to download the DEB file outside the `Dockerfile` and `COPY` it into the image, but the current process downloads inside the `Dockerfile` to minimize external build dependencies.
+- Updating the available product versions and download URL's are done using the custom [CreateMatrix](./CreateMatrix/) utility app.
+  - Version information can be manually curated in the [Version.json](./Make/Version.json) file using external sources.
+  - Version information can also be constructed via the [release API](https://updates.vmsproxy.com/default/releases.json).
+  - The `CreateMatrix` app can construct a [Matrix.json](./Make/Matrix.json) file from the `Version.json` file or from online version information.
+    - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json`
+    - `CreateMatrix matrix --matrix=./Make/Matrix.json --online=true`
+- Local builds can be performed using `make build`, where download URL and version information defaults to the `Dockerfile` values.
+  - All images will be built and launched using `make build` and `make up`, allowing local testing using the build output URL's.
+  - After testing stop and delete containers and images using `make clean`.
+- Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [BuildPublishPipeline.yml](./.github/workflows/BuildPublishPipeline.yml) pipeline.
+  - The pipeline runs the `CreateMatrix` utility to create a `Matrix.json` file containing all the container image details.
+  - A [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy is used to build and publish a container image for every entry in the `Matrix.json` file.
+  - Conditional build time branch logic controls image creation vs. image publishing.
 
 ## Network Optix and Docker
 
-There are annoying and serious issues, but compared to other VMS/NVR software I've paid for and used, Nx Witness is the lightest on system resources, has a good feature set, and with added docker support runs great in my home lab.
+There are issues ranging from annoyances to serious with Network Optix on Docker, but compared to other VMS/NVR software I've paid for and used, it is very light on system resources, has a good feature set, and with added docker support runs great in my home lab.
 
 ### Licensing
 
@@ -270,10 +289,10 @@ I'd be happy to pay a reasonable yearly subscription or maintenance fee, knowing
 
 My wishlist for better docker support:
 
-- Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry.
+- Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry (what this project does).
 - Do not bind the license to hardware, use the cloud account for license enforcement.
 - Do not filter storage filesystems, allow the administrator to specify and use any storage location.
-- Do not pollute the filesystem by blindly creating folders in any detected storage.
+- Do not pollute the filesystem by creating folders in any detected storage, use only what was specified.
 - Do not bind to any discovered network adapter, allow the administrator to specify the bound network adapter, or add an option to opt-out/opt-in to auto-binding.
 - Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
 

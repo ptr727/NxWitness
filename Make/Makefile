@@ -21,13 +21,14 @@
 # Delete all unused container images:
 # docker image prune --all
 
-# Buil Steps:
-# make all
+# Create Dockerfiles:
+# make create
+
+# Build and launch all images:
+# make build
 # make up
 # Test images by ctrl-click opening the browser links
 # make clean
-
-# TODO: Build the Matrix.json file from parts
 
 SHELL := /bin/bash
 
@@ -55,7 +56,7 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 
 
 .PHONY: all
-all: down copy create build
+all: create build
 
 .PHONY: down
 down:
@@ -68,11 +69,10 @@ up:
 .PHONY: check
 check:
 	@echo "Usage:"
-	@echo "'make copy' : Copy files"
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
-	@echo "'make all' : Runs all steps"
+	@echo "'make all' : Runs create and build"
 	@echo ""
 	@echo "Variables:"
 	@echo "M4S = $(M4S)"
@@ -107,10 +107,10 @@ copy:
 	cp Download.sh ../NxMeta/Download.sh
 
 .PHONY: create
-create: $(DIRS:%=%/.docker-create)
+create: copy $(DIRS:%=%/.docker-create)
 
 .PHONY: build
-build: $(DIRS:%=%/.docker-build)
+build: down $(DIRS:%=%/.docker-build)
 
 .PHONY: clean
 clean: down $(DIRS:%=%/.docker-clean)
