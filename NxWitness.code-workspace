@@ -8,6 +8,7 @@
 	"settings": {
 		"makefile.extensionOutputFolder": "./.vscode",
 		"cSpell.words": [
+			"dockerenv",
 			"filesystems",
 			"IPVMS",
 			"lsio",

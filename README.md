@@ -237,6 +237,8 @@ The build is divided into the following parts:
   - A [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy is used to build and publish a container image for every entry in the `Matrix.json` file.
   - Conditional build time branch logic controls image creation vs. image publishing.
 
+Note that only the `develop` branch will use online version information at build time, the `main` branch still relies on the static `Version.json` file I manually curate. I am not yet confident in the logic used in `CreateMatrix` utility or the `releases.json` data published by Network Optix.
+
 ## Network Optix and Docker
 
 There are issues ranging from annoyances to serious with Network Optix on Docker, but compared to other VMS/NVR software I've paid for and used, it is very light on system resources, has a good feature set, and with added docker support runs great in my home lab.
@@ -254,7 +256,7 @@ A portable approach could apply licenses to the [Cloud Account](https://www.netw
 
 **Issue:**  
 The mediaserver attempts to automatically decide what storage to use.  
-Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common ZFS is not supported.  
+Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common [ZFS](https://support.networkoptix.com/hc/en-us/community/posts/1500000914242-Please-add-ZFS-as-supported-storage-to-4-3) is not supported.  
 Duplicate filesystems are ignored, e.g. multiple logical mounts on the same physical storage are ignored.  
 The server blindly creates database files on any writable storage it discovers, regardless of if that storage was assigned for use or not.
 
@@ -264,7 +266,7 @@ Remove the elaborate and prone to failure filesystem discovery and filtering log
 ### Network Binding
 
 **Issue:**  
-The mediaserver binds to any discovered network adapter.
+The mediaserver binds to [any discovered](https://support.networkoptix.com/hc/en-us/community/posts/360048795073-R8-in-Docker-auto-binds-to-any-network-adapter-it-finds) network adapter.
 On docker this means the server binds to all docker networks of all running containers, there could be hundreds or thousands, making the network graph useless, and consuming unnecessary resources.
 
 **Possible Solution:**  
@@ -291,8 +293,8 @@ My wishlist for better docker support:
 
 - Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry (what this project does).
 - Do not bind the license to hardware, use the cloud account for license enforcement.
-- Do not filter storage filesystems, allow the administrator to specify and use any storage location.
-- Do not pollute the filesystem by creating folders in any detected storage, use only what was specified.
+- Do not filter storage filesystems, allow the administrator to specify and use any storage location backed by any filesystem.
+- Do not pollute the filesystem by creating folders in any detected storage, use only storage as specified.
 - Do not bind to any discovered network adapter, allow the administrator to specify the bound network adapter, or add an option to opt-out/opt-in to auto-binding.
 - Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
 
@@ -306,17 +308,16 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
 
 ### Known Issues
 
-- Windows Subsystem for Linux v2 (WSL2) is not supported.
-  - The DEB installer `postinst` step the installer tries to start the service, and fails the install.
+- v4 does not support Windows Subsystem for Linux v2 (WSL2).
+  - The DEB installer `postinst` step tries to start the service, and fails the install.
     - `Detected runtime type: wsl.`
     - `System has not been booted with systemd as init system (PID 1). Can't operate.`
-  - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
-  - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- Upgrading from v4.x to v5.0:
-  - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
-  - After upgrading to 5.0, reverting to 4.2 is no longer possible.
+  - v4 logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
+  - v5 logic tests for `if [[ -f "/.dockerenv" ]]`, the presence of a Docker environment, that is more portable, and does work in WSL2.
+- Downgrading from v5 to v4 is not supported.
+  - The mediaserver will fail to start.
     - `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`
-  - Make a copy of the server configuration before upgrading, and restore the old configuration when downgrading.
+  - Make a copy, or ZFS snapshot, of the server configuration before upgrading, and restore the old configuration when downgrading.
 
 ### Missing Storage
 
