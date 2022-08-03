@@ -14,10 +14,10 @@
         },
         {
             "product": "vms",
-            "version": "5.0.0.35134 R10",
+            "version": "5.0.0.35269 R11",
             "protocol_version": 5002,
             "publication_type": "release",
-            "release_date": "1657918998520",
+            "release_date": "1659433159847",
             "release_delivery_days": null
         }
     ]

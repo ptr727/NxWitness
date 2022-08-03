@@ -1,11 +1,11 @@
 {
-    "version": "5.0.0.35136",
+    "version": "5.0.0.35270",
     "releaseNotes": "https://www.networkoptix.com/all-nx-witness-release-notes",
     "product": "nxwitness",
     "productDescription": "Video Management System",
-    "date": "08 Jul 2022",
-    "buildNumber": "35136",
-    "password": "d3ye5b",
+    "date": "26 Jul 2022",
+    "buildNumber": "35270",
+    "password": "xk3y79",
     "type": "release",
     "installers": [
         {
@@ -13,8 +13,8 @@
             "appType": "client",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-client-5.0.0.35136-linux_x64.deb",
-            "path": "linux/nxwitness-client-5.0.0.35136-linux_x64.deb",
+            "fileName": "nxwitness-client-5.0.0.35270-linux_x64.deb",
+            "path": "linux/nxwitness-client-5.0.0.35270-linux_x64.deb",
             "niceName": "Ubuntu x64 - Client installer"
         },
         {
@@ -22,8 +22,8 @@
             "appType": "server",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-server-5.0.0.35136-linux_x64.deb",
-            "path": "linux/nxwitness-server-5.0.0.35136-linux_x64.deb",
+            "fileName": "nxwitness-server-5.0.0.35270-linux_x64.deb",
+            "path": "linux/nxwitness-server-5.0.0.35270-linux_x64.deb",
             "niceName": "Ubuntu x64 - Server installer"
         },
         {
@@ -31,8 +31,8 @@
             "appType": "bundle",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-bundle-5.0.0.35136-windows_x64.exe",
-            "path": "windows/nxwitness-bundle-5.0.0.35136-windows_x64.exe",
+            "fileName": "nxwitness-bundle-5.0.0.35270-windows_x64.exe",
+            "path": "windows/nxwitness-bundle-5.0.0.35270-windows_x64.exe",
             "niceName": "Windows x64 - Client & Server"
         },
         {
@@ -40,8 +40,8 @@
             "appType": "client",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-client-5.0.0.35136-windows_x64.exe",
-            "path": "windows/nxwitness-client-5.0.0.35136-windows_x64.exe",
+            "fileName": "nxwitness-client-5.0.0.35270-windows_x64.exe",
+            "path": "windows/nxwitness-client-5.0.0.35270-windows_x64.exe",
             "niceName": "Windows x64 - Client installer"
         },
         {
@@ -49,8 +49,8 @@
             "appType": "paxton_plugin",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-paxton_plugin-5.0.0.35136-Net2v5.exe",
-            "path": "windows/nxwitness-paxton_plugin-5.0.0.35136-Net2v5.exe",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.35270-Net2v5.exe",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.35270-Net2v5.exe",
             "niceName": "Paxton Net2 Pro v5 - plugin installer"
         },
         {
@@ -58,8 +58,8 @@
             "appType": "paxton_plugin",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-paxton_plugin-5.0.0.35136-Net2v6.exe",
-            "path": "windows/nxwitness-paxton_plugin-5.0.0.35136-Net2v6.exe",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.35270-Net2v6.exe",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.35270-Net2v6.exe",
             "niceName": "Paxton Net2 Pro v6 - plugin installer"
         },
         {
@@ -67,8 +67,8 @@
             "appType": "server",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-server-5.0.0.35136-windows_x64.exe",
-            "path": "windows/nxwitness-server-5.0.0.35136-windows_x64.exe",
+            "fileName": "nxwitness-server-5.0.0.35270-windows_x64.exe",
+            "path": "windows/nxwitness-server-5.0.0.35270-windows_x64.exe",
             "niceName": "Windows x64 - Server installer"
         },
         {
@@ -76,8 +76,8 @@
             "appType": "testcamera",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-testcamera-5.0.0.35136-windows_x64.zip",
-            "path": "windows/nxwitness-testcamera-5.0.0.35136-windows_x64.zip",
+            "fileName": "nxwitness-testcamera-5.0.0.35270-windows_x64.zip",
+            "path": "windows/nxwitness-testcamera-5.0.0.35270-windows_x64.zip",
             "niceName": "Windows x64 - Test camera"
         },
         {
@@ -85,8 +85,8 @@
             "appType": "client",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-client-5.0.0.35136-macos_x64.dmg",
-            "path": "macos/nxwitness-client-5.0.0.35136-macos_x64.dmg",
+            "fileName": "nxwitness-client-5.0.0.35270-macos_x64.dmg",
+            "path": "macos/nxwitness-client-5.0.0.35270-macos_x64.dmg",
             "niceName": "Mac OS - Client installer"
         },
         {
@@ -94,8 +94,8 @@
             "appType": "client",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-client-5.0.0.35136-macos_arm64.dmg",
-            "path": "macos/nxwitness-client-5.0.0.35136-macos_arm64.dmg",
+            "fileName": "nxwitness-client-5.0.0.35270-macos_arm64.dmg",
+            "path": "macos/nxwitness-client-5.0.0.35270-macos_arm64.dmg",
             "niceName": "Mac OS ARM64 - Client installer"
         },
         {
@@ -103,8 +103,8 @@
             "appType": "server",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-server-5.0.0.35136-edge1.zip",
-            "path": "arm/nxwitness-server-5.0.0.35136-edge1.zip",
+            "fileName": "nxwitness-server-5.0.0.35270-edge1.zip",
+            "path": "arm/nxwitness-server-5.0.0.35270-edge1.zip",
             "niceName": "Edge - Server installer"
         },
         {
@@ -112,8 +112,8 @@
             "appType": "server",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-server-5.0.0.35136-linux_arm64.deb",
-            "path": "arm/nxwitness-server-5.0.0.35136-linux_arm64.deb",
+            "fileName": "nxwitness-server-5.0.0.35270-linux_arm64.deb",
+            "path": "arm/nxwitness-server-5.0.0.35270-linux_arm64.deb",
             "niceName": "NVIDIA Jetson / ARM64 - Server installer"
         },
         {
@@ -121,8 +121,8 @@
             "appType": "client",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-client-5.0.0.35136-linux_arm64.deb",
-            "path": "arm/nxwitness-client-5.0.0.35136-linux_arm64.deb",
+            "fileName": "nxwitness-client-5.0.0.35270-linux_arm64.deb",
+            "path": "arm/nxwitness-client-5.0.0.35270-linux_arm64.deb",
             "niceName": "NVIDIA Jetson / ARM64 - Client installer"
         },
         {
@@ -130,8 +130,8 @@
             "appType": "server",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-server-5.0.0.35136-linux_arm32.deb",
-            "path": "arm/nxwitness-server-5.0.0.35136-linux_arm32.deb",
+            "fileName": "nxwitness-server-5.0.0.35270-linux_arm32.deb",
+            "path": "arm/nxwitness-server-5.0.0.35270-linux_arm32.deb",
             "niceName": "Raspberry Pi / ARM32 - Server installer"
         },
         {
@@ -139,8 +139,8 @@
             "appType": "metadata_sdk",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-metadata_sdk-5.0.0.35136-universal.zip",
-            "path": "sdk/nxwitness-metadata_sdk-5.0.0.35136-universal.zip",
+            "fileName": "nxwitness-metadata_sdk-5.0.0.35270-universal.zip",
+            "path": "sdk/nxwitness-metadata_sdk-5.0.0.35270-universal.zip",
             "niceName": "Cross-platform - SDK: Metadata"
         },
         {
@@ -148,8 +148,8 @@
             "appType": "storage_sdk",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-storage_sdk-5.0.0.35136-universal.zip",
-            "path": "sdk/nxwitness-storage_sdk-5.0.0.35136-universal.zip",
+            "fileName": "nxwitness-storage_sdk-5.0.0.35270-universal.zip",
+            "path": "sdk/nxwitness-storage_sdk-5.0.0.35270-universal.zip",
             "niceName": "Cross-platform - SDK: Storage"
         },
         {
@@ -157,8 +157,8 @@
             "appType": "video_source_sdk",
             "beta": false,
             "cloudGroup": "prod",
-            "fileName": "nxwitness-video_source_sdk-5.0.0.35136-universal.zip",
-            "path": "sdk/nxwitness-video_source_sdk-5.0.0.35136-universal.zip",
+            "fileName": "nxwitness-video_source_sdk-5.0.0.35270-universal.zip",
+            "path": "sdk/nxwitness-video_source_sdk-5.0.0.35270-universal.zip",
             "niceName": "Cross-platform - SDK: Camera"
         }
     ],
@@ -171,8 +171,8 @@
                     "appType": "client",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-client-5.0.0.35136-linux_x64.deb",
-                    "path": "linux/nxwitness-client-5.0.0.35136-linux_x64.deb",
+                    "fileName": "nxwitness-client-5.0.0.35270-linux_x64.deb",
+                    "path": "linux/nxwitness-client-5.0.0.35270-linux_x64.deb",
                     "niceName": "Ubuntu x64 - Client installer"
                 },
                 {
@@ -180,8 +180,8 @@
                     "appType": "server",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-server-5.0.0.35136-linux_x64.deb",
-                    "path": "linux/nxwitness-server-5.0.0.35136-linux_x64.deb",
+                    "fileName": "nxwitness-server-5.0.0.35270-linux_x64.deb",
+                    "path": "linux/nxwitness-server-5.0.0.35270-linux_x64.deb",
                     "niceName": "Ubuntu x64 - Server installer"
                 }
             ]
@@ -194,8 +194,8 @@
                     "appType": "paxton_plugin",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-paxton_plugin-5.0.0.35136-Net2v5.exe",
-                    "path": "windows/nxwitness-paxton_plugin-5.0.0.35136-Net2v5.exe",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.35270-Net2v5.exe",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.35270-Net2v5.exe",
                     "niceName": "Paxton Net2 Pro v5 - plugin installer"
                 },
                 {
@@ -203,8 +203,8 @@
                     "appType": "paxton_plugin",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-paxton_plugin-5.0.0.35136-Net2v6.exe",
-                    "path": "windows/nxwitness-paxton_plugin-5.0.0.35136-Net2v6.exe",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.35270-Net2v6.exe",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.35270-Net2v6.exe",
                     "niceName": "Paxton Net2 Pro v6 - plugin installer"
                 },
                 {
@@ -212,8 +212,8 @@
                     "appType": "bundle",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-bundle-5.0.0.35136-windows_x64.exe",
-                    "path": "windows/nxwitness-bundle-5.0.0.35136-windows_x64.exe",
+                    "fileName": "nxwitness-bundle-5.0.0.35270-windows_x64.exe",
+                    "path": "windows/nxwitness-bundle-5.0.0.35270-windows_x64.exe",
                     "niceName": "Windows x64 - Client & Server"
                 },
                 {
@@ -221,8 +221,8 @@
                     "appType": "client",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-client-5.0.0.35136-windows_x64.exe",
-                    "path": "windows/nxwitness-client-5.0.0.35136-windows_x64.exe",
+                    "fileName": "nxwitness-client-5.0.0.35270-windows_x64.exe",
+                    "path": "windows/nxwitness-client-5.0.0.35270-windows_x64.exe",
                     "niceName": "Windows x64 - Client installer"
                 },
                 {
@@ -230,8 +230,8 @@
                     "appType": "server",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-server-5.0.0.35136-windows_x64.exe",
-                    "path": "windows/nxwitness-server-5.0.0.35136-windows_x64.exe",
+                    "fileName": "nxwitness-server-5.0.0.35270-windows_x64.exe",
+                    "path": "windows/nxwitness-server-5.0.0.35270-windows_x64.exe",
                     "niceName": "Windows x64 - Server installer"
                 },
                 {
@@ -239,8 +239,8 @@
                     "appType": "testcamera",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-testcamera-5.0.0.35136-windows_x64.zip",
-                    "path": "windows/nxwitness-testcamera-5.0.0.35136-windows_x64.zip",
+                    "fileName": "nxwitness-testcamera-5.0.0.35270-windows_x64.zip",
+                    "path": "windows/nxwitness-testcamera-5.0.0.35270-windows_x64.zip",
                     "niceName": "Windows x64 - Test camera"
                 }
             ]
@@ -253,8 +253,8 @@
                     "appType": "client",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-client-5.0.0.35136-macos_x64.dmg",
-                    "path": "macos/nxwitness-client-5.0.0.35136-macos_x64.dmg",
+                    "fileName": "nxwitness-client-5.0.0.35270-macos_x64.dmg",
+                    "path": "macos/nxwitness-client-5.0.0.35270-macos_x64.dmg",
                     "niceName": "Mac OS - Client installer"
                 },
                 {
@@ -262,8 +262,8 @@
                     "appType": "client",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-client-5.0.0.35136-macos_arm64.dmg",
-                    "path": "macos/nxwitness-client-5.0.0.35136-macos_arm64.dmg",
+                    "fileName": "nxwitness-client-5.0.0.35270-macos_arm64.dmg",
+                    "path": "macos/nxwitness-client-5.0.0.35270-macos_arm64.dmg",
                     "niceName": "Mac OS ARM64 - Client installer"
                 }
             ]
@@ -276,8 +276,8 @@
                     "appType": "server",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-server-5.0.0.35136-edge1.zip",
-                    "path": "arm/nxwitness-server-5.0.0.35136-edge1.zip",
+                    "fileName": "nxwitness-server-5.0.0.35270-edge1.zip",
+                    "path": "arm/nxwitness-server-5.0.0.35270-edge1.zip",
                     "niceName": "Edge - Server installer"
                 },
                 {
@@ -285,8 +285,8 @@
                     "appType": "client",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-client-5.0.0.35136-linux_arm64.deb",
-                    "path": "arm/nxwitness-client-5.0.0.35136-linux_arm64.deb",
+                    "fileName": "nxwitness-client-5.0.0.35270-linux_arm64.deb",
+                    "path": "arm/nxwitness-client-5.0.0.35270-linux_arm64.deb",
                     "niceName": "NVIDIA Jetson / ARM64 - Client installer"
                 },
                 {
@@ -294,8 +294,8 @@
                     "appType": "server",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-server-5.0.0.35136-linux_arm64.deb",
-                    "path": "arm/nxwitness-server-5.0.0.35136-linux_arm64.deb",
+                    "fileName": "nxwitness-server-5.0.0.35270-linux_arm64.deb",
+                    "path": "arm/nxwitness-server-5.0.0.35270-linux_arm64.deb",
                     "niceName": "NVIDIA Jetson / ARM64 - Server installer"
                 },
                 {
@@ -303,8 +303,8 @@
                     "appType": "server",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-server-5.0.0.35136-linux_arm32.deb",
-                    "path": "arm/nxwitness-server-5.0.0.35136-linux_arm32.deb",
+                    "fileName": "nxwitness-server-5.0.0.35270-linux_arm32.deb",
+                    "path": "arm/nxwitness-server-5.0.0.35270-linux_arm32.deb",
                     "niceName": "Raspberry Pi / ARM32 - Server installer"
                 }
             ]
@@ -317,8 +317,8 @@
                     "appType": "video_source_sdk",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-video_source_sdk-5.0.0.35136-universal.zip",
-                    "path": "sdk/nxwitness-video_source_sdk-5.0.0.35136-universal.zip",
+                    "fileName": "nxwitness-video_source_sdk-5.0.0.35270-universal.zip",
+                    "path": "sdk/nxwitness-video_source_sdk-5.0.0.35270-universal.zip",
                     "niceName": "Cross-platform - SDK: Camera"
                 },
                 {
@@ -326,8 +326,8 @@
                     "appType": "metadata_sdk",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-metadata_sdk-5.0.0.35136-universal.zip",
-                    "path": "sdk/nxwitness-metadata_sdk-5.0.0.35136-universal.zip",
+                    "fileName": "nxwitness-metadata_sdk-5.0.0.35270-universal.zip",
+                    "path": "sdk/nxwitness-metadata_sdk-5.0.0.35270-universal.zip",
                     "niceName": "Cross-platform - SDK: Metadata"
                 },
                 {
@@ -335,8 +335,8 @@
                     "appType": "storage_sdk",
                     "beta": false,
                     "cloudGroup": "prod",
-                    "fileName": "nxwitness-storage_sdk-5.0.0.35136-universal.zip",
-                    "path": "sdk/nxwitness-storage_sdk-5.0.0.35136-universal.zip",
+                    "fileName": "nxwitness-storage_sdk-5.0.0.35270-universal.zip",
+                    "path": "sdk/nxwitness-storage_sdk-5.0.0.35270-universal.zip",
                     "niceName": "Cross-platform - SDK: Storage"
                 }
             ]
@@ -346,5 +346,5 @@
     "cloudGroup": "prod",
     "beta": false,
     "dismissed": false,
-    "releaseUrl": "https://updates.networkoptix.com/default/35136/"
+    "releaseUrl": "https://updates.networkoptix.com/default/35270/"
 }

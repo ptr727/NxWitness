@@ -13,8 +13,8 @@
           ]
         },
         {
-          "Version": "5.0.0.35134",
-          "Uri": "https://updates.networkoptix.com/metavms/35134/metavms-server_update-5.0.0.35134-linux_x64.zip",
+          "Version": "5.0.0.35269",
+          "Uri": "https://updates.networkoptix.com/metavms/35269/metavms-server_update-5.0.0.35269-linux_x64.zip",
           "Labels": [
             "latest",
             "stable"
@@ -29,13 +29,7 @@
           "Version": "5.0.0.35270",
           "Uri": "https://updates.networkoptix.com/default/35270/nxwitness-server_update-5.0.0.35270-linux_x64.zip",
           "Labels": [
-            "latest"
-          ]
-        },
-        {
-          "Version": "4.2.0.32840",
-          "Uri": "https://updates.networkoptix.com/default/32840/nxwitness-server_update-4.2.0.32840-linux64.zip",
-          "Labels": [
+            "latest",
             "stable"
           ]
         }
