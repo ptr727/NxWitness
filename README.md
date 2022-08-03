@@ -185,9 +185,9 @@ services:
 - Use `nobody` and `users` identifiers, `PUID=99` and `PGID=100`.
 - Register the Unraid filesystems in the `additionalLocalFsTypes` advanced settings, see the [Missing Storage](#missing-storage) section for help.
 
-## Release Tracking
+## Product Information
 
-Product releases, updates, and information can be found at the following locations:
+### Releases Information
 
 - Nx Witness:
   - [Downloads API](https://nxvms.com/api/utils/downloads)
@@ -208,7 +208,18 @@ Product releases, updates, and information can be found at the following locatio
   - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
 
-Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
+### Advanced Configuration
+
+- Advanced `mediaserver.conf` [Configuration](https://support.networkoptix.com/hc/en-us/articles/360036389693-How-to-access-Nx-Server-configuration-options):
+  - v4: `https://[hostname]:7001/static/index.html#/developers/serverDocumentation`
+  - v5: JSON: `https://[hostname]:7001/api/settingsDocumentation`
+- Advanced Web Configuration:
+  - v4: `https://[hostname]:7001/static/index.html#/advanced`
+  - v5: `https://[hostname]:7001/#/settings/advanced`
+  - Get State: JSON: `https://[hostname]:7001/api/systemSettings`
+- Storage Reporting:
+  - v4: `https://[hostname]:7001/static/health.html#/health/storages`
+  - v5: `https://[hostname]:7001/#/health/storages`
 
 ## Build Process
 
@@ -238,6 +249,8 @@ The build is divided into the following parts:
   - Conditional build time branch logic controls image creation vs. image publishing.
 
 Note that only the `develop` branch will use online version information at build time, the `main` branch still relies on the static `Version.json` file I manually curate. I am not yet confident in the logic used in `CreateMatrix` utility or the `releases.json` data published by Network Optix.
+
+Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
 
 ## Network Optix and Docker
 
@@ -325,12 +338,12 @@ The following section will help troubleshoot common problems with missing storag
 If this does not help, please contact [Network Optix Support](https://support.networkoptix.com/hc/en-us/community/topics).  
 Please do not open a GitHub issue unless you are positive the issue is with the `Dockerfile`.
 
-Verify the available storage locations:  
-Open the [web admin](https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin) interface, Right-Click on the server name in the Desktop Client, and select "Server Web Page".  
-Click on "Information" and then "Storage Locations", or visit `https://[hostname]:7001/static/health.html#/health/storages`, and verify that all mounted storage is listed.
+Note that the configuration URL's changed between v4 and v5, see the [Advanced Configuration](#advanced-configuration) section for version specific URL's.
+
+Confirm that all the mounted volumes are listed in the available storage locations in the [web admin](https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin) portal.
 
 Enable debug logging in the mediaserver:  
-Edit `/config/etc/mediaserver.conf`, set `logLevel=DEBUG2`, restart the server.  
+Edit `/config/etc/mediaserver.conf`, set `logLevel=verbose`, restart the server.  
 Look for clues in `/config/var/log/log_file.log`.
 
 E.g.
@@ -410,9 +423,8 @@ VERBOSE nx::vms::server::fs: /dev/sdb8 /archive btrfs - duplicate
 
 In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.
 
-Add the required filesystem types in the advanced configuration menu, and restart the server:  
-Open the advanced configuration web admin page at `https://[hostname]:7001/static/index.html#/advanced`.  
-Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`.
+Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.
+Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
 Alternatively call the configuration API directly:  
 `wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:7001/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.
