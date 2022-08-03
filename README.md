@@ -18,7 +18,7 @@ Docker container images are published on [Docker Hub](https://hub.docker.com/u/p
 Images are tagged using `latest`, `stable`, and the specific version number.  
 The `latest` tag uses the latest release version.  
 The `stable` tag uses the stable release version, `stable` and `latest` may be the same version.  
-Development branch and beta builds use the `develop` and `beta` tags, not to be used other than for testing purposes.
+The `develop` tag is assigned to `develop` branch builds, and the `beta` tag to pre-release product versions, use for testing only.
 
 E.g.
 

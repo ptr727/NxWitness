@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Serilog;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -98,5 +98,12 @@ public class ImageInfo
 
         // Done
         return imageList;
+    }
+
+    public void LogInformation()
+    {
+        Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", Name, Branch, Tags.Count, Args.Count);
+        Tags.ForEach(item => Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, item));
+        Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
     }
 }

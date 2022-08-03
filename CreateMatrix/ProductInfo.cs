@@ -4,7 +4,6 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
-using static CreateMatrix.ReleasesJsonSchema;
 
 namespace CreateMatrix;
 

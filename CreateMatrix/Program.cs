@@ -179,9 +179,7 @@ internal static class Program
         Log.Logger.Information("Created {Count} images in matrix", matrixJson.Images.Count);
 
         // Log info
-        foreach (var image in matrixJson.Images)
-            Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", image.Name,
-                image.Branch, image.Tags.Count, image.Args.Count);
+        matrixJson.Images.ForEach(item => item.LogInformation());
 
         // Write matrix
         Log.Logger.Information("Writing matrix to {Path}", matrixPath);
