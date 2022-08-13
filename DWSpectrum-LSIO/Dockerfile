@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-ARG DOWNLOAD_VERSION="4.2.0.32842"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/35271/dwspectrum-server_update-5.0.0.35271-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.0.0.35271"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
