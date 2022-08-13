@@ -120,15 +120,6 @@ internal static class Program
             // Get versions for all products using releases API
             versionSchema.Products = ProductInfo.GetProducts();
             versionSchema.Products.ForEach(item => item.GetReleasesVersions());
-
-            // Get versions for all products using downloads API
-            // TODO: Deprecated
-            {
-                var downloadProducts = ProductInfo.GetProducts();
-                downloadProducts.ForEach(item => item.GetDownloadsVersions());
-                downloadProducts.ForEach(item => item.LogInformation());
-                downloadProducts.ForEach(item => item.VerifyUrls());
-            }
         }
 
         // Log info

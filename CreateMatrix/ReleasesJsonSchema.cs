@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using Serilog;
+using static CreateMatrix.ReleasesJsonSchema;
 
 namespace CreateMatrix;
 
@@ -32,6 +33,16 @@ public class ReleasesJsonSchema
         [JsonProperty("release_date")] public long ReleaseDate { get; set; }
 
         [JsonProperty("release_delivery_days")] public int ReleaseDeliveryDays { get; set; }
+
+        public bool IsReleased()
+        {
+            // TODO: Follow up with Nx on correctness of logic
+            // Similar to logic used in releases_info.cpp : canReceiveUnpublishedBuild()
+            // release_date is a null or a quoted string in JSON
+            // release_delivery_days is a null or integer in JSON
+            // JSON to int conversion will default to 0 for null, so testing for >= will always be true?
+            return ReleaseDate > 0 && ReleaseDeliveryDays >= 0;
+        }
     }
 
     [JsonProperty("packages_urls")] public List<string> PackagesUrls { get; set; } = new();

@@ -57,6 +57,7 @@ public class ProductInfo
             select new ProductInfo { Product = productType }).ToList();
     }
 
+    [Obsolete("Deprecated by GetReleasesVersions().", false)]
     public void GetDownloadsVersions()
     {
         // Get version information using {cloudhost}/api/utils/downloads
@@ -130,21 +131,15 @@ public class ProductInfo
             // Reuse HttpClient
             using HttpClient httpClient = new();
 
-            // Keep track of labels
-            List<string> labelsList = new();
+            // Labels used for state tracking
+            List<string> labelList = new();
 
             // Get all releases
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, ProductShortName);
             foreach (var release in releasesList)
             {
-                // Skip unknown release types
-                if (!release.Product.Equals("vms") ||
-                    !(release.PublicationType.Equals("release") || release.PublicationType.Equals("rc") || release.PublicationType.Equals("beta")))
-                {
-                    // Skip
-                    Log.Logger.Warning("Unknown release type : Product: {Product}, Type: {Type}", release.Product, release.PublicationType);
-                    continue;                    
-                }
+                // We expect only "vms" products
+                Debug.Assert(release.Product.Equals("vms"));
 
                 // Set version
                 VersionUri versionUri = new();
@@ -167,51 +162,27 @@ public class ProductInfo
                 {
                     case "release":
                     {
-                        // Released or unreleased by date being set
-                        if (release.ReleaseDate > 0 && release.ReleaseDeliveryDays >= 0)
-                        {
-                            // Set as stable
-                            if (!labelsList.Exists(item => item.Equals(VersionUri.StableLabel)))
-                            {
-                                labelsList.Add(VersionUri.StableLabel);
-                                versionUri.Labels.Add(VersionUri.StableLabel);
-                            }
-                        }
-                        else
-                        {                       
-                            // Set as latest
-                            if (!labelsList.Exists(item => item.Equals(VersionUri.LatestLabel)))
-                            {
-                                labelsList.Add(VersionUri.LatestLabel);
-                                versionUri.Labels.Add(VersionUri.LatestLabel);
-                            }
-                        }
+                        // Set as stable or latest based on released or not
+                        AddLabel(labelList, versionUri, release.IsReleased() ? VersionUri.StableLabel : VersionUri.LatestLabel);
 
                         break;
                     }
                     case "rc":
                     {
                         // Set as rc
-                        if (!labelsList.Exists(item => item.Equals(VersionUri.RcLabel)))
-                        {
-                            labelsList.Add(VersionUri.RcLabel);
-                            versionUri.Labels.Add(VersionUri.RcLabel);
-                        }
+                        AddLabel(labelList, versionUri, VersionUri.RcLabel);
 
                         break;
                     }
                     case "beta":
                     {
                         // Set as beta
-                        if (!labelsList.Exists(item => item.Equals(VersionUri.BetaLabel)))
-                        {
-                            labelsList.Add(VersionUri.BetaLabel);
-                            versionUri.Labels.Add(VersionUri.BetaLabel);
-                        }
+                        AddLabel(labelList, versionUri, VersionUri.BetaLabel);
 
                         break;
                     }
                     default:
+                        // Unknown publication type
                         throw new InvalidEnumArgumentException($"Unknown PublicationType: {release.PublicationType}");
                 }
 
@@ -236,24 +207,30 @@ public class ProductInfo
             if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.StableLabel)) == -1)
             {
                 // Find latest
-                var latest = Versions.Find(item => item.Labels.Contains(VersionUri.LatestLabel));
-                Debug.Assert(latest != default(VersionUri));
+                var stable = Versions.Find(item => item.Labels.Contains(VersionUri.LatestLabel));
+                Debug.Assert(stable != default(VersionUri));
 
                 // Add the stable label
-                latest.Labels.Add(VersionUri.StableLabel);
+                stable.Labels.Add(VersionUri.StableLabel);
             }
 
             // Sort the labels to make diffs easier
             Versions.ForEach(item => item.Labels.Sort());
-
-            // Check logic to make sure latest and stable are present
-            Debug.Assert(Versions.FindIndex(item => item.Labels.Contains(VersionUri.LatestLabel)) != -1);
-            Debug.Assert(Versions.FindIndex(item => item.Labels.Contains(VersionUri.StableLabel)) != -1);
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
         {
             // Log and rethrow
             throw;
+        }
+    }
+
+    private static void AddLabel(List<string> labelList, VersionUri versionUri, string label)
+    {
+        // Add label only if not already set
+        if (!labelList.Exists(item => item.Equals(label)))
+        {
+            labelList.Add(label);
+            versionUri.Labels.Add(label);
         }
     }
 
