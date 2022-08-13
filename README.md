@@ -16,9 +16,9 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
 Images are tagged using `latest`, `stable`, and the specific version number.  
-The `latest` tag uses the latest release version.  
-The `stable` tag uses the stable release version, `stable` and `latest` may be the same version.  
-The `develop` tag is assigned to `develop` branch builds, and the `beta` tag to pre-release product versions, use for testing only.
+The `latest` tag uses the latest release version, `latest` may be the same as `rc` or `beta`.  
+The `stable` tag uses the stable release version, `stable` may be the same as `latest`.  
+The `develop`, `rc` or `beta` tags are assigned to test or pre-release versions, use with care.
 
 E.g.
 
@@ -235,8 +235,9 @@ The build is divided into the following parts:
   - To disambiguate the [Download.sh](./Make/Download.sh) script handles the variances making the DEB file available to install.
   - It is possible to download the DEB file outside the `Dockerfile` and `COPY` it into the image, but the current process downloads inside the `Dockerfile` to minimize external build dependencies.
 - Updating the available product versions and download URL's are done using the custom [CreateMatrix](./CreateMatrix/) utility app.
-  - Version information can be manually curated in the [Version.json](./Make/Version.json) file using external sources.
-  - Version information can also be constructed via the [release API](https://updates.vmsproxy.com/default/releases.json).
+  - Version information can be manually curated in the [Version.json](./Make/Version.json) file using external version number and download URL sources.
+  - Version information can also be constructed online using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json).
+  - The version selection logic is based on the same logic used in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) open source client published by Network Optix.
   - The `CreateMatrix` app can construct a [Matrix.json](./Make/Matrix.json) file from the `Version.json` file or from online version information.
     - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json`
     - `CreateMatrix matrix --matrix=./Make/Matrix.json --online=true`
@@ -248,7 +249,9 @@ The build is divided into the following parts:
   - A [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy is used to build and publish a container image for every entry in the `Matrix.json` file.
   - Conditional build time branch logic controls image creation vs. image publishing.
 
-Note that only the `develop` branch will use online version information at build time, the `main` branch still relies on the static `Version.json` file I manually curate. I am not yet confident in the logic used in `CreateMatrix` utility or the `releases.json` data published by Network Optix.
+Note that currently only the `develop` branch will use online version information at build time.  
+The `main` branch still relies on the static `Version.json` file I manually curate and test, when observing version changes via [VisualPing](https://visualping.io/).  
+I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic.
 
 Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
 

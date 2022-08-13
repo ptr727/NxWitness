@@ -11,6 +11,7 @@ public class VersionUri : ICloneable, IComparable
     public const string StableLabel = "stable";
     public const string LatestLabel = "latest";
     public const string BetaLabel = "beta";
+    public const string RcLabel = "rc";
 
     object ICloneable.Clone()
     {

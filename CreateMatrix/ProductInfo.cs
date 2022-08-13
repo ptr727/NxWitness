@@ -123,44 +123,9 @@ public class ProductInfo
         {
             // Use release version discovery per Network Optix
             // https://support.networkoptix.com/hc/en-us/community/posts/7615204163607-Automating-downloaded-product-versions-using-JSON-API
-            // TODO: Questions for Nx
-            // - Do we need to use package_urls, or are the downloads always updates.networkoptix.com/{product}?
-            // - If we use the build number for the download URL, can we be sure that build numbers are not reused between versions?
-            // - What is the significance of the order of items in "packages_urls"?
-            // - What is the significance of the order of items in and "releases"?
-            //   - Is the first listed release the latest and the second the stable?
-            //   - Can we relay on the order or should we sort by semver?
-            // - How should I interpret the "release" and "beta" publication types?
-            //   - Is the "publication_type" "beta" / "release" reliable to get pre-release builds?
-            //   - Can I use the first "release" as latest, and the second as stable?
-            //   - If there is one "beta" then there is only one "release", expect "beta", "release", "release"?
-            // - The package downloads are zip files not installer files.
-            //   - Releases do have DEB files published with the same name, but "beta"" releases only have ZIP files, can DEB files always be published?
-            //   - The ZIP filename and the DEB file inside the ZIP is not the same for "beta" releases, this makes automating this difficult.
-            //     E.g. "metavms-server_update-5.1.0.35151-linux_x64-beta.zip" contains "metavms-server-5.1.0.35151-linux_x64-beta.deb".
-            // - From analysis below, there is a discrepancy between versions reported by the cloud portal and the releases API.
-            //   - How to reconcile?
-
-            // NxWitness:
-            // Downloads API: 5.0.0.35136
-            // Releases API: 5.0.0.35270, 4.2.0.32840
-            // Cloud Portal: 5.0.0.35136
-            // Beta Portal: Stable: 5.0.0.35270
-            // Logic: Latest: 5.0.0.35270, Stable: 4.2.0.32840
-            // Discrepancy: Cloud portal and releases versions do not match?
-
-            // NxMeta:
-            // Downloads API: 5.0.0.35134 R10
-            // Releases API: 5.1.0.35151 R1 (beta), 5.0.0.35134 R10
-            // Cloud Portal: 5.0.0.35134 R10
-            // Beta Portal: Release: 5.0.0.35134 R10, Beta: 5.1.0.35151 R1
-            // Logic: Beta: 5.1.0.35151, Latest: 5.0.0.35134, Stable: 5.0.0.35134
-
-            // DWSpectrum:
-            // Downloads API: 4.2.0.32842
-            // Releases API: 5.0.0.35271, 4.2.0.32842
-            // Cloud Portal: 4.2.0.32842
-            // Logic: Latest: 5.0.0.35271, Stable: 4.2.0.32842
+            // Logic follows similar patterns as used in C++ Desktop Client
+            // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
+            // releases_info.cpp : selectVmsRelease(), canReceiveUnpublishedBuild()
 
             // Reuse HttpClient
             using HttpClient httpClient = new();
@@ -172,6 +137,15 @@ public class ProductInfo
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, ProductShortName);
             foreach (var release in releasesList)
             {
+                // Skip unknown release types
+                if (!release.Product.Equals("vms") ||
+                    !(release.PublicationType.Equals("release") || release.PublicationType.Equals("rc") || release.PublicationType.Equals("beta")))
+                {
+                    // Skip
+                    Log.Logger.Warning("Unknown release type : Product: {Product}, Type: {Type}", release.Product, release.PublicationType);
+                    continue;                    
+                }
+
                 // Set version
                 VersionUri versionUri = new();
                 Debug.Assert(!string.IsNullOrEmpty(release.Version));
@@ -193,18 +167,35 @@ public class ProductInfo
                 {
                     case "release":
                     {
-                        // Set as "latest" or "stable" or no label
-                        if (!labelsList.Exists(item => item.Equals(VersionUri.LatestLabel)))
+                        // Released or unreleased by date being set
+                        if (release.ReleaseDate > 0 && release.ReleaseDeliveryDays >= 0)
                         {
-                            // Latest not yet set, add
-                            labelsList.Add(VersionUri.LatestLabel);
-                            versionUri.Labels.Add(VersionUri.LatestLabel);
+                            // Set as stable
+                            if (!labelsList.Exists(item => item.Equals(VersionUri.StableLabel)))
+                            {
+                                labelsList.Add(VersionUri.StableLabel);
+                                versionUri.Labels.Add(VersionUri.StableLabel);
+                            }
                         }
-                        else if (!labelsList.Exists(item => item.Equals(VersionUri.StableLabel)))
+                        else
+                        {                       
+                            // Set as latest
+                            if (!labelsList.Exists(item => item.Equals(VersionUri.LatestLabel)))
+                            {
+                                labelsList.Add(VersionUri.LatestLabel);
+                                versionUri.Labels.Add(VersionUri.LatestLabel);
+                            }
+                        }
+
+                        break;
+                    }
+                    case "rc":
+                    {
+                        // Set as rc
+                        if (!labelsList.Exists(item => item.Equals(VersionUri.RcLabel)))
                         {
-                            // Stable not yet set, add
-                            labelsList.Add(VersionUri.StableLabel);
-                            versionUri.Labels.Add(VersionUri.StableLabel);
+                            labelsList.Add(VersionUri.RcLabel);
+                            versionUri.Labels.Add(VersionUri.RcLabel);
                         }
 
                         break;
@@ -214,7 +205,6 @@ public class ProductInfo
                         // Set as beta
                         if (!labelsList.Exists(item => item.Equals(VersionUri.BetaLabel)))
                         {
-                            // Beta not yet set, add
                             labelsList.Add(VersionUri.BetaLabel);
                             versionUri.Labels.Add(VersionUri.BetaLabel);
                         }
@@ -222,7 +212,6 @@ public class ProductInfo
                         break;
                     }
                     default:
-                        // Figure out how to handle other release types as we see them
                         throw new InvalidEnumArgumentException($"Unknown PublicationType: {release.PublicationType}");
                 }
 
@@ -230,16 +219,32 @@ public class ProductInfo
                 Versions.Add(versionUri);
             }
 
-            // Is there a stable label
+            // If no latest label is set, use stable or rc or beta as latest
+            if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.LatestLabel)) == -1)
+            {
+                // Find stable or rc or beta
+                var latest = Versions.Find(item => item.Labels.Contains(VersionUri.StableLabel));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.RcLabel));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.BetaLabel));
+                Debug.Assert(latest != default(VersionUri));
+
+                // Add latest
+                latest.Labels.Add(VersionUri.LatestLabel);
+            }
+
+            // If no stable label is set, use latest as stable
             if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.StableLabel)) == -1)
             {
-                // Find the version containing the latest label
+                // Find latest
                 var latest = Versions.Find(item => item.Labels.Contains(VersionUri.LatestLabel));
                 Debug.Assert(latest != default(VersionUri));
 
                 // Add the stable label
                 latest.Labels.Add(VersionUri.StableLabel);
             }
+
+            // Sort the labels to make diffs easier
+            Versions.ForEach(item => item.Labels.Sort());
 
             // Check logic to make sure latest and stable are present
             Debug.Assert(Versions.FindIndex(item => item.Labels.Contains(VersionUri.LatestLabel)) != -1);

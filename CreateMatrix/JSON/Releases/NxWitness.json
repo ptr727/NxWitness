@@ -9,8 +9,16 @@
             "version": "5.0.0.35270",
             "protocol_version": 5002,
             "publication_type": "release",
-            "release_date": "1659371734147",
+            "release_date": null,
             "release_delivery_days": null
+        },
+        {
+            "product": "vms",
+            "version": "4.2.0.32840",
+            "protocol_version": 4201,
+            "publication_type": "release",
+            "release_date": "1620848664362",
+            "release_delivery_days": 30
         }
     ]
 }

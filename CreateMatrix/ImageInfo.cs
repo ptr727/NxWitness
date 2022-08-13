@@ -60,6 +60,9 @@ public class ImageInfo
         // Add images to list
         imageList.AddRange(developList);
 
+        // Sort args and tags to make diffs easier
+        imageList.ForEach(item => { item.Args.Sort(); item.Tags.Sort(); } );
+
         return imageList;
     }
 

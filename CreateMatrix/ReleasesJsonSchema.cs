@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using Serilog;
 
 namespace CreateMatrix;
@@ -15,6 +16,7 @@ public class ReleasesJsonSchema
         Formatting = Formatting.Indented,
         StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
         NullValueHandling = NullValueHandling.Ignore,
+        MissingMemberHandling = MissingMemberHandling.Ignore,
         ObjectCreationHandling = ObjectCreationHandling.Replace
     };
 
@@ -24,14 +26,13 @@ public class ReleasesJsonSchema
 
         [JsonProperty("version")] public string Version { get; set; } = "";
 
-        [JsonProperty("protocol_version")] public string ProtocolVersion { get; set; } = "";
+        [JsonProperty("protocol_version")] public int ProtocolVersion { get; set; }
 
         [JsonProperty("publication_type")] public string PublicationType { get; set; } = "";
 
-        [JsonProperty("release_date")] public string ReleaseDate { get; set; } = "";
+        [JsonProperty("release_date")] public long ReleaseDate { get; set; }
 
-        [JsonProperty("release_delivery_days")]
-        public string ReleaseDeliveryDays { get; set; } = "";
+        [JsonProperty("release_delivery_days")] public int ReleaseDeliveryDays { get; set; }
     }
 
     [JsonProperty("packages_urls")] public List<string> PackagesUrls { get; set; } = new();
