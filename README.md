@@ -4,6 +4,7 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ## License
 
+Licensed under the [MIT License](./LICENSE)  
 ![GitHub License](https://img.shields.io/github/license/ptr727/NxWitness)
 
 ## Build Status
