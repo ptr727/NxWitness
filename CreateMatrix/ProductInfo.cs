@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -8,138 +9,105 @@ namespace CreateMatrix;
 
 public class ProductInfo
 {
+    // Serialize enums as strings
+    // Use same spelling as used in Makefile
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ProductType
     {
         NxMeta,
         NxWitness,
 
-        // Use same spelling as used in Makefile
         // ReSharper disable once InconsistentNaming
         DWSpectrum
     }
 
-    // Configure cloud hosts and product paths (can't use path info from JSON)
-    private static readonly Dictionary<ProductType, HostInfo> CloudHosts = new()
+    public ProductType Product { get; set; }
+
+    public List<VersionUri> Versions { get; set; } = new();
+
+    private string ProductShortName => GetProductShortName(Product);
+    private string ProductCloudHost => GetProductCloudHost(Product);
+
+    private static string GetProductShortName(ProductType productType)
     {
+        return productType switch
         {
-            ProductType.NxMeta,
-            new HostInfo { Host = "https://meta.nxvms.com", Path = "metavms" }
-        },
-        {
-            ProductType.NxWitness,
-            new HostInfo { Host = "https://nxvms.com", Path = "default" }
-        },
-        {
-            ProductType.DWSpectrum,
-            new HostInfo { Host = "https://dwspectrum.digital-watchdog.com", Path = "digitalwatchdog" }
-        }
-    };
-
-    public ProductType Product { get; init; }
-    public VersionUri Stable { get; set; } = new();
-    public VersionUri Latest { get; set; } = new();
-
-    public static void GetLatestVersion(IEnumerable<ProductInfo> productsEnumerable)
-    {
-        foreach (var productInfo in productsEnumerable)
-        {
-            Log.Logger.Information("Getting latest version of {ProductType}", productInfo.Product);
-            GetLatestVersion(productInfo.Product, out var versionUri);
-
-            // Did the stable version change
-            if (!productInfo.Stable.Version.Equals(versionUri.Version))
-            {
-                // Update stable version
-                Log.Logger.Warning(
-                    "Stable Version Updated : Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}",
-                    productInfo.Stable.Version, versionUri.Version, versionUri.Uri);
-                productInfo.Stable = versionUri;
-            }
-
-            // Is the stable version greater than the latest version
-            var stableVersion = new Version(productInfo.Stable.Version);
-            var latestVersion = new Version(productInfo.Latest.Version);
-            if (stableVersion.CompareTo(latestVersion) > 0)
-            {
-                Log.Logger.Warning("Stable Version > Latest Version : Stable: {Stable}, Latest: {Latest}",
-                    productInfo.Stable.Version, productInfo.Latest.Version);
-                Log.Logger.Information(
-                    "Latest Version Updated : Old Version: {OldVersion}, New Version: {NewVersion}, New Uri: {NewUri}",
-                    productInfo.Latest.Version, productInfo.Stable.Version, productInfo.Stable.Uri);
-                productInfo.Latest = productInfo.Stable;
-            }
-        }
+            ProductType.NxMeta => "metavms",
+            ProductType.NxWitness => "default",
+            ProductType.DWSpectrum => "digitalwatchdog",
+            _ => throw new InvalidEnumArgumentException(nameof(productType))
+        };
     }
 
-    private static void GetLatestVersion(ProductType productType, out VersionUri versionUri)
+    private static string GetProductCloudHost(ProductType productType)
     {
-        // TODO: Get official documentation on how to build download URL
-        // https://support.networkoptix.com/hc/en-us/community/posts/7615204163607-Automating-downloaded-product-versions-using-JSON-API
-        versionUri = new VersionUri();
+        return productType switch
+        {
+            ProductType.NxMeta => "https://meta.nxvms.com",
+            ProductType.NxWitness => "https://nxvms.com",
+            ProductType.DWSpectrum => "https://dwspectrum.digital-watchdog.com",
+            _ => throw new InvalidEnumArgumentException(nameof(productType))
+        };
+    }
+
+    public static List<ProductInfo> GetProducts()
+    {
+        // Create list of all known products
+        return (from ProductType productType in Enum.GetValues(typeof(ProductType))
+            select new ProductInfo { Product = productType }).ToList();
+    }
+
+    [Obsolete("Deprecated by GetReleasesVersions().", false)]
+    public void GetDownloadsVersions()
+    {
+        // Get version information using {cloudhost}/api/utils/downloads
+        // Stable and Latest will use the same versions
+        Log.Logger.Information("{Product}: Getting online downloads information...", Product);
         try
         {
-            // Create update endpoint
-            // https://{Cloud Portal URL}/api/utils/downloads
-            // https://meta.nxvms.com/api/utils/downloads
-            // https://nxvms.com/api/utils/downloads
-            // https://dwspectrum.digital-watchdog.com/api/utils/downloads
-            var hostInfo = CloudHosts[productType];
-            Uri hostUri = new(hostInfo.Host);
-            Uri updateUri = new(hostUri, "/api/utils/downloads");
-            Log.Logger.Information("Loading build information JSON from {Uri}", updateUri);
+            // Reuse HttpClient
             using HttpClient httpClient = new();
-            var jsonString = httpClient.GetStringAsync(updateUri).Result;
-            var jsonSchema = ReleaseJsonSchema.FromJson(jsonString);
+
+            // Get downloads
+            var downloadsSchema = DownloadsJsonSchema.GetDownloads(httpClient, ProductCloudHost);
+
+            // There is only one version in the downloads API
+            VersionUri versionUri = new();
 
             // "version": "5.0.0.35134 R10",
             // "version": "4.2.0.32842",
-            Debug.Assert(!string.IsNullOrEmpty(jsonSchema.Version));
-            versionUri.Version = jsonSchema.Version;
-
-            // Remove Rxx from version string
-            // "5.0.0.35134 R10"
-            var spaceIndex = versionUri.Version.IndexOf(' ');
-            if (spaceIndex != -1) versionUri.Version = versionUri.Version[..spaceIndex];
-
-            // "product": "metavms",
-            // "product": "nxwitness",
-            // "product": "dwspectrum",
-            // NxWitness is 404 when using nxwitness, use default
-            // DWSpectrum is 404 when using dwspectrum, use digitalwatchdog
-            // Use the static host configuration for the product
-            var product = hostInfo.Path;
+            Debug.Assert(!string.IsNullOrEmpty(downloadsSchema.Version));
+            versionUri.SetCleanVersion(downloadsSchema.Version);
 
             // "buildNumber": "35134",
-            Debug.Assert(!string.IsNullOrEmpty(jsonSchema.BuildNumber));
-            var buildNumber = jsonSchema.BuildNumber;
+            Debug.Assert(!string.IsNullOrEmpty(downloadsSchema.BuildNumber));
+            var buildNumber = int.Parse(downloadsSchema.BuildNumber);
+            Debug.Assert(buildNumber == versionUri.BuildNumber);
 
             // "installers": [
             // "platform": "linux_x64" (v5)
             // "platform": "linux64", (v4)
             // "appType": "server"
             // "path": "linux/metavms-server-5.0.0.35134-linux_x64.deb",
-            Debug.Assert(jsonSchema.Installers.Count > 0);
-            var installer = jsonSchema.Installers.First(item =>
-                item.PlatformName.StartsWith("linux", StringComparison.OrdinalIgnoreCase) &&
+            Debug.Assert(downloadsSchema.Installers.Count > 0);
+            var installer = downloadsSchema.Installers.First(item =>
+                (item.PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) ||
+                 item.PlatformName.Equals("linux64", StringComparison.OrdinalIgnoreCase)) &&
                 item.AppType.Equals("server", StringComparison.OrdinalIgnoreCase));
             ArgumentNullException.ThrowIfNull(installer);
+            Debug.Assert(!string.IsNullOrEmpty(installer.Path));
+            Debug.Assert(!string.IsNullOrEmpty(installer.FileName));
 
-            // https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb
-            // http://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb
-            // https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb
-            versionUri.Uri = $"https://updates.networkoptix.com/{product}/{buildNumber}/{installer.Path}";
-            Log.Logger.Information("Version: {Version}, File Name: {FileName}, Uri: {Uri}", versionUri.Version,
-                installer.FileName, versionUri.Uri);
+            // Create the download URL
+            // https://updates.networkoptix.com/{product}/{build}/{file}
+            versionUri.Uri = $"https://updates.networkoptix.com/{ProductShortName}/{buildNumber}/{installer.Path}";
 
-            // Verify URL
-            Log.Logger.Information("Verifying Uri: {Uri}", versionUri.Uri);
-            var httpResponse = httpClient.GetAsync(versionUri.Uri).Result;
-            httpResponse.EnsureSuccessStatusCode();
-            Log.Logger.Information("File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}",
-                installer.FileName,
-                httpResponse.Content.Headers.ContentLength,
-                httpResponse.Content.Headers.LastModified);
+            // Set as "stable" and "latest" labels
+            versionUri.Labels.Add(VersionUri.StableLabel);
+            versionUri.Labels.Add(VersionUri.LatestLabel);
+
+            // Add to list
+            Versions.Add(versionUri);
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
         {
@@ -148,15 +116,220 @@ public class ProductInfo
         }
     }
 
-    private class HostInfo
+    public void GetReleasesVersions()
     {
-        public string Host { get; init; } = "";
-        public string Path { get; init; } = "";
+        // Get version information using releases.json and package.json 
+        Log.Logger.Information("{Product}: Getting online release information...", Product);
+        try
+        {
+            // Use release version discovery per Network Optix
+            // https://support.networkoptix.com/hc/en-us/community/posts/7615204163607-Automating-downloaded-product-versions-using-JSON-API
+            // Logic follows similar patterns as used in C++ Desktop Client
+            // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
+            // releases_info.cpp : selectVmsRelease(), canReceiveUnpublishedBuild()
+
+            // Reuse HttpClient
+            using HttpClient httpClient = new();
+
+            // Labels used for state tracking
+            List<string> labelList = new();
+
+            // Get all releases
+            var releasesList = ReleasesJsonSchema.GetReleases(httpClient, ProductShortName);
+            foreach (var release in releasesList)
+            {
+                // We expect only "vms" products
+                Debug.Assert(release.Product.Equals("vms"));
+
+                // Set version
+                VersionUri versionUri = new();
+                Debug.Assert(!string.IsNullOrEmpty(release.Version));
+                versionUri.SetCleanVersion(release.Version);
+
+                // Get the build number from the version
+                var buildNumber = versionUri.BuildNumber;
+
+                // Get package for this release
+                var package = PackagesJsonSchema.GetPackage(httpClient, ProductShortName, buildNumber);
+                Debug.Assert(!string.IsNullOrEmpty(package.File));
+
+                // Create the download URL
+                // https://updates.networkoptix.com/{product}/{build}/{file}
+                versionUri.Uri = $"https://updates.networkoptix.com/{ProductShortName}/{buildNumber}/{package.File}";
+
+                // Set a label based on the publications_type value
+                switch (release.PublicationType)
+                {
+                    case "release":
+                    {
+                        // Set as stable or latest based on released or not
+                        AddLabel(labelList, versionUri, release.IsReleased() ? VersionUri.StableLabel : VersionUri.LatestLabel);
+
+                        break;
+                    }
+                    case "rc":
+                    {
+                        // Set as rc
+                        AddLabel(labelList, versionUri, VersionUri.RcLabel);
+
+                        break;
+                    }
+                    case "beta":
+                    {
+                        // Set as beta
+                        AddLabel(labelList, versionUri, VersionUri.BetaLabel);
+
+                        break;
+                    }
+                    default:
+                        // Unknown publication type
+                        throw new InvalidEnumArgumentException($"Unknown PublicationType: {release.PublicationType}");
+                }
+
+                // Add to list
+                Versions.Add(versionUri);
+            }
+
+            // If no latest label is set, use stable or rc or beta as latest
+            if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.LatestLabel)) == -1)
+            {
+                // Find stable or rc or beta
+                var latest = Versions.Find(item => item.Labels.Contains(VersionUri.StableLabel));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.RcLabel));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.BetaLabel));
+                Debug.Assert(latest != default(VersionUri));
+
+                // Add latest
+                latest.Labels.Add(VersionUri.LatestLabel);
+            }
+
+            // If no stable label is set, use latest as stable
+            if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.StableLabel)) == -1)
+            {
+                // Find latest
+                var stable = Versions.Find(item => item.Labels.Contains(VersionUri.LatestLabel));
+                Debug.Assert(stable != default(VersionUri));
+
+                // Add the stable label
+                stable.Labels.Add(VersionUri.StableLabel);
+            }
+
+            // Sort the labels to make diffs easier
+            Versions.ForEach(item => item.Labels.Sort());
+        }
+        catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
+        {
+            // Log and rethrow
+            throw;
+        }
     }
 
-    public class VersionUri
+    private static void AddLabel(List<string> labelList, VersionUri versionUri, string label)
     {
-        public string Version { get; set; } = "";
-        public string Uri { get; set; } = "";
+        // Add label only if not already set
+        if (!labelList.Exists(item => item.Equals(label)))
+        {
+            labelList.Add(label);
+            versionUri.Labels.Add(label);
+        }
+    }
+
+    public void LogInformation()
+    {
+        foreach (var versionUri in Versions)
+        {
+            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, Uri: {Uri}", Product,
+                versionUri.Version, versionUri.Labels, versionUri.Uri);
+        }
+    }
+
+    public void VerifyUrls()
+    {
+        try
+        {
+            using HttpClient httpClient = new();
+            foreach (var versionUri in Versions)
+                VerifyUrl(httpClient, versionUri.Uri);
+        }
+        catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
+        {
+            // Log an rethrow
+            throw;
+        }
+    }
+
+    private static void VerifyUrl(HttpClient httpClient, string url)
+    {
+        // Will throw on failure
+
+        // Get URL
+        var uri = new Uri(url);
+        Log.Logger.Information("Verifying Url: {Url}", url);
+        var httpResponse = httpClient.GetAsync(uri).Result;
+        httpResponse.EnsureSuccessStatusCode();
+
+        // Get filename from httpResponse or Uri path
+        string? fileName = null;
+        fileName ??= httpResponse.Content.Headers.ContentDisposition?.FileName;
+        fileName ??= Path.GetFileName(uri.LocalPath);
+
+        // Log details
+        Log.Logger.Information("File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}",
+            fileName,
+            httpResponse.Content.Headers.ContentLength,
+            httpResponse.Content.Headers.LastModified);
+    }
+
+    public static List<ProductInfo> GetDefaults()
+    {
+        // Create an empty list of products
+        List<ProductInfo> productList = new();
+
+        // NxMeta
+        var product = new ProductInfo
+        {
+            Product = ProductType.NxMeta
+        };
+        productList.Add(product);
+        var versionUri = new VersionUri
+        {
+            Version = "5.0.0.35134",
+            Uri = "https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb",
+            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
+        };
+        product.Versions.Add(versionUri);
+
+        // NxWitness
+        product = new ProductInfo
+        {
+            Product = ProductType.NxWitness
+        };
+        productList.Add(product);
+        versionUri = new VersionUri
+        {
+            Version = "5.0.0.35136",
+            Uri = "https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb",
+            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
+        };
+        product.Versions.Add(versionUri);
+
+        // DWSpectrum
+        product = new ProductInfo
+        {
+            Product = ProductType.DWSpectrum
+        };
+        productList.Add(product);
+
+        // DWSpectrum Stable
+        versionUri = new VersionUri
+        {
+            Version = "4.2.0.32842",
+            Uri =
+                "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb",
+            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
+        };
+        product.Versions.Add(versionUri);
+
+        return productList;
     }
 }

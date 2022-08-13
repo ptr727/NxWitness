@@ -15,19 +15,24 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 ## Container Images
 
 Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
-Images are tagged using `latest` or `stable` and the specific build version number.  
-`latest` images use the latest patch release version.  
-`stable` images use the last stable release version.  
-This allows flexibility for deployments that want to pin to specific release channels or versions.  
+Images are tagged using `latest`, `stable`, and the specific version number.  
+The `latest` tag uses the latest release version, `latest` may be the same as `rc` or `beta`.  
+The `stable` tag uses the stable release version, `stable` may be the same as `latest`.  
+The `develop`, `rc` or `beta` tags are assigned to test or pre-release versions, they are not generated with every release, use with care and only as needed.
+
 E.g.
 
 ```console
+# Latest NxMeta-LSIO from Docker
 docker pull docker.io/ptr727/nxmeta-lsio:latest
+# Stable DWSpectrum from GitHub
 docker pull ghcr.io/ptr727/dwspectrum:stable
+# 5.0.0.35136 NxWitness-LSIO from Docker
 docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
-The images are updated weekly, picking up the latest upstream OS updates, and stable build version updates.
+The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.  
+See the [Build Process](#build-process) section for more details on how versions and builds are managed.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
 ![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
@@ -180,44 +185,77 @@ services:
 - Use `nobody` and `users` identifiers, `PUID=99` and `PGID=100`.
 - Register the Unraid filesystems in the `additionalLocalFsTypes` advanced settings, see the [Missing Storage](#missing-storage) section for help.
 
-## Release Tracking
+## Product Information
 
-Product releases, updates, and information can be found at the following locations:
+### Releases Information
 
 - Nx Witness:
-  - [JSON API](https://nxvms.com/api/utils/downloads)
+  - [Downloads API](https://nxvms.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/default/releases.json)
   - [Downloads](https://nxvms.com/download/linux)
   - [Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
   - [Release Notes](https://www.networkoptix.com/all-nx-witness-release-notes)
 - Nx Meta:
-  - [JSON API](https://meta.nxvms.com/api/utils/downloads)
+  - [Downloads API](https://meta.nxvms.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/metavms/releases.json)
   - [Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
   - [Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
   - [Downloads](https://meta.nxvms.com/download/linux)
   - [Beta Downloads](https://meta.nxvms.com/downloads/patches)
 - DW Spectrum:
-  - [JSON API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
+  - [Downloads API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
+  - [Releases API](https://updates.vmsproxy.com/digitalwatchdog/releases.json)
   - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
   - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
-  - Note that DW Spectrum versions often lag Nx Witness releases.
 
-Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
+### Advanced Configuration
+
+- Advanced `mediaserver.conf` [Configuration](https://support.networkoptix.com/hc/en-us/articles/360036389693-How-to-access-Nx-Server-configuration-options):
+  - v4: `https://[hostname]:7001/static/index.html#/developers/serverDocumentation`
+  - v5: JSON: `https://[hostname]:7001/api/settingsDocumentation`
+- Advanced Web Configuration:
+  - v4: `https://[hostname]:7001/static/index.html#/advanced`
+  - v5: `https://[hostname]:7001/#/settings/advanced`
+  - Get State: JSON: `https://[hostname]:7001/api/systemSettings`
+- Storage Reporting:
+  - v4: `https://[hostname]:7001/static/health.html#/health/storages`
+  - v5: `https://[hostname]:7001/#/health/storages`
 
 ## Build Process
 
-With three products and two base images we end up with six different dockerfiles, that all basically look the same. Unfortunately Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, so I use the [M4 macro processor](https://www.gnu.org/software/m4/) and a `Makefile` to dynamically create a `Dockerfile` for every variant.
+The build is divided into the following parts:
 
-Updating the product versions and download URL's are done using the custom `CreateMatrix`  utility app.  
-The app takes a [Version.json](./Make/Version.json) file as input, creates permutations for products, base images, latest versions, stable versions, develop builds, and produces a [Matrix.json](./Make/Matrix.json) file as output.  
-All the images are built using GitHub Actions using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy derived from the `Matrix.json` file.
+- A [Makefile](./Make/Makefile) is used to create the `Dockerfile`'s for permutations of "Entrypoint" and "LSIO" variants, and for each of "NxMeta", "NxWitness" and "DWSpectrum" products.
+  - There is similarity between the container variants, and to avoid code duplication the `Dockerfile` is dynamically constructed using file snippets.
+  - Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble the snippets.
+  - The various docker project directories are created by running `make create`.
+  - The project directories could be created at build time, but they are currently created and checked into source control to simplify change review.
+- The `Dockerfile` downloads and installs the mediaserver installer at build time using the `DOWNLOAD_URL` environment variable.
+  - The Nx download URL can be a DEB file or a ZIP file containing a DEB file, and the DEB file in the ZIP file may not be the same name as the ZIP file.
+  - The [Download.sh](./Make/Download.sh) script handles the variances making the DEB file available to install.
+  - It is possible to download the DEB file outside the `Dockerfile` and `COPY` it into the image, but the current process downloads inside the `Dockerfile` to minimize external build dependencies.
+- Updating the available product versions and download URL's are done using the custom [CreateMatrix](./CreateMatrix/) utility app.
+  - Version information can be manually curated in the [Version.json](./Make/Version.json) file.
+  - Version information can also be constructed online using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
+  - The `CreateMatrix` app can construct a [Matrix.json](./Make/Matrix.json) file from the `Version.json` file or from online version information.
+    - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json`
+    - `CreateMatrix matrix --matrix=./Make/Matrix.json --online=true`
+- Local builds can be performed using `make build`, where download URL and version information defaults to the `Dockerfile` values.
+  - All images will be built and launched using `make build` and `make up`, allowing local testing using the build output URL's.
+  - After testing stop and delete containers and images using `make clean`.
+- Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [BuildPublishPipeline.yml](./.github/workflows/BuildPublishPipeline.yml) pipeline.
+  - The pipeline runs the `CreateMatrix` utility to create a `Matrix.json` file containing all the container image details.
+  - A [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy is used to build and publish a container image for every entry in the `Matrix.json` file.
+  - Conditional build time branch logic controls image creation vs. image publishing.
+- Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
 
-The `CreateMatrix` utility will optionally query the latest `stable` product versions using the Network Optix online JSON API, and automatically build with the latest stable versions. In case the `stable` version is greater than the `latest` version, the `latest` version will be updated to match the `stable` version.
-
-Pre-release or Beta versions are not publish via the JSON API and are thus not automatically discoverable. I do monitor the NxMeta downloads page using [VisualPing](https://visualping.io/) but it is not always reliable. In case of new versions that are not yet building, feel free to create an issue with pointers to the downloads.
+Note that currently only the `develop` branch will use online version information at build time.  
+The `main` branch still relies on the static `Version.json` file I manually curate and test, when observing version changes via [VisualPing](https://visualping.io/).  
+I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic.
 
 ## Network Optix and Docker
 
-There are annoying and serious issues, but compared to other VMS/NVR software I've paid for and used, Nx Witness is the lightest on system resources, has a good feature set, and with added docker support runs great in my home lab.
+There are issues ranging from annoyances to serious with Network Optix on Docker, but compared to other VMS/NVR software I've paid for and used, it is very light on system resources, has a good feature set, and with added docker support runs great in my home lab.
 
 ### Licensing
 
@@ -232,7 +270,7 @@ A portable approach could apply licenses to the [Cloud Account](https://www.netw
 
 **Issue:**  
 The mediaserver attempts to automatically decide what storage to use.  
-Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common ZFS is not supported.  
+Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common [ZFS](https://support.networkoptix.com/hc/en-us/community/posts/1500000914242-Please-add-ZFS-as-supported-storage-to-4-3) is not supported.  
 Duplicate filesystems are ignored, e.g. multiple logical mounts on the same physical storage are ignored.  
 The server blindly creates database files on any writable storage it discovers, regardless of if that storage was assigned for use or not.
 
@@ -242,7 +280,7 @@ Remove the elaborate and prone to failure filesystem discovery and filtering log
 ### Network Binding
 
 **Issue:**  
-The mediaserver binds to any discovered network adapter.
+The mediaserver binds to [any discovered](https://support.networkoptix.com/hc/en-us/community/posts/360048795073-R8-in-Docker-auto-binds-to-any-network-adapter-it-finds) network adapter.
 On docker this means the server binds to all docker networks of all running containers, there could be hundreds or thousands, making the network graph useless, and consuming unnecessary resources.
 
 **Possible Solution:**  
@@ -267,10 +305,10 @@ I'd be happy to pay a reasonable yearly subscription or maintenance fee, knowing
 
 My wishlist for better docker support:
 
-- Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry.
+- Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry (what this project does).
 - Do not bind the license to hardware, use the cloud account for license enforcement.
-- Do not filter storage filesystems, allow the administrator to specify and use any storage location.
-- Do not pollute the filesystem by blindly creating folders in any detected storage.
+- Do not filter storage filesystems, allow the administrator to specify and use any storage location backed by any filesystem.
+- Do not pollute the filesystem by creating folders in any detected storage, use only storage as specified.
 - Do not bind to any discovered network adapter, allow the administrator to specify the bound network adapter, or add an option to opt-out/opt-in to auto-binding.
 - Implement a [more useful](https://support.networkoptix.com/hc/en-us/community/posts/360044221713-Backup-retention-policy) recording archive management system, allowing for separate high speed recording, and high capacity playback storage volumes. E.g. as implemented by [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
 
@@ -284,20 +322,16 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
 
 ### Known Issues
 
-- Windows Subsystem for Linux v2 (WSL2) is not supported.
-  - The DEB installer `postinst` step the installer tries to start the service, and fails the install.
+- v4 does not support Windows Subsystem for Linux v2 (WSL2).
+  - The DEB installer `postinst` step tries to start the service, and fails the install.
     - `Detected runtime type: wsl.`
     - `System has not been booted with systemd as init system (PID 1). Can't operate.`
-  - The logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
-  - The installer logic [should](https://support.networkoptix.com/hc/en-us/community/posts/1500000699041-WSL2-docker-runtime-not-supported) perform a `systemd` positive test vs. testing for not docker.
-- The download CDN SSL certificates are not trusted on all systems.
-  - `ERROR: cannot verify updates.networkoptix.com's certificate, issued by 'CN=Amazon,OU=Server CA 1B,O=Amazon,C=US': Unable to locally verify the issuer's authority. To connect to updates.networkoptix.com insecurely, use --no-check-certificate`
-  - When downloading use `wget --no-verbose --no-check-certificate` to ignore the SSL error.
-- Upgrading from v4.x to v5.0:
-  - The old shell script `mediaserver` is now what used to be `mediaserver-bin`, and `root-tool` is now what used to be `root-tool-bin`.
-  - After upgrading to 5.0, reverting to 4.2 is no longer possible.
+  - v4 logic tests for `if [[ $RUNTIME != "docker" ]]`, while the runtime reported by WSL2 is `wsl` not `docker`.
+  - v5 logic tests for `if [[ -f "/.dockerenv" ]]`, the presence of a Docker environment, that is more portable, and does work in WSL2.
+- Downgrading from v5 to v4 is not supported.
+  - The mediaserver will fail to start.
     - `ERROR ec2::detail::QnDbManager(...): DB Error at ec2::ErrorCode ec2::detail::QnDbManager::doQueryNoLock(...): No query Unable to fetch row`
-  - Make a copy of the server configuration before upgrading, and restore the old configuration when downgrading.
+  - Make a copy, or ZFS snapshot, of the server configuration before upgrading, and restore the old configuration when downgrading.
 
 ### Missing Storage
 
@@ -305,12 +339,12 @@ The following section will help troubleshoot common problems with missing storag
 If this does not help, please contact [Network Optix Support](https://support.networkoptix.com/hc/en-us/community/topics).  
 Please do not open a GitHub issue unless you are positive the issue is with the `Dockerfile`.
 
-Verify the available storage locations:  
-Open the [web admin](https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin) interface, Right-Click on the server name in the Desktop Client, and select "Server Web Page".  
-Click on "Information" and then "Storage Locations", or visit `https://[hostname]:7001/static/health.html#/health/storages`, and verify that all mounted storage is listed.
+Note that the configuration URL's changed between v4 and v5, see the [Advanced Configuration](#advanced-configuration) section for version specific URL's.
+
+Confirm that all the mounted volumes are listed in the available storage locations in the [web admin](https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin) portal.
 
 Enable debug logging in the mediaserver:  
-Edit `/config/etc/mediaserver.conf`, set `logLevel=DEBUG2`, restart the server.  
+Edit `/config/etc/mediaserver.conf`, set `logLevel=verbose`, restart the server.  
 Look for clues in `/config/var/log/log_file.log`.
 
 E.g.
@@ -390,9 +424,8 @@ VERBOSE nx::vms::server::fs: /dev/sdb8 /archive btrfs - duplicate
 
 In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.
 
-Add the required filesystem types in the advanced configuration menu, and restart the server:  
-Open the advanced configuration web admin page at `https://[hostname]:7001/static/index.html#/advanced`.  
-Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`.
+Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.
+Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
 Alternatively call the configuration API directly:  
 `wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:7001/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.

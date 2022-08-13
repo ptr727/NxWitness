@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb"
-ARG DOWNLOAD_VERSION="4.2.0.32842"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/35271/dwspectrum-server_update-5.0.0.35271-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.0.0.35271"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -30,16 +30,23 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools, don't cleanup, do cleanup after install mediaserver
+# Install required tools and utilities
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        ca-certificates \
         mc \
         nano \
+        unzip \
         wget
 
-# Download the DEB installer file
-RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
+# Download the installer file
+RUN mkdir -p /temp
+COPY Download.sh /temp/Download.sh
+# Set the working directory to /temp
+WORKDIR /temp
+RUN chmod +x Download.sh \
+    && ./Download.sh
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
@@ -47,10 +54,11 @@ RUN apt-get update \
         gdb \
         sudo \
         ./vms_server.deb \
+# Cleanup        
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf ./vms_server.deb
+    && rm -rf /temp
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool

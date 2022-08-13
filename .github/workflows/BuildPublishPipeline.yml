@@ -43,7 +43,8 @@ jobs:
       # Run CreateMatrix tool
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-run
       - name: "Run CreateMatrix Tool"
-        run: dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --online=true
+        # Perform online updates only for develop builds, not ready to enable online updates for main builds yet
+        run: dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --online=${{ github.ref_name == 'develop' }}
 
       # Load Matrix.json from file
       - name: "Load Matrix JSON"

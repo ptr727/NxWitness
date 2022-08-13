@@ -21,13 +21,14 @@
 # Delete all unused container images:
 # docker image prune --all
 
-# Buil Steps:
-# make all
+# Create Dockerfiles:
+# make create
+
+# Build and launch all images:
+# make build
 # make up
 # Test images by ctrl-click opening the browser links
 # make clean
-
-# TODO: Build the Matrix.json file from parts
 
 SHELL := /bin/bash
 
@@ -55,7 +56,7 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 
 
 .PHONY: all
-all: down entrypoint create build
+all: create build
 
 .PHONY: down
 down:
@@ -68,19 +69,18 @@ up:
 .PHONY: check
 check:
 	@echo "Usage:"
-	@echo "'make entrypoint' : Copy entrypoint files"
 	@echo "'make create' : Create Docker files"
 	@echo "'make build' : Build Docker files"
 	@echo "'make clean' : Delete Docker images"
-	@echo "'make all' : Runs all steps"
+	@echo "'make all' : Runs create and build"
 	@echo ""
 	@echo "Variables:"
 	@echo "M4S = $(M4S)"
 	@echo "DIRS = $(DIRS)"
 	@echo "LOWERDIRS = $(LOWERDIRS)"
 
-.PHONY: entrypoint
-entrypoint:
+.PHONY: copy
+copy:
 	-rm -rf ../DWSpectrum-LSIO/root
 	-mkdir ../DWSpectrum-LSIO/root
 	cp -R ../LSIO/* ../DWSpectrum-LSIO/root
@@ -99,12 +99,18 @@ entrypoint:
 	-rm -rf ../NxMeta/root
 	-mkdir ../NxMeta/root
 	cp -R ../Entrypoint/* ../NxMeta/root/
+	cp Download.sh ../DWSpectrum-LSIO/Download.sh
+	cp Download.sh ../DWSpectrum/Download.sh
+	cp Download.sh ../NxWitness-LSIO/Download.sh
+	cp Download.sh ../NxWitness/Download.sh
+	cp Download.sh ../NxMeta-LSIO/Download.sh
+	cp Download.sh ../NxMeta/Download.sh
 
 .PHONY: create
-create: $(DIRS:%=%/.docker-create)
+create: copy $(DIRS:%=%/.docker-create)
 
 .PHONY: build
-build: $(DIRS:%=%/.docker-build)
+build: down $(DIRS:%=%/.docker-build)
 
 .PHONY: clean
 clean: down $(DIRS:%=%/.docker-clean)

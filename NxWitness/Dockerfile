@@ -7,8 +7,8 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="http://updates.networkoptix.com/default/5.0.0.35064/linux/nxwitness-server-5.0.0.35064-linux_x64.deb"
-ARG DOWNLOAD_VERSION="5.0.0.35064"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/35270/nxwitness-server_update-5.0.0.35270-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.0.0.35270"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
@@ -30,16 +30,23 @@ LABEL name=${LABEL_NAME} \
     download=${DOWNLOAD_URL} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install tools, don't cleanup, do cleanup after install mediaserver
+# Install required tools and utilities
 RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
+        ca-certificates \
         mc \
         nano \
+        unzip \
         wget
 
-# Download the DEB installer file
-RUN wget --no-verbose --no-check-certificate --output-document=./vms_server.deb ${DOWNLOAD_URL}
+# Download the installer file
+RUN mkdir -p /temp
+COPY Download.sh /temp/Download.sh
+# Set the working directory to /temp
+WORKDIR /temp
+RUN chmod +x Download.sh \
+    && ./Download.sh
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
@@ -47,10 +54,11 @@ RUN apt-get update \
         gdb \
         sudo \
         ./vms_server.deb \
+# Cleanup        
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf ./vms_server.deb
+    && rm -rf /temp
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool

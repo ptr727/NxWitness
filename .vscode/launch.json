@@ -8,7 +8,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net6.0/CreateMatrix.dll",
             "args": ["matrix", "--online"],
-            "cwd": "${workspaceFolder}/CreateMatrix",
+            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
             "console": "internalConsole",
             "stopAtEntry": false
         },
@@ -19,7 +19,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net6.0/CreateMatrix.dll",
             "args": ["defaults", "--online"],
-            "cwd": "${workspaceFolder}/CreateMatrix",
+            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
             "console": "internalConsole",
             "stopAtEntry": false
         },
@@ -30,7 +30,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net6.0/CreateMatrix.dll",
             "args": ["schema"],
-            "cwd": "${workspaceFolder}/CreateMatrix",
+            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
             "console": "internalConsole",
             "stopAtEntry": false
         },

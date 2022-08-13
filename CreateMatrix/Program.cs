@@ -31,17 +31,22 @@ internal static class Program
             description: "Matrix JSON file.",
             getDefaultValue: () => "Matrix.json");
 
-        var schemaOption = new Option<string>(
-            name: "--schema",
+        var schemaVersionOption = new Option<string>(
+            name: "--schemaversion",
             description: "Version JSON schema file.",
             getDefaultValue: () => "Version.schema.json");
 
+        var schemaMatrixOption = new Option<string>(
+            name: "--schemamatrix",
+            description: "Matrix JSON schema file.",
+            getDefaultValue: () => "Matrix.schema.json");
+
         var onlineOption = new Option<bool>(
             name: "--online",
-            description: "Update versions from online release information.",
+            description: "Update versions using online release information",
             getDefaultValue: () => false);
 
-        var defaultCommand = new Command("defaults", "Write defaults to version file.")
+        var defaultCommand = new Command("defaults", "Write defaults to version file")
         {
             versionOption,
             onlineOption
@@ -49,7 +54,7 @@ internal static class Program
         defaultCommand.SetHandler((version, online) => { DefaultHandler(version, online); },
             versionOption, onlineOption);
 
-        var matrixCommand = new Command("matrix", "Create matrix file from version information.")
+        var matrixCommand = new Command("matrix", "Create matrix file from version information")
         {
             versionOption,
             matrixOption,
@@ -58,15 +63,16 @@ internal static class Program
         matrixCommand.SetHandler((version, matrix, online) => { MatrixHandler(version, matrix, online); },
             versionOption, matrixOption, onlineOption);
 
-        var schemaCommand = new Command("schema", "Write version schema file.")
+        var schemaCommand = new Command("schema", "Write version and matrix schema files")
         {
-            schemaOption
+            schemaVersionOption,
+            schemaMatrixOption
         };
-        schemaCommand.SetHandler(schema => { SchemaHandler(schema); },
-            schemaOption);
+        schemaCommand.SetHandler((version, matrix) => { SchemaHandler(version, matrix); },
+            schemaVersionOption, schemaMatrixOption);
 
         var rootCommand =
-            new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions.")
+            new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
             {
                 defaultCommand,
                 matrixCommand,
@@ -85,13 +91,11 @@ internal static class Program
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
-    private static Task<int> SchemaHandler(string schemaPath)
+    private static Task<int> SchemaHandler(string schemaVersionPath, string schemaMatrixPath)
     {
-        Log.Logger.Information("Writing schema to file : Schema Path: {SchemaPath}", schemaPath);
-
-        // Write the schema
-        VersionJsonSchema.GenerateSchema(schemaPath);
-
+        Log.Logger.Information("Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}", schemaVersionPath, schemaMatrixPath);
+        VersionJsonSchema.GenerateSchema(schemaVersionPath);
+        MatrixJsonSchema.GenerateSchema(schemaMatrixPath);
         return Task.FromResult(0);
     }
 
@@ -100,16 +104,29 @@ internal static class Program
         Log.Logger.Information("Writing defaults to file : Version Path: {VersionPath}, Online Updates: {OnlineUpdate}",
             versionPath, onlineUpdate);
 
-        // Create defaults
+        // Use static defaults or online versions
         VersionJsonSchema versionSchema = new();
-        versionSchema.SetDefaults();
-
-        // Replace stable versions with online version information
-        if (onlineUpdate)
+        if (!onlineUpdate)
         {
-            Log.Logger.Information("Getting latest stable version information online...");
-            ProductInfo.GetLatestVersion(versionSchema.Products);
+            Log.Logger.Information("Using static version defaults");
+
+            // Use static information
+            versionSchema.Products = ProductInfo.GetDefaults();
         }
+        else
+        {
+            Log.Logger.Information("Getting online version information...");
+
+            // Get versions for all products using releases API
+            versionSchema.Products = ProductInfo.GetProducts();
+            versionSchema.Products.ForEach(item => item.GetReleasesVersions());
+        }
+
+        // Log info
+        versionSchema.Products.ForEach(item => item.LogInformation());
+
+        // Verify Urls
+        versionSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Write to file
         Log.Logger.Information("Writing versions to {Path}", versionPath);
@@ -124,31 +141,36 @@ internal static class Program
             "Creating image matrix from versions : Version Path: {VersionPath}, Matrix Path: {MatrixPath}, Online Updates: {OnlineUpdate}",
             versionPath, matrixPath, onlineUpdate);
 
-        // Load versions
-        Log.Logger.Information("Reading versions from {Path}", versionPath);
-        var versionSchema = VersionJsonSchema.FromFile(versionPath);
-        Log.Logger.Information("Loaded {Count} products from {Path}", versionSchema.Products.Count, versionPath);
-        foreach (var productVersion in versionSchema.Products)
-            Log.Logger.Information(
-                "Product: {Product}, Stable Version: {StableVersion}, Latest Version: {LatestVersion}",
-                productVersion.Product, productVersion.Stable.Version, productVersion.Latest.Version);
-
-        // Replace stable versions with online version information
-        if (onlineUpdate)
+        // Load versions from file or online
+        VersionJsonSchema versionSchema = new();
+        if (!onlineUpdate)
         {
-            Log.Logger.Information("Getting latest stable version information online...");
-            ProductInfo.GetLatestVersion(versionSchema.Products);
+            Log.Logger.Information("Reading versions from {Path}", versionPath);
+            versionSchema = VersionJsonSchema.FromFile(versionPath);
+        }
+        else
+        {
+            Log.Logger.Information("Getting online version information...");
+            versionSchema.Products = ProductInfo.GetProducts();
+            versionSchema.Products.ForEach(item => item.GetReleasesVersions());
         }
 
+        // Log info
+        versionSchema.Products.ForEach(item => item.LogInformation());
+
+        // Verify Urls
+        versionSchema.Products.ForEach(item => item.VerifyUrls());
+
         // Create matrix
+        Log.Logger.Information("Creating Matrix from versions");
         MatrixJsonSchema matrixJson = new()
         {
             Images = ImageInfo.CreateImages(versionSchema.Products)
         };
         Log.Logger.Information("Created {Count} images in matrix", matrixJson.Images.Count);
-        foreach (var image in matrixJson.Images)
-            Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", image.Name,
-                image.Branch, image.Tags.Count, image.Args.Count);
+
+        // Log info
+        matrixJson.Images.ForEach(item => item.LogInformation());
 
         // Write matrix
         Log.Logger.Information("Writing matrix to {Path}", matrixPath);
