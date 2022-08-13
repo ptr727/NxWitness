@@ -4,7 +4,7 @@ This is a project to build docker containers for [Network Optix Nx Witness VMS](
 
 ## License
 
-Licensed under the [MIT License](./LICENSE)  
+Licensed under the [MIT License](./LICENSE).  
 ![GitHub License](https://img.shields.io/github/license/ptr727/NxWitness)
 
 ## Build Status
@@ -36,28 +36,40 @@ The images are updated weekly, picking up the latest upstream OS updates, and ne
 See the [Build Process](#build-process) section for more details on how versions and builds are managed.
 
 [NxWitness](https://hub.docker.com/r/ptr727/nxwitness)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness/stable?label=stable&logo=docker)
+![NxWitness Stable](https://img.shields.io/docker/v/ptr727/nxwitness/stable?label=stable&logo=docker)
+![NxWitness Latest](https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker)
+![NxWitness RC](https://img.shields.io/docker/v/ptr727/nxwitness/rc?label=rc&logo=docker)
+![NxWitness Beta](https://img.shields.io/docker/v/ptr727/nxwitness/beta?label=beta&logo=docker)
 
 [NxWitness-LSIO](https://hub.docker.com/r/ptr727/nxwitness-lsio)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker)
+![NxWitness-LSIO Stable](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker)
+![NxWitness-LSIO Latest](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/latest?label=latest&logo=docker)
+![NxWitness-LSIO RC](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/rc?label=rc&logo=docker)
+![NxWitness-LSIO Beta](https://img.shields.io/docker/v/ptr727/nxwitness-lsio/beta?label=beta&logo=docker)
 
 [NxMeta](https://hub.docker.com/r/ptr727/nxmeta)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta/stable?label=stable&logo=docker)
+![NxMeta Stable](https://img.shields.io/docker/v/ptr727/nxmeta/stable?label=stable&logo=docker)
+![NxMeta Latest](https://img.shields.io/docker/v/ptr727/nxmeta/latest?label=latest&logo=docker)
+![NxMeta RC](https://img.shields.io/docker/v/ptr727/nxmeta/rc?label=rc&logo=docker)
+![NxMeta Beta](https://img.shields.io/docker/v/ptr727/nxmeta/beta?label=beta&logo=docker)
 
 [NxMeta-LSIO](https://hub.docker.com/r/ptr727/nxmeta-lsio)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/stable?label=stable&logo=docker)
+![NxMeta-LSIO Stable](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/stable?label=stable&logo=docker)
+![NxMeta-LSIO Latest](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/latest?label=latest&logo=docker)
+![NxMeta-LSIO RC](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/rc?label=rc&logo=docker)
+![NxMeta-LSIO Beta](https://img.shields.io/docker/v/ptr727/nxmeta-lsio/beta?label=beta&logo=docker)
 
 [DWSpectrum](https://hub.docker.com/r/ptr727/dwspectrum)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum/stable?label=stable&logo=docker)
+![DWSpectrum Stable](https://img.shields.io/docker/v/ptr727/dwspectrum/stable?label=stable&logo=docker)
+![DWSpectrum Latest](https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker)
+![DWSpectrum RC](https://img.shields.io/docker/v/ptr727/dwspectrum/rc?label=rc&logo=docker)
+![DWSpectrum Beta](https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker)
 
 [DWSpectrum-LSIO](https://hub.docker.com/r/ptr727/dwspectrum-lsio)  
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker)
-![Docker Image Version](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker)
+![DWSpectrum-LSIO Stable](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker)
+![DWSpectrum-LSIO Latest](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker)
+![DWSpectrum-LSIO RC](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/rc?label=rc&logo=docker)
+![DWSpectrum-LSIO Beta](https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/beta?label=beta&logo=docker)
 
 ## Overview
 
