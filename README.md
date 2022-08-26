@@ -264,7 +264,7 @@ The build is divided into the following parts:
 
 Note that currently only the `develop` branch will use online version information at build time.  
 The `main` branch still relies on the static `Version.json` file I manually curate and test, when observing version changes via [VisualPing](https://visualping.io/).  
-I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic.
+I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic, currently it is [not reliable](https://github.com/networkoptix/nx_open/issues/3).
 
 ## Network Optix and Docker
 
