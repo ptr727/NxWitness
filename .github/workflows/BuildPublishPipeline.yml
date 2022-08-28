@@ -127,7 +127,7 @@ jobs:
       # Create a badge
       # https://github.com/marketplace/actions/bring-your-own-badge
       - name: "Build Date Badge"
-        uses: RubbaBoy/BYOB@v1
+        uses: RubbaBoy/BYOB@v1.3.0
         with:
           NAME: "lastbuild"
           LABEL: "Last Build Date"
