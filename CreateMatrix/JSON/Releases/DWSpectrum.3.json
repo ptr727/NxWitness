@@ -1,0 +1,16 @@
+{
+    "packages_urls": [
+        "https://updates.networkoptix.com/digitalwatchdog",
+        "http://beta.networkoptix.com/beta-builds/digitalwatchdog"
+    ],
+    "releases": [
+        {
+            "product": "vms",
+            "version": "5.0.0.35271",
+            "protocol_version": 5002,
+            "publication_type": "release",
+            "release_date": "1662033178345",
+            "release_delivery_days": null
+        }
+    ]
+}
