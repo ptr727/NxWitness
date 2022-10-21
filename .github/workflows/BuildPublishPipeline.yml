@@ -59,7 +59,6 @@ jobs:
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
-          # echo "::set-output name=matrix::${FJSON}"
           echo "matrix=${FJSON}" >> $GITHUB_OUTPUT
 
   # Build and publish docker images
@@ -129,7 +128,6 @@ jobs:
       # Get date from environment as a variable
       - id: date
         run: |
-          # echo "::set-output name=date::$(date)"
           echo "date=$(date)" >> $GITHUB_OUTPUT
       # Create badge
       # https://github.com/marketplace/actions/bring-your-own-badge
