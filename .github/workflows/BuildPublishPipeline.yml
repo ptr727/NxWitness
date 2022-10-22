@@ -59,7 +59,7 @@ jobs:
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
-          echo "::set-output name=matrix::${FJSON}"
+          echo "matrix=${FJSON}" >> $GITHUB_OUTPUT
 
   # Build and publish docker images
   buildpublish:
@@ -119,7 +119,7 @@ jobs:
             ') }}
 
   # Create a custom badge to report the build date
-  # Run this job at teh end of the pipeline
+  # Run this job at the end of the pipeline
   datebadge:
     needs: buildpublish
     name: "Build Date Badge"
@@ -128,11 +128,11 @@ jobs:
       # Get date from environment as a variable
       - id: date
         run: |
-          echo "::set-output name=date::$(date)"
+          echo "date=$(date)" >> $GITHUB_OUTPUT
       # Create badge
       # https://github.com/marketplace/actions/bring-your-own-badge
       - name: "Build Date Badge"
-        uses: RubbaBoy/BYOB@v1.3.0
+        uses: RubbaBoy/BYOB@v1
         with:
           NAME: lastbuild
           LABEL: "Last Build"
