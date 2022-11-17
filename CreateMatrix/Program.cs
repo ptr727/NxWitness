@@ -155,6 +155,12 @@ internal static class Program
             versionSchema.Products.ForEach(item => item.GetReleasesVersions());
         }
 
+        // Remove all stable labels
+        // https://github.com/ptr727/NxWitness/issues/62
+        versionSchema.Products.ForEach(product =>
+            product.Versions.ForEach(version =>
+                version.Labels.RemoveAll(label => string.Equals(label, VersionUri.StableLabel))));
+
         // Log info
         versionSchema.Products.ForEach(item => item.LogInformation());
 

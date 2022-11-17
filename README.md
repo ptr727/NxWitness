@@ -14,13 +14,9 @@ Licensed under the [MIT License](./LICENSE).
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/NxWitness/Build%20and%20Publish%20Docker%20Images?logo=github)](https://github.com/ptr727/NxWitness/actions)  
 [![GitHub Actions Last Build](https://byob.yarr.is/ptr727/NxWitness/lastbuild)](https://github.com/ptr727/NxWitness/actions)
 
-## !!! Warning
-
-Network Optix released `5.0` (per the releases JSON API), I updated the `stable` version to `5.0`, then Nx [reverted](https://github.com/networkoptix/nx_open/issues/3) the change and made `4.2` the `stable` build, removed `5.0`, later re-added `5.0` as latest build.  
-This is very problematic; any users running the `stable` tag would have already been upgraded to `5.0`, if I now revert `stable` back to `4.2`, those installations will break as one cannot downgrade once upgraded.  
-I am currently not updating any builds until `5.0` is again promoted to `stable`.
-
 ## Releases
+
+**Warning**: Publishing of `stable` tags are currently suspended, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
 
 Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
 Images are tagged using `latest`, `stable`, and the specific version number.  
@@ -271,7 +267,7 @@ The build is divided into the following parts:
 
 Note that currently only the `develop` branch will use online version information at build time.  
 The `main` branch still relies on the static `Version.json` file I manually curate and test, when observing version changes via [VisualPing](https://visualping.io/).  
-I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic, currently it is [not reliable](https://github.com/networkoptix/nx_open/issues/3).
+I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic, currently it is [not reliable](https://github.com/ptr727/NxWitness/issues/62).
 
 ## Network Optix and Docker
 
