@@ -253,7 +253,7 @@ public class ProductInfo
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
         {
-            // Log an rethrow
+            // Log and rethrow
             throw;
         }
     }
