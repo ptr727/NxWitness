@@ -32,14 +32,14 @@
       "Name": "NxMeta",
       "Branch": "main",
       "Tags": [
-        "docker.io/ptr727/nxmeta:5.1.0.35151",
+        "docker.io/ptr727/nxmeta:5.1.0.35837",
         "docker.io/ptr727/nxmeta:beta",
-        "ghcr.io/ptr727/nxmeta:5.1.0.35151",
+        "ghcr.io/ptr727/nxmeta:5.1.0.35837",
         "ghcr.io/ptr727/nxmeta:beta"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35151/metavms-server_update-5.1.0.35151-linux_x64-beta.zip",
-        "DOWNLOAD_VERSION=5.1.0.35151"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35837/metavms-server_update-5.1.0.35837-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=5.1.0.35837"
       ]
     },
     {
@@ -72,14 +72,14 @@
       "Name": "NxMeta-LSIO",
       "Branch": "main",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:5.1.0.35151",
+        "docker.io/ptr727/nxmeta-lsio:5.1.0.35837",
         "docker.io/ptr727/nxmeta-lsio:beta",
-        "ghcr.io/ptr727/nxmeta-lsio:5.1.0.35151",
+        "ghcr.io/ptr727/nxmeta-lsio:5.1.0.35837",
         "ghcr.io/ptr727/nxmeta-lsio:beta"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35151/metavms-server_update-5.1.0.35151-linux_x64-beta.zip",
-        "DOWNLOAD_VERSION=5.1.0.35151"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35837/metavms-server_update-5.1.0.35837-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=5.1.0.35837"
       ]
     },
     {
@@ -194,14 +194,14 @@
       "Name": "NxMeta",
       "Branch": "develop",
       "Tags": [
-        "docker.io/ptr727/nxmeta:develop-5.1.0.35151",
+        "docker.io/ptr727/nxmeta:develop-5.1.0.35837",
         "docker.io/ptr727/nxmeta:develop-beta",
-        "ghcr.io/ptr727/nxmeta:develop-5.1.0.35151",
+        "ghcr.io/ptr727/nxmeta:develop-5.1.0.35837",
         "ghcr.io/ptr727/nxmeta:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35151/metavms-server_update-5.1.0.35151-linux_x64-beta.zip",
-        "DOWNLOAD_VERSION=5.1.0.35151"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35837/metavms-server_update-5.1.0.35837-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=5.1.0.35837"
       ]
     },
     {
@@ -236,14 +236,14 @@
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:develop-5.1.0.35151",
+        "docker.io/ptr727/nxmeta-lsio:develop-5.1.0.35837",
         "docker.io/ptr727/nxmeta-lsio:develop-beta",
-        "ghcr.io/ptr727/nxmeta-lsio:develop-5.1.0.35151",
+        "ghcr.io/ptr727/nxmeta-lsio:develop-5.1.0.35837",
         "ghcr.io/ptr727/nxmeta-lsio:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35151/metavms-server_update-5.1.0.35151-linux_x64-beta.zip",
-        "DOWNLOAD_VERSION=5.1.0.35151"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/35837/metavms-server_update-5.1.0.35837-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=5.1.0.35837"
       ]
     }
   ]
