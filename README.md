@@ -11,7 +11,7 @@ Licensed under the [MIT License](./LICENSE).
 
 [Code and Pipeline is on GitHub](https://github.com/ptr727/NxWitness):  
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github)](https://github.com/ptr727/NxWitness/commits/main)  
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ptr727/NxWitness/Build%20and%20Publish%20Docker%20Images?logo=github)](https://github.com/ptr727/NxWitness/actions)  
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github)](https://github.com/ptr727/NxWitness/actions)  
 [![GitHub Actions Last Build](https://byob.yarr.is/ptr727/NxWitness/lastbuild)](https://github.com/ptr727/NxWitness/actions)
 
 ## Releases
