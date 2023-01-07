@@ -126,14 +126,14 @@
       "Name": "DWSpectrum",
       "Branch": "main",
       "Tags": [
-        "docker.io/ptr727/dwspectrum:5.0.0.35746",
+        "docker.io/ptr727/dwspectrum:5.0.0.36183",
         "docker.io/ptr727/dwspectrum:latest",
-        "ghcr.io/ptr727/dwspectrum:5.0.0.35746",
+        "ghcr.io/ptr727/dwspectrum:5.0.0.36183",
         "ghcr.io/ptr727/dwspectrum:latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/35746/dwspectrum-server_update-5.0.0.35746-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.35746"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36183/dwspectrum-server_update-5.0.0.36183-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36183"
       ]
     },
     {
@@ -152,14 +152,14 @@
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
       "Tags": [
-        "docker.io/ptr727/dwspectrum-lsio:5.0.0.35746",
+        "docker.io/ptr727/dwspectrum-lsio:5.0.0.36183",
         "docker.io/ptr727/dwspectrum-lsio:latest",
-        "ghcr.io/ptr727/dwspectrum-lsio:5.0.0.35746",
+        "ghcr.io/ptr727/dwspectrum-lsio:5.0.0.36183",
         "ghcr.io/ptr727/dwspectrum-lsio:latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/35746/dwspectrum-server_update-5.0.0.35746-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.35746"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36183/dwspectrum-server_update-5.0.0.36183-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36183"
       ]
     },
     {
