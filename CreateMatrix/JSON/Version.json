@@ -32,6 +32,13 @@
       "Product": "NxWitness",
       "Versions": [
         {
+          "Version": "5.1.0.36160",
+          "Uri": "https://updates.networkoptix.com/default/36160/nxwitness-server_update-5.1.0.36160-linux_x64-beta.zip",
+          "Labels": [
+            "beta"
+          ]
+        },
+        {
           "Version": "5.0.0.35745",
           "Uri": "https://updates.networkoptix.com/default/35745/nxwitness-server_update-5.0.0.35745-linux_x64.zip",
           "Labels": [
@@ -44,6 +51,13 @@
     {
       "Product": "DWSpectrum",
       "Versions": [
+        {
+          "Version": "5.1.0.36162",
+          "Uri": "https://updates.networkoptix.com/digitalwatchdog/36162/dwspectrum-server_update-5.1.0.36162-linux_x64-beta.zip",
+          "Labels": [
+            "beta"
+          ]
+        },
         {
           "Version": "5.0.0.36183",
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/36183/dwspectrum-server_update-5.0.0.36183-linux_x64.zip",
