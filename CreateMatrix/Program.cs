@@ -169,18 +169,23 @@ internal static class Program
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
-        MatrixJsonSchema matrixJson = new()
+        MatrixJsonSchema matrixSchema = new()
         {
             Images = ImageInfo.CreateImages(versionSchema.Products)
         };
-        Log.Logger.Information("Created {Count} images in matrix", matrixJson.Images.Count);
+        Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
-        // Log info
-        matrixJson.Images.ForEach(item => item.LogInformation());
+        // Disable GHCR posting
+        // https://github.com/ptr727/NxWitness/issues/69
+        matrixSchema.Images.ForEach(image =>
+            image.Tags.RemoveAll(tag => tag.Contains("ghcr.io")));
+
+       // Log info
+        matrixSchema.Images.ForEach(item => item.LogInformation());
 
         // Write matrix
         Log.Logger.Information("Writing matrix to {Path}", matrixPath);
-        MatrixJsonSchema.ToFile(matrixPath, matrixJson);
+        MatrixJsonSchema.ToFile(matrixPath, matrixSchema);
 
         return Task.FromResult(0);
     }

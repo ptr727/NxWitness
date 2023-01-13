@@ -16,7 +16,10 @@ Licensed under the [MIT License](./LICENSE).
 
 ## Releases
 
-**Warning**: Publishing of `stable` tags are currently suspended, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
+**Known Issues**:
+
+- Publishing of `stable` tags are currently suspended, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
+- Posting of images to GHCR are temporarily disabled due to posting failures, see this [issue](https://github.com/ptr727/NxWitness/issues/69) for details.
 
 Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
 Images are tagged using `latest`, `stable`, and the specific version number.  
