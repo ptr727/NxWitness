@@ -103,7 +103,7 @@ jobs:
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: "Build and Push Images"
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile

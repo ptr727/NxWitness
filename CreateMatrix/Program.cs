@@ -175,11 +175,6 @@ internal static class Program
         };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
-        // Disable GHCR posting
-        // https://github.com/ptr727/NxWitness/issues/69
-        matrixSchema.Images.ForEach(image =>
-            image.Tags.RemoveAll(tag => tag.Contains("ghcr.io")));
-
        // Log info
         matrixSchema.Images.ForEach(item => item.LogInformation());
 
