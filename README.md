@@ -16,6 +16,7 @@ Licensed under the [MIT License](./LICENSE).
 
 ## Build Issues
 
+- Automatic updating of Nx build versions during scheduled builds are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/73) for details.
 - Publishing of `stable` tags are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
 
 ## Releases
@@ -266,10 +267,6 @@ The build is divided into the following parts:
   - A [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy is used to build and publish a container image for every entry in the `Matrix.json` file.
   - Conditional build time branch logic controls image creation vs. image publishing.
 - Updating the mediaserver inside docker is not supported, to update the server version pull a new container image, it is "the docker way".
-
-Note that currently only the `develop` branch will use online version information at build time.  
-The `main` branch still relies on the static `Version.json` file I manually curate and test, when observing version changes via [VisualPing](https://visualping.io/).  
-I will enable online updates for the `main` branch when I am confident in the `CreateMatrix` and `releases.json` logic, currently it is [not reliable](https://github.com/ptr727/NxWitness/issues/62).
 
 ## Network Optix and Docker
 

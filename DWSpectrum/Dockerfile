@@ -1,3 +1,5 @@
+# https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+# Latest supported is Focal
 FROM ubuntu:focal
 
 

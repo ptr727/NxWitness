@@ -3,6 +3,7 @@
 
 # Test installing in container:
 # docker run -it --rm ubuntu:focal /bin/bash
+# docker run -it --rm lsiobase/ubuntu:focal /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update
 # apt-get upgrade --yes
