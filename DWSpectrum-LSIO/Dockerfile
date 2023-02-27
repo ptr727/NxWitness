@@ -1,3 +1,5 @@
+# https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+# Latest supported is Focal
 FROM lsiobase/ubuntu:focal
 
 
@@ -51,13 +53,18 @@ RUN chmod +x Download.sh \
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
+# LSIO does not officially support changing the "abc" username
+# https://discourse.linuxserver.io/t/changing-abc-container-user/3208
+# S6 V2:
 # https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/10-adduser
+# S6 V3:
+# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
 # Change user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
 # Change group "abc" to ${COMPANY_NAME}
     && groupmod -n ${COMPANY_NAME} abc \
 # Replace "abc" with ${COMPANY_NAME}
-    && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/cont-init.d/10-adduser
+    && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
