@@ -31,6 +31,7 @@ RUN chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediase
 
 # Copy etc init and services files
 # https://github.com/just-containers/s6-overlay#container-environment
+# https://www.linuxserver.io/blog/how-is-container-formed
 COPY root/etc /etc
 
 # Expose port 7001

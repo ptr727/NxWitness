@@ -1,0 +1,45 @@
+#!/usr/bin/with-contenv bash
+
+### Relocate and link required files and directories
+echo "init-nx-relocate : COMPANY_NAME = ${COMPANY_NAME}"
+
+# Make sure that /config/var exists
+if [[ ! -d /config/var ]]
+then
+    echo "/config/var does not exist, creating"
+    mkdir -p /config/var
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/var
+fi
+
+# Make sure that /config/etc exists
+if [[ ! -d /config/etc ]]
+then
+    echo "/config/etc does not exist, creating"
+    mkdir -p /config/etc
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/etc
+fi
+
+# Make sure that ../mediaserver/var links to /config/var
+if [[ ! -h /opt/${COMPANY_NAME}/mediaserver/var ]]
+then
+    echo "../mediaserver/var is not a link, linking"
+    rm -rf /opt/${COMPANY_NAME}/mediaserver/var
+    ln -s /config/var /opt/${COMPANY_NAME}/mediaserver/var
+    chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/var
+fi
+
+# Make sure that ../mediaserver/etc links to /config/etc
+if [[ ! -h /opt/${COMPANY_NAME}/mediaserver/etc ]]
+then
+    echo "../mediaserver/etc is not a link, linking"
+    rm -rf /opt/${COMPANY_NAME}/mediaserver/etc
+    ln -s /config/etc /opt/${COMPANY_NAME}/mediaserver/etc
+    chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/etc
+fi
+
+# Make sure that ../mediaserver/var/data does not exist
+if [[ -d /opt/${COMPANY_NAME}/mediaserver/var/data ]]
+then
+    echo "../mediaserver/var/data exists, deleting"
+    rm /opt/${COMPANY_NAME}/mediaserver/var/data
+fi
