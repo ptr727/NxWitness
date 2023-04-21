@@ -1,0 +1,24 @@
+{
+    "packages_urls": [
+      "https://updates.networkoptix.com/default",
+      "https://beta.networkoptix.com/beta-builds/default"
+    ],
+    "releases": [
+      {
+        "product": "vms",
+        "version": "5.1.0.36751",
+        "protocol_version": 5107,
+        "publication_type": "rc",
+        "release_date": null,
+        "release_delivery_days": null
+      },
+      {
+        "product": "vms",
+        "version": "5.0.0.36634",
+        "protocol_version": 5005,
+        "publication_type": "release",
+        "release_date": "1682031478805",
+        "release_delivery_days": 7
+      }
+    ]
+  }
