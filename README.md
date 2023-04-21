@@ -18,10 +18,11 @@ Licensed under the [MIT License](./LICENSE).
 
 - Automatic updating of Nx build versions during scheduled builds are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/73) for details.
 - Publishing of `stable` tags are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
+- Publishing to GHCR was removed, it is just not reliable and kept breaking the builds with `failed to push ghcr.io ... write: broken pipe` errors.
 
 ## Releases
 
-Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727) and [GitHub Container Registry](https://github.com/ptr727?tab=packages&repo_name=NxWitness).  
+Docker container images are published on [Docker Hub](https://hub.docker.com/u/ptr727).  
 Images are tagged using `latest`, `stable`, and the specific version number.  
 The `latest` tag uses the latest release version, `latest` may be the same as `rc` or `beta`.  
 The `stable` tag uses the stable release version, `stable` may be the same as `latest`.  
@@ -31,11 +32,11 @@ E.g.
 
 ```console
 # Latest NxMeta-LSIO from Docker
-docker pull docker.io/ptr727/nxmeta-lsio:latest
+docker pull ptr727/nxmeta-lsio:latest
 # Stable DWSpectrum from GitHub
-docker pull ghcr.io/ptr727/dwspectrum:stable
+docker pull ptr727/dwspectrum:stable
 # 5.0.0.35136 NxWitness-LSIO from Docker
-docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
+docker pull ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
 The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.  
@@ -320,7 +321,7 @@ I'd be happy to pay a reasonable yearly subscription or maintenance fee, knowing
 
 My wishlist for better docker support:
 
-- Publish always up to date and ready to use docker images on Docker Hub or GitHub Container Registry (what this project does).
+- Publish always up to date and ready to use docker images on Docker Hub.
 - Do not bind the license to hardware, use the cloud account for license enforcement.
 - Do not filter storage filesystems, allow the administrator to specify and use any storage location backed by any filesystem.
 - Do not pollute the filesystem by creating folders in any detected storage, use only storage as specified.

@@ -33,7 +33,8 @@ public class ImageInfo
         Tags.Add($"docker.io/ptr727/{Name.ToLower()}:{prefixTag}");
 
         // GitHub Container Registry
-        Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
+        // TODO: GHCR pushes are just too unreliable
+        // Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
     }
 
     public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
