@@ -1,0 +1,927 @@
+{
+    "version": "5.0.0.36634",
+    "meta_version": "P1",
+    "releaseNotes": "https://www.networkoptix.com/all-nx-witness-release-notes",
+    "product": "nxwitness",
+    "productDescription": "Video Management System",
+    "date": "04 Apr 2023",
+    "buildNumber": "36634",
+    "password": "thn04r",
+    "type": "release",
+    "backwardCompatible": true,
+    "cloudGroup": "prod",
+    "beta": false,
+    "dismissed": false,
+    "installers": [
+        {
+            "platform": "edge1",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-edge1.txt",
+            "path": "arm/nxwitness-conan_refs-5.0.0.36634-edge1.txt",
+            "niceName": "Edge - conan_refs"
+        },
+        {
+            "platform": "edge1",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server-5.0.0.36634-edge1.zip",
+            "path": "arm/nxwitness-server-5.0.0.36634-edge1.zip",
+            "niceName": "Edge - Server installer"
+        },
+        {
+            "platform": "edge1",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-edge1.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-edge1.zip",
+            "niceName": "Edge - Update package - server"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client-5.0.0.36634-linux_x64.deb",
+            "path": "linux/nxwitness-client-5.0.0.36634-linux_x64.deb",
+            "niceName": "Ubuntu x64 - Client installer"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-linux_x64.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-linux_x64.zip",
+            "niceName": "Ubuntu x64 - Update package - client"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_x64.txt",
+            "path": "linux/nxwitness-conan_refs-5.0.0.36634-linux_x64.txt",
+            "niceName": "Ubuntu x64 - conan_refs"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server-5.0.0.36634-linux_x64.deb",
+            "path": "linux/nxwitness-server-5.0.0.36634-linux_x64.deb",
+            "niceName": "Ubuntu x64 - Server installer"
+        },
+        {
+            "platform": "linux_x64",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-linux_x64.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-linux_x64.zip",
+            "niceName": "Ubuntu x64 - Update package - server"
+        },
+        {
+            "platform": "linux_arm32",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_arm32.txt",
+            "path": "arm/nxwitness-conan_refs-5.0.0.36634-linux_arm32.txt",
+            "niceName": "Raspberry Pi / ARM32 - conan_refs"
+        },
+        {
+            "platform": "linux_arm32",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server-5.0.0.36634-linux_arm32.deb",
+            "path": "arm/nxwitness-server-5.0.0.36634-linux_arm32.deb",
+            "niceName": "Raspberry Pi / ARM32 - Server installer"
+        },
+        {
+            "platform": "bananapi",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-bananapi.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-bananapi.zip",
+            "niceName": "Banana Pi - Update package - server"
+        },
+        {
+            "platform": "linux_arm32",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-linux_arm32.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-linux_arm32.zip",
+            "niceName": "Raspberry Pi / ARM32 - Update package - server"
+        },
+        {
+            "platform": "rpi",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-rpi.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-rpi.zip",
+            "niceName": "Raspberry Pi - Update package - server"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client-5.0.0.36634-linux_arm64.deb",
+            "path": "arm/nxwitness-client-5.0.0.36634-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Client installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-linux_arm64.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-linux_arm64.zip",
+            "niceName": "NVIDIA Jetson / ARM64 - Update package - client"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_arm64.txt",
+            "path": "arm/nxwitness-conan_refs-5.0.0.36634-linux_arm64.txt",
+            "niceName": "NVIDIA Jetson / ARM64 - conan_refs"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server-5.0.0.36634-linux_arm64.deb",
+            "path": "arm/nxwitness-server-5.0.0.36634-linux_arm64.deb",
+            "niceName": "NVIDIA Jetson / ARM64 - Server installer"
+        },
+        {
+            "platform": "linux_arm64",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-linux_arm64.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-linux_arm64.zip",
+            "niceName": "NVIDIA Jetson / ARM64 - Update package - server"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "client_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_debug-5.0.0.36634-macos_x64.zip",
+            "path": "macos/nxwitness-client_debug-5.0.0.36634-macos_x64.zip",
+            "niceName": "Mac OS - ~ PDB - client debug files"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "libs_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-libs_debug-5.0.0.36634-macos_x64.zip",
+            "path": "macos/nxwitness-libs_debug-5.0.0.36634-macos_x64.zip",
+            "niceName": "Mac OS - ~ PDB - libraries debug files"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "misc_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-misc_debug-5.0.0.36634-macos_x64.zip",
+            "path": "macos/nxwitness-misc_debug-5.0.0.36634-macos_x64.zip",
+            "niceName": "Mac OS - ~ PDB - Applauncher, traytool & other debug files"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client-5.0.0.36634-macos_x64.dmg",
+            "path": "macos/nxwitness-client-5.0.0.36634-macos_x64.dmg",
+            "niceName": "Mac OS - Client installer"
+        },
+        {
+            "platform": "macos",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-macos.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-macos.zip",
+            "niceName": "Mac OS - Update package - client"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-macos_x64.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-macos_x64.zip",
+            "niceName": "Mac OS - Update package - client"
+        },
+        {
+            "platform": "macos_x64",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-macos_x64.txt",
+            "path": "macos/nxwitness-conan_refs-5.0.0.36634-macos_x64.txt",
+            "niceName": "Mac OS - conan_refs"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "client_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_debug-5.0.0.36634-macos_arm64.zip",
+            "path": "macos/nxwitness-client_debug-5.0.0.36634-macos_arm64.zip",
+            "niceName": "Mac OS ARM64 - ~ PDB - client debug files"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "libs_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-libs_debug-5.0.0.36634-macos_arm64.zip",
+            "path": "macos/nxwitness-libs_debug-5.0.0.36634-macos_arm64.zip",
+            "niceName": "Mac OS ARM64 - ~ PDB - libraries debug files"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "misc_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-misc_debug-5.0.0.36634-macos_arm64.zip",
+            "path": "macos/nxwitness-misc_debug-5.0.0.36634-macos_arm64.zip",
+            "niceName": "Mac OS ARM64 - ~ PDB - Applauncher, traytool & other debug files"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client-5.0.0.36634-macos_arm64.dmg",
+            "path": "macos/nxwitness-client-5.0.0.36634-macos_arm64.dmg",
+            "niceName": "Mac OS ARM64 - Client installer"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-macos_arm64.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-macos_arm64.zip",
+            "niceName": "Mac OS ARM64 - Update package - client"
+        },
+        {
+            "platform": "macos_arm64",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-macos_arm64.txt",
+            "path": "macos/nxwitness-conan_refs-5.0.0.36634-macos_arm64.txt",
+            "niceName": "Mac OS ARM64 - conan_refs"
+        },
+        {
+            "platform": "universal",
+            "appType": "metadata_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-metadata_sdk-5.0.0.36634-universal.zip",
+            "path": "sdk/nxwitness-metadata_sdk-5.0.0.36634-universal.zip",
+            "niceName": "Cross-platform - SDK: Metadata"
+        },
+        {
+            "platform": "universal",
+            "appType": "storage_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-storage_sdk-5.0.0.36634-universal.zip",
+            "path": "sdk/nxwitness-storage_sdk-5.0.0.36634-universal.zip",
+            "niceName": "Cross-platform - SDK: Storage"
+        },
+        {
+            "platform": "universal",
+            "appType": "video_source_sdk",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-video_source_sdk-5.0.0.36634-universal.zip",
+            "path": "sdk/nxwitness-video_source_sdk-5.0.0.36634-universal.zip",
+            "niceName": "Cross-platform - SDK: Camera"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "client_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_debug-5.0.0.36634-windows_x64.zip",
+            "path": "windows/nxwitness-client_debug-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - ~ PDB - client debug files"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "libs_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-libs_debug-5.0.0.36634-windows_x64.zip",
+            "path": "windows/nxwitness-libs_debug-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - ~ PDB - libraries debug files"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "misc_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-misc_debug-5.0.0.36634-windows_x64.zip",
+            "path": "windows/nxwitness-misc_debug-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - ~ PDB - Applauncher, traytool & other debug files"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "server_debug",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_debug-5.0.0.36634-windows_x64.zip",
+            "path": "windows/nxwitness-server_debug-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - ~ PDB - server debug files"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "bundle",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-bundle-5.0.0.36634-windows_x64.exe",
+            "path": "windows/nxwitness-bundle-5.0.0.36634-windows_x64.exe",
+            "niceName": "Windows x64 - Client & Server"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "client",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client-5.0.0.36634-windows_x64.exe",
+            "path": "windows/nxwitness-client-5.0.0.36634-windows_x64.exe",
+            "niceName": "Windows x64 - Client installer"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "client_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-client_update-5.0.0.36634-windows_x64.zip",
+            "path": "nxwitness-client_update-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - Update package - client"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "conan_refs",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-conan_refs-5.0.0.36634-windows_x64.txt",
+            "path": "windows/nxwitness-conan_refs-5.0.0.36634-windows_x64.txt",
+            "niceName": "Windows x64 - conan_refs"
+        },
+        {
+            "platform": "Net2v5",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v5.exe",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v5.exe",
+            "niceName": "Paxton Net2 Pro v5 - plugin installer"
+        },
+        {
+            "platform": "Net2v5",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v5.msi",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v5.msi",
+            "niceName": "Paxton Net2 Pro v5 - plugin installer"
+        },
+        {
+            "platform": "Net2v6",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v6.exe",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v6.exe",
+            "niceName": "Paxton Net2 Pro v6 - plugin installer"
+        },
+        {
+            "platform": "Net2v6",
+            "appType": "paxton_plugin",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v6.msi",
+            "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v6.msi",
+            "niceName": "Paxton Net2 Pro v6 - plugin installer"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "server",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server-5.0.0.36634-windows_x64.exe",
+            "path": "windows/nxwitness-server-5.0.0.36634-windows_x64.exe",
+            "niceName": "Windows x64 - Server installer"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "server_update",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-server_update-5.0.0.36634-windows_x64.zip",
+            "path": "nxwitness-server_update-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - Update package - server"
+        },
+        {
+            "platform": "windows_x64",
+            "appType": "testcamera",
+            "beta": false,
+            "cloudGroup": "prod",
+            "fileName": "nxwitness-testcamera-5.0.0.36634-windows_x64.zip",
+            "path": "windows/nxwitness-testcamera-5.0.0.36634-windows_x64.zip",
+            "niceName": "Windows x64 - Test camera"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "sdk",
+            "files": [
+                {
+                    "platform": "universal",
+                    "appType": "video_source_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-video_source_sdk-5.0.0.36634-universal.zip",
+                    "path": "sdk/nxwitness-video_source_sdk-5.0.0.36634-universal.zip",
+                    "niceName": "Cross-platform - SDK: Camera"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "metadata_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-metadata_sdk-5.0.0.36634-universal.zip",
+                    "path": "sdk/nxwitness-metadata_sdk-5.0.0.36634-universal.zip",
+                    "niceName": "Cross-platform - SDK: Metadata"
+                },
+                {
+                    "platform": "universal",
+                    "appType": "storage_sdk",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-storage_sdk-5.0.0.36634-universal.zip",
+                    "path": "sdk/nxwitness-storage_sdk-5.0.0.36634-universal.zip",
+                    "niceName": "Cross-platform - SDK: Storage"
+                }
+            ]
+        },
+        {
+            "name": "arm",
+            "files": [
+                {
+                    "platform": "bananapi",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-bananapi.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-bananapi.zip",
+                    "niceName": "Banana Pi - Update package - server"
+                },
+                {
+                    "platform": "edge1",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server-5.0.0.36634-edge1.zip",
+                    "path": "arm/nxwitness-server-5.0.0.36634-edge1.zip",
+                    "niceName": "Edge - Server installer"
+                },
+                {
+                    "platform": "edge1",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-edge1.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-edge1.zip",
+                    "niceName": "Edge - Update package - server"
+                },
+                {
+                    "platform": "edge1",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-edge1.txt",
+                    "path": "arm/nxwitness-conan_refs-5.0.0.36634-edge1.txt",
+                    "niceName": "Edge - conan_refs"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client-5.0.0.36634-linux_arm64.deb",
+                    "path": "arm/nxwitness-client-5.0.0.36634-linux_arm64.deb",
+                    "niceName": "NVIDIA Jetson / ARM64 - Client installer"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server-5.0.0.36634-linux_arm64.deb",
+                    "path": "arm/nxwitness-server-5.0.0.36634-linux_arm64.deb",
+                    "niceName": "NVIDIA Jetson / ARM64 - Server installer"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-linux_arm64.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-linux_arm64.zip",
+                    "niceName": "NVIDIA Jetson / ARM64 - Update package - client"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-linux_arm64.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-linux_arm64.zip",
+                    "niceName": "NVIDIA Jetson / ARM64 - Update package - server"
+                },
+                {
+                    "platform": "linux_arm64",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_arm64.txt",
+                    "path": "arm/nxwitness-conan_refs-5.0.0.36634-linux_arm64.txt",
+                    "niceName": "NVIDIA Jetson / ARM64 - conan_refs"
+                },
+                {
+                    "platform": "rpi",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-rpi.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-rpi.zip",
+                    "niceName": "Raspberry Pi - Update package - server"
+                },
+                {
+                    "platform": "linux_arm32",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server-5.0.0.36634-linux_arm32.deb",
+                    "path": "arm/nxwitness-server-5.0.0.36634-linux_arm32.deb",
+                    "niceName": "Raspberry Pi / ARM32 - Server installer"
+                },
+                {
+                    "platform": "linux_arm32",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-linux_arm32.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-linux_arm32.zip",
+                    "niceName": "Raspberry Pi / ARM32 - Update package - server"
+                },
+                {
+                    "platform": "linux_arm32",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_arm32.txt",
+                    "path": "arm/nxwitness-conan_refs-5.0.0.36634-linux_arm32.txt",
+                    "niceName": "Raspberry Pi / ARM32 - conan_refs"
+                }
+            ]
+        },
+        {
+            "name": "linux",
+            "files": [
+                {
+                    "platform": "linux_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client-5.0.0.36634-linux_x64.deb",
+                    "path": "linux/nxwitness-client-5.0.0.36634-linux_x64.deb",
+                    "niceName": "Ubuntu x64 - Client installer"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server-5.0.0.36634-linux_x64.deb",
+                    "path": "linux/nxwitness-server-5.0.0.36634-linux_x64.deb",
+                    "niceName": "Ubuntu x64 - Server installer"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-linux_x64.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-linux_x64.zip",
+                    "niceName": "Ubuntu x64 - Update package - client"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-linux_x64.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-linux_x64.zip",
+                    "niceName": "Ubuntu x64 - Update package - server"
+                },
+                {
+                    "platform": "linux_x64",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-linux_x64.txt",
+                    "path": "linux/nxwitness-conan_refs-5.0.0.36634-linux_x64.txt",
+                    "niceName": "Ubuntu x64 - conan_refs"
+                }
+            ]
+        },
+        {
+            "name": "macos",
+            "files": [
+                {
+                    "platform": "macos_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client-5.0.0.36634-macos_x64.dmg",
+                    "path": "macos/nxwitness-client-5.0.0.36634-macos_x64.dmg",
+                    "niceName": "Mac OS - Client installer"
+                },
+                {
+                    "platform": "macos",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-macos.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-macos.zip",
+                    "niceName": "Mac OS - Update package - client"
+                },
+                {
+                    "platform": "macos_x64",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-macos_x64.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-macos_x64.zip",
+                    "niceName": "Mac OS - Update package - client"
+                },
+                {
+                    "platform": "macos_x64",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-macos_x64.txt",
+                    "path": "macos/nxwitness-conan_refs-5.0.0.36634-macos_x64.txt",
+                    "niceName": "Mac OS - conan_refs"
+                },
+                {
+                    "platform": "macos_x64",
+                    "appType": "misc_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-misc_debug-5.0.0.36634-macos_x64.zip",
+                    "path": "macos/nxwitness-misc_debug-5.0.0.36634-macos_x64.zip",
+                    "niceName": "Mac OS - ~ PDB - Applauncher, traytool & other debug files"
+                },
+                {
+                    "platform": "macos_x64",
+                    "appType": "client_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_debug-5.0.0.36634-macos_x64.zip",
+                    "path": "macos/nxwitness-client_debug-5.0.0.36634-macos_x64.zip",
+                    "niceName": "Mac OS - ~ PDB - client debug files"
+                },
+                {
+                    "platform": "macos_x64",
+                    "appType": "libs_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-libs_debug-5.0.0.36634-macos_x64.zip",
+                    "path": "macos/nxwitness-libs_debug-5.0.0.36634-macos_x64.zip",
+                    "niceName": "Mac OS - ~ PDB - libraries debug files"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client-5.0.0.36634-macos_arm64.dmg",
+                    "path": "macos/nxwitness-client-5.0.0.36634-macos_arm64.dmg",
+                    "niceName": "Mac OS ARM64 - Client installer"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-macos_arm64.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-macos_arm64.zip",
+                    "niceName": "Mac OS ARM64 - Update package - client"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-macos_arm64.txt",
+                    "path": "macos/nxwitness-conan_refs-5.0.0.36634-macos_arm64.txt",
+                    "niceName": "Mac OS ARM64 - conan_refs"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "misc_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-misc_debug-5.0.0.36634-macos_arm64.zip",
+                    "path": "macos/nxwitness-misc_debug-5.0.0.36634-macos_arm64.zip",
+                    "niceName": "Mac OS ARM64 - ~ PDB - Applauncher, traytool & other debug files"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "client_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_debug-5.0.0.36634-macos_arm64.zip",
+                    "path": "macos/nxwitness-client_debug-5.0.0.36634-macos_arm64.zip",
+                    "niceName": "Mac OS ARM64 - ~ PDB - client debug files"
+                },
+                {
+                    "platform": "macos_arm64",
+                    "appType": "libs_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-libs_debug-5.0.0.36634-macos_arm64.zip",
+                    "path": "macos/nxwitness-libs_debug-5.0.0.36634-macos_arm64.zip",
+                    "niceName": "Mac OS ARM64 - ~ PDB - libraries debug files"
+                }
+            ]
+        },
+        {
+            "name": "windows",
+            "files": [
+                {
+                    "platform": "Net2v5",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v5.exe",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v5.exe",
+                    "niceName": "Paxton Net2 Pro v5 - plugin installer"
+                },
+                {
+                    "platform": "Net2v5",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v5.msi",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v5.msi",
+                    "niceName": "Paxton Net2 Pro v5 - plugin installer"
+                },
+                {
+                    "platform": "Net2v6",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v6.exe",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v6.exe",
+                    "niceName": "Paxton Net2 Pro v6 - plugin installer"
+                },
+                {
+                    "platform": "Net2v6",
+                    "appType": "paxton_plugin",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-paxton_plugin-5.0.0.36634-Net2v6.msi",
+                    "path": "windows/nxwitness-paxton_plugin-5.0.0.36634-Net2v6.msi",
+                    "niceName": "Paxton Net2 Pro v6 - plugin installer"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "bundle",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-bundle-5.0.0.36634-windows_x64.exe",
+                    "path": "windows/nxwitness-bundle-5.0.0.36634-windows_x64.exe",
+                    "niceName": "Windows x64 - Client & Server"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "client",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client-5.0.0.36634-windows_x64.exe",
+                    "path": "windows/nxwitness-client-5.0.0.36634-windows_x64.exe",
+                    "niceName": "Windows x64 - Client installer"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "server",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server-5.0.0.36634-windows_x64.exe",
+                    "path": "windows/nxwitness-server-5.0.0.36634-windows_x64.exe",
+                    "niceName": "Windows x64 - Server installer"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "testcamera",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-testcamera-5.0.0.36634-windows_x64.zip",
+                    "path": "windows/nxwitness-testcamera-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - Test camera"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "client_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_update-5.0.0.36634-windows_x64.zip",
+                    "path": "nxwitness-client_update-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - Update package - client"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "server_update",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_update-5.0.0.36634-windows_x64.zip",
+                    "path": "nxwitness-server_update-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - Update package - server"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "conan_refs",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-conan_refs-5.0.0.36634-windows_x64.txt",
+                    "path": "windows/nxwitness-conan_refs-5.0.0.36634-windows_x64.txt",
+                    "niceName": "Windows x64 - conan_refs"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "misc_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-misc_debug-5.0.0.36634-windows_x64.zip",
+                    "path": "windows/nxwitness-misc_debug-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - ~ PDB - Applauncher, traytool & other debug files"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "client_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-client_debug-5.0.0.36634-windows_x64.zip",
+                    "path": "windows/nxwitness-client_debug-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - ~ PDB - client debug files"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "libs_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-libs_debug-5.0.0.36634-windows_x64.zip",
+                    "path": "windows/nxwitness-libs_debug-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - ~ PDB - libraries debug files"
+                },
+                {
+                    "platform": "windows_x64",
+                    "appType": "server_debug",
+                    "beta": false,
+                    "cloudGroup": "prod",
+                    "fileName": "nxwitness-server_debug-5.0.0.36634-windows_x64.zip",
+                    "path": "windows/nxwitness-server_debug-5.0.0.36634-windows_x64.zip",
+                    "niceName": "Windows x64 - ~ PDB - server debug files"
+                }
+            ]
+        }
+    ],
+    "releaseUrl": "https://updates.networkoptix.com/default/36634/"
+}
