@@ -6,10 +6,10 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "5.1.0.36161",
-          "Uri": "https://updates.networkoptix.com/metavms/36161/metavms-server_update-5.1.0.36161-linux_x64-beta.zip",
+          "Version": "5.1.0.36751",
+          "Uri": "https://updates.networkoptix.com/metavms/36751/metavms-server_update-5.1.0.36751-linux_x64-rc.zip",
           "Labels": [
-            "beta"
+            "rc"
           ]
         },
         {
