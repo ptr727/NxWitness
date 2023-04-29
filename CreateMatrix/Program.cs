@@ -174,7 +174,7 @@ internal static class Program
                         else if (compare > 0)
                         {
                             // Newer online version
-                            Log.Logger.Information("{Product}{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
+                            Log.Logger.Information("{Product}:{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
                             update = true;
                         }
                     }
