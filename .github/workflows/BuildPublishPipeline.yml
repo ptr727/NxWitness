@@ -113,6 +113,8 @@ jobs:
       - name: Build and Push Images
         uses: docker/build-push-action@v4
         with:
+          cache-from: type=registry,ref=docker.io/ptr727/${{ matrix.images.name }}:buildcache
+          cache-to: type=registry,ref=docker.io/ptr727/${{ matrix.images.name }}:buildcache,mode=max
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
