@@ -109,19 +109,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # https://github.com/marketplace/actions/change-string-case-minimal-dependencies
-      - name: Change repo case
-        id: repocase
-        uses: Entepotenz/change-string-case-action-min-dependencies@v1
-        with:
-          string: ${{ matrix.images.name }}
-
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: Build and Push Images
         uses: docker/build-push-action@v4
         with:
-          cache-from: type=registry,ref=docker.io/ptr727/${{ steps.repocase.outputs.lowercase }}:buildcache
-          cache-to: type=registry,ref=docker.io/ptr727/${{ steps.repocase.outputs.lowercase }}:buildcache,mode=max
+          cache-from: type=registry,ref=docker.io/ptr727/nxwitness:buildcache
+          cache-to: type=registry,ref=docker.io/ptr727/nxwitness:buildcache,mode=max
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64
