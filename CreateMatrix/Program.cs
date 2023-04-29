@@ -3,11 +3,15 @@ using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
 
+// dotnet publish --self-contained false --output ./publish
+// ./publish/CreateMatrix matrix --update --matrix ./JSON/Matrix.json --version ./JSON/Version.json
+// echo $?
+
 namespace CreateMatrix;
 
 internal static class Program
 {
-    private static int Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         // Configure logger
         ConfigureLogger();
@@ -16,7 +20,8 @@ internal static class Program
         var rootCommand = CreateCommandLine();
 
         // Run
-        return rootCommand.Invoke(args);
+        // 0 == ok, 1 == error
+        return await rootCommand.InvokeAsync(args);
     }
 
     private static RootCommand CreateCommandLine()
@@ -41,40 +46,47 @@ internal static class Program
             description: "Matrix JSON schema file.",
             getDefaultValue: () => "Matrix.schema.json");
 
-        var onlineOption = new Option<bool>(
-            name: "--online",
-            description: "Update versions using online release information",
+        var updateOption = new Option<bool>(
+            name: "--update",
+            description: "Update version information",
             getDefaultValue: () => false);
 
-        var defaultCommand = new Command("defaults", "Write defaults to version file")
-        {
-            versionOption,
-            onlineOption
-        };
-        defaultCommand.SetHandler((version, online) => { DefaultHandler(version, online); },
-            versionOption, onlineOption);
+        var versionCommand = new Command("version", "Create version information file")
+            {
+                versionOption
+            };
+        versionCommand.SetHandler((versionValue) => 
+            { 
+                return VersionHandler(versionValue); 
+            },
+            versionOption);
 
-        var matrixCommand = new Command("matrix", "Create matrix file from version information")
-        {
-            versionOption,
-            matrixOption,
-            onlineOption
-        };
-        matrixCommand.SetHandler((version, matrix, online) => { MatrixHandler(version, matrix, online); },
-            versionOption, matrixOption, onlineOption);
+        var matrixCommand = new Command("matrix", "Create matrix information file")
+            {
+                versionOption,
+                matrixOption,
+                updateOption
+            };
+        matrixCommand.SetHandler((versionValue, matrixValue, updateValue) => 
+            { 
+                return MatrixHandler(versionValue, matrixValue, updateValue);
+            },
+            versionOption, matrixOption, updateOption);
 
         var schemaCommand = new Command("schema", "Write version and matrix schema files")
-        {
-            schemaVersionOption,
-            schemaMatrixOption
-        };
-        schemaCommand.SetHandler((version, matrix) => { SchemaHandler(version, matrix); },
+            {
+                schemaVersionOption,
+                schemaMatrixOption
+            };
+        schemaCommand.SetHandler((versionValue, matrixValue) => 
+            { 
+                return SchemaHandler(versionValue, matrixValue); 
+            },
             schemaVersionOption, schemaMatrixOption);
 
-        var rootCommand =
-            new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
+        var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
             {
-                defaultCommand,
+                versionCommand,
                 matrixCommand,
                 schemaCommand
             };
@@ -99,79 +111,93 @@ internal static class Program
         return Task.FromResult(0);
     }
 
-    private static Task<int> DefaultHandler(string versionPath, bool onlineUpdate)
+    private static Task<int> VersionHandler(string versionPath)
     {
-        Log.Logger.Information("Writing defaults to file : Version Path: {VersionPath}, Online Updates: {OnlineUpdate}",
-            versionPath, onlineUpdate);
-
-        // Use static defaults or online versions
+        // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
-        if (!onlineUpdate)
-        {
-            Log.Logger.Information("Using static version defaults");
-
-            // Use static information
-            versionSchema.Products = ProductInfo.GetDefaults();
-        }
-        else
-        {
-            Log.Logger.Information("Getting online version information...");
-
-            // Get versions for all products using releases API
-            versionSchema.Products = ProductInfo.GetProducts();
-            versionSchema.Products.ForEach(item => item.GetReleasesVersions());
-        }
-
-        // Log info
+        Log.Logger.Information("Getting online version information...");
+        versionSchema.Products = ProductInfo.GetProducts();
+        versionSchema.Products.ForEach(item => item.GetVersions());
         versionSchema.Products.ForEach(item => item.LogInformation());
-
-        // Verify Urls
         versionSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Write to file
-        Log.Logger.Information("Writing versions to {Path}", versionPath);
+        Log.Logger.Information("Writing version information to {Path}", versionPath);
         VersionJsonSchema.ToFile(versionPath, versionSchema);
 
         return Task.FromResult(0);
     }
 
-    private static Task<int> MatrixHandler(string versionPath, string matrixPath, bool onlineUpdate)
+    private static Task<int> MatrixHandler(string versionPath, string matrixPath, bool updateVersion)
     {
-        Log.Logger.Information(
-            "Creating image matrix from versions : Version Path: {VersionPath}, Matrix Path: {MatrixPath}, Online Updates: {OnlineUpdate}",
-            versionPath, matrixPath, onlineUpdate);
+        // Load version info from file
+        Log.Logger.Information("Reading version information from {Path}", versionPath);
+        var fileSchema = VersionJsonSchema.FromFile(versionPath);
+        fileSchema.Products.ForEach(item => item.LogInformation());
+        fileSchema.Products.ForEach(item => item.VerifyUrls());
 
-        // Load versions from file or online
-        VersionJsonSchema versionSchema = new();
-        if (!onlineUpdate)
+        // Update version information
+        if (updateVersion)
         {
-            Log.Logger.Information("Reading versions from {Path}", versionPath);
-            versionSchema = VersionJsonSchema.FromFile(versionPath);
-        }
-        else
-        {
+            // Get versions for all products using releases API
+            VersionJsonSchema onlineSchema = new();
             Log.Logger.Information("Getting online version information...");
-            versionSchema.Products = ProductInfo.GetProducts();
-            versionSchema.Products.ForEach(item => item.GetReleasesVersions());
+            onlineSchema.Products = ProductInfo.GetProducts();
+            onlineSchema.Products.ForEach(item => item.GetVersions());
+            onlineSchema.Products.ForEach(item => item.LogInformation());
+            onlineSchema.Products.ForEach(item => item.VerifyUrls());
+
+            // The online versions may not be older than the file versions
+    
+            // Iterate over all file products
+            foreach (var fileProduct in fileSchema.Products)
+            {
+                // Find the matching online product
+                var onlineProduct = onlineSchema.Products.Find(item => item.Product == fileProduct.Product);
+                ArgumentNullException.ThrowIfNull(onlineProduct);
+
+                // Find the version by known labels, label may not always be present
+                foreach (var label in VersionUri.KnownLabels)
+                {
+                    var fileVersion = fileProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+                    var onlineVersion = onlineProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+
+                    if (fileVersion != null && onlineVersion != null)
+                    {
+                        // Compare the versions
+                        var compare = onlineVersion.CompareTo(fileVersion);
+                        if (compare < 0)
+                        {
+                            // Versions may not regress
+                            Log.Logger.Error("{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", label, onlineVersion.Version, fileVersion.Version);
+                            return Task.FromResult(1);
+                        }
+                        else if (compare > 0)
+                        {
+                            // Newer online version
+                            Log.Logger.Information("{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", label, onlineVersion.Version, fileVersion.Version);
+                        }
+                    }
+                }
+            }
+
+            // Update the file version with the online version
+            Log.Logger.Information("Writing version information to {Path}", versionPath);
+            VersionJsonSchema.ToFile(versionPath, onlineSchema);
+            fileSchema = onlineSchema;
         }
 
         // Remove all stable labels
         // https://github.com/ptr727/NxWitness/issues/62
-        versionSchema.Products.ForEach(product =>
+        fileSchema.Products.ForEach(product =>
             product.Versions.ForEach(version =>
                 version.Labels.RemoveAll(label => string.Equals(label, VersionUri.StableLabel))));
-
-        // Log info
-        versionSchema.Products.ForEach(item => item.LogInformation());
-
-        // Verify Urls
-        versionSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
         MatrixJsonSchema matrixSchema = new()
         {
-            Images = ImageInfo.CreateImages(versionSchema.Products)
+            Images = ImageInfo.CreateImages(fileSchema.Products)
         };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 

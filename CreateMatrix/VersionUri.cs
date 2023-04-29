@@ -13,6 +13,8 @@ public class VersionUri : ICloneable, IComparable
     public const string BetaLabel = "beta";
     public const string RcLabel = "rc";
 
+    public static readonly string[] KnownLabels = new string[] { VersionUri.StableLabel, VersionUri.LatestLabel, VersionUri.BetaLabel, VersionUri.RcLabel };
+
     object ICloneable.Clone()
     {
         return Clone();
