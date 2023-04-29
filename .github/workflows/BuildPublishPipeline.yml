@@ -17,6 +17,10 @@ on:
     # TODO: Figure out how to build main and develop vs. just the default branch
     - cron: 0 2 * * MON
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
 
