@@ -134,7 +134,6 @@ internal static class Program
         Log.Logger.Information("Reading version information from {Path}", versionPath);
         var fileSchema = VersionJsonSchema.FromFile(versionPath);
         fileSchema.Products.ForEach(item => item.LogInformation());
-        fileSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Update version information
         if (updateVersion)
@@ -145,11 +144,11 @@ internal static class Program
             onlineSchema.Products = ProductInfo.GetProducts();
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
-            onlineSchema.Products.ForEach(item => item.VerifyUrls());
 
             // The online versions may not be older than the file versions
     
-            // Iterate over all file products
+            // Iterate over all products
+            bool update = false;
             foreach (var fileProduct in fileSchema.Products)
             {
                 // Find the matching online product
@@ -169,22 +168,27 @@ internal static class Program
                         if (compare < 0)
                         {
                             // Versions may not regress
-                            Log.Logger.Error("{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", label, onlineVersion.Version, fileVersion.Version);
+                            Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
                             return Task.FromResult(1);
                         }
                         else if (compare > 0)
                         {
                             // Newer online version
-                            Log.Logger.Information("{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", label, onlineVersion.Version, fileVersion.Version);
+                            Log.Logger.Information("{Product}{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
+                            update = true;
                         }
                     }
                 }
             }
 
             // Update the file version with the online version
-            Log.Logger.Information("Writing version information to {Path}", versionPath);
-            VersionJsonSchema.ToFile(versionPath, onlineSchema);
-            fileSchema = onlineSchema;
+            if (update)
+            {
+                onlineSchema.Products.ForEach(item => item.VerifyUrls());
+                Log.Logger.Information("Writing version information to {Path}", versionPath);
+                VersionJsonSchema.ToFile(versionPath, onlineSchema);
+                fileSchema = onlineSchema;
+            }
         }
 
         // Remove all stable labels
