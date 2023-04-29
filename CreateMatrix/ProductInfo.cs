@@ -57,7 +57,11 @@ public class ProductInfo
             select new ProductInfo { Product = productType }).ToList();
     }
 
-    [Obsolete("Deprecated by GetReleasesVersions().", false)]
+    public void GetVersions()
+    {
+        GetReleasesVersions();
+    }
+
     public void GetDownloadsVersions()
     {
         // Get version information using {cloudhost}/api/utils/downloads
@@ -278,58 +282,5 @@ public class ProductInfo
             fileName,
             httpResponse.Content.Headers.ContentLength,
             httpResponse.Content.Headers.LastModified);
-    }
-
-    public static List<ProductInfo> GetDefaults()
-    {
-        // Create an empty list of products
-        List<ProductInfo> productList = new();
-
-        // NxMeta
-        var product = new ProductInfo
-        {
-            Product = ProductType.NxMeta
-        };
-        productList.Add(product);
-        var versionUri = new VersionUri
-        {
-            Version = "5.0.0.35134",
-            Uri = "https://updates.networkoptix.com/metavms/35134/linux/metavms-server-5.0.0.35134-linux_x64.deb",
-            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
-        };
-        product.Versions.Add(versionUri);
-
-        // NxWitness
-        product = new ProductInfo
-        {
-            Product = ProductType.NxWitness
-        };
-        productList.Add(product);
-        versionUri = new VersionUri
-        {
-            Version = "5.0.0.35136",
-            Uri = "https://updates.networkoptix.com/default/35136/linux/nxwitness-server-5.0.0.35136-linux_x64.deb",
-            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
-        };
-        product.Versions.Add(versionUri);
-
-        // DWSpectrum
-        product = new ProductInfo
-        {
-            Product = ProductType.DWSpectrum
-        };
-        productList.Add(product);
-
-        // DWSpectrum Stable
-        versionUri = new VersionUri
-        {
-            Version = "4.2.0.32842",
-            Uri =
-                "https://updates.networkoptix.com/digitalwatchdog/32842/linux/dwspectrum-server-4.2.0.32842-linux64.deb",
-            Labels = { VersionUri.StableLabel, VersionUri.LatestLabel }
-        };
-        product.Versions.Add(versionUri);
-
-        return productList;
     }
 }

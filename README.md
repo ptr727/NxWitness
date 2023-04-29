@@ -16,9 +16,7 @@ Licensed under the [MIT License](./LICENSE).
 
 ## Build Issues
 
-- Automatic updating of Nx build versions during scheduled builds are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/73) for details.
 - Publishing of `stable` tags are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
-- Publishing to GHCR was removed, it is just not reliable and kept breaking the builds with `failed to push ghcr.io ... write: broken pipe` errors.
 
 ## Releases
 
@@ -31,12 +29,12 @@ The `develop`, `rc` or `beta` tags are assigned to test or pre-release versions,
 E.g.
 
 ```console
-# Latest NxMeta-LSIO from Docker
-docker pull ptr727/nxmeta-lsio:latest
-# Stable DWSpectrum from GitHub
-docker pull ptr727/dwspectrum:stable
-# 5.0.0.35136 NxWitness-LSIO from Docker
-docker pull ptr727/nxwitness-lsio:5.0.0.35136
+# Latest NxMeta-LSIO
+docker pull docker.io/ptr727/nxmeta-lsio:latest
+# Stable DWSpectrum
+docker pull docker.io/ptr727/dwspectrum:stable
+# 5.0.0.35136 NxWitness-LSIO
+docker pull docker.io/ptr727/nxwitness-lsio:5.0.0.35136
 ```
 
 The images are updated weekly, picking up the latest upstream OS updates, and newly released product versions.  
@@ -156,7 +154,7 @@ docker create \
   --env TZ=Americas/Los_Angeles \
   --volume /mnt/nxwitness/config:/config:rw \
   --volume /mnt/nxwitness/media:/media:rw \
-  ptr727/nxwitness-lsio:stable
+  docker.io/ptr727/nxwitness-lsio:stable
 
 docker start nxwitness-lsio-test-container
 ```
@@ -168,7 +166,7 @@ version: "3.7"
 
 services:
   nxwitness:
-    image: ptr727/nxwitness-lsio:stable
+    image: docker.io/ptr727/nxwitness-lsio:stable
     container_name: nxwitness-lsio-test-container
     restart: unless-stopped
     network_mode: host
@@ -188,7 +186,7 @@ version: "3.7"
 
 services:
   nxwitness:
-    image: ptr727/nxwitness:stable
+    image: docker.io/ptr727/nxwitness:stable
     container_name: nxwitness-test-container
     restart: unless-stopped
     network_mode: host
@@ -255,11 +253,10 @@ The build is divided into the following parts:
   - The [Download.sh](./Make/Download.sh) script handles the variances making the DEB file available to install.
   - It is possible to download the DEB file outside the `Dockerfile` and `COPY` it into the image, but the current process downloads inside the `Dockerfile` to minimize external build dependencies.
 - Updating the available product versions and download URL's are done using the custom [CreateMatrix](./CreateMatrix/) utility app.
-  - Version information can be manually curated in the [Version.json](./Make/Version.json) file.
-  - Version information can also be constructed online using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
-  - The `CreateMatrix` app can construct a [Matrix.json](./Make/Matrix.json) file from the `Version.json` file or from online version information.
-    - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json`
-    - `CreateMatrix matrix --matrix=./Make/Matrix.json --online=true`
+  - The [Version.json](./Make/Version.json) information is updated using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
+    - `CreateMatrix version --version=./Make/Version.json`
+  - The [Matrix.json](./Make/Matrix.json) is created from the `Version.json` file and optionally updated.
+    - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update`
 - Local builds can be performed using `make build`, where download URL and version information defaults to the `Dockerfile` values.
   - All images will be built and launched using `make build` and `make up`, allowing local testing using the build output URL's.
   - After testing stop and delete containers and images using `make clean`.
