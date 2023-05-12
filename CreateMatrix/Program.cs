@@ -168,8 +168,18 @@ internal static class Program
                         if (compare < 0)
                         {
                             // Versions may not regress
-                            Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                            return Task.FromResult(1);
+
+                            // Ignore stable version regressions
+                            // https://github.com/ptr727/NxWitness/issues/62
+                            if (string.Equals(label, VersionUri.StableLabel))
+                            {
+                                Log.Logger.Warning("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
+                            }
+                            else
+                            {
+                                Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
+                                return Task.FromResult(1);
+                            }
                         }
                         else if (compare > 0)
                         {
