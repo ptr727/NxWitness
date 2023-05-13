@@ -55,11 +55,7 @@ internal static class Program
             {
                 versionOption
             };
-        versionCommand.SetHandler((versionValue) => 
-            { 
-                return VersionHandler(versionValue); 
-            },
-            versionOption);
+        versionCommand.SetHandler(VersionHandler, versionOption);
 
         var matrixCommand = new Command("matrix", "Create matrix information file")
             {
@@ -67,22 +63,14 @@ internal static class Program
                 matrixOption,
                 updateOption
             };
-        matrixCommand.SetHandler((versionValue, matrixValue, updateValue) => 
-            { 
-                return MatrixHandler(versionValue, matrixValue, updateValue);
-            },
-            versionOption, matrixOption, updateOption);
+        matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
 
         var schemaCommand = new Command("schema", "Write version and matrix schema files")
             {
                 schemaVersionOption,
                 schemaMatrixOption
             };
-        schemaCommand.SetHandler((versionValue, matrixValue) => 
-            { 
-                return SchemaHandler(versionValue, matrixValue); 
-            },
-            schemaVersionOption, schemaMatrixOption);
+        schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
         var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
             {
@@ -98,8 +86,7 @@ internal static class Program
         // Configure serilog console logging
         SelfLog.Enable(Console.Error);
         LoggerConfiguration loggerConfiguration = new();
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code,
-            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
+        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
@@ -121,6 +108,10 @@ internal static class Program
         versionSchema.Products.ForEach(item => item.LogInformation());
         versionSchema.Products.ForEach(item => item.VerifyUrls());
 
+        // Filter using default rule set
+        if (!VersionRule.Evaluate(versionSchema.Products, VersionRule.DefaultRuleList, true))
+            Log.Logger.Warning("Version filter applied using default rules");
+
         // Write to file
         Log.Logger.Information("Writing version information to {Path}", versionPath);
         VersionJsonSchema.ToFile(versionPath, versionSchema);
@@ -135,6 +126,10 @@ internal static class Program
         var fileSchema = VersionJsonSchema.FromFile(versionPath);
         fileSchema.Products.ForEach(item => item.LogInformation());
 
+        // Filter using default rule set
+        if (!VersionRule.Evaluate(fileSchema.Products, VersionRule.DefaultRuleList, true))
+            Log.Logger.Warning("Version filter applied using default rules");
+
         // Update version information
         if (updateVersion)
         {
@@ -145,74 +140,28 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
-            // The online versions may not be older than the file versions
-    
-            // Iterate over all products
-            bool update = false;
-            foreach (var fileProduct in fileSchema.Products)
-            {
-                // Find the matching online product
-                var onlineProduct = onlineSchema.Products.Find(item => item.Product == fileProduct.Product);
-                ArgumentNullException.ThrowIfNull(onlineProduct);
+            // Creating a filter based on the file information may not include all labels
+            // Filter using default rule set
+            if (!VersionRule.Evaluate(onlineSchema.Products, VersionRule.DefaultRuleList, true))
+                Log.Logger.Warning("Version filter applied using default rules");
 
-                // Find the version by known labels, label may not always be present
-                foreach (var label in VersionUri.KnownLabels)
-                {
-                    var fileVersion = fileProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
-                    var onlineVersion = onlineProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+            // Create a filter from the file information
+            var fileFilter = VersionRule.Create(fileSchema.Products);
 
-                    if (fileVersion != null && onlineVersion != null)
-                    {
-                        // Compare the versions
-                        var compare = onlineVersion.CompareTo(fileVersion);
-                        if (compare < 0)
-                        {
-                            // Versions may not regress
-
-                            // Ignore stable version regressions
-                            // https://github.com/ptr727/NxWitness/issues/62
-                            if (string.Equals(label, VersionUri.StableLabel))
-                            {
-                                Log.Logger.Warning("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                            }
-                            else
-                            {
-                                Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                                return Task.FromResult(1);
-                            }
-                        }
-                        else if (compare > 0)
-                        {
-                            // Newer online version
-                            Log.Logger.Information("{Product}:{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                            update = true;
-                        }
-                    }
-                }
-            }
+            // Filter online information using file information
+            if (!VersionRule.Evaluate(fileSchema.Products, fileFilter, true))
+                Log.Logger.Warning("Version filter applied using current versions on file");
 
             // Update the file version with the online version
-            if (update)
-            {
-                onlineSchema.Products.ForEach(item => item.VerifyUrls());
-                Log.Logger.Information("Writing version information to {Path}", versionPath);
-                VersionJsonSchema.ToFile(versionPath, onlineSchema);
-                fileSchema = onlineSchema;
-            }
+            onlineSchema.Products.ForEach(item => item.VerifyUrls());
+            Log.Logger.Information("Writing version information to {Path}", versionPath);
+            VersionJsonSchema.ToFile(versionPath, onlineSchema);
+            fileSchema = onlineSchema;
         }
-
-        // Remove all stable labels
-        // https://github.com/ptr727/NxWitness/issues/62
-        fileSchema.Products.ForEach(product =>
-            product.Versions.ForEach(version =>
-                version.Labels.RemoveAll(label => string.Equals(label, VersionUri.StableLabel))));
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
-        MatrixJsonSchema matrixSchema = new()
-        {
-            Images = ImageInfo.CreateImages(fileSchema.Products)
-        };
+        MatrixJsonSchema matrixSchema = new() { Images = ImageInfo.CreateImages(fileSchema.Products) };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
        // Log info

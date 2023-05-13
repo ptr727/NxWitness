@@ -2,20 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema.Generation;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace CreateMatrix;
 
 public class MatrixJsonSchemaBase
 {
-    protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
+    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
 
     [JsonProperty(PropertyName = "$schema", Order = -3)]
     public string Schema { get; } = SchemaUri;
 
     [DefaultValue(0)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate, Order = -2)]
-    public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
+    public int SchemaVersion { get; set; } = MatrixJsonSchema.Version;
 }
 
 public class MatrixJsonSchema : MatrixJsonSchemaBase
@@ -30,7 +30,8 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
         ObjectCreationHandling = ObjectCreationHandling.Replace
     };
 
-    [Required] public List<ImageInfo> Images { get; set; } = new();
+    [Required]
+    public List<ImageInfo> Images { get; set; } = new();
 
     public static void ToFile(string path, MatrixJsonSchema jsonSchema)
     {
@@ -40,22 +41,6 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     private static string ToJson(MatrixJsonSchema jsonSchema)
     {
         return JsonConvert.SerializeObject(jsonSchema, Settings);
-    }
-
-    private static MatrixJsonSchema FromJson(string jsonString)
-    {
-        var matrixJsonSchemaBase = JsonConvert.DeserializeObject<MatrixJsonSchemaBase>(jsonString, Settings);
-        ArgumentNullException.ThrowIfNull(matrixJsonSchemaBase);
-        var schemaVersion = matrixJsonSchemaBase.SchemaVersion;
-        switch (schemaVersion)
-        {
-            case Version:
-                var schema = JsonConvert.DeserializeObject<MatrixJsonSchema>(jsonString, Settings);
-                ArgumentNullException.ThrowIfNull(schema);
-                return schema;
-            default:
-                throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");
-        }
     }
 
     public static void GenerateSchema(string path)

@@ -1,27 +1,38 @@
 ﻿using Serilog;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace CreateMatrix;
 
 public class ImageInfo
 {
+    // JSON serialized must be public get and set
+
+    public string Name { get; set; } = "";
+    public string Branch { get; set; } = "";
+    public string CacheScope { get; set; } = "";
+    public List<string> Tags { get; set; } = new();
+    public List<string> Args { get; set; } = new();
+
     private static readonly string[] BaseNames = { "", "LSIO" };
-    public string Name { get; private set; } = "";
-    public string Branch { get; private set; } = "";
-    public List<string> Tags { get; } = new();
-    public List<string> Args { get; } = new();
+    private static readonly string[] RegistryNames = { "docker.io/ptr727" };
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
         Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType.ToString()}-{baseName}";
+
+        // E.g. default, lsio
+        CacheScope = string.IsNullOrEmpty(baseName) ? "default" : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
     }
 
-    private void AddArgs(VersionUri versionUri)
+    private void AddArgs(VersionInfo versionInfo)
     {
-        Args.Add($"DOWNLOAD_VERSION={versionUri.Version}");
-        Args.Add($"DOWNLOAD_URL={versionUri.Uri}");
+        Args.Add($"DOWNLOAD_VERSION={versionInfo.Version}");
+        Args.Add($"DOWNLOAD_URL={versionInfo.Uri}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
@@ -29,12 +40,11 @@ public class ImageInfo
         // E.g. latest, develop-latest
         var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
-        // Docker Hub
-        Tags.Add($"docker.io/ptr727/{Name.ToLower()}:{prefixTag}");
-
-        // GitHub Container Registry
-        // TODO: GHCR pushes are just too unreliable
-        // Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
+        // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
+        foreach (var registry in RegistryNames)
+        {
+            Tags.Add($"docker.io/ptr727/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
+        }
     }
 
     public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
@@ -67,11 +77,10 @@ public class ImageInfo
         return imageList;
     }
 
-    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName,
-        string? tagPrefix = null)
+    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
-        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionUriComparer());
+        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
         
         // Create images for each version
@@ -86,12 +95,13 @@ public class ImageInfo
             imageInfo.AddTag(versionUri.Version, tagPrefix);
 
             // Add tags for all labels
-            versionUri.Labels.ForEach(item => imageInfo.AddTag(item, tagPrefix));
+            versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
-            // Add prefix as a standalone tag when the label is latest
-            if (!string.IsNullOrEmpty(tagPrefix) &&
-                versionUri.Labels.FindIndex(item => item.Contains(VersionUri.LatestLabel)) != -1)
+            // Add prefix as a standalone tag when the label contains latest
+            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.Latest))
+            {
                 imageInfo.AddTag(tagPrefix);
+            }
 
             // Add args
             imageInfo.AddArgs(versionUri);

@@ -16,7 +16,7 @@ Licensed under the [MIT License](./LICENSE).
 
 ## Build Issues
 
-- Publishing of `stable` tags are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
+- Publishing of `stable` tags for versions older than "5.0" are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
 
 ## Releases
 

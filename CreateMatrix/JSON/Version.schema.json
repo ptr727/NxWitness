@@ -16,12 +16,12 @@
             "null"
           ],
           "items": {
-            "$ref": "#/definitions/VersionUri"
+            "$ref": "#/definitions/VersionInfo"
           }
         }
       }
     },
-    "VersionUri": {
+    "VersionInfo": {
       "type": [
         "object",
         "null"
@@ -44,12 +44,7 @@
             "array",
             "null"
           ],
-          "items": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
+          "items": {}
         }
       }
     }
