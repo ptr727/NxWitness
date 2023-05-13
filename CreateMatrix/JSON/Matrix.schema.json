@@ -21,6 +21,12 @@
             "null"
           ]
         },
+        "CacheScope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "Tags": {
           "type": [
             "array",

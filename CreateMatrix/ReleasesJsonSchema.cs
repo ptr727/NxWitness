@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using Serilog;
-using static CreateMatrix.ReleasesJsonSchema;
 
 namespace CreateMatrix;
 
@@ -49,7 +48,7 @@ public class ReleasesJsonSchema
 
     [JsonProperty("releases")] public List<Release> Releases { get; set; } = new();
 
-    public static ReleasesJsonSchema FromJson(string jsonString)
+    private static ReleasesJsonSchema FromJson(string jsonString)
     {
         var jsonSchema = JsonConvert.DeserializeObject<ReleasesJsonSchema>(jsonString, Settings);
         ArgumentNullException.ThrowIfNull(jsonSchema);

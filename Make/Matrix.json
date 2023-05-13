@@ -5,6 +5,7 @@
     {
       "Name": "NxMeta",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:4.2.0.32836"
       ],
@@ -16,6 +17,7 @@
     {
       "Name": "NxMeta",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:5.0.0.36871",
         "docker.io/ptr727/nxmeta:latest"
@@ -28,6 +30,7 @@
     {
       "Name": "NxMeta",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:5.1.0.36830",
         "docker.io/ptr727/nxmeta:rc"
@@ -40,6 +43,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:4.2.0.32836"
       ],
@@ -51,6 +55,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:5.0.0.36871",
         "docker.io/ptr727/nxmeta-lsio:latest"
@@ -63,6 +68,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:5.1.0.36830",
         "docker.io/ptr727/nxmeta-lsio:rc"
@@ -75,9 +81,11 @@
     {
       "Name": "NxWitness",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxwitness:5.0.0.36634",
-        "docker.io/ptr727/nxwitness:latest"
+        "docker.io/ptr727/nxwitness:latest",
+        "docker.io/ptr727/nxwitness:stable"
       ],
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/default/36634/nxwitness-server_update-5.0.0.36634-linux_x64.zip",
@@ -87,6 +95,7 @@
     {
       "Name": "NxWitness",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxwitness:5.1.0.36751",
         "docker.io/ptr727/nxwitness:rc"
@@ -99,9 +108,11 @@
     {
       "Name": "NxWitness-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxwitness-lsio:5.0.0.36634",
-        "docker.io/ptr727/nxwitness-lsio:latest"
+        "docker.io/ptr727/nxwitness-lsio:latest",
+        "docker.io/ptr727/nxwitness-lsio:stable"
       ],
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/default/36634/nxwitness-server_update-5.0.0.36634-linux_x64.zip",
@@ -111,6 +122,7 @@
     {
       "Name": "NxWitness-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxwitness-lsio:5.1.0.36751",
         "docker.io/ptr727/nxwitness-lsio:rc"
@@ -123,6 +135,7 @@
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/dwspectrum:4.2.0.32842"
       ],
@@ -134,6 +147,7 @@
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/dwspectrum:5.0.0.36871",
         "docker.io/ptr727/dwspectrum:latest"
@@ -146,6 +160,7 @@
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/dwspectrum:5.1.0.36830",
         "docker.io/ptr727/dwspectrum:rc"
@@ -158,6 +173,7 @@
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/dwspectrum-lsio:4.2.0.32842"
       ],
@@ -169,6 +185,7 @@
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/dwspectrum-lsio:5.0.0.36871",
         "docker.io/ptr727/dwspectrum-lsio:latest"
@@ -181,6 +198,7 @@
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/dwspectrum-lsio:5.1.0.36830",
         "docker.io/ptr727/dwspectrum-lsio:rc"
@@ -193,6 +211,7 @@
     {
       "Name": "NxMeta",
       "Branch": "develop",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:develop-4.2.0.32836"
       ],
@@ -204,6 +223,7 @@
     {
       "Name": "NxMeta",
       "Branch": "develop",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:develop",
         "docker.io/ptr727/nxmeta:develop-5.0.0.36871",
@@ -217,6 +237,7 @@
     {
       "Name": "NxMeta",
       "Branch": "develop",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:develop-5.1.0.36830",
         "docker.io/ptr727/nxmeta:develop-rc"
@@ -229,6 +250,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:develop-4.2.0.32836"
       ],
@@ -240,6 +262,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:develop",
         "docker.io/ptr727/nxmeta-lsio:develop-5.0.0.36871",
@@ -253,6 +276,7 @@
     {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:develop-5.1.0.36830",
         "docker.io/ptr727/nxmeta-lsio:develop-rc"
