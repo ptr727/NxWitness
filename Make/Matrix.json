@@ -5,57 +5,87 @@
     {
       "Name": "NxMeta",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:5.0.0.36634",
-        "docker.io/ptr727/nxmeta:latest"
+        "docker.io/ptr727/nxmeta:4.2.0.32836"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36634/metavms-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32836/metavms-server_update-4.2.0.32836-linux64.zip",
+        "DOWNLOAD_VERSION=4.2.0.32836"
       ]
     },
     {
       "Name": "NxMeta",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:5.1.0.36751",
+        "docker.io/ptr727/nxmeta:5.0.0.36871",
+        "docker.io/ptr727/nxmeta:latest"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36871/metavms-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
+      ]
+    },
+    {
+      "Name": "NxMeta",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:5.1.0.36830",
         "docker.io/ptr727/nxmeta:rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36751/metavms-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36830/metavms-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     },
     {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:5.0.0.36634",
+        "docker.io/ptr727/nxmeta-lsio:4.2.0.32836"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32836/metavms-server_update-4.2.0.32836-linux64.zip",
+        "DOWNLOAD_VERSION=4.2.0.32836"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:5.0.0.36871",
         "docker.io/ptr727/nxmeta-lsio:latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36634/metavms-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36871/metavms-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
       ]
     },
     {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:5.1.0.36751",
+        "docker.io/ptr727/nxmeta-lsio:5.1.0.36830",
         "docker.io/ptr727/nxmeta-lsio:rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36751/metavms-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36830/metavms-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     },
     {
       "Name": "NxWitness",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxwitness:5.0.0.36634",
-        "docker.io/ptr727/nxwitness:latest"
+        "docker.io/ptr727/nxwitness:latest",
+        "docker.io/ptr727/nxwitness:stable"
       ],
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/default/36634/nxwitness-server_update-5.0.0.36634-linux_x64.zip",
@@ -65,6 +95,7 @@
     {
       "Name": "NxWitness",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxwitness:5.1.0.36751",
         "docker.io/ptr727/nxwitness:rc"
@@ -77,9 +108,11 @@
     {
       "Name": "NxWitness-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxwitness-lsio:5.0.0.36634",
-        "docker.io/ptr727/nxwitness-lsio:latest"
+        "docker.io/ptr727/nxwitness-lsio:latest",
+        "docker.io/ptr727/nxwitness-lsio:stable"
       ],
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/default/36634/nxwitness-server_update-5.0.0.36634-linux_x64.zip",
@@ -89,6 +122,7 @@
     {
       "Name": "NxWitness-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxwitness-lsio:5.1.0.36751",
         "docker.io/ptr727/nxwitness-lsio:rc"
@@ -101,6 +135,7 @@
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/dwspectrum:4.2.0.32842"
       ],
@@ -112,30 +147,33 @@
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/dwspectrum:5.0.0.36634",
+        "docker.io/ptr727/dwspectrum:5.0.0.36871",
         "docker.io/ptr727/dwspectrum:latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36634/dwspectrum-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36871/dwspectrum-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
       ]
     },
     {
       "Name": "DWSpectrum",
       "Branch": "main",
+      "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/dwspectrum:5.1.0.36751",
+        "docker.io/ptr727/dwspectrum:5.1.0.36830",
         "docker.io/ptr727/dwspectrum:rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36830/dwspectrum-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     },
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/dwspectrum-lsio:4.2.0.32842"
       ],
@@ -147,75 +185,105 @@
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/dwspectrum-lsio:5.0.0.36634",
+        "docker.io/ptr727/dwspectrum-lsio:5.0.0.36871",
         "docker.io/ptr727/dwspectrum-lsio:latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36634/dwspectrum-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36871/dwspectrum-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
       ]
     },
     {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
+      "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/dwspectrum-lsio:5.1.0.36751",
+        "docker.io/ptr727/dwspectrum-lsio:5.1.0.36830",
         "docker.io/ptr727/dwspectrum-lsio:rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36830/dwspectrum-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     },
     {
       "Name": "NxMeta",
       "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:develop-4.2.0.32836"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32836/metavms-server_update-4.2.0.32836-linux64.zip",
+        "DOWNLOAD_VERSION=4.2.0.32836"
+      ]
+    },
+    {
+      "Name": "NxMeta",
+      "Branch": "develop",
+      "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/nxmeta:develop",
-        "docker.io/ptr727/nxmeta:develop-5.0.0.36634",
+        "docker.io/ptr727/nxmeta:develop-5.0.0.36871",
         "docker.io/ptr727/nxmeta:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36634/metavms-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36871/metavms-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
       ]
     },
     {
       "Name": "NxMeta",
       "Branch": "develop",
+      "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:develop-5.1.0.36751",
+        "docker.io/ptr727/nxmeta:develop-5.1.0.36830",
         "docker.io/ptr727/nxmeta:develop-rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36751/metavms-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36830/metavms-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     },
     {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:develop-4.2.0.32836"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/32836/metavms-server_update-4.2.0.32836-linux64.zip",
+        "DOWNLOAD_VERSION=4.2.0.32836"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/nxmeta-lsio:develop",
-        "docker.io/ptr727/nxmeta-lsio:develop-5.0.0.36634",
+        "docker.io/ptr727/nxmeta-lsio:develop-5.0.0.36871",
         "docker.io/ptr727/nxmeta-lsio:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36634/metavms-server_update-5.0.0.36634-linux_x64.zip",
-        "DOWNLOAD_VERSION=5.0.0.36634"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36871/metavms-server_update-5.0.0.36871-linux_x64.zip",
+        "DOWNLOAD_VERSION=5.0.0.36871"
       ]
     },
     {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
+      "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:develop-5.1.0.36751",
+        "docker.io/ptr727/nxmeta-lsio:develop-5.1.0.36830",
         "docker.io/ptr727/nxmeta-lsio:develop-rc"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36751/metavms-server_update-5.1.0.36751-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36751"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/36830/metavms-server_update-5.1.0.36830-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36830"
       ]
     }
   ]

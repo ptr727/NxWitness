@@ -13,15 +13,20 @@ public class ImageInfo
 
     public string Name { get; set; } = "";
     public string Branch { get; set; } = "";
+    public string CacheScope { get; set; } = "";
     public List<string> Tags { get; set; } = new();
     public List<string> Args { get; set; } = new();
 
     private static readonly string[] BaseNames = { "", "LSIO" };
+    private static readonly string[] RegistryNames = { "docker.io/ptr727" };
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
         Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType.ToString()}-{baseName}";
+
+        // E.g. default, lsio
+        CacheScope = string.IsNullOrEmpty(baseName) ? "default" : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
     }
 
     private void AddArgs(VersionInfo versionInfo)
@@ -35,11 +40,11 @@ public class ImageInfo
         // E.g. latest, develop-latest
         var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
-        // Docker Hub
-        Tags.Add($"docker.io/ptr727/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag}");
-
-        // GitHub Container Registry
-        // Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
+        // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
+        foreach (var registry in RegistryNames)
+        {
+            Tags.Add($"docker.io/ptr727/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
+        }
     }
 
     public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
@@ -72,8 +77,7 @@ public class ImageInfo
         return imageList;
     }
 
-    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName,
-        string? tagPrefix = null)
+    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
         var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());

@@ -110,11 +110,14 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
+      # https://github.com/marketplace/actions/build-and-push-docker-images
+      # https://docs.docker.com/build/ci/github-actions/cache/
+      # https://github.com/moby/buildkit#github-actions-cache-experimental
       - name: Build and Push Images
         uses: docker/build-push-action@v4
         with:
-          cache-from: type=registry,ref=docker.io/ptr727/nxwitness:buildcache
-          cache-to: type=registry,ref=docker.io/ptr727/nxwitness:buildcache,mode=max
+          cache-from: type=gha,scope=${{ matrix.images.cachescope }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.images.cachescope }}
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
           platforms: linux/amd64

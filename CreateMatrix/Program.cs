@@ -140,12 +140,17 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
+            // Creating a filter based on the file information may not include all labels
+            // Filter using default rule set
+            if (!VersionRule.Evaluate(onlineSchema.Products, VersionRule.DefaultRuleList, true))
+                Log.Logger.Warning("Version filter applied using default rules");
+
             // Create a filter from the file information
             var fileFilter = VersionRule.Create(fileSchema.Products);
 
             // Filter online information using file information
             if (!VersionRule.Evaluate(fileSchema.Products, fileFilter, true))
-                Log.Logger.Warning("Version filter applied using versions on file");
+                Log.Logger.Warning("Version filter applied using current versions on file");
 
             // Update the file version with the online version
             onlineSchema.Products.ForEach(item => item.VerifyUrls());

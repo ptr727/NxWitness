@@ -62,7 +62,7 @@ internal class VersionRule
                 }
 
                 // Remove labels
-                if (filterLabels)
+                if (filterLabels && removeLabels.Count > 0)
                 { 
                     versionInfo.Labels.RemoveAll(item => removeLabels.Contains(item));
                 }
