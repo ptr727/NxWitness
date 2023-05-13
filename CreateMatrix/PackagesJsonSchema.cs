@@ -56,7 +56,7 @@ public class PackagesJsonSchema
 
     [JsonProperty("packages")] public List<Package> Packages { get; set; } = new();
 
-    public static PackagesJsonSchema FromJson(string jsonString)
+    private static PackagesJsonSchema FromJson(string jsonString)
     {
         var jsonSchema = JsonConvert.DeserializeObject<PackagesJsonSchema>(jsonString, Settings);
         ArgumentNullException.ThrowIfNull(jsonSchema);

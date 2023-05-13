@@ -1,49 +1,96 @@
-using System.Diagnostics;
 using Serilog;
 
 namespace CreateMatrix;
 
-class VersionRule
+internal class VersionRule
 {
-    ProductInfo.ProductType Product { get; set; }
-    VersionInfo.LabelType Label { get; set; }
-    string MinVersion { get; set; } = "";
+    private ProductInfo.ProductType Product { get; init; } = ProductInfo.ProductType.None;
+    private VersionInfo.LabelType Label { get; init; } = VersionInfo.LabelType.None;
+    private string MinVersion { get; init; } = "";
 
-    public bool Evaluate(ProductInfo productInfo)
+    public static readonly List<VersionRule> DefaultRuleList = new()
+    { 
+        // Use None to match any product or label
+        new VersionRule { Label = VersionInfo.LabelType.Stable, MinVersion = "5.0" },
+        new VersionRule { Label = VersionInfo.LabelType.Latest, MinVersion = "5.0" },
+        new VersionRule { Label = VersionInfo.LabelType.RC, MinVersion = "5.1" },
+        new VersionRule { Label = VersionInfo.LabelType.Beta, MinVersion = "5.1" }
+    };
+
+    private bool Evaluate(ProductInfo productInfo, VersionInfo versionInfo, VersionInfo.LabelType label)
     {
-        Debug.Assert(!string.IsNullOrEmpty(MinVersion));
-        Debug.Assert(productInfo.Product == Product);
-        Debug.Assert(productInfo.Versions.FirstOrDefault(versionInfo => versionInfo.Labels.Contains(Label)) != null);
-
-        // Iterate through all the versions in the product
-        foreach (var versionInfo in productInfo.Versions)
+        // Match the product
+        if (Product != ProductInfo.ProductType.None && Product != productInfo.Product)
         {
-            // Match the label
-            if (Label == VersionInfo.LabelType.None || versionInfo.Labels.Contains(Label))
+            // No match
+            return true;
+        }
+
+        // Match the label
+        if (Label != VersionInfo.LabelType.None && Label != label)
+        {
+            // No match
+            return true;
+        }
+
+        // Match the version
+        if (CompareVersion(versionInfo.Version, MinVersion) >= 0)
+            return true;
+        
+        Log.Logger.Warning("{Product}:{Label} : {Version} is less than {MinVersion}", productInfo.Product, Label, versionInfo.Version, MinVersion);
+        return false;
+    }
+
+    public static bool Evaluate(List<ProductInfo> productList, List<VersionRule> ruleList, bool filterLabels)
+    {
+        // All products
+        var result = true;
+        foreach (var productInfo in productList)
+        {
+            // All versions
+            foreach (var versionInfo in productInfo.Versions)
             {
-                // Compare the version
-                if (CompareVersion(MinVersion, versionInfo.Version) < 0)
+                // Labels to remove
+                var removeLabels = new List<VersionInfo.LabelType>();
+
+                // All labels
+                foreach (var label in from label in versionInfo.Labels from 
+                             versionRule in ruleList.Where(versionRule => !versionRule.Evaluate(productInfo, versionInfo, label)) select label)
                 {
-                    Log.Logger.Error("{Product}:{Label} : {Version} is less than {MinVersion}", productInfo.Product, Label, versionInfo.Version, MinVersion);
-                    return false;
+                    removeLabels.Add(label);
+                    result = false;
+                }
+
+                // Remove labels
+                if (filterLabels)
+                { 
+                    versionInfo.Labels.RemoveAll(item => removeLabels.Contains(item));
                 }
             }
         }
 
         // Done
-        return true;
+        return result;
     }
 
-    public static readonly VersionRule[] VersionRules = new VersionRule[] 
-    { 
-        // Update the rules as needed
-        // https://github.com/ptr727/NxWitness/issues/62
-        // Use None to match any product or label
-        new VersionRule() { Product = ProductInfo.ProductType.None, Label = VersionInfo.LabelType.stable, MinVersion = "5.0" },
-        new VersionRule() { Product = ProductInfo.ProductType.None, Label = VersionInfo.LabelType.latest, MinVersion = "5.0" },
-        new VersionRule() { Product = ProductInfo.ProductType.None, Label = VersionInfo.LabelType.rc, MinVersion = "5.1" },
-        new VersionRule() { Product = ProductInfo.ProductType.None, Label = VersionInfo.LabelType.beta, MinVersion = "5.1" },
-    };
+    public static List<VersionRule> Create(List<ProductInfo> productList)
+    {
+        // Create rule list from product list
+        var ruleList = new List<VersionRule>();
+
+        // All products
+        foreach (var productInfo in productList)
+        {
+            // All versions
+            foreach (var versionInfo in productInfo.Versions)
+            {
+                // All labels
+                ruleList.AddRange(versionInfo.Labels.Select(label => new VersionRule { Product = productInfo.Product, Label = label, MinVersion = versionInfo.Version }));
+            }
+        }
+
+        return ruleList;
+    }
 
     public static int CompareVersion(string lhs, string rhs)
     {
@@ -51,112 +98,5 @@ class VersionRule
         var lhsVersion = new Version(lhs);
         var rhsVersion = new Version(rhs);
         return lhsVersion.CompareTo(rhsVersion);
-    }
-
-    public static bool Evaluate(List<ProductInfo> productList)
-    {
-        // Iterate over all the products
-        foreach (var productInfo in productList)
-        {
-            // Find a rule matching the product and evaluate
-            var matchRule = FindMatchRule(productInfo);
-            if (matchRule != null && !matchRule.Evaluate(productInfo))
-            {
-                return false;                    
-            }
-        }
-
-        // Done
-        return true;        
-    }
-
-    public static bool Evaluate(List<ProductInfo> fileProductList, List<ProductInfo> onlineProductList)
-    {
-        // Evaluate static rules against online products
-        if (!Evaluate(onlineProductList))
-        {
-            return false;
-        }
-
-        // Evaluate online products against file products
-        bool update = false;
-        foreach (var onlineProduct in onlineProductList)
-        {
-            // Find the file product matching the online product
-            var fileProduct = fileProductList.Find(item => item.Product == onlineProduct.Product);
-            ArgumentNullException.ThrowIfNull(fileProduct);
-
-            // Test every known label
-            foreach (var labelType in VersionInfo.GetLabelTypes())
-            {
-                // Find the version matching the label
-                var fileVersion = fileProduct.Versions.FirstOrDefault(item => item.Labels.Contains(labelType));
-                var onlineVersion = onlineProduct.Versions.FirstOrDefault(item => item.Labels.Contains(labelType));
-
-                // If either has no matching label then skip the check
-                if (fileVersion == null || onlineVersion == null)
-                {
-                    continue;
-                }
-
-                // Compare the online version number with the file version number
-                var compare = onlineVersion.CompareTo(fileVersion);
-                if (compare < 0)
-                {
-                    // Version numbers may only increment
-
-                    // Ignore stable version regressions
-                    // https://github.com/ptr727/NxWitness/issues/62
-                    if (labelType == VersionInfo.LabelType.stable)
-                    {
-                        Log.Logger.Warning("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, labelType, onlineVersion.Version, fileVersion.Version);
-                    }
-                    else
-                    {
-                        // Any other labels regressing is an error
-                        Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, labelType, onlineVersion.Version, fileVersion.Version);
-                        return false;
-                    }
-                }
-                else if (compare > 0)
-                {
-                    // Newer online version
-                    Log.Logger.Information("{Product}:{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, labelType, onlineVersion.Version, fileVersion.Version);
-                    update = true;
-                }
-            }
-        }
-    }
-
-    private static VersionRule? FindMatchRule(ProductInfo productInfo)
-    {
-        // Iterate through all rules
-        foreach (var versionRule in VersionRules)
-        {
-            // Match by product type or None
-            if (versionRule.Product == ProductInfo.ProductType.None || versionRule.Product == productInfo.Product)
-            {
-                // Match by None label
-                if (versionRule.Label == VersionInfo.LabelType.None)
-                {
-                    // Match
-                    return versionRule;
-                }
-
-                // Iterate through all versions
-                foreach (var versionInfo in productInfo.Versions)
-                {
-                    // Match by label
-                    if (versionInfo.Labels.Contains(versionRule.Label))
-                    {
-                        // Match
-                        return versionRule;
-                    }
-                }
-            }
-        }
-
-        // No match
-        return null;
     }
 }

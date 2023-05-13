@@ -7,8 +7,7 @@ namespace CreateMatrix;
 
 public class VersionJsonSchemaBase
 {
-    protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
+    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
 
     // Schema reference
     [JsonProperty(PropertyName = "$schema", Order = -3)]
@@ -32,7 +31,8 @@ public class VersionJsonSchema : VersionJsonSchemaBase
         ObjectCreationHandling = ObjectCreationHandling.Replace
     };
 
-    [Required] public List<ProductInfo> Products { get; set; } = new();
+    [Required] 
+    public List<ProductInfo> Products { get; set; } = new();
 
     public static VersionJsonSchema FromFile(string path)
     {

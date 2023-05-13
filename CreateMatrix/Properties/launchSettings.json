@@ -6,11 +6,11 @@
     },
     "Matrix": {
       "commandName": "Project",
-      "commandLineArgs": "matrix --online=true"
+      "commandLineArgs": "matrix --update=true"
     },
-    "Defaults": {
+    "Version": {
       "commandName": "Project",
-      "commandLineArgs": "defaults --online=true"
+      "commandLineArgs": "version"
     },
     "Schema": {
       "commandName": "Project",

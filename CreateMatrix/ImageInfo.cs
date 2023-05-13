@@ -1,16 +1,22 @@
 ﻿using Serilog;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace CreateMatrix;
 
 public class ImageInfo
 {
+    // JSON serialized must be public get and set
+
+    public string Name { get; set; } = "";
+    public string Branch { get; set; } = "";
+    public List<string> Tags { get; set; } = new();
+    public List<string> Args { get; set; } = new();
+
     private static readonly string[] BaseNames = { "", "LSIO" };
-    public string Name { get; private set; } = "";
-    public string Branch { get; private set; } = "";
-    public List<string> Tags { get; } = new();
-    public List<string> Args { get; } = new();
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
@@ -30,10 +36,9 @@ public class ImageInfo
         var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
         // Docker Hub
-        Tags.Add($"docker.io/ptr727/{Name.ToLower()}:{prefixTag}");
+        Tags.Add($"docker.io/ptr727/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag}");
 
         // GitHub Container Registry
-        // TODO: GHCR pushes are just too unreliable
         // Tags.Add($"ghcr.io/ptr727/{Name.ToLower()}:{prefixTag}");
     }
 
@@ -89,7 +94,7 @@ public class ImageInfo
             versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
             // Add prefix as a standalone tag when the label contains latest
-            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.latest))
+            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.Latest))
             {
                 imageInfo.AddTag(tagPrefix);
             }

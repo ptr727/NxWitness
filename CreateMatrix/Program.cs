@@ -55,11 +55,7 @@ internal static class Program
             {
                 versionOption
             };
-        versionCommand.SetHandler((versionValue) => 
-            { 
-                return VersionHandler(versionValue); 
-            },
-            versionOption);
+        versionCommand.SetHandler(VersionHandler, versionOption);
 
         var matrixCommand = new Command("matrix", "Create matrix information file")
             {
@@ -67,22 +63,14 @@ internal static class Program
                 matrixOption,
                 updateOption
             };
-        matrixCommand.SetHandler((versionValue, matrixValue, updateValue) => 
-            { 
-                return MatrixHandler(versionValue, matrixValue, updateValue);
-            },
-            versionOption, matrixOption, updateOption);
+        matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
 
         var schemaCommand = new Command("schema", "Write version and matrix schema files")
             {
                 schemaVersionOption,
                 schemaMatrixOption
             };
-        schemaCommand.SetHandler((versionValue, matrixValue) => 
-            { 
-                return SchemaHandler(versionValue, matrixValue); 
-            },
-            schemaVersionOption, schemaMatrixOption);
+        schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
         var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
             {
@@ -98,8 +86,7 @@ internal static class Program
         // Configure serilog console logging
         SelfLog.Enable(Console.Error);
         LoggerConfiguration loggerConfiguration = new();
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code,
-            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
+        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
@@ -121,6 +108,10 @@ internal static class Program
         versionSchema.Products.ForEach(item => item.LogInformation());
         versionSchema.Products.ForEach(item => item.VerifyUrls());
 
+        // Filter using default rule set
+        if (!VersionRule.Evaluate(versionSchema.Products, VersionRule.DefaultRuleList, true))
+            Log.Logger.Warning("Version filter applied using default rules");
+
         // Write to file
         Log.Logger.Information("Writing version information to {Path}", versionPath);
         VersionJsonSchema.ToFile(versionPath, versionSchema);
@@ -135,11 +126,9 @@ internal static class Program
         var fileSchema = VersionJsonSchema.FromFile(versionPath);
         fileSchema.Products.ForEach(item => item.LogInformation());
 
-        // Verify the file versions can be used
-        if (!VersionRule.Evaluate(fileSchema.Products))
-        {
-            return Task.FromResult(1);
-        }
+        // Filter using default rule set
+        if (!VersionRule.Evaluate(fileSchema.Products, VersionRule.DefaultRuleList, true))
+            Log.Logger.Warning("Version filter applied using default rules");
 
         // Update version information
         if (updateVersion)
@@ -151,11 +140,12 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
-            // Verify the online versions can be used
-            if (!VersionRule.Evaluate(fileSchema.Products, onlineSchema.Products))
-            {
-                return Task.FromResult(1);
-            }
+            // Create a filter from the file information
+            var fileFilter = VersionRule.Create(fileSchema.Products);
+
+            // Filter online information using file information
+            if (!VersionRule.Evaluate(fileSchema.Products, fileFilter, true))
+                Log.Logger.Warning("Version filter applied using versions on file");
 
             // Update the file version with the online version
             onlineSchema.Products.ForEach(item => item.VerifyUrls());
@@ -164,18 +154,9 @@ internal static class Program
             fileSchema = onlineSchema;
         }
 
-        // Remove all stable labels
-        // https://github.com/ptr727/NxWitness/issues/62
-        fileSchema.Products.ForEach(product =>
-            product.Versions.ForEach(version =>
-                version.Labels.RemoveAll(label => string.Equals(label, VersionUri.StableLabel))));
-
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
-        MatrixJsonSchema matrixSchema = new()
-        {
-            Images = ImageInfo.CreateImages(fileSchema.Products)
-        };
+        MatrixJsonSchema matrixSchema = new() { Images = ImageInfo.CreateImages(fileSchema.Products) };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
        // Log info
