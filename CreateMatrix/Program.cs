@@ -135,6 +135,12 @@ internal static class Program
         var fileSchema = VersionJsonSchema.FromFile(versionPath);
         fileSchema.Products.ForEach(item => item.LogInformation());
 
+        // Verify the file versions can be used
+        if (!VersionRule.Evaluate(fileSchema.Products))
+        {
+            return Task.FromResult(1);
+        }
+
         // Update version information
         if (updateVersion)
         {
@@ -145,60 +151,17 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
-            // The online versions may not be older than the file versions
-    
-            // Iterate over all products
-            bool update = false;
-            foreach (var fileProduct in fileSchema.Products)
+            // Verify the online versions can be used
+            if (!VersionRule.Evaluate(fileSchema.Products, onlineSchema.Products))
             {
-                // Find the matching online product
-                var onlineProduct = onlineSchema.Products.Find(item => item.Product == fileProduct.Product);
-                ArgumentNullException.ThrowIfNull(onlineProduct);
-
-                // Find the version by known labels, label may not always be present
-                foreach (var label in VersionUri.KnownLabels)
-                {
-                    var fileVersion = fileProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
-                    var onlineVersion = onlineProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
-
-                    if (fileVersion != null && onlineVersion != null)
-                    {
-                        // Compare the versions
-                        var compare = onlineVersion.CompareTo(fileVersion);
-                        if (compare < 0)
-                        {
-                            // Versions may not regress
-
-                            // Ignore stable version regressions
-                            // https://github.com/ptr727/NxWitness/issues/62
-                            if (string.Equals(label, VersionUri.StableLabel))
-                            {
-                                Log.Logger.Warning("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                            }
-                            else
-                            {
-                                Log.Logger.Error("{Product}:{Label} : Online version {OnlineVersion} is less than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                                return Task.FromResult(1);
-                            }
-                        }
-                        else if (compare > 0)
-                        {
-                            // Newer online version
-                            Log.Logger.Information("{Product}:{Label} : Online version {OnlineVersion} is greater than file version {FileVersion}", fileProduct.Product, label, onlineVersion.Version, fileVersion.Version);
-                            update = true;
-                        }
-                    }
-                }
+                return Task.FromResult(1);
             }
 
             // Update the file version with the online version
-            if (update)
-            {
-                onlineSchema.Products.ForEach(item => item.VerifyUrls());
-                Log.Logger.Information("Writing version information to {Path}", versionPath);
-                VersionJsonSchema.ToFile(versionPath, onlineSchema);
-                fileSchema = onlineSchema;
-            }
+            onlineSchema.Products.ForEach(item => item.VerifyUrls());
+            Log.Logger.Information("Writing version information to {Path}", versionPath);
+            VersionJsonSchema.ToFile(versionPath, onlineSchema);
+            fileSchema = onlineSchema;
         }
 
         // Remove all stable labels

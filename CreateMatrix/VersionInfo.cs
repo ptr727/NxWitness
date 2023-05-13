@@ -1,19 +1,24 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CreateMatrix;
 
-public class VersionUri : ICloneable, IComparable
+public class VersionInfo : ICloneable, IComparable
 {
+    // Serialize enums as strings
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum LabelType 
+    {
+        None,
+        stable,
+        latest,
+        beta,
+        rc
+    }
+
     public string Version { get; set; } = "";
     public string Uri { get; set; } = "";
-    public List<string> Labels { get; set; } = new();
-
-    public const string StableLabel = "stable";
-    public const string LatestLabel = "latest";
-    public const string BetaLabel = "beta";
-    public const string RcLabel = "rc";
-
-    public static readonly string[] KnownLabels = new string[] { VersionUri.StableLabel, VersionUri.LatestLabel, VersionUri.BetaLabel, VersionUri.RcLabel };
+    public List<LabelType> Labels { get; set; } = new();
 
     object ICloneable.Clone()
     {
@@ -24,14 +29,14 @@ public class VersionUri : ICloneable, IComparable
     {
         if (obj == null)
             return 1;
-        if (obj is not VersionUri other)
+        if (obj is not VersionInfo other)
             throw new InvalidCastException(nameof(obj));
         return CompareTo(other);
     }
 
-    public VersionUri Clone()
+    public VersionInfo Clone()
     {
-        return (VersionUri)MemberwiseClone();
+        return (VersionInfo)MemberwiseClone();
     }
 
     [JsonIgnore]
@@ -45,7 +50,7 @@ public class VersionUri : ICloneable, IComparable
     [JsonIgnore]
     public int BuildNumber => GetBuildNumber(Version);
 
-    public int CompareTo(VersionUri other)
+    public int CompareTo(VersionInfo other)
     {
         // Compare version numbers
         var thisVersion = new Version(Version);
@@ -69,12 +74,27 @@ public class VersionUri : ICloneable, IComparable
         var versionClass = new Version(GetCleanVersion(version));
         return versionClass.Revision;
     }
+
+    public static List<LabelType> GetLabelTypes()
+    {
+        // Create list of product types
+        var labelList = new List<LabelType>();
+        foreach (LabelType labelType in Enum.GetValues(typeof(LabelType)))
+        {
+            // Exclude None type
+            if (labelType != LabelType.None)
+            {
+                labelList.Add(labelType);
+            }
+        }
+        return labelList;
+    }
 }
 
-public class VersionUriComparer : Comparer<VersionUri>
+public class VersionInfoComparer : Comparer<VersionInfo>
 {
     // Compare using version numbers
-    public override int Compare(VersionUri? x, VersionUri? y)
+    public override int Compare(VersionInfo? x, VersionInfo? y)
     {
         return x switch
         {

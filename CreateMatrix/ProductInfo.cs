@@ -14,16 +14,15 @@ public class ProductInfo
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ProductType
     {
+        None,
         NxMeta,
         NxWitness,
-
-        // ReSharper disable once InconsistentNaming
         DWSpectrum
     }
 
     public ProductType Product { get; set; }
 
-    public List<VersionUri> Versions { get; set; } = new();
+    public List<VersionInfo> Versions { get; set; } = new();
 
     private string ProductShortName => GetProductShortName(Product);
     private string ProductCloudHost => GetProductCloudHost(Product);
@@ -50,11 +49,25 @@ public class ProductInfo
         };
     }
 
+    public static List<ProductType> GetProductTypes()
+    {
+        // Create list of product types
+        var productList = new List<ProductType>();
+        foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+        {
+            // Exclude None type
+            if (productType != ProductType.None)
+            {
+                productList.Add(productType);
+            }
+        }
+        return productList;
+    }
+
     public static List<ProductInfo> GetProducts()
     {
         // Create list of all known products
-        return (from ProductType productType in Enum.GetValues(typeof(ProductType))
-            select new ProductInfo { Product = productType }).ToList();
+        return (from ProductType productType in GetProductTypes() select new ProductInfo { Product = productType }).ToList();
     }
 
     public void GetVersions()
@@ -76,7 +89,7 @@ public class ProductInfo
             var downloadsSchema = DownloadsJsonSchema.GetDownloads(httpClient, ProductCloudHost);
 
             // There is only one version in the downloads API
-            VersionUri versionUri = new();
+            VersionInfo versionUri = new();
 
             // "version": "5.0.0.35134 R10",
             // "version": "4.2.0.32842",
@@ -107,8 +120,8 @@ public class ProductInfo
             versionUri.Uri = $"https://updates.networkoptix.com/{ProductShortName}/{buildNumber}/{installer.Path}";
 
             // Set as "stable" and "latest" labels
-            versionUri.Labels.Add(VersionUri.StableLabel);
-            versionUri.Labels.Add(VersionUri.LatestLabel);
+            versionUri.Labels.Add(VersionInfo.LabelType.stable);
+            versionUri.Labels.Add(VersionInfo.LabelType.latest);
 
             // Add to list
             Versions.Add(versionUri);
@@ -136,7 +149,7 @@ public class ProductInfo
             using HttpClient httpClient = new();
 
             // Labels used for state tracking
-            List<string> labelList = new();
+            List<VersionInfo.LabelType> labelList = new();
 
             // Get all releases
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, ProductShortName);
@@ -146,12 +159,12 @@ public class ProductInfo
                 Debug.Assert(release.Product.Equals("vms"));
 
                 // Set version
-                VersionUri versionUri = new();
+                VersionInfo versionInfo = new();
                 Debug.Assert(!string.IsNullOrEmpty(release.Version));
-                versionUri.SetCleanVersion(release.Version);
+                versionInfo.SetCleanVersion(release.Version);
 
                 // Get the build number from the version
-                var buildNumber = versionUri.BuildNumber;
+                var buildNumber = versionInfo.BuildNumber;
 
                 // Get package for this release
                 var package = PackagesJsonSchema.GetPackage(httpClient, ProductShortName, buildNumber);
@@ -159,7 +172,7 @@ public class ProductInfo
 
                 // Create the download URL
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionUri.Uri = $"https://updates.networkoptix.com/{ProductShortName}/{buildNumber}/{package.File}";
+                versionInfo.Uri = $"https://updates.networkoptix.com/{ProductShortName}/{buildNumber}/{package.File}";
 
                 // Set a label based on the publications_type value
                 switch (release.PublicationType)
@@ -167,21 +180,21 @@ public class ProductInfo
                     case "release":
                     {
                         // Set as stable or latest based on released or not
-                        AddLabel(labelList, versionUri, release.IsReleased() ? VersionUri.StableLabel : VersionUri.LatestLabel);
+                        AddLabel(labelList, versionInfo, release.IsReleased() ? VersionInfo.LabelType.stable : VersionInfo.LabelType.latest);
 
                         break;
                     }
                     case "rc":
                     {
                         // Set as rc
-                        AddLabel(labelList, versionUri, VersionUri.RcLabel);
+                        AddLabel(labelList, versionInfo, VersionInfo.LabelType.rc);
 
                         break;
                     }
                     case "beta":
                     {
                         // Set as beta
-                        AddLabel(labelList, versionUri, VersionUri.BetaLabel);
+                        AddLabel(labelList, versionInfo, VersionInfo.LabelType.beta);
 
                         break;
                     }
@@ -191,31 +204,31 @@ public class ProductInfo
                 }
 
                 // Add to list
-                Versions.Add(versionUri);
+                Versions.Add(versionInfo);
             }
 
             // If no latest label is set, use stable or rc or beta as latest
-            if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.LatestLabel)) == -1)
+            if (Versions.FindIndex(item => item.Labels.Contains(VersionInfo.LabelType.latest)) == -1)
             {
                 // Find stable or rc or beta
-                var latest = Versions.Find(item => item.Labels.Contains(VersionUri.StableLabel));
-                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.RcLabel));
-                latest ??= Versions.Find(item => item.Labels.Contains(VersionUri.BetaLabel));
-                Debug.Assert(latest != default(VersionUri));
+                var latest = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.stable));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.rc));
+                latest ??= Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.beta));
+                Debug.Assert(latest != default(VersionInfo));
 
                 // Add latest
-                latest.Labels.Add(VersionUri.LatestLabel);
+                latest.Labels.Add(VersionInfo.LabelType.latest);
             }
 
             // If no stable label is set, use latest as stable
-            if (Versions.FindIndex(item => item.Labels.Contains(VersionUri.StableLabel)) == -1)
+            if (Versions.FindIndex(item => item.Labels.Contains(VersionInfo.LabelType.stable)) == -1)
             {
                 // Find latest
-                var stable = Versions.Find(item => item.Labels.Contains(VersionUri.LatestLabel));
-                Debug.Assert(stable != default(VersionUri));
+                var stable = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.latest));
+                Debug.Assert(stable != default(VersionInfo));
 
                 // Add the stable label
-                stable.Labels.Add(VersionUri.StableLabel);
+                stable.Labels.Add(VersionInfo.LabelType.stable);
             }
 
             // Sort the labels to make diffs easier
@@ -228,13 +241,13 @@ public class ProductInfo
         }
     }
 
-    private static void AddLabel(List<string> labelList, VersionUri versionUri, string label)
+    private static void AddLabel(List<VersionInfo.LabelType> labelList, VersionInfo versionInfo, VersionInfo.LabelType label)
     {
         // Add label only if not already set
         if (!labelList.Exists(item => item.Equals(label)))
         {
             labelList.Add(label);
-            versionUri.Labels.Add(label);
+            versionInfo.Labels.Add(label);
         }
     }
 

@@ -18,10 +18,10 @@ public class ImageInfo
         Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType.ToString()}-{baseName}";
     }
 
-    private void AddArgs(VersionUri versionUri)
+    private void AddArgs(VersionInfo versionInfo)
     {
-        Args.Add($"DOWNLOAD_VERSION={versionUri.Version}");
-        Args.Add($"DOWNLOAD_URL={versionUri.Uri}");
+        Args.Add($"DOWNLOAD_VERSION={versionInfo.Version}");
+        Args.Add($"DOWNLOAD_URL={versionInfo.Uri}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
@@ -71,7 +71,7 @@ public class ImageInfo
         string? tagPrefix = null)
     {
         // Create a set by unique versions
-        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionUriComparer());
+        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
         
         // Create images for each version
@@ -86,12 +86,13 @@ public class ImageInfo
             imageInfo.AddTag(versionUri.Version, tagPrefix);
 
             // Add tags for all labels
-            versionUri.Labels.ForEach(item => imageInfo.AddTag(item, tagPrefix));
+            versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
-            // Add prefix as a standalone tag when the label is latest
-            if (!string.IsNullOrEmpty(tagPrefix) &&
-                versionUri.Labels.FindIndex(item => item.Contains(VersionUri.LatestLabel)) != -1)
+            // Add prefix as a standalone tag when the label contains latest
+            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.latest))
+            {
                 imageInfo.AddTag(tagPrefix);
+            }
 
             // Add args
             imageInfo.AddArgs(versionUri);
