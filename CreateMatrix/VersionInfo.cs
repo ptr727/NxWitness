@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -40,6 +41,12 @@ public class VersionInfo
         // "5.0.0.35134 R10" -> "5.0.0.35134"
         var spaceIndex = version.IndexOf(' ');
         Version = spaceIndex == -1 ? version : version[..spaceIndex];
+    }
+
+    public static IEnumerable<LabelType> GetLabelTypes()
+    {
+        // Create list of label types
+        return Enum.GetValues(typeof(LabelType)).Cast<LabelType>().Where(labelType => labelType != LabelType.None).ToList();
     }
 }
 
