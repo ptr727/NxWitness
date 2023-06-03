@@ -150,7 +150,7 @@ internal static class Program
 
             // Filter online information using file information
             var fileFilter = VersionRule.Create(fileSchema.Products);
-            if (!VersionRule.Filter(fileSchema.Products, fileFilter))
+            if (!VersionRule.Filter(onlineSchema.Products, fileFilter))
                 Log.Logger.Warning("Version filter applied using current versions on file");
 
             // Update the file version with the online version
