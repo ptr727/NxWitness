@@ -52,7 +52,9 @@
         {
           "Version": "5.1.0.36751",
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
-          "Labels": []
+          "Labels": [
+            "RC"
+          ]
         },
         {
           "Version": "5.0.0.36871",
