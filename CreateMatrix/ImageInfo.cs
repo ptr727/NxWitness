@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace CreateMatrix;
 
@@ -43,7 +44,7 @@ public class ImageInfo
         // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
         foreach (var registry in RegistryNames)
         {
-            Tags.Add($"docker.io/ptr727/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
+            Tags.Add($"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
         }
     }
 

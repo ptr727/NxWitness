@@ -162,12 +162,11 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/dwspectrum:5.1.0.36830",
-        "docker.io/ptr727/dwspectrum:rc"
+        "docker.io/ptr727/dwspectrum:5.1.0.36751"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36830/dwspectrum-server_update-5.1.0.36830-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36830"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36751"
       ]
     },
     {
@@ -200,12 +199,11 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/dwspectrum-lsio:5.1.0.36830",
-        "docker.io/ptr727/dwspectrum-lsio:rc"
+        "docker.io/ptr727/dwspectrum-lsio:5.1.0.36751"
       ],
       "Args": [
-        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36830/dwspectrum-server_update-5.1.0.36830-linux_x64-rc.zip",
-        "DOWNLOAD_VERSION=5.1.0.36830"
+        "DOWNLOAD_URL=https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
+        "DOWNLOAD_VERSION=5.1.0.36751"
       ]
     },
     {

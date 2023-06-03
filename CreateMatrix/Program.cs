@@ -109,7 +109,7 @@ internal static class Program
         versionSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Filter using default rule set
-        if (!VersionRule.Evaluate(versionSchema.Products, VersionRule.DefaultRuleList, true))
+        if (!VersionRule.Filter(versionSchema.Products, VersionRule.DefaultRuleList))
             Log.Logger.Warning("Version filter applied using default rules");
 
         // Write to file
@@ -127,7 +127,7 @@ internal static class Program
         fileSchema.Products.ForEach(item => item.LogInformation());
 
         // Filter using default rule set
-        if (!VersionRule.Evaluate(fileSchema.Products, VersionRule.DefaultRuleList, true))
+        if (!VersionRule.Filter(fileSchema.Products, VersionRule.DefaultRuleList))
             Log.Logger.Warning("Version filter applied using default rules");
 
         // Update version information
@@ -140,16 +140,17 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
-            // Creating a filter based on the file information may not include all labels
+            // Merge the online and file information
+            if (!VersionRule.Merge(onlineSchema.Products, fileSchema.Products))
+                Log.Logger.Warning("Online version merged with file version");
+
             // Filter using default rule set
-            if (!VersionRule.Evaluate(onlineSchema.Products, VersionRule.DefaultRuleList, true))
+            if (!VersionRule.Filter(onlineSchema.Products, VersionRule.DefaultRuleList))
                 Log.Logger.Warning("Version filter applied using default rules");
 
-            // Create a filter from the file information
-            var fileFilter = VersionRule.Create(fileSchema.Products);
-
             // Filter online information using file information
-            if (!VersionRule.Evaluate(fileSchema.Products, fileFilter, true))
+            var fileFilter = VersionRule.Create(fileSchema.Products);
+            if (!VersionRule.Filter(onlineSchema.Products, fileFilter))
                 Log.Logger.Warning("Version filter applied using current versions on file");
 
             // Update the file version with the online version
@@ -158,6 +159,9 @@ internal static class Program
             VersionJsonSchema.ToFile(versionPath, onlineSchema);
             fileSchema = onlineSchema;
         }
+
+        // Verify all versions
+        fileSchema.Products.ForEach(item => item.VerifyUrls());
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
