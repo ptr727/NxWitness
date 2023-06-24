@@ -12,7 +12,7 @@
   <Category>HomeAutomation: Security: Status:Beta</Category>
   <WebUI>http://[IP]:[PORT:7001]</WebUI>
   <TemplateURL>https://github.com/ptr727/NxWitness/Unraid</TemplateURL>
-  <Icon>https://github.com/ptr727/NxWitness/raw/master/Unraid/NxLogo.png</Icon>
+  <Icon>https://github.com/ptr727/NxWitness/raw/main/Unraid/NxLogo.png</Icon>
   <Data>
     <Volume>
       <HostDir>/mnt/user/appdata/nxwitness-lsio</HostDir>
