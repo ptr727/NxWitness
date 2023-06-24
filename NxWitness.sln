@@ -48,6 +48,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{7616F2DB-88DE-4219-9544-76C8750ECF99}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\BuildPublishPipeline.yml = .github\workflows\BuildPublishPipeline.yml
+		.github\dependabot.yml = .github\dependabot.yml
 		.github\workflows\DockerHubDescription.yml = .github\workflows\DockerHubDescription.yml
 	EndProjectSection
 EndProject
