@@ -32,8 +32,8 @@ public class ImageInfo
 
     private void AddArgs(VersionInfo versionInfo)
     {
-        Args.Add($"DOWNLOAD_VERSION={versionInfo.Version}");
-        Args.Add($"DOWNLOAD_URL={versionInfo.Uri}");
+        Args.Add($"{DownloadVersion}={versionInfo.Version}");
+        Args.Add($"{DownloadUrl}={versionInfo.Uri}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
@@ -121,4 +121,7 @@ public class ImageInfo
         Tags.ForEach(item => Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, item));
         Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
     }
+
+    public const string DownloadVersion = "DOWNLOAD_VERSION";
+    public const string DownloadUrl = "DOWNLOAD_URL";
 }
