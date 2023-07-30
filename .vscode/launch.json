@@ -7,8 +7,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net7.0/CreateMatrix.dll",
-            "args": ["matrix", "--update"],
-            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
+            "args": ["matrix", "--version=./Make/Version.json", "--matrix=./Make/Matrix.json", "--update"],
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
         },
