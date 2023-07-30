@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: Network Optix Support
     url: https://support.networkoptix.com/hc/en-us/community/topics
-    about: Please report product issues to Network Optix.
-  - name: Missing Storage
-    url: https://github.com/ptr727/NxWitness/tree/main#missing-storage
-    about: Troubleshoot missing storage.
+    about: Please report Nx product issues to Network Optix.
+  - name: Digital Watchdog Support
+    url: https://digital-watchdog.com/dw-support
+    about: Please report DW product issues to Digital Watchdog.

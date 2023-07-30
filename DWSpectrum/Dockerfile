@@ -1,6 +1,7 @@
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported is Focal
-FROM ubuntu:focal
+# Latest supported for v5.1 is Jammy
+# https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy
+FROM ubuntu:jammy
 
 
 # Labels
@@ -9,8 +10,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/35271/dwspectrum-server_update-5.0.0.35271-linux_x64.zip"
-ARG DOWNLOAD_VERSION="5.0.0.35271"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.1.0.37133"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"

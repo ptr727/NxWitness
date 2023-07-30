@@ -1,3 +1,4 @@
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported is Focal
-FROM lsiobase/ubuntu:focal
+# Latest supported for v5.1 is Jammy
+# https://hub.docker.com/r/lsiobase/ubuntu/tags?page=1&name=jammy
+FROM lsiobase/ubuntu:jammy

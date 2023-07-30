@@ -1,6 +1,7 @@
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported is Focal
-FROM ubuntu:focal
+# Latest supported for v5.1 is Jammy
+# https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy
+FROM ubuntu:jammy
 
 
 # Labels
@@ -9,8 +10,8 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/35270/nxwitness-server_update-5.0.0.35270-linux_x64.zip"
-ARG DOWNLOAD_VERSION="5.0.0.35270"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/37133/nxwitness-server_update-5.1.0.37133-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.1.0.37133"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
