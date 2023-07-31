@@ -51,7 +51,6 @@ jobs:
 
       # Execute the compiled version to make sure that the build breaks for a non-0 exit code
       - name: Run CreateMatrix Tool
-        # if: ${{ github.ref_name == 'develop' }}
         run: ${{ runner.temp }}/publish/CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update
 
       # https://github.com/marketplace/actions/git-auto-commit

@@ -12,10 +12,8 @@ internal class VersionRule
     public static readonly List<VersionRule> DefaultRuleList = new()
     { 
         // Use None to match any product or label
-        new VersionRule { Label = VersionInfo.LabelType.Stable, Version = "5.0" },
-        new VersionRule { Label = VersionInfo.LabelType.Latest, Version = "5.0" },
-        new VersionRule { Label = VersionInfo.LabelType.RC, Version = "5.1" },
-        new VersionRule { Label = VersionInfo.LabelType.Beta, Version = "5.1" }
+        // Only v5.1 or later is supported
+        new VersionRule { Version = "5.1" }
     };
 
     private bool Evaluate(ProductInfo productInfo, VersionInfo versionInfo, VersionInfo.LabelType label)
@@ -48,6 +46,9 @@ internal class VersionRule
         var result = true;
         foreach (var productInfo in productList)
         {
+            // Versions to remove
+            var removeVersions = new List<VersionInfo>();
+
             // All versions
             foreach (var versionInfo in productInfo.Versions)
             {
@@ -58,17 +59,35 @@ internal class VersionRule
                 foreach (var label in from label in versionInfo.Labels from 
                              versionRule in ruleList.Where(versionRule => !versionRule.Evaluate(productInfo, versionInfo, label)) select label)
                 {
+                    // Mark the label to be removed
+                    Log.Logger.Warning("{Product}:{Version}:{Label} filtered out", productInfo.Product, versionInfo.Version, label);
                     removeLabels.Add(label);
                     result = false;
                 }
 
-                // Remove labels
+                // Remove filtered labels
                 if (removeLabels.Count > 0)
                 { 
-                    // Logging in Evaluate()
                     versionInfo.Labels.RemoveAll(item => removeLabels.Contains(item));
                 }
+
+                // Mark the version to be removed
+                if (versionInfo.Labels.Count == 0)
+                {
+                    Log.Logger.Warning("{Product}:{Version} filtered out", productInfo.Product, versionInfo.Version);
+                    removeVersions.Add(versionInfo);
+                    result = false;
+                }
             }
+
+            // Remove filtered versions
+            if (removeVersions.Count > 0)
+            { 
+                productInfo.Versions.RemoveAll(item => removeVersions.Contains(item));
+            }
+
+            // We must have at least one version per product
+            Debug.Assert(productInfo.Versions.Count >= 1);
         }
 
         // Done
@@ -83,7 +102,7 @@ internal class VersionRule
         var result = true;
         foreach (var productInfo in productList)
         {
-            // List of label associated with version
+            // List of labels associated with version
             var versionAddList = new List<Tuple<VersionInfo.LabelType, VersionInfo>>();
 
             // All possible labels

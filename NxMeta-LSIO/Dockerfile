@@ -1,6 +1,7 @@
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported is Focal
-FROM lsiobase/ubuntu:focal
+# Latest supported for v5.1 is Jammy
+# https://hub.docker.com/r/lsiobase/ubuntu/tags?page=1&name=jammy
+FROM lsiobase/ubuntu:jammy
 
 
 # Labels
@@ -9,8 +10,8 @@ ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/35269/metavms-server_update-5.0.0.35269-linux_x64.zip"
-ARG DOWNLOAD_VERSION="5.0.0.35269"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/37133/metavms-server_update-5.1.0.37133-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.1.0.37133"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"

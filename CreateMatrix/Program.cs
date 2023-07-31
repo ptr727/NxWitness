@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using System.Diagnostics;
+using System.Text;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -72,11 +74,18 @@ internal static class Program
             };
         schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
+        var makeCommand = new Command("make", "Write latest versions from matrix to make files")
+            {
+                matrixOption
+            };
+        makeCommand.SetHandler(MakeHandler, matrixOption);
+
         var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
             {
                 versionCommand,
                 matrixCommand,
-                schemaCommand
+                schemaCommand,
+                makeCommand
             };
         return rootCommand;
     }
@@ -174,6 +183,67 @@ internal static class Program
         // Write matrix
         Log.Logger.Information("Writing matrix to {Path}", matrixPath);
         MatrixJsonSchema.ToFile(matrixPath, matrixSchema);
+
+        return Task.FromResult(0);
+    }
+
+    private static Task<int> MakeHandler(string matrixPath)
+    {
+        // Load matrix info from file
+        Log.Logger.Information("Reading version information from {Path}", matrixPath);
+        var matrixSchema = MatrixJsonSchema.FromFile(matrixPath);
+
+        // Use the same path as the matrix file
+        var makePath = Path.GetDirectoryName(matrixPath);
+        Debug.Assert(!string.IsNullOrEmpty(makePath));
+
+        // List of product to path mappings
+        var makeProductList = new List<Tuple<string, string>>() 
+        {
+            new ("NxMeta", "dwspectrum.docker"),
+            new ("NxWitness", "nxwitness.docker"),
+            new ("DWSpectrum", "nxmeta.docker")
+        };
+
+        // List of args
+        var argList = new List<string>() { ImageInfo.DownloadVersion, ImageInfo.DownloadUrl };
+
+        // Rewrite the version and path info
+        foreach (var tuple in makeProductList)
+        {
+            // Make file path
+            var filePath = Path.Combine(makePath, tuple.Item2);
+
+            // Read all lines from the file
+            Log.Logger.Information("Reading make information from {Path}", filePath);
+            var fileLines = File.ReadAllLines(filePath).ToList();
+
+            // Get latest product entry from matrix
+            var imageInfo = matrixSchema.Images.Find(item => string.Equals(item.Name, tuple.Item1) && item.Tags.Any(item => item.Contains("latest")));
+            Debug.Assert(imageInfo != null);
+
+            // Replace the args
+            foreach (var arg in argList)
+            {
+                // Get arg from image
+                var latestArg = imageInfo.Args.Find(item => item.StartsWith(arg));
+                Debug.Assert(latestArg != null);
+                var latestParts = latestArg.Split('=');
+                Debug.Assert(latestParts.Length == 2);
+
+                // Get arg from file
+                var fileArg = fileLines.Find(item => item.Contains(arg));
+                Debug.Assert(fileArg != null);
+
+                // Rewrite file arg
+                fileArg = $"ARG {arg}=\"{latestParts[1]}\"";
+                Log.Logger.Information("Rewriting: {Arg}", fileArg);
+            }
+
+            // Rewrite the file
+            Log.Logger.Information("Writing make information to {Path}", filePath);
+            File.WriteAllLines(filePath, fileLines);
+        }
 
         return Task.FromResult(0);
     }

@@ -35,6 +35,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "Update Make Files",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net7.0/CreateMatrix.dll",
+            "args": ["make", "--matrix=./Make/Matrix.json"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"

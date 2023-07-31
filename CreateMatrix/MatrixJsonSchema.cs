@@ -33,6 +33,11 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     [Required]
     public List<ImageInfo> Images { get; set; } = new();
 
+    public static MatrixJsonSchema FromFile(string path)
+    {
+        return FromJson(File.ReadAllText(path));
+    }
+
     public static void ToFile(string path, MatrixJsonSchema jsonSchema)
     {
         File.WriteAllText(path, ToJson(jsonSchema));
@@ -41,6 +46,26 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     private static string ToJson(MatrixJsonSchema jsonSchema)
     {
         return JsonConvert.SerializeObject(jsonSchema, Settings);
+    }
+
+    private static MatrixJsonSchema FromJson(string jsonString)
+    {
+        var matrixJsonSchemaBase = JsonConvert.DeserializeObject<MatrixJsonSchemaBase>(jsonString, Settings);
+        ArgumentNullException.ThrowIfNull(matrixJsonSchemaBase);
+
+        // Deserialize the correct version
+        var schemaVersion = matrixJsonSchemaBase.SchemaVersion;
+        switch (schemaVersion)
+        {
+            // Current version
+            case Version:
+                var schema = JsonConvert.DeserializeObject<MatrixJsonSchema>(jsonString, Settings);
+                ArgumentNullException.ThrowIfNull(schema);
+                return schema;
+            // Unknown version
+            default:
+                throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");
+        }
     }
 
     public static void GenerateSchema(string path)

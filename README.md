@@ -14,9 +14,12 @@ Licensed under the [MIT License](./LICENSE).
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github)](https://github.com/ptr727/NxWitness/actions)  
 [![GitHub Actions Last Build](https://byob.yarr.is/ptr727/NxWitness/lastbuild)](https://github.com/ptr727/NxWitness/actions)
 
-## Build Issues
+## Build Notes
 
-- Publishing of `stable` tags for versions older than `5.0` are disabled, see this [issue](https://github.com/ptr727/NxWitness/issues/62) for details.
+- Nx released v5.1 across all products brands.
+- v5.1 [supports](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
+- Due to the Jammy dependency versions older than v5.1 are no longer being built.
+- The build tooling will ensure that tagged version numbers will never regress, see issue [#62](https://github.com/ptr727/NxWitness/issues/62) for details.
 
 ## Releases
 
@@ -99,10 +102,10 @@ The project supports three product variants:
 
 The project creates two variants of each product using different base images:
 
-- [Ubuntu](https://ubuntu.com/) using [ubuntu:focal](https://hub.docker.com/_/ubuntu) base image.
-- [LinuxServer](https://www.linuxserver.io/) using [lsiobase/ubuntu:focal](https://hub.docker.com/r/lsiobase/ubuntu) base image.
+- [Ubuntu](https://ubuntu.com/) using [ubuntu:jammy](https://hub.docker.com/_/ubuntu) base image.
+- [LinuxServer](https://www.linuxserver.io/) using [lsiobase/ubuntu:jammy](https://hub.docker.com/r/lsiobase/ubuntu) base image.
 
-Note that smaller base images, like [Alpine](https://alpinelinux.org/), and the current [Ubuntu 22.04 LTS (Jammy Jellyfish)](https://releases.ubuntu.com/22.04/) are not [supported](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) by the mediaserver.
+Note that smaller base images like [Alpine](https://alpinelinux.org/) are not [supported](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) by the mediaserver.
 
 ### LinuxServer
 
@@ -197,7 +200,7 @@ services:
 
 ### Unraid Template
 
-- Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/master/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
+- Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/main/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
 - Create a new container by clicking the "Add Container" button, select the desired product template from the dropdown.
 - If using Unassigned Devices for media storage, use `RW/Slave` access mode.
 - Use `nobody` and `users` identifiers, `PUID=99` and `PGID=100`.
@@ -255,8 +258,9 @@ The build is divided into the following parts:
 - Updating the available product versions and download URL's are done using the custom [CreateMatrix](./CreateMatrix/) utility app.
   - The [Version.json](./Make/Version.json) information is updated using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
     - `CreateMatrix version --version=./Make/Version.json`
-  - The [Matrix.json](./Make/Matrix.json) is created from the `Version.json` file and optionally updated.
+  - The [Matrix.json](./Make/Matrix.json) is created from the `Version.json` file and versions optionally updated.
     - `CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update`
+    - The tooling will not allow tagged build version numbers to regress, see issue [#62](https://github.com/ptr727/NxWitness/issues/62) for details.
 - Local builds can be performed using `make build`, where download URL and version information defaults to the `Dockerfile` values.
   - All images will be built and launched using `make build` and `make up`, allowing local testing using the build output URL's.
   - After testing stop and delete containers and images using `make clean`.

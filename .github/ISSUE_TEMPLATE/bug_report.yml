@@ -1,0 +1,31 @@
+name: Bug Report
+description: File a bug or issue report
+title: "<Use a descriptive title>"
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please note that I am not affiliated with Network Optix or Digital Watchdog, and I cannot provide support for their products.  
+        Contact [Network Optix Support](https://support.networkoptix.com/hc/en-us/community/topics) or [Digital Watchdog Support](https://digital-watchdog.com/dw-support) for any product support issues.  
+        Search for similar [Issues](https://github.com/ptr727/NxWitness/issues) before submitting a new issue.  
+        For help with setting up or deploying Docker images refer to your favorite internet technical help resource.  
+        Please submit issues in English.  
+        Only submit issues that are related to the creation or publication of the Docker images.
+  - type: textarea
+    attributes:
+      label: Describe the problem?
+      description: What happened and what did you expect to happen.
+      value: |
+        Steps to reproduce:
+        - I did this.
+        - This happened.
+        - I expected this to happen.
+        Configuration:
+        - OS, platform, hardware.
+        - Docker image name, tag, and version.
+        - Deployment method and configuration.
+        Logs:
+        - Log or console output.
+    validations:
+      required: true

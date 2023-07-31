@@ -507,3 +507,6 @@ fabric.properties
 **/bin
 **/obj
 !CreateMatrix/JSON/**
+
+# JetBrains
+.idea
