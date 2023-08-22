@@ -86,7 +86,7 @@ See the [Build Process](#build-process) section for more details on how versions
 I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. Nx Witness provided no support for Docker, but I did find the [The Home Repot NxWitness](https://github.com/thehomerepot/nxwitness) project, that inspired me to create this project.  
 I started with individual repositories for Nx Witness, Nx Meta, and DW Spectrum, but that soon became cumbersome with lots of duplication, and I combined all product flavors into this one project.
 
-As of recent Network Optix does provide [Experimental Docker Support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker), and they publish a [reference docker project](https://github.com/networkoptix/nx_open_integrations/tree/master/docker), but they do not publish container images.  
+As of recent Network Optix does provide [Experimental Docker Support](https://support.networkoptix.com/hc/en-us/articles/360037973573-How-to-run-Nx-Server-in-Docker), and they publish a [docker project](https://github.com/networkoptix/nxvms-docker), but they do not publish container images.  
 
 The biggest outstanding challenges with running in docker are hardware bound licensing and lack of admin defined storage locations, see the [Network Optix and Docker](#network-optix-and-docker) section for details.  
 
@@ -123,6 +123,9 @@ The docker configuration is simple, requiring just two volume mappings for confi
 
 ### Volumes
 
+Refer to the [nxvms-docker](https://github.com/networkoptix/nxvms-docker#volumes-description) page for volume mapping details.  
+The LSIO images [re-link](./LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run) internal paths, while the non-LSIO images needs to map volumes directly to the required paths.
+
 `/config` : Configuration files.  
 `/media` : Recording files.  
 `/archive` : Backup files. (Optional)
@@ -141,7 +144,7 @@ Note that if your storage is not showing up, see the [Missing Storage](#missing-
 
 ### Network Mode
 
-Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#networking).
+Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended](https://github.com/networkoptix/nxvms-docker#networking).
 
 ## Examples
 
@@ -182,7 +185,13 @@ services:
 
 ### Non-LSIO Docker Compose
 
-The LSIO images re-link internal paths, while the non-LSIO images needs to map volumes directly to the installed folders.
+Refer to the [nxvms-docker](https://github.com/networkoptix/nxvms-docker#volumes-description) page for volume mapping details.
+
+Note that the directory names are dependent on the product being used:
+
+- NxWitness: `networkoptix`
+- DWSpectrum: `digitalwatchdog`
+- NxMeta: `networkoptix-metavms`
 
 ```yaml
 version: "3.7"
@@ -287,7 +296,7 @@ A portable approach could apply licenses to the [Cloud Account](https://www.netw
 
 **Issue:**  
 The mediaserver attempts to automatically decide what storage to use.  
-Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nx_open_integrations/tree/master/docker#notes-about-storage), e.g. popular and common [ZFS](https://support.networkoptix.com/hc/en-us/community/posts/1500000914242-Please-add-ZFS-as-supported-storage-to-4-3) is not supported.  
+Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nxvms-docker#notes-about-storage), e.g. popular and common [ZFS](https://support.networkoptix.com/hc/en-us/community/posts/1500000914242-Please-add-ZFS-as-supported-storage-to-4-3) is not supported.  
 Duplicate filesystems are ignored, e.g. multiple logical mounts on the same physical storage are ignored.  
 The server blindly creates database files on any writable storage it discovers, regardless of if that storage was assigned for use or not.
 
