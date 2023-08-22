@@ -5,6 +5,7 @@
     "cSpell.words": [
         "appdata",
         "btrfs",
+        "digitalwatchdog",
         "dockerenv",
         "domainname",
         "dwspectrum",
@@ -13,6 +14,7 @@
         "lsio",
         "lsiobase",
         "mediaserver",
+        "metavms",
         "networkoptix",
         "Newtonsoft",
         "noatime",
@@ -20,6 +22,7 @@
         "nosuid",
         "nvrpool",
         "nxmeta",
+        "nxvms",
         "nxwitness",
         "Optix",
         "PGID",

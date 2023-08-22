@@ -12,7 +12,7 @@ internal class VersionRule
     public static readonly List<VersionRule> DefaultRuleList = new()
     { 
         // Use None to match any product or label
-        // Only v5.1 or later is supported
+        // Only v5.1 or later is supported with Ubuntu Jammy
         new VersionRule { Version = "5.1" }
     };
 
@@ -71,9 +71,10 @@ internal class VersionRule
                     versionInfo.Labels.RemoveAll(item => removeLabels.Contains(item));
                 }
 
-                // Mark the version to be removed
+                // Remove the version if it has no labels
                 if (versionInfo.Labels.Count == 0)
                 {
+                    // Mark the version to be removed
                     Log.Logger.Warning("{Product}:{Version} filtered out", productInfo.Product, versionInfo.Version);
                     removeVersions.Add(versionInfo);
                     result = false;

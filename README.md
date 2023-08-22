@@ -187,7 +187,7 @@ services:
 
 Refer to the [nxvms-docker](https://github.com/networkoptix/nxvms-docker#volumes-description) page for volume mapping details.
 
-Note that the directory names are dependent on the product being used:
+Note that the directory names are dependent on the product being used (see [`Test.yml`](./Make/Test.yml) for examples):
 
 - NxWitness: `networkoptix`
 - DWSpectrum: `digitalwatchdog`
