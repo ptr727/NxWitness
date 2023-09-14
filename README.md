@@ -140,7 +140,7 @@ Note that if your storage is not showing up, see the [Missing Storage](#missing-
 
 `PUID` : User Id (LSIO only, see [docs](https://docs.linuxserver.io/general/understanding-puid-and-pgid) for usage).  
 `PGID` : Group Id (LSIO only).  
-`TZ` : Timezone, e.g. `Americas/Los_Angeles`.
+`TZ` : Timezone, e.g. `America/Los_Angeles`.
 
 ### Network Mode
 
@@ -157,7 +157,7 @@ docker create \
   --domainname=foo.bar.net \
   --restart=unless-stopped \
   --network=host \
-  --env TZ=Americas/Los_Angeles \
+  --env TZ=America/Los_Angeles \
   --volume /mnt/nxwitness/config:/config:rw \
   --volume /mnt/nxwitness/media:/media:rw \
   docker.io/ptr727/nxwitness-lsio:stable
@@ -177,7 +177,7 @@ services:
     restart: unless-stopped
     network_mode: host
     environment:
-      - TZ=Americas/Los_Angeles
+      - TZ=America/Los_Angeles
     volumes:
       - /mnt/nxwitness/config:/config
       - /mnt/nxwitness/media:/media
