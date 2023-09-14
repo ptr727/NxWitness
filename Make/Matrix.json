@@ -30,6 +30,19 @@
       ]
     },
     {
+      "Name": "NxMeta",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:6.0.0.37363",
+        "docker.io/ptr727/nxmeta:beta"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37363/metavms-server_update-6.0.0.37363-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=6.0.0.37363"
+      ]
+    },
+    {
       "Name": "NxMeta-LSIO",
       "Branch": "main",
       "CacheScope": "lsio",
@@ -54,6 +67,19 @@
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37133/metavms-server_update-5.1.0.37133-linux_x64.zip",
         "DOWNLOAD_VERSION=5.1.0.37133"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:6.0.0.37363",
+        "docker.io/ptr727/nxmeta-lsio:beta"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37363/metavms-server_update-6.0.0.37363-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=6.0.0.37363"
       ]
     },
     {
@@ -191,6 +217,19 @@
       ]
     },
     {
+      "Name": "NxMeta",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:develop-6.0.0.37363",
+        "docker.io/ptr727/nxmeta:develop-beta"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37363/metavms-server_update-6.0.0.37363-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=6.0.0.37363"
+      ]
+    },
+    {
       "Name": "NxMeta-LSIO",
       "Branch": "develop",
       "CacheScope": "lsio",
@@ -216,6 +255,19 @@
       "Args": [
         "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37133/metavms-server_update-5.1.0.37133-linux_x64.zip",
         "DOWNLOAD_VERSION=5.1.0.37133"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:develop-6.0.0.37363",
+        "docker.io/ptr727/nxmeta-lsio:develop-beta"
+      ],
+      "Args": [
+        "DOWNLOAD_URL=https://updates.networkoptix.com/metavms/37363/metavms-server_update-6.0.0.37363-linux_x64-beta.zip",
+        "DOWNLOAD_VERSION=6.0.0.37363"
       ]
     }
   ]
