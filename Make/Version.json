@@ -60,6 +60,13 @@
           ]
         },
         {
+          "Version": "5.1.0.37133",
+          "Uri": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip",
+          "Labels": [
+            "Stable"
+          ]
+        },
+        {
           "Version": "5.1.0.36751",
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/36751/dwspectrum-server_update-5.1.0.36751-linux_x64-rc.zip",
           "Labels": [
