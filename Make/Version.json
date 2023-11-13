@@ -6,15 +6,15 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "6.0.0.37363",
-          "Uri": "https://updates.networkoptix.com/metavms/37363/metavms-server_update-6.0.0.37363-linux_x64-beta.zip",
+          "Version": "6.0.0.37711",
+          "Uri": "https://updates.networkoptix.com/metavms/37711/metavms-server_update-6.0.0.37711-linux_x64-beta.zip",
           "Labels": [
             "Beta"
           ]
         },
         {
-          "Version": "5.1.0.37133",
-          "Uri": "https://updates.networkoptix.com/metavms/37133/metavms-server_update-5.1.0.37133-linux_x64.zip",
+          "Version": "5.1.1.37512",
+          "Uri": "https://updates.networkoptix.com/metavms/37512/metavms-server_update-5.1.1.37512-linux_x64.zip",
           "Labels": [
             "Stable",
             "Latest"
@@ -33,8 +33,8 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "5.1.0.37133",
-          "Uri": "https://updates.networkoptix.com/default/37133/nxwitness-server_update-5.1.0.37133-linux_x64.zip",
+          "Version": "5.1.1.37512",
+          "Uri": "https://updates.networkoptix.com/default/37512/nxwitness-server_update-5.1.1.37512-linux_x64.zip",
           "Labels": [
             "Stable",
             "Latest"
@@ -53,10 +53,17 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
+          "Version": "5.1.1.37512",
+          "Uri": "https://updates.networkoptix.com/digitalwatchdog/37512/dwspectrum-server_update-5.1.1.37512-linux_x64.zip",
+          "Labels": [
+            "Latest"
+          ]
+        },
+        {
           "Version": "5.1.0.37133",
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip",
           "Labels": [
-            "Latest"
+            "Stable"
           ]
         },
         {
