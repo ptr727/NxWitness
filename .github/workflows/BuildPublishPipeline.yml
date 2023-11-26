@@ -139,8 +139,8 @@ jobs:
     needs: buildpublish
     name: Build Date Badge
     runs-on: ubuntu-latest
-    # Skip pull requests
-    if: ${{ github.event_name != 'pull_request' }}
+    # Skip pull requests and only update on main branch
+    if: ${{ (github.event_name != 'pull_request') && (endsWith(github.ref, 'refs/heads/main')) }}
 
     steps:
 
