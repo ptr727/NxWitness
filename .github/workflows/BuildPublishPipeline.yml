@@ -43,7 +43,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish
       - name: Build CreateMatrix Tool
@@ -90,7 +90,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Setup QEMU
