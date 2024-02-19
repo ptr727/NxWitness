@@ -1,17 +1,8 @@
 #!/usr/bin/with-contenv bash
 
-# Run as ${COMPANY_NAME} user
-# exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin -e'
+# Run mediaserver as ${COMPANY_NAME} user
+echo "Launching mediaserver"
+exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver -e'
 
-# Run as root user
+# Run mediaserver as root user
 # exec /opt/${COMPANY_NAME}/mediaserver/bin/mediaserver -e
-
-# Version 4.3 renamed the binary files, conditionally launch the mediaserver-bin else mediaserver
-if [[ -e /opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin ]]
-then
-    echo "Launching mediaserver-bin"
-    exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver-bin -e'
-else
-    echo "Launching mediaserver"
-    exec s6-setuidgid ${COMPANY_NAME} /bin/bash -c '/opt/${COMPANY_NAME}/mediaserver/bin/mediaserver -e'
-fi

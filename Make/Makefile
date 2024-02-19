@@ -2,13 +2,14 @@
 # sudo apt install make m4 docker-compose
 
 # Test installing in container:
-# docker run -it --rm ubuntu:focal /bin/bash
-# docker run -it --rm lsiobase/ubuntu:focal /bin/bash
+# docker run -it --rm ubuntu:jammy /bin/bash
+# docker run -it --rm lsiobase/ubuntu:jammy /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
-# apt-get update
-# apt-get upgrade --yes
+# apt-get update && apt-get upgrade --yes
 # apt-get install --no-install-recommends --yes mc nano strace wget gdb
-# wget --no-verbose --no-check-certificate --output-document=./vms_server.deb https://updates.networkoptix.com/metavms/5.0.0.34326%20R6/linux/metavms-server-5.0.0.34326-linux_x64-patch.deb
+# wget --no-verbose --output-document=./vms_server.zip https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip
+# unzip -d ./download_zip ./vms_server.zip
+# cp ./download_zip/metavms-server-5.1.2.37996-linux_x64.deb ./vms_server.deb
 # Install:
 # apt-get install --no-install-recommends --yes ./vms_server.deb
 # Extract DEB package:
@@ -22,13 +23,17 @@
 # Delete all unused container images:
 # docker image prune --all
 
+# Update versions used in static make files
+# CreateMatrix make --matrix=./Make/Matrix.json
+
 # Create Dockerfiles:
 # make create
 
 # Build and launch all images:
 # make build
 # make up
-# Test images by ctrl-click opening the browser links
+## Test images by ctrl-click opening the browser links
+## Attach to running image using docker exec --interactive --tty [containername] /bin/bash
 # make clean
 
 SHELL := /bin/bash

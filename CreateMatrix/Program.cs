@@ -193,16 +193,15 @@ internal static class Program
         Log.Logger.Information("Reading version information from {Path}", matrixPath);
         var matrixSchema = MatrixJsonSchema.FromFile(matrixPath);
 
-        // Use the same path as the matrix file
-        var makePath = Path.GetDirectoryName(matrixPath);
-        Debug.Assert(!string.IsNullOrEmpty(makePath));
+        // Use the same path as the matrix file, could be empty
+        var makePath = Path.GetDirectoryName(matrixPath) ?? "";
 
         // List of product to path mappings
         var makeProductList = new List<Tuple<string, string>>() 
         {
-            new ("NxMeta", "dwspectrum.docker"),
+            new ("NxMeta", "nxmeta.docker"),
             new ("NxWitness", "nxwitness.docker"),
-            new ("DWSpectrum", "nxmeta.docker")
+            new ("DWSpectrum", "dwspectrum.docker")
         };
 
         // List of args
@@ -232,12 +231,12 @@ internal static class Program
                 Debug.Assert(latestParts.Length == 2);
 
                 // Get arg from file
-                var fileArg = fileLines.Find(item => item.Contains(arg));
-                Debug.Assert(fileArg != null);
+                var fileArg = fileLines.FindIndex(item => item.Contains(arg));
+                Debug.Assert(fileArg != -1);
 
                 // Rewrite file arg
-                fileArg = $"ARG {arg}=\"{latestParts[1]}\"";
-                Log.Logger.Information("Rewriting: {Arg}", fileArg);
+                fileLines[fileArg] = $"ARG {arg}=\"{latestParts[1]}\"";
+                Log.Logger.Information("Rewriting: {Arg}", fileLines[fileArg]);
             }
 
             // Rewrite the file

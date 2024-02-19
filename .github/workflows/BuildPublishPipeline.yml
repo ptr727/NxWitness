@@ -7,14 +7,10 @@ name: Build and Publish Docker Images
 on:
   push:
     branches: [ main, develop ]
-    paths-ignore: [ README.md, HubREADME.md ]
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:
   schedule:
-    # https://crontab.guru/
-    # Rebuild 2am every Monday, LSIO rebuilds on Friday's
-    # TODO: Figure out how to build main and develop vs. just the default branch
     - cron: 0 2 * * MON
 
 concurrency:
@@ -24,8 +20,35 @@ concurrency:
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
 
+  # Get version information
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      SemVer2: ${{ steps.nbgv.outputs.SemVer2 }}
+      AssemblyVersion: ${{ steps.nbgv.outputs.AssemblyVersion }}
+      AssemblyFileVersion: ${{ steps.nbgv.outputs.AssemblyFileVersion }}
+      AssemblyInformationalVersion: ${{ steps.nbgv.outputs.AssemblyInformationalVersion }}
+
+    steps:
+
+      # Checkout code
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Get all history for version calculation
+          fetch-depth: 0
+
+      # Run Nerdbank.GitVersioning
+      # https://github.com/marketplace/actions/nerdbank-gitversioning
+      - name: Run Nerdbank.GitVersioning tool
+        id: nbgv
+        uses: dotnet/nbgv@master
+
   # Set the build matrix
   setmatrix:
+    needs: version
     name: Set Matrix
     runs-on: ubuntu-latest
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idoutputs
@@ -47,7 +70,16 @@ jobs:
 
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish
       - name: Build CreateMatrix Tool
-        run: dotnet publish ./CreateMatrix/CreateMatrix.csproj --self-contained false --output ${{ runner.temp }}/publish
+        run: >-
+          dotnet publish ./CreateMatrix/CreateMatrix.csproj
+          --self-contained false
+          --output ${{ runner.temp }}/publish
+          --configuration ${{ endsWith(github.ref, 'refs/heads/main') && 'Release' || 'Debug' }}
+          -property:Version=${{ needs.version.outputs.AssemblyVersion }}
+          -property:FileVersion=${{ needs.version.outputs.AssemblyFileVersion }}
+          -property:AssemblyVersion=${{ needs.version.outputs.AssemblyVersion }}
+          -property:InformationalVersion=${{ needs.version.outputs.AssemblyInformationalVersion }}
+          -property:PackageVersion=${{ needs.version.outputs.SemVer2 }}
 
       # Execute the compiled version to make sure that the build breaks for a non-0 exit code
       - name: Run CreateMatrix Tool
@@ -78,9 +110,9 @@ jobs:
           echo "$FJSON"
           echo "matrix=${FJSON}" >> $GITHUB_OUTPUT
 
-  # Build and publish docker images
-  buildpublish:
-    needs: setmatrix
+  # Build and push docker images
+  buildpush:
+    needs: [setmatrix, version]
     name: Build and Publish Docker Images
     runs-on: ubuntu-latest
 
@@ -132,11 +164,37 @@ jobs:
           build-args: |-
             ${{ join(matrix.images.args, '
             ') }}
+            LABEL_VERSION=${{ needs.version.outputs.SemVer2 }}
+
+  # Release
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [ buildpush, version ]
+    # Skip pull requests
+    if: ${{ github.event_name != 'pull_request' }}
+
+    steps:
+
+    # Create GitHub release
+    # https://github.com/marketplace/actions/gh-release
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        # Generate changelog from commit messages
+        generate_release_notes: true
+        # Create a tag with the version number
+        tag_name: ${{ needs.version.outputs.SemVer2 }}
+        # Only main branch is not a pre-release
+        prerelease: ${{ !endsWith(github.ref, 'refs/heads/main') }}
+        files: |
+            ./Make/Version.json
+            ./Make/Matrix.json
 
   # Create a custom badge to report the build date
   # Run this job at the end of the pipeline
   datebadge:
-    needs: buildpublish
+    needs: buildpush
     name: Build Date Badge
     runs-on: ubuntu-latest
     # Skip pull requests and only update on main branch

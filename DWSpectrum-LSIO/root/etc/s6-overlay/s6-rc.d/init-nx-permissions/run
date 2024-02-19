@@ -21,13 +21,6 @@ then
     chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /media
 fi
 
-# /archive (recursive)
-if [[ ! "$(stat -c %U /archive)" = "${COMPANY_NAME}" ]]
-then
-    echo "Changing ownership on /archive"
-    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /archive
-fi
-
 # /opt/${COMPANY_NAME}/mediaserver/bin
 if [[ ! "$(stat -c %U /opt/${COMPANY_NAME}/mediaserver/bin)" = "${COMPANY_NAME}" ]]
 then

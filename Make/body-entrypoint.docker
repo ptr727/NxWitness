@@ -12,8 +12,7 @@ RUN apt-get update \
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool
-# Add v4.2 and v5.0 flavors of the root tool naming
-RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool, /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin" > /etc/sudoers.d/${COMPANY_NAME}
+RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
 # Copy the entrypoint.sh launch script
 # entrypoint.sh will run the mediaserver and root-tool
@@ -29,7 +28,3 @@ ENTRYPOINT ["/opt/entrypoint.sh"]
 
 # Expose port 7001
 EXPOSE 7001
-
-# Mount points
-# /opt/${COMPANY_NAME}/mediaserver/etc -> /config
-# /opt/${COMPANY_NAME}/mediaserver/var -> /media

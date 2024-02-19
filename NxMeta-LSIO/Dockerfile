@@ -10,8 +10,8 @@ ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/37133/metavms-server_update-5.1.0.37133-linux_x64.zip"
-ARG DOWNLOAD_VERSION="5.1.0.37133"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.1.2.37996"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix-metavms"
@@ -26,11 +26,15 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Media server user and directory name
 ENV COMPANY_NAME=${RUNTIME_NAME}
 
+# Build tool version set as build argument
+ARG LABEL_VERSION="1.0.0.0"
+
+# LABEL_NAME and LABEL_DESCRIPTION set in specific variant of build
+
 # Labels
-LABEL name=${LABEL_NAME} \
+LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
     description=${LABEL_DESCRIPTION} \
-    version=${DOWNLOAD_VERSION} \
-    download=${DOWNLOAD_URL} \
+    version=${LABEL_VERSION} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
 # Install required tools and utilities
@@ -56,9 +60,6 @@ RUN chmod +x Download.sh \
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
 # LSIO does not officially support changing the "abc" username
 # https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-# S6 V2:
-# https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/10-adduser
-# S6 V3:
 # https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
 # Change user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
@@ -91,12 +92,11 @@ COPY root/etc /etc
 EXPOSE 7001
 
 # Create mount points
-# Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
+# Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
-# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
+# /root/.config/nx_ini links -> /config/ini
 # /config is for configuration
 # /media is for media recording
-# /archive is for media backups
-VOLUME /config /media /archive
+VOLUME /config /media
 
