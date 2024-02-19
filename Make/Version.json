@@ -13,18 +13,18 @@
           ]
         },
         {
+          "Version": "5.1.3.38235",
+          "Uri": "https://updates.networkoptix.com/metavms/38235/metavms-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
+        {
           "Version": "5.1.2.37996",
           "Uri": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
           "Labels": [
             "Stable",
             "Latest"
-          ]
-        },
-        {
-          "Version": "5.1.0.36830",
-          "Uri": "https://updates.networkoptix.com/metavms/36830/metavms-server_update-5.1.0.36830-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
           ]
         }
       ]
@@ -33,18 +33,18 @@
       "Product": "NxWitness",
       "Versions": [
         {
+          "Version": "5.1.3.38235",
+          "Uri": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
+        {
           "Version": "5.1.2.37996",
           "Uri": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip",
           "Labels": [
             "Stable",
             "Latest"
-          ]
-        },
-        {
-          "Version": "5.1.2.37821",
-          "Uri": "https://updates.networkoptix.com/default/37821/nxwitness-server_update-5.1.2.37821-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
           ]
         }
       ]
@@ -52,6 +52,13 @@
     {
       "Product": "DWSpectrum",
       "Versions": [
+        {
+          "Version": "5.1.3.38235",
+          "Uri": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
         {
           "Version": "5.1.2.37996",
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
@@ -64,13 +71,6 @@
           "Uri": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip",
           "Labels": [
             "Stable"
-          ]
-        },
-        {
-          "Version": "5.1.2.37821",
-          "Uri": "https://updates.networkoptix.com/digitalwatchdog/37821/dwspectrum-server_update-5.1.2.37821-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
           ]
         }
       ]
