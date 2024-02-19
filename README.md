@@ -281,6 +281,7 @@ Use [`Test.sh`](./Make/Test.sh) for local testing:
 
 - Licensing:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
+  - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
   - Fix: Associate licenses with the [Cloud Account](https://www.networkoptix.com/nx-witness/nx-witness-cloud/) not the local hardware.
 - Storage Management:

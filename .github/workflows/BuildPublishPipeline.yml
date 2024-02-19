@@ -181,15 +181,13 @@ jobs:
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
-        # Generate changelog from commit messages
         generate_release_notes: true
-        # Create a tag with the version number
         tag_name: ${{ needs.version.outputs.SemVer2 }}
-        # Only main branch is not a pre-release
         prerelease: ${{ !endsWith(github.ref, 'refs/heads/main') }}
+        fail_on_unmatched_files: true
         files: |
-            ./Make/Version.json
-            ./Make/Matrix.json
+            Make/Version.json
+            Make/Matrix.json
 
   # Create a custom badge to report the build date
   # Run this job at the end of the pipeline
