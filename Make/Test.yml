@@ -2,6 +2,10 @@ version: "3.7"
 
 # Volume sub-paths are only supported on Moby v26+
 # https://github.com/moby/moby/pull/45687
+
+# tmpfs is only supported on Linux
+# tmpfs: /tmp
+
 volumes:
 
   test_dwspectrum_etc:
@@ -41,7 +45,6 @@ services:
       - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
       - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
       - test_dwspectrum_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7101:7001
@@ -55,7 +58,6 @@ services:
     volumes:
       - test_dwspectrum-lsio_config:/config
       - test_dwspectrum-lsio_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7111:7001
@@ -71,7 +73,6 @@ services:
       - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
       - test_nxwitness_var:/opt/networkoptix/mediaserver/var
       - test_nxwitness_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7102:7001
@@ -85,7 +86,6 @@ services:
     volumes:
       - test_nxwitness-lsio_config:/config
       - test_nxwitness-lsio_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7112:7001
@@ -101,7 +101,6 @@ services:
       - test_nxmeta_ini:/home/networkoptix-metavms/.config/nx_ini
       - test_nxmeta_var:/opt/networkoptix-metavms/mediaserver/var
       - test_nxmeta_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7103:7001
@@ -115,7 +114,6 @@ services:
     volumes:
       - test_nxmeta-lsio_config:/config
       - test_nxmeta-lsio_media:/media
-    tmpfs: /tmp
     network_mode: bridge
     ports:
       - 7113:7001
