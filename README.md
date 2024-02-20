@@ -283,39 +283,39 @@ Use [`Test.sh`](./Make/Test.sh) for local testing:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Fix: Associate licenses with the [Cloud Account](https://www.networkoptix.com/nx-witness/nx-witness-cloud/) not the local hardware.
+  - Nx Fix: Associate licenses with the [Cloud Account](https://www.networkoptix.com/nx-witness/nx-witness-cloud/) not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
   - Filesystem types are filtered out if not on the [supported list](https://github.com/networkoptix/nxvms-docker#notes-about-storage).
   - Mounted volumes are ignored if backed by the same physical storage, even if logically separate.
   - Unwanted `Nx MetaVMS Media` directories are created on any discoverable writable storage.
-  - Fix: Eliminate the elaborate filesystem filter logic and use only the admin specified storage locations.
+  - Nx Fix: Eliminate the elaborate filesystem filter logic and use only the admin specified storage locations.
 - Configuration Files:
   - `.conf` configuration files are located in a static `mediaserver/etc` location while `.ini` configuration files are in a user-account dependent location, e.g. `/home/networkoptix/.config/nx_ini` or `/root/.config/nx_ini`.
   - There is no value in having a server use per-user configuration directories, and it is inconsistent to mix configuration file locations.
-  - Fix: Store all configuration files in `mediaserver/etc`.
+  - Nx Fix: Store all configuration files in `mediaserver/etc`.
 - External Plugins:
   - Custom or [Marketplace](https://www.networkoptix.com/nx-meta/nx-integrations-marketplace/) plugins are installed in the `mediaserver/bin/plugins` directory.
   - The `mediaserver/bin/plugins` directory is already pre-populated with Nx installed plugins.
-  - It is not possible to use external plugins from a mounted volume as the directory is already in-use directory.
-  - Fix: Load plugins from `mediaserver/var/plugins` or from sub-directories mounted below `mediaserver/bin/plugins`, e.g. `mediaserver/bin/plugins/external`
+  - It is not possible to use external plugins from a mounted volume as the directory is already in-use.
+  - Nx Fix: Load plugins from `mediaserver/var/plugins` or from sub-directories mounted below `mediaserver/bin/plugins`, e.g. `mediaserver/bin/plugins/external`
 - Lifetime Upgrades:
   - Nx is a cloud product, free to view, free upgrades, comes with ongoing costs of hosting, maintenance, and support, it is [unfeasible](https://www.crunchbase.com/organization/network-optix) to sustain a business with ongoing costs using perpetual one-off licenses.
   - My personal experience with [Digital Watchdog](https://digital-watchdog.com/) and their [Lifetime Upgrades and No Annual Agreements](https://dwspectrum.com/upgrades/) is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
-  - Fix: Camera licenses are per year covering support and upgrades.
+  - Nx Fix: Yearly camera license renewals covering the cost of support and upgrades.
 - Archiving:
-  - Nx makes no distinction in use and requirements between recording and archiving storage, basically just a mirror without any capacity or retention benefit.
-  - Recording storage is typically high speed low latency SSD/NVMe's arrays, and due to cost low capacity, while archival playback storage could be very high capacity low cost magnetic media arrays.
-  - Fix: Implement something akin to archiving in [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm).
+  - Nx makes no distinction in between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
+  - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
+  - Nx Fix: Implement something akin to archiving in [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm) where recording storage is separate from long term archival storage.
 - Image Publication:
   - Nx relies on end-users or projects like this one to create and publish docker images.
-  - Fix: Nx to publish up-to-date images for all product variants and release channels.
+  - Nx Fix: Publish up-to-date images for all product variants and release channels.
 - Break-Fix-Version-Forward:
   - Nx product versions published via their releases API occasionally go backwards, e.g. `release`: v4.3 -> v5.0 -> v4.3.
   - Nx supports forward-only in-place upgrades, e.g. v4.3 to v5.0, but not v5.0 to v4.3.
-  - Publishing generic tags, e.g. `latest` using a version that regresses, e.g. v4.3 -> v5.0 -> v4.3 breaks deployments, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details.
+  - Publishing generic tags, e.g. `latest`, using a version that regresses, e.g. v4.3 -> v5.0 -> v4.3 breaks deployments, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details.
   - `CreateMatrix` tooling keeps track of published versions, and prevents version regression of generic `latest`, `rc` and `beta` tags.
-Fix: Nx to break-fix-version-forward only.
+  - Nx Fix: Release break-fix-version-forward only via release API's.
 
 ## Troubleshooting
 
