@@ -10,8 +10,8 @@ ARG LABEL_DESCRIPTION="DW Spectrum IPVMS Docker"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip"
-ARG DOWNLOAD_VERSION="5.1.0.37133"
+ARG DOWNLOAD_URL="https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_VERSION="5.1.2.37996"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -26,11 +26,15 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Media server user and directory name
 ENV COMPANY_NAME=${RUNTIME_NAME}
 
+# Build tool version set as build argument
+ARG LABEL_VERSION="1.0.0.0"
+
+# LABEL_NAME and LABEL_DESCRIPTION set in specific variant of build
+
 # Labels
-LABEL name=${LABEL_NAME} \
+LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
     description=${LABEL_DESCRIPTION} \
-    version=${DOWNLOAD_VERSION} \
-    download=${DOWNLOAD_URL} \
+    version=${LABEL_VERSION} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
 # Install required tools and utilities
@@ -65,8 +69,7 @@ RUN apt-get update \
 
 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
 # Only allow sudo no password access to the root-tool
-# Add v4.2 and v5.0 flavors of the root tool naming
-RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool, /opt/${COMPANY_NAME}/mediaserver/bin/root-tool-bin" > /etc/sudoers.d/${COMPANY_NAME}
+RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
 # Copy the entrypoint.sh launch script
 # entrypoint.sh will run the mediaserver and root-tool
@@ -82,8 +85,4 @@ ENTRYPOINT ["/opt/entrypoint.sh"]
 
 # Expose port 7001
 EXPOSE 7001
-
-# Mount points
-# /opt/${COMPANY_NAME}/mediaserver/etc -> /config
-# /opt/${COMPANY_NAME}/mediaserver/var -> /media
 

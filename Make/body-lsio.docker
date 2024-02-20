@@ -3,9 +3,6 @@
 # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
 # LSIO does not officially support changing the "abc" username
 # https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-# S6 V2:
-# https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/10-adduser
-# S6 V3:
 # https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
 # Change user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
@@ -38,11 +35,10 @@ COPY root/etc /etc
 EXPOSE 7001
 
 # Create mount points
-# Links will be created at runtime in the etc/cont-init.d/50-relocate-files script
+# Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
-# /opt/${COMPANY_NAME}/mediaserver/var/data -> /media
+# /root/.config/nx_ini links -> /config/ini
 # /config is for configuration
 # /media is for media recording
-# /archive is for media backups
-VOLUME /config /media /archive
+VOLUME /config /media

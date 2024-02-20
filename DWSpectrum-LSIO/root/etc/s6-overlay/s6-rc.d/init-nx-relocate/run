@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-### Relocate and link required files and directories
+### Relocate and link files and directories
 echo "init-nx-relocate : COMPANY_NAME = ${COMPANY_NAME}"
 
 # Make sure that /config/var exists
@@ -17,6 +17,22 @@ then
     echo "/config/etc does not exist, creating"
     mkdir -p /config/etc
     chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/etc
+fi
+
+# Make sure that /config/ini exists
+if [[ ! -d /config/ini ]]
+then
+    echo "/config/ini does not exist, creating"
+    mkdir -p /config/ini
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /config/ini
+fi
+
+# Make sure that /root/.config/nx_ini exists
+if [[ ! -d /root/.config/nx_ini ]]
+then
+    echo "/root/.config/nx_ini does not exist, creating"
+    mkdir -p /root/.config/nx_ini
+    chown --verbose --recursive ${COMPANY_NAME}:${COMPANY_NAME} /root/.config/nx_ini
 fi
 
 # Make sure that ../mediaserver/var links to /config/var
@@ -37,7 +53,17 @@ then
     chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/etc
 fi
 
+# Make sure that /root/.config/nx_ini links to /config/ini
+if [[ ! -h /root/.config/nx_ini ]]
+then
+    echo "/root/.config/nx_ini is not a link, linking"
+    rm -rf /root/.config/nx_ini
+    ln -s /config/ini /root/.config/nx_ini
+    chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /root/.config/nx_ini
+fi
+
 # Make sure that ../mediaserver/var/data does not exist
+# TODO: Is this still required?
 if [[ -d /opt/${COMPANY_NAME}/mediaserver/var/data ]]
 then
     echo "../mediaserver/var/data exists, deleting"

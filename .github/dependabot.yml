@@ -4,7 +4,7 @@ updates:
 
   # main
 - package-ecosystem: "nuget"
-  directory: "/"
+  directory: "/CreateMatrix"
   schedule:
     interval: "daily"
 - package-ecosystem: "github-actions"
@@ -14,7 +14,7 @@ updates:
 
   # develop
 - package-ecosystem: "nuget"
-  directory: "/"
+  directory: "/CreateMatrix"
   target-branch: "develop"
   schedule:
     interval: "daily"
