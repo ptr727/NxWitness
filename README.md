@@ -304,7 +304,7 @@ Use [`Test.sh`](./Make/Test.sh) for local testing:
   - My personal experience with [Digital Watchdog](https://digital-watchdog.com/) and their [Lifetime Upgrades and No Annual Agreements](https://dwspectrum.com/upgrades/) is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
   - Nx Fix: Yearly camera license renewals covering the cost of support and upgrades.
 - Archiving:
-  - Nx makes no distinction in between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
+  - Nx makes no distinction between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
   - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
   - Nx Fix: Implement something akin to archiving in [Milestone XProtect VMS](https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm) where recording storage is separate from long term archival storage.
 - Image Publication:
