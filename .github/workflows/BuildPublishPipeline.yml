@@ -176,6 +176,10 @@ jobs:
 
     steps:
 
+    # https://github.com/marketplace/actions/checkout
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
     # Create GitHub release
     # https://github.com/marketplace/actions/gh-release
     - name: Create GitHub release
@@ -186,8 +190,8 @@ jobs:
         prerelease: ${{ !endsWith(github.ref, 'refs/heads/main') }}
         fail_on_unmatched_files: true
         files: |
-            Make/Version.json
-            Make/Matrix.json
+            ./Make/Version.json
+            ./Make/Matrix.json
 
   # Create a custom badge to report the build date
   # Run this job at the end of the pipeline
