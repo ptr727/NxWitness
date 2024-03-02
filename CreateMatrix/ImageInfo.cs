@@ -15,11 +15,11 @@ public class ImageInfo
     public string Name { get; set; } = "";
     public string Branch { get; set; } = "";
     public string CacheScope { get; set; } = "";
-    public List<string> Tags { get; set; } = new();
-    public List<string> Args { get; set; } = new();
+    public List<string> Tags { get; set; } = [];
+    public List<string> Args { get; set; } = [];
 
-    private static readonly string[] BaseNames = { "", "LSIO" };
-    private static readonly string[] RegistryNames = { "docker.io/ptr727" };
+    private static readonly string[] BaseNames = ["", "LSIO"];
+    private static readonly string[] RegistryNames = ["docker.io/ptr727" /*, "ghcr.io/ptr727"*/];
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
@@ -33,7 +33,8 @@ public class ImageInfo
     private void AddArgs(VersionInfo versionInfo)
     {
         Args.Add($"{DownloadVersion}={versionInfo.Version}");
-        Args.Add($"{DownloadUrl}={versionInfo.Uri}");
+        Args.Add($"{DownloadX64Url}={versionInfo.UriX64}");
+        Args.Add($"{DownloadArm64Url}={versionInfo.UriArm64}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
@@ -51,7 +52,7 @@ public class ImageInfo
     public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
     {
         // Iterate through products and base names and create images
-        List<ImageInfo> imageList = new();
+        List<ImageInfo> imageList = [];
         foreach (var productInfo in productList)
             foreach (var baseName in BaseNames)
                 imageList.AddRange(CreateImages(productInfo, baseName));
@@ -60,7 +61,7 @@ public class ImageInfo
         imageList.ForEach(item => item.Branch = "main");
 
         // Create develop builds of NxMeta
-        List<ImageInfo> developList = new();
+        List<ImageInfo> developList = [];
         var nxMeta = productList.Find(item => item.Product == ProductInfo.ProductType.NxMeta);
         Debug.Assert(nxMeta != default(ProductInfo));
         foreach (var baseName in BaseNames)
@@ -78,14 +79,14 @@ public class ImageInfo
         return imageList;
     }
 
-    private static IEnumerable<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
+    private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
         var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
         
         // Create images for each version
-        List<ImageInfo> imageList = new();
+        List<ImageInfo> imageList = [];
         foreach (var versionUri in versionSet)
         {
             // Create image
@@ -123,5 +124,6 @@ public class ImageInfo
     }
 
     public const string DownloadVersion = "DOWNLOAD_VERSION";
-    public const string DownloadUrl = "DOWNLOAD_URL";
+    public const string DownloadX64Url = "DOWNLOAD_X64_URL";
+    public const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
 }

@@ -205,9 +205,9 @@ internal static class Program
         };
 
         // List of args
-        var argList = new List<string>() { ImageInfo.DownloadVersion, ImageInfo.DownloadUrl };
+        var argList = new List<string>() { ImageInfo.DownloadVersion, ImageInfo.DownloadX64Url, ImageInfo.DownloadArm64Url };
 
-        // Rewrite the version and path info
+        // Rewrite the args
         foreach (var tuple in makeProductList)
         {
             // Make file path

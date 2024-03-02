@@ -23,8 +23,9 @@ public class VersionInfo
     }
 
     public string Version { get; set; } = "";
-    public string Uri { get; set; } = "";
-    public List<LabelType> Labels { get; set; } = new();
+    public string UriX64 { get; set; } = "";
+    public string UriArm64 { get; set; } = "";
+    public List<LabelType> Labels { get; set; } = [];
 
     public int GetBuildNumber()
     {

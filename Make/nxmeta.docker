@@ -1,6 +1,7 @@
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_arm64.zip"
 ARG DOWNLOAD_VERSION="5.1.2.37996"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)

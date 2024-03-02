@@ -9,12 +9,12 @@ internal class VersionRule
     private VersionInfo.LabelType Label { get; init; } = VersionInfo.LabelType.None;
     private string Version { get; init; } = "";
 
-    public static readonly List<VersionRule> DefaultRuleList = new()
-    { 
+    public static readonly List<VersionRule> DefaultRuleList =
+    [ 
         // Use None to match any product or label
         // Only v5.1 or later is supported with Ubuntu Jammy
         new VersionRule { Version = "5.1" }
-    };
+    ];
 
     private bool Evaluate(ProductInfo productInfo, VersionInfo versionInfo, VersionInfo.LabelType label)
     {
@@ -75,7 +75,7 @@ internal class VersionRule
                 if (versionInfo.Labels.Count == 0)
                 {
                     // Mark the version to be removed
-                    Log.Logger.Warning("{Product}:{Version} filtered out", productInfo.Product, versionInfo.Version);
+                    Log.Logger.Warning("{Product}:{Version} no labels filtered out", productInfo.Product, versionInfo.Version);
                     removeVersions.Add(versionInfo);
                     result = false;
                 }

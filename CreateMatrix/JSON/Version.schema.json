@@ -33,7 +33,13 @@
             "null"
           ]
         },
-        "Uri": {
+        "UriX64": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "UriArm64": {
           "type": [
             "string",
             "null"

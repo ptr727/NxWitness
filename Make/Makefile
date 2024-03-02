@@ -26,6 +26,10 @@
 # Update versions used in static make files
 # CreateMatrix make --matrix=./Make/Matrix.json
 
+# Enable multiplatform builds
+# https://github.com/tonistiigi/binfmt
+# docker run --privileged --rm tonistiigi/binfmt --install all
+
 # Create Dockerfiles:
 # make create
 
@@ -47,7 +51,7 @@ DIRS := $(basename $(M4S))
 LOWERDIRS := $(call lowercase,$(DIRS))
 
 %/.docker-build: %/Dockerfile
-	docker build -t test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
+	docker buildx build --platform linux/amd64,linux/arm64 --tag test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
 	touch "../$@"
 
 %/.docker-clean: %/Dockerfile

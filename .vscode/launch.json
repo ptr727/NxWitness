@@ -18,8 +18,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net8.0/CreateMatrix.dll",
-            "args": ["version"],
-            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
+            "args": ["version", "--version=./Make/Version.json"],
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
         },

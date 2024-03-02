@@ -16,7 +16,10 @@ Licensed under the [MIT License](./LICENSE).
 
 ## Release Notes
 
-- Build version 2.0:
+- Version 2.1:
+  - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
+    - Note that I have only verified that the container runs on a Raspberry Pi 5 using "Raspberry Pi OS Lite" based on Debian 12 for ARM64.
+- Version 2.0:
   - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
   - Nx released v5.1 across all product brands, v5.1 [supports](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
   - Due to the Jammy dependency versions older than v5.1 are no longer being built.
@@ -118,11 +121,11 @@ The [LinuxServer (LSIO)](https://www.linuxserver.io/) base images provide valuab
 
 ## Configuration
 
-User accounts and directory names are based on the `${COMPANY_NAME}` variable that is a function of the product variant being used:
+User accounts and directory names are based on the product variant exposed by the `${COMPANY_NAME}` variable:
 
-- NxWitness: `${COMPANY_NAME}=networkoptix`
-- DWSpectrum: `${COMPANY_NAME}=digitalwatchdog`
-- NxMeta: `${COMPANY_NAME}=networkoptix-metavms`
+- NxWitness: `networkoptix`
+- DWSpectrum: `digitalwatchdog`
+- NxMeta: `networkoptix-metavms`
 
 ### LSIO Volumes
 
@@ -260,7 +263,7 @@ Build overview:
 
 - A [Makefile](./Make/Makefile) is used to create the `Dockerfile`'s for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
 - Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble common snippets.
-- The `Dockerfile` [downloads](./Make/Download.sh) and installs the mediaserver installer at build time using the `DOWNLOAD_URL` environment variable.
+- The `Dockerfile` [downloads](./Make/Download.sh) and installs the mediaserver installer at build time using the `DOWNLOAD_X64_URL` or `DOWNLOAD_ARM64_URL` environment variable.
 - The [`CreateMatrix`](./CreateMatrix/) custom app is used to update available product versions and download URL's.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
 - [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
@@ -270,7 +273,7 @@ Build overview:
 Use [`Test.sh`](./Make/Test.sh) for local testing:
 
 - Update the the latest available versions in `Version.json` and `Matrix.json`: `dotnet run --project ../CreateMatrix/CreateMatrix.csproj -- matrix --update`.
-- Update `ARG DOWNLOAD_URL` and `ARG DOWNLOAD_VERSION` in the static `Dockerfile` snippets: `dotnet run --project ../CreateMatrix/CreateMatrix.csproj -- make`.
+- Update `ARG DOWNLOAD_X64_URL`, `ARG DOWNLOAD_ARM64_URL` and `ARG DOWNLOAD_VERSION` in the static `Dockerfile` snippets: `dotnet run --project ../CreateMatrix/CreateMatrix.csproj -- make`.
 - Create `Dockerfile`'s from the snippets using M4: `make create`.
 - Build the `Dockerfile`'s locally using `docker build`: `make build`.
 - Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants: [`Up.sh`](./Make/Up.sh).

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -27,7 +28,7 @@ public class ProductInfo
 
     public ProductType Product { get; set; }
 
-    public List<VersionInfo> Versions { get; set; } = new();
+    public List<VersionInfo> Versions { get; set; } = [];
 
     private string GetProductShortName()
     {
@@ -74,7 +75,7 @@ public class ProductInfo
             using HttpClient httpClient = new();
 
             // Labels used for state tracking
-            List<VersionInfo.LabelType> labelList = new();
+            List<VersionInfo.LabelType> labelList = [];
 
             // Get all releases
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetProductShortName());
@@ -91,13 +92,27 @@ public class ProductInfo
                 // Get the build number from the version
                 var buildNumber = versionInfo.GetBuildNumber();
 
-                // Get package for this release
-                var package = PackagesJsonSchema.GetPackage(httpClient, GetProductShortName(), buildNumber);
-                Debug.Assert(!string.IsNullOrEmpty(package.File));
+                // Get packages for this release
+                var packageList = PackagesJsonSchema.GetPackages(httpClient, GetProductShortName(), buildNumber);
 
-                // Create the download URL
+                // Get the x64 and arm64 server ubuntu packages
+                var packageX64 = packageList.Find(item =>
+                    item.Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
+                    item.PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) &&
+                    item.Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)));
+                Debug.Assert(packageX64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
+                var packageArm64 = packageList.Find(item =>
+                    item.Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
+                    item.PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase) &&
+                    item.Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)));
+                Debug.Assert(packageArm64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
+
+                // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionInfo.Uri = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{package.File}";
+                versionInfo.UriX64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageX64.File}";
+                versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageArm64.File}";
 
                 // Set a label based on the publications_type value
                 switch (release.PublicationType)
@@ -178,7 +193,7 @@ public class ProductInfo
     public void LogInformation()
     {
         foreach (var versionUri in Versions)
-            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, Uri: {Uri}", Product, versionUri.Version, versionUri.Labels, versionUri.Uri);
+            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}", Product, versionUri.Version, versionUri.Labels, versionUri.UriX64, versionUri.UriArm64);
     }
 
     public void VerifyUrls()
@@ -189,7 +204,8 @@ public class ProductInfo
             foreach (var versionUri in Versions)
             { 
                 // Will throw on error
-                VerifyUrl(httpClient, versionUri.Uri);
+                VerifyUrl(httpClient, versionUri.UriX64);
+                VerifyUrl(httpClient, versionUri.UriArm64);
             }
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
