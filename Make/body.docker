@@ -1,3 +1,13 @@
+# Global builder variables
+# https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
+ARG \
+    # Platform of the build result. Eg linux/amd64, linux/arm/v7, windows/amd64
+    TARGETPLATFORM \
+    # Architecture component of TARGETPLATFORM
+    TARGETARCH \
+    # Platform of the node performing the build
+    BUILDPLATFORM
+
 # The RUN wget command will be cached unless we change the cache tag
 # Use the download version for the cache tag
 ARG CACHE_DATE=${DOWNLOAD_VERSION}

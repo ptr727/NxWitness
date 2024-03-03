@@ -44,9 +44,9 @@ public class ReleasesJsonSchema
         }
     }
 
-    [JsonProperty("packages_urls")] public List<string> PackagesUrls { get; set; } = new();
+    [JsonProperty("packages_urls")] public List<string> PackagesUrls { get; set; } = [];
 
-    [JsonProperty("releases")] public List<Release> Releases { get; set; } = new();
+    [JsonProperty("releases")] public List<Release> Releases { get; set; } = [];
 
     private static ReleasesJsonSchema FromJson(string jsonString)
     {
@@ -62,6 +62,8 @@ public class ReleasesJsonSchema
         Uri releasesUri = new($"https://updates.vmsproxy.com/{productName}/releases.json");
         Log.Logger.Information("Getting release information from {Uri}", releasesUri);
         var jsonString = httpClient.GetStringAsync(releasesUri).Result;
+
+        // Deserialize JSON
         var releasesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(releasesSchema);
         ArgumentNullException.ThrowIfNull(releasesSchema.Releases);

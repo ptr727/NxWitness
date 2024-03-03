@@ -39,7 +39,7 @@ public class PackagesJsonSchema
 
         [JsonProperty("signature")] public string Signature { get; set; } = "";
 
-        [JsonProperty("variants")] public List<Variant> Variants { get; set; } = new();
+        [JsonProperty("variants")] public List<Variant> Variants { get; set; } = [];
     }
 
     [JsonProperty("version")] public string Version { get; set; } = "";
@@ -54,7 +54,7 @@ public class PackagesJsonSchema
 
     [JsonProperty("eulaVersion")] public long EulaVersion { get; set; }
 
-    [JsonProperty("packages")] public List<Package> Packages { get; set; } = new();
+    [JsonProperty("packages")] public List<Package> Packages { get; set; } = [];
 
     private static PackagesJsonSchema FromJson(string jsonString)
     {
@@ -63,26 +63,21 @@ public class PackagesJsonSchema
         return jsonSchema;
     }
 
-    internal static Package GetPackage(HttpClient httpClient, string productName, int buildNumber)
+    internal static List<Package> GetPackages(HttpClient httpClient, string productName, int buildNumber)
     {
         // Load packages JSON
         // https://updates.networkoptix.com/{product}/{build}/packages.json
         Uri packagesUri = new($"https://updates.networkoptix.com/{productName}/{buildNumber}/packages.json");
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
         var jsonString = httpClient.GetStringAsync(packagesUri).Result;
+
+        // Deserialize JSON
         var packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
         ArgumentNullException.ThrowIfNull(packagesSchema.Packages);
         Debug.Assert(packagesSchema.Packages.Count > 0);
 
-        // Get the "server" and "linux_x64" package
-        var package = packagesSchema.Packages.Find(item =>
-            item.Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
-            item.PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase));
-        Debug.Assert(package != default(Package));
-        Debug.Assert(!string.IsNullOrEmpty(package.File));
-
-        // Return package
-        return package;
+        // Return packages
+        return packagesSchema.Packages;
     }
 }

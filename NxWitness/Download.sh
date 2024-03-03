@@ -3,8 +3,13 @@
 # Installer expected filename
 DEB_FILE="./vms_server.deb"
 
+# Use X64 or ARM64 URL
+DOWNLOAD_URL=${DOWNLOAD_X64_URL}
+if [ "${TARGETPLATFORM}" == "linux/arm64" ]; then
+        DOWNLOAD_URL=${DOWNLOAD_ARM64_URL};
+    fi
+
 # Get the filename fom the URL
-# export DOWNLOAD_URL="https://updates.networkoptix.com/metavms/35151/metavms-server_update-5.1.0.35151-linux_x64-beta.zip"
 echo "Download URL: ${DOWNLOAD_URL}"
 DOWNLOAD_FILENAME=$(basename "$DOWNLOAD_URL")
 echo "Download Filename: ${DOWNLOAD_FILENAME}"

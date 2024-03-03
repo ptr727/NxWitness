@@ -1,5 +1,5 @@
 # Dependencies:
-# sudo apt install make m4 docker-compose
+# sudo apt install make m4 docker-compose docker-buildx
 
 # Test installing in container:
 # docker run -it --rm ubuntu:jammy /bin/bash
@@ -20,20 +20,23 @@
 # Run shell in container, names come from Test.yml:
 # docker run -it --rm test_nxwitness /bin/bash
 
-# Delete all unused container images:
+# Docker cleanup:
+# df
 # docker image prune --all
-
-# Update versions used in static make files
-# CreateMatrix make --matrix=./Make/Matrix.json
+# docker system prune --all --force --volumes
 
 # Create Dockerfiles:
 # make create
 
-# Build and launch all images:
+# Build images:
 # make build
+
+# Launch images:
 # make up
 ## Test images by ctrl-click opening the browser links
 ## Attach to running image using docker exec --interactive --tty [containername] /bin/bash
+
+# Cleanup
 # make clean
 
 SHELL := /bin/bash
@@ -47,7 +50,8 @@ DIRS := $(basename $(M4S))
 LOWERDIRS := $(call lowercase,$(DIRS))
 
 %/.docker-build: %/Dockerfile
-	docker build -t test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
+	docker buildx build --platform linux/amd64,linux/arm64 --tag test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
+	docker buildx build --platform linux/amd64 --load --tag test_$(call lowercase,$(patsubst %/,%,$(basename $@))) ../$(dir $@)
 	touch "../$@"
 
 %/.docker-clean: %/Dockerfile
@@ -59,7 +63,6 @@ LOWERDIRS := $(call lowercase,$(DIRS))
 %/Dockerfile: %.m4
 	-rm ../$@
 	m4 $< >../$@
-
 
 .PHONY: all
 all: create build
@@ -112,11 +115,20 @@ copy:
 	cp Download.sh ../NxMeta-LSIO/Download.sh
 	cp Download.sh ../NxMeta/Download.sh
 
+.PHONY: update
+update:
+	dotnet run --project ../CreateMatrix -- matrix --update
+	dotnet run --project ../CreateMatrix -- make
+
 .PHONY: create
-create: copy $(DIRS:%=%/.docker-create)
+create: update copy $(DIRS:%=%/.docker-create)
+
+.PHONY: multiplat
+multiplat: 
+	-docker buildx create --name multiplat --use
 
 .PHONY: build
-build: down $(DIRS:%=%/.docker-build)
+build: down multiplat $(DIRS:%=%/.docker-build)
 
 .PHONY: clean
 clean: down $(DIRS:%=%/.docker-clean)
