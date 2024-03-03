@@ -35,7 +35,7 @@ volumes:
 services:
 
   digitalwatchdog:
-    image: docker.io/ptr727/dwspectrum-develop
+    image: docker.io/ptr727/dwspectrum:develop
     container_name: test_dwspectrum-container
     restart: unless-stopped
     environment:
@@ -50,7 +50,7 @@ services:
       - 7101:7001
 
   digitalwatchdog-lsio:
-    image: docker.io/ptr727/dwspectrum-lsio-develop
+    image: docker.io/ptr727/dwspectrum-lsio:develop
     container_name: test_dwspectrum-lsio-container
     restart: unless-stopped
     environment:
@@ -63,7 +63,7 @@ services:
       - 7111:7001
 
   networkoptix:
-    image: docker.io/ptr727/networkoptix-develop
+    image: docker.io/ptr727/networkoptix:develop
     container_name: test-networkoptix-container
     restart: unless-stopped
     environment:
@@ -78,7 +78,7 @@ services:
       - 7102:7001
 
   networkoptix-lsio:
-    image: docker.io/ptr727/networkoptix-lsio-develop
+    image: docker.io/ptr727/networkoptix-lsio:develop
     container_name: test_nxwitness-lsio-container
     restart: unless-stopped
     environment:
@@ -91,7 +91,7 @@ services:
       - 7112:7001
 
   networkoptix-metavms:
-    image: docker.io/ptr727/nxmeta-develop
+    image: docker.io/ptr727/nxmeta:develop
     container_name: test_nxmeta-container
     restart: unless-stopped
     environment:
@@ -106,7 +106,7 @@ services:
       - 7103:7001
 
   networkoptix-metavms-lsio:
-    image: docker.io/ptr727/nxmeta-lsio-develop
+    image: docker.io/ptr727/nxmeta-lsio:develop
     container_name: test_nxmeta-lsio-container
     restart: unless-stopped
     environment:

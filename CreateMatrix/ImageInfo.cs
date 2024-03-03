@@ -51,7 +51,7 @@ public class ImageInfo
 
     public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
     {
-        // Iterate through products and base names and create images
+        // Create images for all products
         List<ImageInfo> imageList = [];
         foreach (var productInfo in productList)
             foreach (var baseName in BaseNames)
@@ -60,12 +60,11 @@ public class ImageInfo
         // Set branch as "main" on all images
         imageList.ForEach(item => item.Branch = "main");
 
-        // Create develop builds of NxMeta
+        // Create develop tagged images for all products
         List<ImageInfo> developList = [];
-        var nxMeta = productList.Find(item => item.Product == ProductInfo.ProductType.NxMeta);
-        Debug.Assert(nxMeta != default(ProductInfo));
-        foreach (var baseName in BaseNames)
-            developList.AddRange(CreateImages(nxMeta, baseName, "develop"));
+        foreach (var productInfo in productList)
+            foreach (var baseName in BaseNames)
+                developList.AddRange(CreateImages(productInfo, baseName, "develop"));
 
         // Set branch as "develop"
         developList.ForEach(item => item.Branch = "develop");
