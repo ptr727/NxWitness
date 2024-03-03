@@ -1,7 +1,7 @@
 #!/bin/bash
 
-docker-compose --file Test.yml down --volumes
-docker-compose --file Test.yml up --detach
+docker-compose --file Test-develop.yml down --volumes
+docker-compose --file Test-develop.yml up --detach
 
 echo "Ctrl-Click on links to launch web UI in browser"
 
@@ -12,4 +12,4 @@ echo "Nx Witness-LSIO:" "https://$HOSTNAME:7112/"
 echo "Nx Meta:" "https://$HOSTNAME:7103/"
 echo "Nx Meta-LSIO:" "https://$HOSTNAME:7113/"
 
-echo "Run './Down.sh' to stop or 'make clean' to stop and cleanup images"
+echo "Run './Down-develop.sh' to stop stack"

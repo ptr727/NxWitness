@@ -13,6 +13,7 @@
 			"autoremove",
 			"btrfs",
 			"BUILDPLATFORM",
+			"buildx",
 			"cloudhost",
 			"digitalwatchdog",
 			"dockerenv",

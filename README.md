@@ -18,7 +18,7 @@ Licensed under the [MIT License](./LICENSE).
 
 - Version 2.1:
   - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
-    - Note that I have only verified that the container runs on a Raspberry Pi 5 using "Raspberry Pi OS Lite" based on Debian 12 for ARM64.
+    - TODO: Note that testing was limited to verifying that the container runs on a Raspberry Pi.
 - Version 2.0:
   - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
   - Nx released v5.1 across all product brands, v5.1 [supports](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
@@ -263,22 +263,21 @@ Build overview:
 
 - A [Makefile](./Make/Makefile) is used to create the `Dockerfile`'s for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
 - Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble common snippets.
-- The `Dockerfile` [downloads](./Make/Download.sh) and installs the mediaserver installer at build time using the `DOWNLOAD_X64_URL` or `DOWNLOAD_ARM64_URL` environment variable.
-- The [`CreateMatrix`](./CreateMatrix/) custom app is used to update available product versions and download URL's.
+- The `Dockerfile` [downloads](./Make/Download.sh) and installs the mediaserver installer at build time using environment variables for the URLs.
+- [`CreateMatrix`](./CreateMatrix/) is a custom app used to update available product versions and download URLs.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [release API](https://updates.vmsproxy.com/default/releases.json), using the same logic as in the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client.
 - [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
 - Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing `release` builds using an older version breaking already upgraded systems.
 
-Use [`Test.sh`](./Make/Test.sh) for local testing:
+Local testing:
 
-- Update the the latest available versions in `Version.json` and `Matrix.json`: `dotnet run --project ../CreateMatrix/CreateMatrix.csproj -- matrix --update`.
-- Update `ARG DOWNLOAD_X64_URL`, `ARG DOWNLOAD_ARM64_URL` and `ARG DOWNLOAD_VERSION` in the static `Dockerfile` snippets: `dotnet run --project ../CreateMatrix/CreateMatrix.csproj -- make`.
-- Create `Dockerfile`'s from the snippets using M4: `make create`.
-- Build the `Dockerfile`'s locally using `docker build`: `make build`.
-- Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants: [`Up.sh`](./Make/Up.sh).
-- Test the various instances by Ctrl-Clicking on the links to launching the URI.
-- Shutdown the stack using [`Down.sh`](./Make/Down.sh).
+- Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
+  - `make create`: Create `Dockerfile`'s from the snippets using M4 and update the latest version information using `CreateMatrix`.
+  - `make build`: Build the `Dockerfile`'s using `docker buildx build`.
+  - `make up`: Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants.
+- Ctrl-Click on the links to launch the web UI for each of the product variants.
+- Run `make clean` to Shutdown the compose stack and cleanup images.
 
 ## Known Issues
 
