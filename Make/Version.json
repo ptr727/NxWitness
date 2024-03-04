@@ -13,18 +13,18 @@
           ]
         },
         {
-          "Version": "5.1.3.38235",
-          "Uri": "https://updates.networkoptix.com/metavms/38235/metavms-server_update-5.1.3.38235-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
           "Uri": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "5.1.3.38235",
+          "Uri": "https://updates.networkoptix.com/metavms/38235/metavms-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         }
       ]
