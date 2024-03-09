@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema.Generation;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace CreateMatrix;
 
@@ -21,7 +22,7 @@ public class VersionJsonSchemaBase
 
 public class VersionJsonSchema : VersionJsonSchemaBase
 {
-    public const int Version = 1;
+    public const int Version = 2;
 
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -32,7 +33,7 @@ public class VersionJsonSchema : VersionJsonSchemaBase
     };
 
     [Required] 
-    public List<ProductInfo> Products { get; set; } = new();
+    public List<ProductInfo> Products { get; set; } = [];
 
     public static VersionJsonSchema FromFile(string path)
     {
@@ -64,6 +65,10 @@ public class VersionJsonSchema : VersionJsonSchemaBase
                 var schema = JsonConvert.DeserializeObject<VersionJsonSchema>(jsonString, Settings);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
+            case 1:
+                // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
+                // Breaking change, UriArm64 is required in ARM64 docker builds
+                throw new InvalidEnumArgumentException($"Unsupported SchemaVersion: {schemaVersion}");
             // Unknown version
             default:
                 throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");

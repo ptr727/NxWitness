@@ -145,7 +145,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.images.cachescope }}
           context: ${{ matrix.images.name }}
           file: ${{ matrix.images.name }}/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           # Push only if not a pull request and branch name matches current branch
           push: ${{ (github.event_name != 'pull_request') && (github.ref_name == matrix.images.branch) }}
           # Convert tag and args from array to multiline strings

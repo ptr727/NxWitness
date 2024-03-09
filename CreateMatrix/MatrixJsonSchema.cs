@@ -10,9 +10,11 @@ public class MatrixJsonSchemaBase
 {
     protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
 
+    // Schema reference
     [JsonProperty(PropertyName = "$schema", Order = -3)]
     public string Schema { get; } = SchemaUri;
 
+    // Default to 0 if no value specified, and always write the version first
     [DefaultValue(0)]
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate, Order = -2)]
     public int SchemaVersion { get; set; } = MatrixJsonSchema.Version;
@@ -20,7 +22,7 @@ public class MatrixJsonSchemaBase
 
 public class MatrixJsonSchema : MatrixJsonSchemaBase
 {
-    public const int Version = 1;
+    public const int Version = 2;
 
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -31,7 +33,7 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     };
 
     [Required]
-    public List<ImageInfo> Images { get; set; } = new();
+    public List<ImageInfo> Images { get; set; } = [];
 
     public static MatrixJsonSchema FromFile(string path)
     {
@@ -62,6 +64,10 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
                 var schema = JsonConvert.DeserializeObject<MatrixJsonSchema>(jsonString, Settings);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
+            case 1:
+                // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
+                // Breaking change, UriArm64 is required in ARM64 docker builds
+                throw new InvalidEnumArgumentException($"Unsupported SchemaVersion: {schemaVersion}");
             // Unknown version
             default:
                 throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");

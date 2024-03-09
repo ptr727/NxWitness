@@ -23,16 +23,17 @@ public class VersionInfo
     }
 
     public string Version { get; set; } = "";
-    public string Uri { get; set; } = "";
-    public List<LabelType> Labels { get; set; } = new();
+    public string UriX64 { get; set; } = "";
+    public string UriArm64 { get; set; } = "";
+    public List<LabelType> Labels { get; set; } = [];
 
     public int GetBuildNumber()
     {
         // Extract the build number using the Version class (vs. regex)
         // 5.0.0.35271 -> 35271
         // 5.1.0.35151 R1 -> 35151
-        var versionClass = new Version(Version);
-        return versionClass.Revision;
+        var version = new Version(Version);
+        return version.Revision;
     }
 
     public void SetVersion(string version)
@@ -41,6 +42,29 @@ public class VersionInfo
         // "5.0.0.35134 R10" -> "5.0.0.35134"
         var spaceIndex = version.IndexOf(' ');
         Version = spaceIndex == -1 ? version : version[..spaceIndex];
+    }
+
+    public int CompareTo(VersionInfo rhs)
+    {
+        return Compare(this, rhs);
+    }
+
+    public int CompareTo(string rhs)
+    {
+        return Compare(Version, rhs);
+    }
+
+    internal static int Compare(string lhs, string rhs)
+    {
+        // Compare version numbers using Version class
+        var lhsVersion = new Version(lhs);
+        var rhsVersion = new Version(rhs);
+        return lhsVersion.CompareTo(rhsVersion);
+    }
+
+    public static int Compare(VersionInfo lhs, VersionInfo rhs) 
+    {
+        return Compare(lhs.Version, rhs.Version);
     }
 
     public static IEnumerable<LabelType> GetLabelTypes()
@@ -59,7 +83,7 @@ public class VersionInfoComparer : Comparer<VersionInfo>
         {
             null when y == null => 0,
             null => -1,
-            _ => y == null ? 1 : VersionRule.CompareVersion(x.Version, y.Version)
+            _ => y == null ? 1 : VersionInfo.Compare(x, y)
         };
     }
 }

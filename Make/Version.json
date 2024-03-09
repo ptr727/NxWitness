@@ -1,30 +1,25 @@
 {
   "$schema": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
-  "SchemaVersion": 1,
+  "SchemaVersion": 2,
   "Products": [
     {
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "6.0.0.38086",
-          "Uri": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_x64-beta.zip",
-          "Labels": [
-            "Beta"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
-          "Uri": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
+          "UriX64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
           ]
         },
         {
-          "Version": "5.1.3.38235",
-          "Uri": "https://updates.networkoptix.com/metavms/38235/metavms-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Version": "6.0.0.38086",
+          "UriX64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_arm64-beta.zip",
           "Labels": [
-            "RC"
+            "Beta"
           ]
         }
       ]
@@ -33,18 +28,20 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "5.1.3.38235",
-          "Uri": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
-          "Uri": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip",
+          "UriX64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "5.1.3.38235",
+          "UriX64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         }
       ]
@@ -53,24 +50,20 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
-          "Version": "5.1.3.38235",
-          "Uri": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_x64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
-          "Uri": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         },
         {
-          "Version": "5.1.0.37133",
-          "Uri": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip",
+          "Version": "5.1.3.38235",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_arm64-rc.zip",
           "Labels": [
-            "Stable"
+            "RC"
           ]
         }
       ]

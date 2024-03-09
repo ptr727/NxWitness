@@ -6,15 +6,23 @@
     },
     "Matrix": {
       "commandName": "Project",
-      "commandLineArgs": "matrix --update=true"
+      "commandLineArgs": "matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update",
+      "workingDirectory": "$(SolutionDir)"
     },
     "Version": {
       "commandName": "Project",
-      "commandLineArgs": "version"
+      "commandLineArgs": "version --version=./Make/Version.json",
+      "workingDirectory": "$(SolutionDir)"
     },
     "Schema": {
       "commandName": "Project",
-      "commandLineArgs": "schema"
+      "commandLineArgs": "schema --schemaversion ./JSON/Version.schema.json --schemamatrix ./JSON/Matrix.schema.json",
+      "workingDirectory": "$(SolutionDir)"
+    },
+    "Make": {
+      "commandName": "Project",
+      "commandLineArgs": "make --matrix=./Make/Matrix.json",
+      "workingDirectory": "$(SolutionDir)"
     }
   }
 }

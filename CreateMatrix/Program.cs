@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Diagnostics;
-using System.Text;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -117,10 +116,6 @@ internal static class Program
         versionSchema.Products.ForEach(item => item.LogInformation());
         versionSchema.Products.ForEach(item => item.VerifyUrls());
 
-        // Filter using default rule set
-        if (!VersionRule.Filter(versionSchema.Products, VersionRule.DefaultRuleList))
-            Log.Logger.Warning("Version filter applied using default rules");
-
         // Write to file
         Log.Logger.Information("Writing version information to {Path}", versionPath);
         VersionJsonSchema.ToFile(versionPath, versionSchema);
@@ -133,11 +128,10 @@ internal static class Program
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
         var fileSchema = VersionJsonSchema.FromFile(versionPath);
-        fileSchema.Products.ForEach(item => item.LogInformation());
 
-        // Filter using default rule set
-        if (!VersionRule.Filter(fileSchema.Products, VersionRule.DefaultRuleList))
-            Log.Logger.Warning("Version filter applied using default rules");
+        // Re-verify as rules may have changed after file was written
+        fileSchema.Products.ForEach(item => item.Verify());
+        fileSchema.Products.ForEach(item => item.LogInformation());
 
         // Update version information
         if (updateVersion)
@@ -149,18 +143,8 @@ internal static class Program
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
 
-            // Merge the online and file information
-            if (!VersionRule.Merge(onlineSchema.Products, fileSchema.Products))
-                Log.Logger.Warning("Online version merged with file version");
-
-            // Filter using default rule set
-            if (!VersionRule.Filter(onlineSchema.Products, VersionRule.DefaultRuleList))
-                Log.Logger.Warning("Version filter applied using default rules");
-
-            // Filter online information using file information
-            var fileFilter = VersionRule.Create(fileSchema.Products);
-            if (!VersionRule.Filter(onlineSchema.Products, fileFilter))
-                Log.Logger.Warning("Version filter applied using current versions on file");
+            // Make sure the labelled version numbers do not regress
+            ReleaseVersionForward.Verify(fileSchema.Products, onlineSchema.Products);
 
             // Update the file version with the online version
             onlineSchema.Products.ForEach(item => item.VerifyUrls());
@@ -197,7 +181,7 @@ internal static class Program
         var makePath = Path.GetDirectoryName(matrixPath) ?? "";
 
         // List of product to path mappings
-        var makeProductList = new List<Tuple<string, string>>() 
+        var makeProductList = new List<Tuple<string, string>>
         {
             new ("NxMeta", "nxmeta.docker"),
             new ("NxWitness", "nxwitness.docker"),
@@ -205,9 +189,9 @@ internal static class Program
         };
 
         // List of args
-        var argList = new List<string>() { ImageInfo.DownloadVersion, ImageInfo.DownloadUrl };
+        var argList = new List<string> { ImageInfo.DownloadVersion, ImageInfo.DownloadX64Url, ImageInfo.DownloadArm64Url };
 
-        // Rewrite the version and path info
+        // Rewrite the args
         foreach (var tuple in makeProductList)
         {
             // Make file path
@@ -218,7 +202,7 @@ internal static class Program
             var fileLines = File.ReadAllLines(filePath).ToList();
 
             // Get latest product entry from matrix
-            var imageInfo = matrixSchema.Images.Find(item => string.Equals(item.Name, tuple.Item1) && item.Tags.Any(item => item.Contains("latest")));
+            var imageInfo = matrixSchema.Images.Find(image => string.Equals(image.Name, tuple.Item1) && image.Tags.Any(tag => tag.Contains("latest")));
             Debug.Assert(imageInfo != null);
 
             // Replace the args

@@ -10,11 +10,22 @@ ARG LABEL_DESCRIPTION="Nx Witness VMS Docker based on LinuxServer"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_URL="https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_arm64.zip"
 ARG DOWNLOAD_VERSION="5.1.2.37996"
 
 # NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
 ARG RUNTIME_NAME="networkoptix"
+
+# Global builder variables
+# https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
+ARG \
+    # Platform of the build result. Eg linux/amd64, linux/arm/v7, windows/amd64
+    TARGETPLATFORM \
+    # Architecture component of TARGETPLATFORM
+    TARGETARCH \
+    # Platform of the node performing the build
+    BUILDPLATFORM
 
 # The RUN wget command will be cached unless we change the cache tag
 # Use the download version for the cache tag

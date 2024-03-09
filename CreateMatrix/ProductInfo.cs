@@ -27,7 +27,7 @@ public class ProductInfo
 
     public ProductType Product { get; set; }
 
-    public List<VersionInfo> Versions { get; set; } = new();
+    public List<VersionInfo> Versions { get; set; } = [];
 
     private string GetProductShortName()
     {
@@ -41,7 +41,7 @@ public class ProductInfo
         };
     }
 
-    private static IEnumerable<ProductType> GetProductTypes()
+    internal static IEnumerable<ProductType> GetProductTypes()
     {
         // Create list of product types
         return Enum.GetValues(typeof(ProductType)).Cast<ProductType>().Where(productType => productType != ProductType.None).ToList();
@@ -55,26 +55,12 @@ public class ProductInfo
 
     public void GetVersions()
     {
-        GetReleasesVersions();
-    }
-
-    private void GetReleasesVersions()
-    {
         // Get version information using releases.json and package.json 
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
         {
-            // Use release version discovery per Network Optix
-            // https://support.networkoptix.com/hc/en-us/community/posts/7615204163607-Automating-downloaded-product-versions-using-JSON-API
-            // Logic follows similar patterns as used in C++ Desktop Client
-            // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
-            // releases_info.cpp : selectVmsRelease(), canReceiveUnpublishedBuild()
-
             // Reuse HttpClient
             using HttpClient httpClient = new();
-
-            // Labels used for state tracking
-            List<VersionInfo.LabelType> labelList = new();
 
             // Get all releases
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetProductShortName());
@@ -88,76 +74,35 @@ public class ProductInfo
                 Debug.Assert(!string.IsNullOrEmpty(release.Version));
                 versionInfo.SetVersion(release.Version);
 
+                // Add the label
+                AddLabel(versionInfo, release.GetLabel());
+
                 // Get the build number from the version
                 var buildNumber = versionInfo.GetBuildNumber();
 
-                // Get package for this release
-                var package = PackagesJsonSchema.GetPackage(httpClient, GetProductShortName(), buildNumber);
-                Debug.Assert(!string.IsNullOrEmpty(package.File));
+                // Get available packages for this release
+                var packageList = PackagesJsonSchema.GetPackages(httpClient, GetProductShortName(), buildNumber);
 
-                // Create the download URL
+                // Get the x64 and arm64 server ubuntu server packages
+                var packageX64 = packageList.Find(item => item.IsX64Server());
+                Debug.Assert(packageX64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
+                var packageArm64 = packageList.Find(item => item.IsArm64Server());
+                Debug.Assert(packageArm64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
+
+                // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionInfo.Uri = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{package.File}";
+                versionInfo.UriX64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageX64.File}";
+                versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageArm64.File}";
 
-                // Set a label based on the publications_type value
-                switch (release.PublicationType)
-                {
-                    case "release":
-                    {
-                        // Set as stable or latest based on released or not
-                        AddLabel(labelList, versionInfo, release.IsReleased() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest);
-
-                        break;
-                    }
-                    case "rc":
-                    {
-                        // Set as rc
-                        AddLabel(labelList, versionInfo, VersionInfo.LabelType.RC);
-
-                        break;
-                    }
-                    case "beta":
-                    {
-                        // Set as beta
-                        AddLabel(labelList, versionInfo, VersionInfo.LabelType.Beta);
-
-                        break;
-                    }
-                    default:
-                        // Unknown publication type
-                        throw new InvalidEnumArgumentException($"Unknown PublicationType: {release.PublicationType}");
-                }
-
-                // Add to list
-                Versions.Add(versionInfo);
+                // Verify and add to list
+                if (VerifyVersion(versionInfo)) 
+                    Versions.Add(versionInfo);
             }
 
-            // If no latest label is set, use stable or rc or beta as latest
-            if (Versions.FindIndex(item => item.Labels.Contains(VersionInfo.LabelType.Latest)) == -1)
-            {
-                // Find stable or rc or beta
-                var latest = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Stable));
-                latest ??= Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.RC));
-                latest ??= Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Beta));
-                Debug.Assert(latest != default(VersionInfo));
-
-                // Add latest
-                latest.Labels.Add(VersionInfo.LabelType.Latest);
-            }
-
-            // If no stable label is set, use latest as stable
-            if (Versions.FindIndex(item => item.Labels.Contains(VersionInfo.LabelType.Stable)) == -1)
-            {
-                // Find latest
-                var stable = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest));
-                Debug.Assert(stable != default(VersionInfo));
-
-                // Add the stable label
-                stable.Labels.Add(VersionInfo.LabelType.Stable);
-            }
-
-            // Sort the labels to make diffs easier
-            Versions.ForEach(item => item.Labels.Sort());
+            // Make sure all labels are correct
+            VerifyLabels();
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
         {
@@ -166,19 +111,94 @@ public class ProductInfo
         }
     }
 
-    private static void AddLabel(List<VersionInfo.LabelType> labelList, VersionInfo versionInfo, VersionInfo.LabelType label)
+    private bool VerifyVersion(VersionInfo versionInfo)
     {
-        // Add label only if not already set
-        if (labelList.Exists(item => item.Equals(label))) 
+        // Static rules:
+
+        // Ubuntu Jammy requires version 5.1 or later
+        if (versionInfo.CompareTo("5.1") >= 0) 
+            return true;
+        
+        Log.Logger.Warning("{Product}:{Version} : Ubuntu Jammy requires v5.1+", Product, versionInfo.Version);
+        return false;
+    }
+
+    private void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
+    {
+        // Ignore if label is None
+        if (label == VersionInfo.LabelType.None)
             return;
-        labelList.Add(label);
+
+        // Does this label already exists in other versions
+        var existingVersion = Versions.Find(item => item.Labels.Contains(label));
+        if (existingVersion == default(VersionInfo))
+        {
+            // New label
+            versionInfo.Labels.Add(label);
+            return;
+        }
+
+        // Is this version larger than the other version
+        if (versionInfo.CompareTo(existingVersion) <= 0) 
+            return;
+        
+        Log.Logger.Information("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
+
+        // Remove from other version
+        existingVersion.Labels.Remove(label);
+        // Add to this version
         versionInfo.Labels.Add(label);
+    }
+
+    private void VerifyLabels()
+    {
+        // Sort by version number
+        Versions.Sort(new VersionInfoComparer());
+
+        // If no Latest label is set, use Stable or RC or Beta as Latest
+        if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
+        {
+            // Find Stable or RC or Beta to use as Latest
+            // Versions are ordered so highest version will be used
+            var latest = Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.Stable));
+            latest ??= Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.RC));
+            latest ??= Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.Beta));
+            Debug.Assert(latest != default(VersionInfo));
+
+            // Add latest
+            latest.Labels.Add(VersionInfo.LabelType.Latest);
+        }
+
+        // If no Stable label is set, use Latest as stable
+        if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
+        {
+            // Find latest
+            var stable = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest));
+            Debug.Assert(stable != default(VersionInfo));
+
+            // Add the stable label
+            stable.Labels.Add(VersionInfo.LabelType.Stable);
+        }
+
+        // Remove all versions without labels
+        Versions.RemoveAll(item => item.Labels.Count == 0);
+
+        // Sort by label
+        Versions.ForEach(item => item.Labels.Sort());
+
+        // Must have 1 Latest and 1 Stable label
+        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)) == 1);
+        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)) == 1);
+
+        // Must have no more than 1 Beta or RC labels
+        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)) <= 1);
+        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)) <= 1);
     }
 
     public void LogInformation()
     {
-        foreach (var versionUri in Versions)
-            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, Uri: {Uri}", Product, versionUri.Version, versionUri.Labels, versionUri.Uri);
+        foreach (var version in Versions)
+            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}", Product, version.Version, version.Labels, version.UriX64, version.UriArm64);
     }
 
     public void VerifyUrls()
@@ -189,7 +209,8 @@ public class ProductInfo
             foreach (var versionUri in Versions)
             { 
                 // Will throw on error
-                VerifyUrl(httpClient, versionUri.Uri);
+                VerifyUrl(httpClient, versionUri.UriX64);
+                VerifyUrl(httpClient, versionUri.UriArm64);
             }
         }
         catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
@@ -219,5 +240,22 @@ public class ProductInfo
             fileName,
             httpResponse.Content.Headers.ContentLength,
             httpResponse.Content.Headers.LastModified);
+    }
+
+    public void Verify()
+    {
+        // Match verification logic executed during GetVersions()
+
+        // Verify each version
+        List<VersionInfo> removeVersions = [];
+        foreach (var version in Versions.Where(version => !VerifyVersion(version)))
+        {
+            Log.Logger.Warning("{Product} : Removing {Version}", Product, version.Version);
+            removeVersions.Add(version);
+        }
+        Versions.RemoveAll(item => removeVersions.Contains(item));
+
+        // Verify labels
+        VerifyLabels();
     }
 }
