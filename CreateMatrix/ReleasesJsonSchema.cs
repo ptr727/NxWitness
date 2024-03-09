@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using Serilog;
+using System.ComponentModel;
 
 namespace CreateMatrix;
 
@@ -33,13 +34,22 @@ public class ReleasesJsonSchema
 
         [JsonProperty("release_delivery_days")] public int ReleaseDeliveryDays { get; set; }
 
-        public bool IsReleased()
+        internal VersionInfo.LabelType GetLabel()
         {
-            // TODO: Follow up with Nx on correctness of logic
-            // Similar to logic used in releases_info.cpp : canReceiveUnpublishedBuild()
-            // release_date is a null or a quoted string in JSON
-            // release_delivery_days is a null or integer in JSON
-            // JSON to int conversion will default to 0 for null, so testing for >= will always be true?
+            // Determine the equivalent label
+            return PublicationType switch
+            {
+                "release" => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.None,
+                "rc" => VersionInfo.LabelType.RC,
+                "beta" => VersionInfo.LabelType.Beta,
+                _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
+            };
+        }
+        private bool IsPublished()
+        {
+            // Logic follows similar patterns as used in C++ Desktop Client
+            // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
+            // releases_info.cpp: ReleasesInfo::selectVmsRelease(), isBuildPublished(), canReceiveUnpublishedBuild()
             return ReleaseDate > 0 && ReleaseDeliveryDays >= 0;
         }
     }

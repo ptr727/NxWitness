@@ -1,5 +1,5 @@
 # Dependencies:
-# sudo apt install make m4 docker-compose docker-buildx
+# sudo apt install make m4 docker-compose-plugin docker-buildx-plugin
 
 # Test installing in container:
 # docker run -it --rm ubuntu:jammy /bin/bash

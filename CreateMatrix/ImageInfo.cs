@@ -24,7 +24,7 @@ public class ImageInfo
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
-        Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType.ToString()}-{baseName}";
+        Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType}-{baseName}";
 
         // E.g. default, lsio
         CacheScope = string.IsNullOrEmpty(baseName) ? "default" : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
@@ -78,6 +78,7 @@ public class ImageInfo
         return imageList;
     }
 
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Local
     private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
@@ -98,7 +99,7 @@ public class ImageInfo
             // Add tags for all labels
             versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
-            // Add prefix as a standalone tag when the label contains latest
+            // Add prefix as a standalone tag for latest
             if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.Latest))
             {
                 imageInfo.AddTag(tagPrefix);

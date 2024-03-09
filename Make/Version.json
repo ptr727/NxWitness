@@ -6,20 +6,20 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "6.0.0.38086",
-          "UriX64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_arm64-beta.zip",
-          "Labels": [
-            "Beta"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
           "UriX64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.0.38086",
+          "UriX64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/38086/metavms-server_update-6.0.0.38086-linux_arm64-beta.zip",
+          "Labels": [
+            "Beta"
           ]
         }
       ]
@@ -28,20 +28,20 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "5.1.3.38235",
-          "UriX64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_x64-rc.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_arm64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
-        },
-        {
           "Version": "5.1.2.37996",
           "UriX64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "5.1.3.38235",
+          "UriX64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/38235/nxwitness-server_update-5.1.3.38235-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         }
       ]
@@ -50,27 +50,20 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
+          "Version": "5.1.2.37996",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_arm64.zip",
+          "Labels": [
+            "Stable",
+            "Latest"
+          ]
+        },
+        {
           "Version": "5.1.3.38235",
           "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_x64-rc.zip",
           "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38235/dwspectrum-server_update-5.1.3.38235-linux_arm64-rc.zip",
           "Labels": [
             "RC"
-          ]
-        },
-        {
-          "Version": "5.1.2.37996",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_arm64.zip",
-          "Labels": [
-            "Latest"
-          ]
-        },
-        {
-          "Version": "5.1.0.37133",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37133/dwspectrum-server_update-5.1.0.37133-linux_arm64.zip",
-          "Labels": [
-            "Stable"
           ]
         }
       ]

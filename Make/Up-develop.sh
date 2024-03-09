@@ -1,7 +1,7 @@
 #!/bin/bash
 
-docker-compose --file Test-develop.yml down --volumes
-docker-compose --file Test-develop.yml up --detach
+docker compose --file Test-develop.yml down --volumes
+docker compose --file Test-develop.yml up --detach
 
 echo "Ctrl-Click on links to launch web UI in browser"
 

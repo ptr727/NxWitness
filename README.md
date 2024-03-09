@@ -19,6 +19,8 @@ Licensed under the [MIT License](./LICENSE).
 - Version 2.1:
   - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
     - TODO: Note that testing was limited to verifying that the container runs on a Raspberry Pi.
+  - Updated build scripts to use `docker compose` and `docker buildx` included in the Docker / Moby v25+ [release](https://docs.docker.com/engine/install/).
+  - Updated CreateMatrix tooling to use newest version for `latest` tag when multiple versions are available.
 - Version 2.0:
   - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
   - Nx released v5.1 across all product brands, v5.1 [supports](https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support) Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.

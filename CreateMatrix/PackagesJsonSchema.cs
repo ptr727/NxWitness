@@ -40,6 +40,22 @@ public class PackagesJsonSchema
         [JsonProperty("signature")] public string Signature { get; set; } = "";
 
         [JsonProperty("variants")] public List<Variant> Variants { get; set; } = [];
+
+        internal bool IsX64Server()
+        {
+            // Test for Server and x64 and Ubuntu
+            return Component.Equals("server", StringComparison.OrdinalIgnoreCase) && 
+                PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) &&
+                Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
+        }
+
+        internal bool IsArm64Server()
+        {
+            // Test for Server and Arm64 and Ubuntu
+            return Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
+                PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase) &&
+                Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
+        }
     }
 
     [JsonProperty("version")] public string Version { get; set; } = "";
