@@ -63,8 +63,8 @@ services:
       - 7111:7001
 
   networkoptix:
-    image: docker.io/ptr727/networkoptix:develop
-    container_name: test-networkoptix-container
+    image: docker.io/ptr727/nxwitness:develop
+    container_name: test_nxwitness-container
     restart: unless-stopped
     environment:
       - TZ=Americas/Los_Angeles
@@ -78,7 +78,7 @@ services:
       - 7102:7001
 
   networkoptix-lsio:
-    image: docker.io/ptr727/networkoptix-lsio:develop
+    image: docker.io/ptr727/nxwitness-lsio:develop
     container_name: test_nxwitness-lsio-container
     restart: unless-stopped
     environment:

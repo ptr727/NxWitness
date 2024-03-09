@@ -18,7 +18,7 @@ Licensed under the [MIT License](./LICENSE).
 
 - Version 2.1:
   - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
-    - TODO: Note that testing was limited to verifying that the container runs on a Raspberry Pi.
+    - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
   - Updated build scripts to use `docker compose` and `docker buildx` included in the Docker / Moby v25+ [release](https://docs.docker.com/engine/install/).
   - Updated CreateMatrix tooling to use newest version for `latest` tag when multiple versions are available.
 - Version 2.0:
