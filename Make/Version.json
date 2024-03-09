@@ -21,6 +21,13 @@
           "Labels": [
             "Beta"
           ]
+        },
+        {
+          "Version": "5.1.3.38235",
+          "Uri": "https://updates.networkoptix.com/metavms/38235/metavms-server_update-5.1.3.38235-linux_x64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
         }
       ]
     },
