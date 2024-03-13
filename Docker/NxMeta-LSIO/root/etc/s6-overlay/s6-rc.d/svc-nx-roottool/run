@@ -1,6 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-# Run root-tool as root
-# The root-tool is required to get DMI information when not running mediaserver as root
-echo "Launching root-tool"
-exec /opt/${COMPANY_NAME}/mediaserver/bin/root-tool
