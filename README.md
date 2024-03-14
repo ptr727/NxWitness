@@ -269,9 +269,9 @@ services:
 
 Build overview:
 
-- A [Makefile](./Make/Makefile) is used to create the `Dockerfile`'s for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
+- [Build scripts](./Make/) are used to create the [`Dockerfile`'s](./Docker/) for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
 - Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble common snippets.
-- The `Dockerfile` [downloads](./Make/Download.sh) and installs the mediaserver installer at build time using environment variables for the URLs.
+- The `Dockerfile` [downloads](./Docker/download.sh) and installs the mediaserver installer at build time using environment variables for the URLs.
 - [`CreateMatrix`](./CreateMatrix/) is a custom app used to update available product versions and download URLs.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
 - The logic follows the same pattern as used by the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client logic.
@@ -283,11 +283,11 @@ Build overview:
 Local testing:
 
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
-  - `make create`: Create `Dockerfile`'s from the snippets using M4 and update the latest version information using `CreateMatrix`.
-  - `make build`: Build the `Dockerfile`'s using `docker buildx build`.
-  - `make up`: Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants.
+  - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s from the snippets using M4 and update the latest version information using `CreateMatrix`.
+  - [`Build.sh`](./Make/Build.sh): Builds the `Dockerfile`'s using `docker buildx build`.
+  - [`Up.sh`](./Make/Up.sh): Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.
-- Run `make clean` to shutdown the compose stack and cleanup images.
+- Run [`Clean.sh`](./Make/Clean.sh) to shutdown the compose stack and cleanup images.
 
 ## Known Issues
 

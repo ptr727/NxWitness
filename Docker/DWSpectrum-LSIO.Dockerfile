@@ -60,11 +60,11 @@ RUN apt-get update \
 
 # Download the installer file
 RUN mkdir -p /temp
-COPY Download.sh /temp/Download.sh
+COPY download.sh /temp/download.sh
 # Set the working directory to /temp
 WORKDIR /temp
-RUN chmod +x Download.sh \
-    && ./Download.sh
+RUN chmod +x download.sh \
+    && ./download.sh
 
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
@@ -97,7 +97,7 @@ RUN chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediase
 # Copy etc init and services files
 # https://github.com/just-containers/s6-overlay#container-environment
 # https://www.linuxserver.io/blog/how-is-container-formed
-COPY root/etc /etc
+COPY s6-overlay /etc/s6-overlay
 
 # Expose port 7001
 EXPOSE 7001

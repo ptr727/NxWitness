@@ -60,11 +60,11 @@ RUN apt-get update \
 
 # Download the installer file
 RUN mkdir -p /temp
-COPY Download.sh /temp/Download.sh
+COPY download.sh /temp/download.sh
 # Set the working directory to /temp
 WORKDIR /temp
-RUN chmod +x Download.sh \
-    && ./Download.sh
+RUN chmod +x download.sh \
+    && ./download.sh
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
@@ -84,7 +84,7 @@ RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/r
 
 # Copy the entrypoint.sh launch script
 # entrypoint.sh will run the mediaserver and root-tool
-COPY root/entrypoint.sh /opt/entrypoint.sh
+COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
 
 # Run the entrypoint as the mediaserver ${COMPANY_NAME} user
