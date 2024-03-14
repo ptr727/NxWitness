@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 set -e
 
 # Create Dockerfile from M4

@@ -15,6 +15,8 @@ Licensed under the [MIT License][license].
 
 ## Release Notes
 
+- Version 2.2:
+  - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile` (that I found too difficult to maintain and debug).
 - Version 2.1:
   - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
     - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
@@ -40,7 +42,7 @@ Images are published on [Docker Hub][hub]:
 
 Images are tagged as follows:
 
-- `latest`: Latest published version, `docker pull docker.io/ptr727/nxmeta:latest`.
+- `latest`: Latest published version, e.g. `docker pull docker.io/ptr727/nxmeta:latest`.
 - `stable`: Latest released version, e.g. `docker pull docker.io/ptr727/nxmeta:stable`.
 - `rc`: Latest RC version, e.g. `docker pull docker.io/ptr727/nxmeta:rc`.
 - `beta`: Latest Beta version, e.g. `docker pull docker.io/ptr727/nxmeta:beta`
@@ -50,7 +52,7 @@ Images are tagged as follows:
 Notes:
 
 - `latest` and `stable` may be the same version if all builds are released builds.
-- `rc` and `beta` tags are only built when RC and Beta builds are published, and may be older than current `latest` or `stable` builds.
+- `rc` and `beta` tags are only built when RC and Beta builds are published by Nx, and may be older than current `latest` or `stable` builds.
 - See [Build Process](#build-process) for determination of the "released" status of a build.
 
 The images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.  
@@ -237,7 +239,7 @@ services:
 
 ## Product Information
 
-### Releases Information
+### Release Information
 
 - Nx Witness:
   - [Downloads API](https://nxvms.com/api/utils/downloads)
@@ -278,7 +280,7 @@ Build overview:
 - The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitness_releases] must be greater than `0`
 - [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
 - Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
-- Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing `release` builds using an older version breaking already upgraded systems.
+- Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
 Local testing:
 

@@ -1,7 +1,11 @@
 #!/bin/bash
 
+set -e
+
 ## Dependencies:
-# sudo apt install m4 docker-compose-plugin docker-buildx-plugin
+# Docker v25+, .NET SDK v8+
+# sudo apt update && sudo apt install m4 dotnet-sdk-8.0 docker-compose-plugin docker-buildx-plugin
+
 
 ## Test installing in container:
 # docker run -it --rm ubuntu:jammy /bin/bash
@@ -33,12 +37,6 @@
 # Test.sh : Create and build and launch compose Test.yml compose stack.
 # Clean.sh : Shutdown compose stack and delete images.
 
-
-# Echo commands
-set -x
-
-# Exit on error
-set -e
 
 # Build Dockerfile
 function BuildDockerfile {

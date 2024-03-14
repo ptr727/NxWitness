@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Echo commands
-set -x
-
-# Exit on error
 set -e
 
 # Create Dockerfile from M4 file

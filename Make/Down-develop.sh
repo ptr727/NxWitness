@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 set -e
 
 # Stop stack and cleanup volumes
