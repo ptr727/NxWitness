@@ -41,8 +41,8 @@ RUN apt-get update \
 
 # Download the installer file
 RUN mkdir -p /temp
-COPY Download.sh /temp/Download.sh
+COPY download.sh /temp/download.sh
 # Set the working directory to /temp
 WORKDIR /temp
-RUN chmod +x Download.sh \
-    && ./Download.sh
+RUN chmod +x download.sh \
+    && ./download.sh

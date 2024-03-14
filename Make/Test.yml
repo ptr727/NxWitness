@@ -6,6 +6,8 @@ version: "3.7"
 # tmpfs is only supported on Linux
 # tmpfs: /tmp
 
+# Use local test_* tag builds
+
 volumes:
 
   test_dwspectrum_etc:
