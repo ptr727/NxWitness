@@ -1,7 +1,12 @@
 #!/bin/bash
 
-make create
-make build
-make up
+set -e
 
-echo "Run 'make clean' to stop and cleanup"
+# Create Dockerfile from M4
+./Create.sh
+
+# Build Dockerfile
+./Build.sh
+
+# Launch compose stack
+./Up.sh

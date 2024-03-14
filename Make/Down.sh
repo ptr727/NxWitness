@@ -1,4 +1,6 @@
 #!/bin/bash
 
-# Stop stack
+set -e
+
+# Stop stack and cleanup volumes
 docker compose --file Test.yml down --volumes
