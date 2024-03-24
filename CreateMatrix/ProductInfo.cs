@@ -142,12 +142,26 @@ public class ProductInfo
         if (versionInfo.CompareTo(existingVersion) <= 0) 
             return;
         
-        Log.Logger.Information("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
+        Log.Logger.Warning("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
 
-        // Remove from other version
+        // Remove from other version and add to this version
         existingVersion.Labels.Remove(label);
-        // Add to this version
         versionInfo.Labels.Add(label);
+    }
+
+    private VersionInfo? FindMissingLabel(VersionInfo.LabelType targetLabel, List<VersionInfo.LabelType> sourceLabels)
+    {
+        foreach (var label in sourceLabels)
+        {
+            // Find last matching item, must be sorted
+            var version = Versions.FindLast(item => item.Labels.Contains(label));
+            if (version != default(VersionInfo))
+            {
+                Log.Logger.Warning("{Product}: Using {SourceLabel} for {TargetLabel}", Product, label, targetLabel);
+                return version;
+            }
+        }
+        return default;
     }
 
     private void VerifyLabels()
@@ -158,25 +172,16 @@ public class ProductInfo
         // If no Latest label is set, use Stable or RC or Beta as Latest
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
-            // Find Stable or RC or Beta to use as Latest
-            // Versions are ordered so highest version will be used
-            var latest = Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.Stable));
-            latest ??= Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.RC));
-            latest ??= Versions.FindLast(item => item.Labels.Contains(VersionInfo.LabelType.Beta));
+            var latest = FindMissingLabel(VersionInfo.LabelType.Latest, [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]);
             Debug.Assert(latest != default(VersionInfo));
-
-            // Add latest
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
 
         // If no Stable label is set, use Latest as stable
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
-            // Find latest
-            var stable = Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest));
+            var stable = FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest]);
             Debug.Assert(stable != default(VersionInfo));
-
-            // Add the stable label
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
 
