@@ -39,7 +39,8 @@ public class ReleasesJsonSchema
             // Determine the equivalent label
             return PublicationType switch
             {
-                "release" => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.None,
+                // Use Stable or Latest based on if published or not
+                "release" => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
                 "rc" => VersionInfo.LabelType.RC,
                 "beta" => VersionInfo.LabelType.Beta,
                 _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
