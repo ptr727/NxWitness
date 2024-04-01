@@ -6,18 +6,11 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "5.1.2.37996",
-          "UriX64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "5.1.3.38363",
           "UriX64": "https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         },
@@ -35,18 +28,11 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "5.1.2.37996",
-          "UriX64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/37996/nxwitness-server_update-5.1.2.37996-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "5.1.3.38363",
           "UriX64": "https://updates.networkoptix.com/default/38363/nxwitness-server_update-5.1.3.38363-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/default/38363/nxwitness-server_update-5.1.3.38363-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         }
