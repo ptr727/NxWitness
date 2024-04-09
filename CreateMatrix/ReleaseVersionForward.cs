@@ -8,24 +8,26 @@ internal static class ReleaseVersionForward
     {
         // newProductList will be updated in-place
 
-        // Verify all products
-        foreach (var product in ProductInfo.GetProductTypes())
+        // Verify against all products in the old list
+        foreach (var oldProduct in oldProductList)
         {
-            // Find matching products
-            var oldProduct = oldProductList.First(item => item.Product == product);
-            var newProduct = newProductList.First(item => item.Product == product);
+            // Find matching new product, must be present
+            var newProduct = newProductList.First(item => item.Product == oldProduct.Product);
 
-            // Verify only Stable and Latest, other labels are optional
-            List< VersionInfo.LabelType> labels = [ VersionInfo.LabelType.Stable, VersionInfo.LabelType.Latest ];
-            foreach (var label in labels) 
+            // Verify all labels
+            foreach (var label in VersionInfo.GetLabelTypes()) 
                 Verify(oldProduct, newProduct, label);
         }
     }
 
     private static void Verify(ProductInfo oldProduct, ProductInfo newProduct, VersionInfo.LabelType label)
     {
-        // Find matching versions
-        var oldVersion = oldProduct.Versions.First(item => item.Labels.Contains(label));
+        // Find label in old product, skip if not present
+        var oldVersion = oldProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+        if (oldVersion == default(VersionInfo))
+            return;
+
+        // New product must have the same label
         var newVersion = newProduct.Versions.First(item => item.Labels.Contains(label));
 
         // New version must be >= old version

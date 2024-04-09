@@ -9,8 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		.gitignore = .gitignore
+		HubREADME.md = HubREADME.md
 		LICENSE = LICENSE
 		README.md = README.md
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Make", "Make", "{486D3D04-33A6-4311-9E86-A8FFD8610330}"
@@ -55,6 +57,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{7616
 		.github\workflows\DockerHubDescription.yml = .github\workflows\DockerHubDescription.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{7D1EA36A-E59A-4144-9014-D5ABFE44C432}"
+	ProjectSection(SolutionItems) = preProject
+		Docker\download.sh = Docker\download.sh
+		Docker\DWSpectrum-LSIO.Dockerfile = Docker\DWSpectrum-LSIO.Dockerfile
+		Docker\DWSpectrum.Dockerfile = Docker\DWSpectrum.Dockerfile
+		Docker\entrypoint.sh = Docker\entrypoint.sh
+		Docker\NxMeta-LSIO.Dockerfile = Docker\NxMeta-LSIO.Dockerfile
+		Docker\NxMeta.Dockerfile = Docker\NxMeta.Dockerfile
+		Docker\NxWitness-LSIO.Dockerfile = Docker\NxWitness-LSIO.Dockerfile
+		Docker\NxWitness.Dockerfile = Docker\NxWitness.Dockerfile
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateMatrixTests", "CreateMatrixTests\CreateMatrixTests.csproj", "{2524A282-16D8-44FD-8704-40548C96A5C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +81,10 @@ Global
 		{71CFB3CE-153B-4B61-975D-9FDE9ECD4136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71CFB3CE-153B-4B61-975D-9FDE9ECD4136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71CFB3CE-153B-4B61-975D-9FDE9ECD4136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2524A282-16D8-44FD-8704-40548C96A5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2524A282-16D8-44FD-8704-40548C96A5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2524A282-16D8-44FD-8704-40548C96A5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2524A282-16D8-44FD-8704-40548C96A5C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

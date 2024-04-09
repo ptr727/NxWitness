@@ -40,12 +40,17 @@ public class ReleasesJsonSchema
             return PublicationType switch
             {
                 // Use Stable or Latest based on if published or not
-                "release" => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
-                "rc" => VersionInfo.LabelType.RC,
-                "beta" => VersionInfo.LabelType.Beta,
+                ReleasePublication => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
+                RcPublication => VersionInfo.LabelType.RC,
+                BetaPublication => VersionInfo.LabelType.Beta,
                 _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
             };
         }
+        internal const string ReleasePublication = "release";
+        internal const string RcPublication = "rc";
+        internal const string BetaPublication = "beta";
+        internal const string VmsProduct = "vms";
+
         private bool IsPublished()
         {
             // Logic follows similar patterns as used in C++ Desktop Client

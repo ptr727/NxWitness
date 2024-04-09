@@ -55,6 +55,9 @@ public class ProductInfo
 
     public void GetVersions()
     {
+        // Match the logic with ReleasesTests.CreateProductInfo()
+        // TODO: Refactor to reduce duplication and chance of divergence
+
         // Get version information using releases.json and package.json 
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
@@ -67,7 +70,7 @@ public class ProductInfo
             foreach (var release in releasesList)
             {
                 // We expect only "vms" products
-                Debug.Assert(release.Product.Equals("vms", StringComparison.OrdinalIgnoreCase));
+                Debug.Assert(release.Product.Equals(ReleasesJsonSchema.Release.VmsProduct, StringComparison.OrdinalIgnoreCase));
 
                 // Set version
                 VersionInfo versionInfo = new();
@@ -123,7 +126,7 @@ public class ProductInfo
         return false;
     }
 
-    private void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
+    internal void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
     {
         // Ignore if label is None
         if (label == VersionInfo.LabelType.None)
@@ -164,7 +167,7 @@ public class ProductInfo
         return default;
     }
 
-    private void VerifyLabels()
+    internal void VerifyLabels()
     {
         // Sort by version number
         Versions.Sort(new VersionInfoComparer());
