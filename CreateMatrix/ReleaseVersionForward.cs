@@ -2,9 +2,9 @@
 
 namespace CreateMatrix;
 
-internal static class ReleaseVersionForward
+public static class ReleaseVersionForward
 {
-    internal static void Verify(List<ProductInfo> oldProductList, List<ProductInfo> newProductList)
+    public static void Verify(List<ProductInfo> oldProductList, List<ProductInfo> newProductList)
     {
         // newProductList will be updated in-place
 

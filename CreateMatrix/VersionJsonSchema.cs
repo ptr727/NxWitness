@@ -1,38 +1,28 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Schema.Generation;
-// ReSharper disable PropertyCanBeMadeInitOnly.Global
+﻿using Json.Schema.Generation;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CreateMatrix;
 
 public class VersionJsonSchemaBase
 {
-    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
-
-    // Schema reference
-    [JsonProperty(PropertyName = "$schema", Order = -3)]
+    [JsonPropertyName("$schema")]
+    [JsonPropertyOrder(-3)]
     public string Schema { get; } = SchemaUri;
 
-    // Default to 0 if no value specified, and always write the version first
-    [DefaultValue(0)]
-    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate, Order = -2)]
+    [JsonRequired]
+    [JsonPropertyOrder(-2)]
     public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
+
+    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
 }
 
 public class VersionJsonSchema : VersionJsonSchemaBase
 {
     public const int Version = 2;
 
-    private static readonly JsonSerializerSettings Settings = new()
-    {
-        Formatting = Formatting.Indented,
-        StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
-        NullValueHandling = NullValueHandling.Ignore,
-        ObjectCreationHandling = ObjectCreationHandling.Replace
-    };
-
-    [Required] 
+    [JsonRequired]
     public List<ProductInfo> Products { get; set; } = [];
 
     public static VersionJsonSchema FromFile(string path)
@@ -48,43 +38,40 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     private static string ToJson(VersionJsonSchema jsonSchema)
     {
-        return JsonConvert.SerializeObject(jsonSchema, Settings);
+        return JsonSerializer.Serialize(jsonSchema, MatrixJsonSchema.JsonWriteOptions);
     }
 
     private static VersionJsonSchema FromJson(string jsonString)
     {
-        var versionJsonSchemaBase = JsonConvert.DeserializeObject<VersionJsonSchemaBase>(jsonString, Settings);
+        var versionJsonSchemaBase = JsonSerializer.Deserialize<VersionJsonSchemaBase>(jsonString, MatrixJsonSchema.JsonReadOptions);
         ArgumentNullException.ThrowIfNull(versionJsonSchemaBase);
 
         // Deserialize the correct version
         var schemaVersion = versionJsonSchemaBase.SchemaVersion;
         switch (schemaVersion)
         {
-            // Current version
             case Version:
-                var schema = JsonConvert.DeserializeObject<VersionJsonSchema>(jsonString, Settings);
+                var schema = JsonSerializer.Deserialize<VersionJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
-            case 1:
+            // case 1:
                 // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
                 // Breaking change, UriArm64 is required in ARM64 docker builds
-                throw new InvalidEnumArgumentException($"Unsupported SchemaVersion: {schemaVersion}");
             // Unknown version
             default:
-                throw new InvalidEnumArgumentException($"Unknown SchemaVersion: {schemaVersion}");
+                throw new NotImplementedException();
         }
     }
 
     public static void GenerateSchema(string path)
     {
-        var generator = new JSchemaGenerator
-        {
-            DefaultRequired = Required.Default
-        };
-        var schema = generator.Generate(typeof(VersionJsonSchema));
-        schema.Title = "CreateMatrix Version Schema";
-        schema.SchemaVersion = new Uri("https://json-schema.org/draft-06/schema");
-        schema.Id = new Uri(SchemaUri);
-        File.WriteAllText(path, schema.ToString());
+        const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
+        var schemaBuilder = new JsonSchemaBuilder().FromType<VersionJsonSchema>(new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName })
+            .Title("CreateMatrix Version Schema")
+            .Id(new Uri(SchemaUri))
+            .Schema(new Uri(schemaVersion))
+            .Build();
+        var jsonSchema = JsonSerializer.Serialize(schemaBuilder, MatrixJsonSchema.JsonWriteOptions);
+        File.WriteAllText(path, jsonSchema);
     }
 }

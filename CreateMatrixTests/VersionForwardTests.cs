@@ -8,32 +8,32 @@ public class VersionForwardTests
     public void VersionForward()
     {
         // Create test releases
-        var oldProductList = new List<ProductInfo>() 
+        var oldProductList = new List<ProductInfo>
         { 
-            new ProductInfo() 
+            new()
             { 
                 Product = ProductInfo.ProductType.NxMeta,
-                Versions = new List<VersionInfo>() 
-                { 
-                    new VersionInfo { Version = "1.0", Labels = [ VersionInfo.LabelType.Stable ] },
-                    new VersionInfo { Version = "2.0", Labels = [ VersionInfo.LabelType.Latest ] },
-                    new VersionInfo { Version = "3.0", Labels = [ VersionInfo.LabelType.RC ] },
-                    new VersionInfo { Version = "4.0", Labels = [ VersionInfo.LabelType.Beta ] }
-                }
+                Versions =
+                [
+                    new VersionInfo { Version = "1.0", Labels = [VersionInfo.LabelType.Stable] },
+                    new VersionInfo { Version = "2.0", Labels = [VersionInfo.LabelType.Latest] },
+                    new VersionInfo { Version = "3.0", Labels = [VersionInfo.LabelType.RC] },
+                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
+                ]
             }
         };
-        var newProductList = new List<ProductInfo>()
+        var newProductList = new List<ProductInfo>
         {
-            new ProductInfo()
+            new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
-                Versions = new List<VersionInfo>()
-                {
-                    new VersionInfo { Version = "1.1", Labels = [ VersionInfo.LabelType.Stable ] },
-                    new VersionInfo { Version = "2.1", Labels = [ VersionInfo.LabelType.Latest ] },
-                    new VersionInfo { Version = "3.1", Labels = [ VersionInfo.LabelType.RC ] },
-                    new VersionInfo { Version = "4.1", Labels = [ VersionInfo.LabelType.Beta ] }
-                }
+                Versions =
+                [
+                    new VersionInfo { Version = "1.1", Labels = [VersionInfo.LabelType.Stable] },
+                    new VersionInfo { Version = "2.1", Labels = [VersionInfo.LabelType.Latest] },
+                    new VersionInfo { Version = "3.1", Labels = [VersionInfo.LabelType.RC] },
+                    new VersionInfo { Version = "4.1", Labels = [VersionInfo.LabelType.Beta] }
+                ]
             }
         };
 
@@ -70,32 +70,32 @@ public class VersionForwardTests
     public void VersionRegress()
     {
         // Create test releases
-        var oldProductList = new List<ProductInfo>()
+        var oldProductList = new List<ProductInfo>
         {
-            new ProductInfo()
+            new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
-                Versions = new List<VersionInfo>()
-                {
-                    new VersionInfo { Version = "1.0", Labels = [ VersionInfo.LabelType.Stable ] },
-                    new VersionInfo { Version = "2.0", Labels = [ VersionInfo.LabelType.Latest ] },
-                    new VersionInfo { Version = "3.0", Labels = [ VersionInfo.LabelType.RC ] },
-                    new VersionInfo { Version = "4.0", Labels = [ VersionInfo.LabelType.Beta ] }
-                }
+                Versions =
+                [
+                    new VersionInfo { Version = "1.0", Labels = [VersionInfo.LabelType.Stable] },
+                    new VersionInfo { Version = "2.0", Labels = [VersionInfo.LabelType.Latest] },
+                    new VersionInfo { Version = "3.0", Labels = [VersionInfo.LabelType.RC] },
+                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
+                ]
             }
         };
-        var newProductList = new List<ProductInfo>()
+        var newProductList = new List<ProductInfo>
         {
-            new ProductInfo()
+            new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
-                Versions = new List<VersionInfo>()
-                {
-                    new VersionInfo { Version = "0.9", Labels = [ VersionInfo.LabelType.Stable ] },
-                    new VersionInfo { Version = "1.9", Labels = [ VersionInfo.LabelType.Latest ] },
-                    new VersionInfo { Version = "2.9", Labels = [ VersionInfo.LabelType.RC ] },
-                    new VersionInfo { Version = "3.9", Labels = [ VersionInfo.LabelType.Beta ] }
-                }
+                Versions =
+                [
+                    new VersionInfo { Version = "0.9", Labels = [VersionInfo.LabelType.Stable] },
+                    new VersionInfo { Version = "1.9", Labels = [VersionInfo.LabelType.Latest] },
+                    new VersionInfo { Version = "2.9", Labels = [VersionInfo.LabelType.RC] },
+                    new VersionInfo { Version = "3.9", Labels = [VersionInfo.LabelType.Beta] }
+                ]
             }
         };
 

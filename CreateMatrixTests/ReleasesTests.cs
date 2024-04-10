@@ -12,13 +12,13 @@ public class ReleasesTests
         {
             Releases = [
                 // Stable, published and released
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, ReleaseDate = 1, ReleaseDeliveryDays = 1, Version = "1.0" },
+                new Release { PublicationType = Release.ReleasePublication, ReleaseDate = 1, ReleaseDeliveryDays = 1, Version = "1.0" },
                 // Latest, published not released
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, Version = "2.0" },
+                new Release { PublicationType = Release.ReleasePublication, Version = "2.0" },
                 // RC
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.RcPublication, Version = "3.0" },
+                new Release { PublicationType = Release.RcPublication, Version = "3.0" },
                 // Beta
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.BetaPublication, Version = "4.0" }
+                new Release { PublicationType = Release.BetaPublication, Version = "4.0" }
                 ]
         };
         
@@ -49,11 +49,11 @@ public class ReleasesTests
         {
             Releases = [
                 // Stable, published and released
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, ReleaseDate = 1, ReleaseDeliveryDays = 1, Version = "1.0" },
+                new Release { PublicationType = Release.ReleasePublication, ReleaseDate = 1, ReleaseDeliveryDays = 1, Version = "1.0" },
                 // RC
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.RcPublication, Version = "3.0" },
+                new Release { PublicationType = Release.RcPublication, Version = "3.0" },
                 // Beta
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.BetaPublication, Version = "4.0" }
+                new Release { PublicationType = Release.BetaPublication, Version = "4.0" }
                 ]
         };
 
@@ -72,7 +72,7 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
         
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => (item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable)));
+        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
         Assert.Single(latestVersions);
         // Should have Latest and Stable labels
@@ -90,11 +90,11 @@ public class ReleasesTests
         {
             Releases = [
                 // Latest, published not released
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, Version = "1.0" },
+                new Release { PublicationType = Release.ReleasePublication, Version = "1.0" },
                 // RC
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.RcPublication, Version = "3.0" },
+                new Release { PublicationType = Release.RcPublication, Version = "3.0" },
                 // Beta
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.BetaPublication, Version = "4.0" }
+                new Release { PublicationType = Release.BetaPublication, Version = "4.0" }
                 ]
         };
 
@@ -113,7 +113,7 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
 
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => (item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable)));
+        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
         Assert.Single(latestVersions);
         // Should have Latest and Stable labels
@@ -129,9 +129,9 @@ public class ReleasesTests
         {
             Releases = [
                 // Published not released
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, Version = "2.0" },
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, Version = "3.0" },
-                new ReleasesJsonSchema.Release { PublicationType = ReleasesJsonSchema.Release.ReleasePublication, Version = "4.0" },
+                new Release { PublicationType = Release.ReleasePublication, Version = "2.0" },
+                new Release { PublicationType = Release.ReleasePublication, Version = "3.0" },
+                new Release { PublicationType = Release.ReleasePublication, Version = "4.0" }
                 ]
         };
 
@@ -148,7 +148,7 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)));
 
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => (item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable)));
+        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
         Assert.Single(latestVersions);
         // Should have Latest and Stable labels
