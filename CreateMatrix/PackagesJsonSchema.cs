@@ -14,9 +14,6 @@ public class Variant
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = "";
-
-    [JsonPropertyName("minimumVersion")]
-    public string MinimumVersion { get; set; } = "";
 }
 
 public class Package
@@ -29,15 +26,6 @@ public class Package
 
     [JsonPropertyName("file")]
     public string File { get; set; } = "";
-
-    [JsonPropertyName("size")]
-    public long Size { get; set; }
-
-    [JsonPropertyName("md5")]
-    public string Md5 { get; set; } = "";
-
-    [JsonPropertyName("signature")]
-    public string Signature { get; set; } = "";
 
     [JsonPropertyName("variants")]
     public List<Variant> Variants { get; set; } = [];
@@ -61,24 +49,6 @@ public class Package
 
 public class PackagesJsonSchema
 {
-    [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
-
-    [JsonPropertyName("cloudHost")]
-    public string CloudHost { get; set; } = "";
-
-    [JsonPropertyName("releaseNotesUrl")]
-    public string ReleaseNotesUrl { get; set; } = "";
-
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = "";
-
-    [JsonPropertyName("eula")]
-    public string Eula { get; set; } = "";
-
-    [JsonPropertyName("eulaVersion")]
-    public long EulaVersion { get; set; }
-
     [JsonPropertyName("packages")]
     public List<Package> Packages { get; set; } = [];
 

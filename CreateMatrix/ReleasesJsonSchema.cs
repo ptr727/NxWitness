@@ -19,17 +19,14 @@ public class Release
     [JsonPropertyName("version")]
     public string Version { get; set; } = "";
 
-    [JsonPropertyName("protocol_version")]
-    public int ProtocolVersion { get; set; }
-
     [JsonPropertyName("publication_type")]
     public string PublicationType { get; set; } = "";
 
     [JsonPropertyName("release_date")]
-    public long ReleaseDate { get; set; }
+    public long? ReleaseDate { get; set; }
 
     [JsonPropertyName("release_delivery_days")]
-    public int ReleaseDeliveryDays { get; set; }
+    public long? ReleaseDeliveryDays { get; set; }
 
     public VersionInfo.LabelType GetLabel()
     {
@@ -59,9 +56,6 @@ public class Release
 
 public class ReleasesJsonSchema
 {
-    [JsonPropertyName("packages_urls")]
-    public List<string> PackagesUrls { get; set; } = [];
-
     [JsonPropertyName("releases")]
     public List<Release> Releases { get; set; } = [];
 
