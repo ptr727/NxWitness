@@ -1,80 +1,60 @@
 {
-  "$schema": "https://json-schema.org/draft-06/schema",
-  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
-  "title": "CreateMatrix Version Schema",
-  "definitions": {
-    "ProductInfo": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "Product": {},
-        "Versions": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/definitions/VersionInfo"
+  "type": "object",
+  "properties": {
+    "Products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Product": {
+            "enum": [
+              "None",
+              "NxMeta",
+              "NxWitness",
+              "DWSpectrum"
+            ]
+          },
+          "Versions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Labels": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "None",
+                      "Stable",
+                      "Latest",
+                      "Beta",
+                      "RC"
+                    ]
+                  }
+                },
+                "UriArm64": {
+                  "type": "string"
+                },
+                "UriX64": {
+                  "type": "string"
+                },
+                "Version": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
     },
-    "VersionInfo": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "Version": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "UriX64": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "UriArm64": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "Labels": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {}
-        }
-      }
-    }
-  },
-  "type": "object",
-  "properties": {
     "$schema": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": "string",
+      "readOnly": true
     },
     "SchemaVersion": {
-      "type": "integer",
-      "default": 0
-    },
-    "Products": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/ProductInfo"
-      }
+      "type": "integer"
     }
   },
-  "required": [
-    "Products"
-  ]
+  "title": "CreateMatrix Version Schema",
+  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

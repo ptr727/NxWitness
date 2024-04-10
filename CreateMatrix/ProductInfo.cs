@@ -1,21 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 using Serilog;
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace CreateMatrix;
 
 public class ProductInfo
 {
-    // JSON serialized must be public get and set
-
-    // Serialize enums as strings
-    // Use same spelling as used in Makefile
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ProductType
     {
         None,
@@ -41,7 +34,7 @@ public class ProductInfo
         };
     }
 
-    internal static IEnumerable<ProductType> GetProductTypes()
+    public static IEnumerable<ProductType> GetProductTypes()
     {
         // Create list of product types
         return Enum.GetValues(typeof(ProductType)).Cast<ProductType>().Where(productType => productType != ProductType.None).ToList();
@@ -55,6 +48,9 @@ public class ProductInfo
 
     public void GetVersions()
     {
+        // Match the logic with ReleasesTests.CreateProductInfo()
+        // TODO: Refactor to reduce duplication and chance of divergence
+
         // Get version information using releases.json and package.json 
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
@@ -67,7 +63,7 @@ public class ProductInfo
             foreach (var release in releasesList)
             {
                 // We expect only "vms" products
-                Debug.Assert(release.Product.Equals("vms", StringComparison.OrdinalIgnoreCase));
+                Debug.Assert(release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase));
 
                 // Set version
                 VersionInfo versionInfo = new();
@@ -85,10 +81,10 @@ public class ProductInfo
 
                 // Get the x64 and arm64 server ubuntu server packages
                 var packageX64 = packageList.Find(item => item.IsX64Server());
-                Debug.Assert(packageX64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(packageX64 != default(Package));
                 Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
                 var packageArm64 = packageList.Find(item => item.IsArm64Server());
-                Debug.Assert(packageArm64 != default(PackagesJsonSchema.Package));
+                Debug.Assert(packageArm64 != default(Package));
                 Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
 
                 // Create the download URLs
@@ -123,7 +119,7 @@ public class ProductInfo
         return false;
     }
 
-    private void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
+    public void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
     {
         // Ignore if label is None
         if (label == VersionInfo.LabelType.None)
@@ -164,7 +160,7 @@ public class ProductInfo
         return default;
     }
 
-    private void VerifyLabels()
+    public void VerifyLabels()
     {
         // Sort by version number
         Versions.Sort(new VersionInfoComparer());

@@ -108,6 +108,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      # Keep building even if a job fails, helps with troubleshooting
+      fail-fast: false
       # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         images: ${{ fromJson(needs.setmatrix.outputs.matrix).images }}

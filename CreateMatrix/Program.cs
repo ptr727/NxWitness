@@ -10,7 +10,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace CreateMatrix;
 
-internal static class Program
+public static class Program
 {
     private static async Task<int> Main(string[] args)
     {

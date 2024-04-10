@@ -12,8 +12,8 @@ set -e
 # docker run -it --rm lsiobase/ubuntu:jammy /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update && apt-get upgrade --yes
-# apt-get install --no-install-recommends --yes mc nano strace wget gdb
-# wget --no-verbose --output-document=./vms_server.zip https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip
+# apt-get install --no-install-recommends --yes ca-certificates mc nano unzip wget strace gdb
+# wget --output-document=./vms_server.zip https://updates.networkoptix.com/metavms/37996/metavms-server_update-5.1.2.37996-linux_x64.zip
 # unzip -d ./download_zip ./vms_server.zip
 # cp ./download_zip/metavms-server-5.1.2.37996-linux_x64.deb ./vms_server.deb
 # Install:
