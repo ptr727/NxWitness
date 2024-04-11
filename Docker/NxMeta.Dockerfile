@@ -69,6 +69,7 @@ RUN chmod +x download.sh \
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
+        file \
         gdb \
         sudo \
         ./vms_server.deb \
