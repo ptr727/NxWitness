@@ -1,15 +1,15 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel;
 using Serilog;
 
 namespace CreateMatrix;
 
-// https://updates.vmsproxy.com/{product}/releases.json
+// https://updates.vmsproxy.com/{release}/releases.json
 // https://updates.vmsproxy.com/default/releases.json
 // https://updates.vmsproxy.com/metavms/releases.json
 // https://updates.vmsproxy.com/digitalwatchdog/releases.json
+// https://updates.vmsproxy.com/hanwha/releases.json
 
 public class Release
 {
@@ -78,7 +78,7 @@ public class ReleasesJsonSchema
         var releasesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(releasesSchema);
         ArgumentNullException.ThrowIfNull(releasesSchema.Releases);
-        Debug.Assert(releasesSchema.Releases.Count > 0);
+        ArgumentOutOfRangeException.ThrowIfZero(releasesSchema.Releases.Count);
 
         // Return releases
         return releasesSchema.Releases;

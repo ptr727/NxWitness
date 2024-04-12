@@ -11,7 +11,6 @@ public class VersionInfo
         Stable,
         Latest,
         Beta,
-        // ReSharper disable once InconsistentNaming
         RC
     }
 

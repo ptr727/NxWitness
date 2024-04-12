@@ -29,18 +29,18 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net8.0/CreateMatrix.dll",
-            "args": ["schema"],
+            "args": ["schema", "--schemaversion=./JSON/Version.schema.json", "--schemamatrix=./JSON/Matrix.schema.json"],
             "cwd": "${workspaceFolder}/CreateMatrix/JSON",
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "Update Make Files",
+            "name": "Create Docker and Compose Files",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net8.0/CreateMatrix.dll",
-            "args": ["make", "--matrix=./Make/Matrix.json"],
+            "args": ["make", "--version=./Make/Version.json", "--make=./Make", "--docker=./Docker", "--label=Beta"],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false

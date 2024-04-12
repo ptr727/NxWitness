@@ -1,6 +1,6 @@
-# Docker Projects for Nx Witness and Nx Meta and DW Spectrum
+# Docker Projects for Nx Witness and Variants
 
-This is a project to build docker containers for [Network Optix Nx Witness VMS][nxwitness], and [Network Optix Nx Meta VMS][nxmeta], the developer test and preview version of Nx Witness, and [Digital Watchdog DW Spectrum IPVMS][dwwatchdog], the US licensed and OEM branded version of Nx Witness.
+This is a project to build docker containers for [Network Optix Nx Witness VMS][nxwitness], [Network Optix Nx Meta VMS][nxmeta], [Digital Watchdog DW Spectrum IPVMS][dwspectrum], and [Hanwha Vision Wisenet WAVE VMS][hanwhawave].
 
 ## License
 
@@ -15,9 +15,13 @@ Licensed under the [MIT License][license].
 
 ## Release Notes
 
+- Version 2.4:
+  - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
+  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files.
 - Version 2.3:
   - Added unit test project to verify the release and upgrade control logic.
   - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
+  - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142](https://github.com/ptr727/NxWitness/issues/142).
 - Version 2.2:
   - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile` (that I found too difficult to maintain and debug).
 - Version 2.1:
@@ -42,6 +46,8 @@ Images are published on [Docker Hub][hub]:
 - [NxMeta-LSIO][hub_nxmeta-lsio]: `docker pull docker.io/ptr727/nxmeta-lsio`
 - [DWSpectrum][hub_dwspectrum]: `docker pull docker.io/ptr727/dwspectrum`
 - [DWSpectrum-LSIO][hub_dwspectrum-lsio]: `docker pull docker.io/ptr727/dwspectrum-lsio`
+- [WisenetWAVE][hub_wisenetwave]: `docker pull docker.io/ptr727/wisenetwave`
+- [WisenetWAVE-LSIO][hub_wisenetwave-lsio]: `docker pull docker.io/ptr727/wisenetwave-lsio`
 
 Images are tagged as follows:
 
@@ -97,6 +103,18 @@ See the [Build Process](#build-process) section for more details on how versions
 [![DWSpectrum-LSIO RC][hub_dwspectrum-lsio_rc_shield]][hub_dwspectrum-lsio]
 [![DWSpectrum-LSIO Beta][hub_dwspectrum-lsio_beta_shield]][hub_dwspectrum-lsio]
 
+[WisenetWAVE][hub_wisenetwave]:  
+[![WisenetWAVE Stable][hub_wisenetwave_stable_shield]][hub_wisenetwave]
+[![WisenetWAVE Latest][hub_wisenetwave_latest_shield]][hub_wisenetwave]
+[![WisenetWAVE RC][hub_wisenetwave_rc_shield]][hub_wisenetwave]
+[![WisenetWAVE Beta][hub_wisenetwave_beta_shield]][hub_wisenetwave]
+
+[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:  
+[![WisenetWAVE-LSIO Stable][hub_wisenetwave-lsio_stable_shield]][hub_wisenetwave-lsio]
+[![WisenetWAVE-LSIO Latest][hub_wisenetwave-lsio_latest_shield]][hub_wisenetwave-lsio]
+[![WisenetWAVE-LSIO RC][hub_wisenetwave-lsio_rc_shield]][hub_wisenetwave-lsio]
+[![WisenetWAVE-LSIO Beta][hub_wisenetwave-lsio_beta_shield]][hub_wisenetwave-lsio]
+
 ## Overview
 
 ### Introduction
@@ -108,11 +126,12 @@ Today Network Optix supports [Docker][nx_docker], and they publish [build script
 
 ### Products
 
-The project supports three product variants:
+The project supports the following product variants:
 
 - [Network Optix Nx Witness VMS][nxwitness].
 - [Network Optix Nx Meta VMS][nxmeta], the developer test and preview version of Nx Witness.
-- [Digital Watchdog DW Spectrum IPVMS][dwwatchdog], the US licensed and OEM branded version of Nx Witness.
+- [Digital Watchdog DW Spectrum IPVMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Digital Watchdog][digitalwatchdog].
+- [Hanwha Vision Wisenet WAVE VMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Hanwha Vision][hanwhavision].
 
 ### Base Images
 
@@ -139,6 +158,7 @@ User accounts and directory names are based on the product variant exposed by th
 - NxWitness: `networkoptix`
 - DWSpectrum: `digitalwatchdog`
 - NxMeta: `networkoptix-metavms`
+- WisenetWAVE: `hanwha`
 
 ### LSIO Volumes
 
@@ -245,23 +265,24 @@ services:
 ### Release Information
 
 - Nx Witness:
-  - [Downloads API](https://nxvms.com/api/utils/downloads)
-  - [Releases API][nxwitness_releases]
-  - [Downloads](https://nxvms.com/download/linux)
-  - [Beta Downloads](https://beta.networkoptix.com/beta-builds/default)
-  - [Release Notes](https://www.networkoptix.com/all-nx-witness-release-notes)
+  - [Releases JSON API][nxwitness_releases]
+  - [Downloads][nxwitness_download]
+  - [Beta Downloads][nxwitness_betadownload]
+  - [Release Notes][nxwitness_releasenotes]
 - Nx Meta:
-  - [Downloads API](https://meta.nxvms.com/api/utils/downloads)
-  - [Releases API](https://updates.vmsproxy.com/metavms/releases.json)
-  - [Early Access Signup](https://support.networkoptix.com/hc/en-us/articles/360046713714-Get-an-Nx-Meta-Build)
-  - [Request Developer Licenses](https://support.networkoptix.com/hc/en-us/articles/360045718294-Getting-Licenses-for-Developers)
-  - [Downloads](https://meta.nxvms.com/download/linux)
-  - [Beta Downloads](https://meta.nxvms.com/downloads/patches)
+  - [Releases JSON API][nxmeta_releases]
+  - [Signup for Nx Meta](https://www.networkoptix.com/nx-meta/get-started-with-meta)
+  - [Request Developer Licenses](hhttps://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers)
+  - [Downloads][nxmeta_download]
+  - [Beta Downloads][nxmeta_betadownload]
 - DW Spectrum:
-  - [Downloads API](https://dwspectrum.digital-watchdog.com/api/utils/downloads)
-  - [Releases API](https://updates.vmsproxy.com/digitalwatchdog/releases.json)
-  - [Downloads](https://dwspectrum.digital-watchdog.com/download/linux)
-  - [Release Notes](https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html)
+  - [Releases JSON API][dwspectrum_releases]
+  - [Downloads][dwspectrum_download]
+  - [Release Notes][dwspectrum_releasenotes]
+- Wisenet WAVE:
+  - [Releases JSON API][wisenetwave_releases]
+  - [Downloads][wisenetwave_download]
+  - [Release Notes][wisenetwave_releasenotes]
 
 ### Advanced Configuration
 
@@ -274,10 +295,7 @@ services:
 
 Build overview:
 
-- [Build scripts](./Make/) are used to create the [`Dockerfile`'s](./Docker/) for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
-- Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble common snippets.
-- The `Dockerfile` [downloads](./Docker/download.sh) and installs the mediaserver installer at build time using environment variables for the URLs.
-- [`CreateMatrix`](./CreateMatrix/) is a custom app used to update available product versions and download URLs.
+- [`CreateMatrix`](./CreateMatrix/) is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
 - The logic follows the same pattern as used by the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client logic.
 - The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitness_releases] must be greater than `0`
@@ -288,7 +306,7 @@ Build overview:
 Local testing:
 
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
-  - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s from the snippets using M4 and update the latest version information using `CreateMatrix`.
+  - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
   - [`Build.sh`](./Make/Build.sh): Builds the `Dockerfile`'s using `docker buildx build`.
   - [`Up.sh`](./Make/Up.sh): Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.
@@ -442,7 +460,10 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [digitalwatchdog]: https://digital-watchdog.com/
 [docker_nonroot]: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
 [dw_upgrades]: https://dwspectrum.com/upgrades/
-[dwwatchdog]: https://digital-watchdog.com/productdetail/DW-Spectrum-IPVMS/
+[dwspectrum_releases]: https://updates.vmsproxy.com/digitalwatchdog/releases.json
+[dwspectrum]: https://dwspectrum.com/
+[hanwhavision]: https://hanwhavisionamerica.com/
+[hanwhawave]: https://wavevms.com/
 [hub_dwspectrum_beta_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
 [hub_dwspectrum_latest_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
 [hub_dwspectrum_rc_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/rc?label=rc&logo=docker
@@ -473,6 +494,16 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [hub_nxwitness-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker
 [hub_nxwitness-lsio]: https://hub.docker.com/r/ptr727/nxwitness-lsio
 [hub_nxwitness]: https://hub.docker.com/r/ptr727/nxwitness
+[hub_wisenetwave_beta_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/beta?label=beta&logo=docker
+[hub_wisenetwave_latest_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/latest?label=latest&logo=docker
+[hub_wisenetwave_rc_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/rc?label=rc&logo=docker
+[hub_wisenetwave_stable_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/stable?label=stable&logo=docker
+[hub_wisenetwave-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/beta?label=beta&logo=docker
+[hub_wisenetwave-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/latest?label=latest&logo=docker
+[hub_wisenetwave-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/rc?label=rc&logo=docker
+[hub_wisenetwave-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/stable?label=stable&logo=docker
+[hub_wisenetwave-lsio]: https://hub.docker.com/r/ptr727/wisenetwave-lsio
+[hub_wisenetwave]: https://hub.docker.com/r/ptr727/wisenetwave
 [hub]: https://hub.docker.com/u/ptr727
 [isbuildpublished]: https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L31
 [last_build_shield]: https://byob.yarr.is/ptr727/NxWitness/lastbuild
@@ -497,6 +528,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [nx_releasenotes]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
 [nx_support]: https://support.networkoptix.com/hc/en-us/community/topics
 [nx_webadmin]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
+[nxmeta_releases]: https://updates.vmsproxy.com/metavms/releases.json
 [nxmeta]: https://meta.nxvms.com/
 [nxwitness_releases]: https://updates.vmsproxy.com/default/releases.json
 [nxwitness]: https://www.networkoptix.com/nx-witness/
@@ -506,4 +538,14 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [ubuntu_docker]: https://hub.docker.com/_/ubuntu
 [ubuntu_lsio_docker]: https://hub.docker.com/r/lsiobase/ubuntu
 [ubuntu]: https://ubuntu.com/
+[wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
 [workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github
+[wisenetwave_download]: https://wavevms.com/download/linux
+[wisenetwave_releasenotes]: https://wavevms.com/release-notes/
+[dwspectrum_releasenotes]: https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html
+[dwspectrum_download]: https://dwspectrum.digital-watchdog.com/download/linux
+[nxmeta_betadownload]: https://meta.nxvms.com/downloads/betas
+[nxmeta_download]: https://meta.nxvms.com/download/linux
+[nxwitness_releasenotes]: https://www.networkoptix.com/all-nx-witness-release-notes
+[nxwitness_betadownload]: https://beta.networkoptix.com/beta-builds/default
+[nxwitness_download]: https://nxvms.com/download/linux

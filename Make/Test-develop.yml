@@ -1,115 +1,186 @@
+﻿# Compose file created by CreateMatrix, do not modify by hand
+
 version: "3.7"
 
-# Use docker hub published develop tag builds
+# Volume sub-paths are only supported on Moby v26+
+# https://github.com/moby/moby/pull/45687
+
+# tmpfs is only supported on Linux
+# tmpfs: /tmp
 
 volumes:
 
-  test_dwspectrum_etc:
-  test_dwspectrum_ini:
-  test_dwspectrum_var:
-  test_dwspectrum_media:
-
-  test_dwspectrum-lsio_config:
-  test_dwspectrum-lsio_media:
-
-  test_nxwitness_etc:
-  test_nxwitness_ini:
-  test_nxwitness_var:
-  test_nxwitness_media:
-
-  test_nxwitness-lsio_config:
-  test_nxwitness-lsio_media:
-
+  # Dockerfile : NxMeta
   test_nxmeta_etc:
   test_nxmeta_ini:
   test_nxmeta_var:
   test_nxmeta_media:
 
+
+  # Dockerfile : NxMeta-LSIO
   test_nxmeta-lsio_config:
   test_nxmeta-lsio_media:
 
+  # Dockerfile : NxWitness
+  test_nxwitness_etc:
+  test_nxwitness_ini:
+  test_nxwitness_var:
+  test_nxwitness_media:
+
+
+  # Dockerfile : NxWitness-LSIO
+  test_nxwitness-lsio_config:
+  test_nxwitness-lsio_media:
+
+  # Dockerfile : DWSpectrum
+  test_dwspectrum_etc:
+  test_dwspectrum_ini:
+  test_dwspectrum_var:
+  test_dwspectrum_media:
+
+
+  # Dockerfile : DWSpectrum-LSIO
+  test_dwspectrum-lsio_config:
+  test_dwspectrum-lsio_media:
+
+  # Dockerfile : WisenetWAVE
+  test_wisenetwave_etc:
+  test_wisenetwave_ini:
+  test_wisenetwave_var:
+  test_wisenetwave_media:
+
+
+  # Dockerfile : WisenetWAVE-LSIO
+  test_wisenetwave-lsio_config:
+  test_wisenetwave-lsio_media:
+
+
 services:
 
-  digitalwatchdog:
-    image: docker.io/ptr727/dwspectrum:develop
-    container_name: test_dwspectrum-container
+  # Dockerfile : NxMeta
+  # Port : 7101
+  nxmeta:
+    image: docker.io/ptr727/nxmeta:develop
+    container_name: nxmeta-container
     restart: unless-stopped
     environment:
       - TZ=Americas/Los_Angeles
-    volumes:
-      - test_dwspectrum_etc:/opt/digitalwatchdog/mediaserver/etc
-      - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
-      - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
-      - test_dwspectrum_media:/media
     network_mode: bridge
     ports:
       - 7101:7001
-
-  digitalwatchdog-lsio:
-    image: docker.io/ptr727/dwspectrum-lsio:develop
-    container_name: test_dwspectrum-lsio-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_dwspectrum-lsio_config:/config
-      - test_dwspectrum-lsio_media:/media
-    network_mode: bridge
-    ports:
-      - 7111:7001
-
-  networkoptix:
-    image: docker.io/ptr727/nxwitness:develop
-    container_name: test_nxwitness-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_nxwitness_etc:/opt/networkoptix/mediaserver/etc
-      - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
-      - test_nxwitness_var:/opt/networkoptix/mediaserver/var
-      - test_nxwitness_media:/media
-    network_mode: bridge
-    ports:
-      - 7102:7001
-
-  networkoptix-lsio:
-    image: docker.io/ptr727/nxwitness-lsio:develop
-    container_name: test_nxwitness-lsio-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_nxwitness-lsio_config:/config
-      - test_nxwitness-lsio_media:/media
-    network_mode: bridge
-    ports:
-      - 7112:7001
-
-  networkoptix-metavms:
-    image: docker.io/ptr727/nxmeta:develop
-    container_name: test_nxmeta-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
     volumes:
       - test_nxmeta_etc:/opt/networkoptix-metavms/mediaserver/etc
       - test_nxmeta_ini:/home/networkoptix-metavms/.config/nx_ini
       - test_nxmeta_var:/opt/networkoptix-metavms/mediaserver/var
       - test_nxmeta_media:/media
-    network_mode: bridge
-    ports:
-      - 7103:7001
 
-  networkoptix-metavms-lsio:
+  # Dockerfile : NxMeta-LSIO
+  # Port : 7201
+  nxmeta-lsio:
     image: docker.io/ptr727/nxmeta-lsio:develop
-    container_name: test_nxmeta-lsio-container
+    container_name: nxmeta-lsio-container
     restart: unless-stopped
     environment:
       - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7201:7001
     volumes:
       - test_nxmeta-lsio_config:/config
       - test_nxmeta-lsio_media:/media
+
+  # Dockerfile : NxWitness
+  # Port : 7102
+  nxwitness:
+    image: docker.io/ptr727/nxwitness:develop
+    container_name: nxwitness-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7113:7001
+      - 7102:7001
+    volumes:
+      - test_nxwitness_etc:/opt/networkoptix/mediaserver/etc
+      - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
+      - test_nxwitness_var:/opt/networkoptix/mediaserver/var
+      - test_nxwitness_media:/media
+
+  # Dockerfile : NxWitness-LSIO
+  # Port : 7202
+  nxwitness-lsio:
+    image: docker.io/ptr727/nxwitness-lsio:develop
+    container_name: nxwitness-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7202:7001
+    volumes:
+      - test_nxwitness-lsio_config:/config
+      - test_nxwitness-lsio_media:/media
+
+  # Dockerfile : DWSpectrum
+  # Port : 7103
+  dwspectrum:
+    image: docker.io/ptr727/dwspectrum:develop
+    container_name: dwspectrum-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7103:7001
+    volumes:
+      - test_dwspectrum_etc:/opt/digitalwatchdog/mediaserver/etc
+      - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
+      - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
+      - test_dwspectrum_media:/media
+
+  # Dockerfile : DWSpectrum-LSIO
+  # Port : 7203
+  dwspectrum-lsio:
+    image: docker.io/ptr727/dwspectrum-lsio:develop
+    container_name: dwspectrum-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7203:7001
+    volumes:
+      - test_dwspectrum-lsio_config:/config
+      - test_dwspectrum-lsio_media:/media
+
+  # Dockerfile : WisenetWAVE
+  # Port : 7104
+  wisenetwave:
+    image: docker.io/ptr727/wisenetwave:develop
+    container_name: wisenetwave-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7104:7001
+    volumes:
+      - test_wisenetwave_etc:/opt/hanwha/mediaserver/etc
+      - test_wisenetwave_ini:/home/hanwha/.config/nx_ini
+      - test_wisenetwave_var:/opt/hanwha/mediaserver/var
+      - test_wisenetwave_media:/media
+
+  # Dockerfile : WisenetWAVE-LSIO
+  # Port : 7204
+  wisenetwave-lsio:
+    image: docker.io/ptr727/wisenetwave-lsio:develop
+    container_name: wisenetwave-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7204:7001
+    volumes:
+      - test_wisenetwave-lsio_config:/config
+      - test_wisenetwave-lsio_media:/media

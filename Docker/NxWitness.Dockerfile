@@ -1,20 +1,26 @@
+﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Product: NxWitness
+# Description: Nx Witness VMS
+# Company: networkoptix
+# Release: default
+# LSIO: False
+
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported for v5.1 is Jammy
-# https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy
+# Latest Ubuntu supported for v5.1 is Jammy
 FROM ubuntu:jammy
 
-
 # Labels
-ARG LABEL_NAME="NxMeta"
-ARG LABEL_DESCRIPTION="Nx Witness VMS Docker"
+ARG LABEL_NAME="NxWitness"
+ARG LABEL_DESCRIPTION="Nx Witness VMS"
+ARG LABEL_VERSION="6.0.0.38488"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/38363/nxwitness-server_update-5.1.3.38363-linux_x64.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/38363/nxwitness-server_update-5.1.3.38363-linux_arm64.zip"
-ARG DOWNLOAD_VERSION="5.1.3.38363"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/38488/nxwitness-server_update-6.0.0.38488-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/38488/nxwitness-server_update-6.0.0.38488-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.0.0.38488"
 
-# NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
+# Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix"
 
 # Global builder variables
@@ -36,11 +42,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Media server user and directory name
 ENV COMPANY_NAME=${RUNTIME_NAME}
-
-# Build tool version set as build argument
-ARG LABEL_VERSION="1.0.0.0"
-
-# LABEL_NAME and LABEL_DESCRIPTION set in specific variant of build
 
 # Labels
 LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
@@ -69,7 +70,7 @@ RUN chmod +x download.sh \
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        file \
+        file \ # https://github.com/ptr727/NxWitness/issues/142
         gdb \
         sudo \
         ./vms_server.deb \
@@ -98,3 +99,8 @@ ENTRYPOINT ["/opt/entrypoint.sh"]
 # Expose port 7001
 EXPOSE 7001
 
+# Link volumes directly, e.g.
+# /mnt/config/etc:opt/networkoptix/mediaserver/etc
+# /mnt/config/nx_ini:/home/networkoptix/.config/nx_ini
+# /mnt/config/var:/opt/networkoptix/mediaserver/var
+# /mnt/media:/media

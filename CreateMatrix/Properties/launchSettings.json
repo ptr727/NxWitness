@@ -16,12 +16,12 @@
     },
     "Schema": {
       "commandName": "Project",
-      "commandLineArgs": "schema --schemaversion ./JSON/Version.schema.json --schemamatrix ./JSON/Matrix.schema.json",
+      "commandLineArgs": "schema --schemaversion=./JSON/Version.schema.json --schemamatrix=./JSON/Matrix.schema.json",
       "workingDirectory": "$(ProjectDir)"
     },
     "Make": {
       "commandName": "Project",
-      "commandLineArgs": "make --matrix=./Make/Matrix.json",
+      "commandLineArgs": "make --version=./Make/Version.json --make=./Make --docker=./Docker --label=Beta",
       "workingDirectory": "$(SolutionDir)"
     }
   }

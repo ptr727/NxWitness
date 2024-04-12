@@ -17,31 +17,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Make", "Make", "{486D3D04-33A6-4311-9E86-A8FFD8610330}"
 	ProjectSection(SolutionItems) = preProject
-		Make\base-entrypoint.docker = Make\base-entrypoint.docker
-		Make\base-lsio.docker = Make\base-lsio.docker
-		Make\body-entrypoint.docker = Make\body-entrypoint.docker
-		Make\body-lsio.docker = Make\body-lsio.docker
-		Make\body.docker = Make\body.docker
 		Make\Build.sh = Make\Build.sh
 		Make\Clean.sh = Make\Clean.sh
 		Make\Create.sh = Make\Create.sh
 		Make\Down-develop.sh = Make\Down-develop.sh
+		Make\Down-latest.sh = Make\Down-latest.sh
 		Make\Down.sh = Make\Down.sh
-		Make\DWSpectrum-LSIO.m4 = Make\DWSpectrum-LSIO.m4
-		Make\dwspectrum.docker = Make\dwspectrum.docker
-		Make\DWSpectrum.m4 = Make\DWSpectrum.m4
+		Make\Instructions.sh = Make\Instructions.sh
 		Make\Makefile = Make\Makefile
 		Make\Matrix.json = Make\Matrix.json
-		Make\NxMeta-LSIO.m4 = Make\NxMeta-LSIO.m4
-		Make\nxmeta.docker = Make\nxmeta.docker
-		Make\NxMeta.m4 = Make\NxMeta.m4
-		Make\NxWitness-LSIO.m4 = Make\NxWitness-LSIO.m4
-		Make\nxwitness.docker = Make\nxwitness.docker
-		Make\NxWitness.m4 = Make\NxWitness.m4
 		Make\Test-develop.yml = Make\Test-develop.yml
+		Make\Test-latest.yml = Make\Test-latest.yml
 		Make\Test.sh = Make\Test.sh
 		Make\Test.yml = Make\Test.yml
 		Make\Up-develop.sh = Make\Up-develop.sh
+		Make\Up-latest.sh = Make\Up-latest.sh
 		Make\Up.sh = Make\Up.sh
 		Make\Version.json = Make\Version.json
 	EndProjectSection
@@ -71,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{7D1EA3
 		Docker\NxMeta.Dockerfile = Docker\NxMeta.Dockerfile
 		Docker\NxWitness-LSIO.Dockerfile = Docker\NxWitness-LSIO.Dockerfile
 		Docker\NxWitness.Dockerfile = Docker\NxWitness.Dockerfile
+		Docker\WisenetWAVE-LSIO.Dockerfile = Docker\WisenetWAVE-LSIO.Dockerfile
+		Docker\WisenetWAVE.Dockerfile = Docker\WisenetWAVE.Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateMatrixTests", "CreateMatrixTests\CreateMatrixTests.csproj", "{2524A282-16D8-44FD-8704-40548C96A5C3}"
