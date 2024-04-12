@@ -4,5 +4,5 @@ ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/digitalwatchdog/38363/dws
 ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/digitalwatchdog/38363/dwspectrum-server_update-5.1.3.38363-linux_arm64.zip"
 ARG DOWNLOAD_VERSION="5.1.3.38363"
 
-# DWSpectrum
-ARG RUNTIME_NAME="digitalwatchdog"
+# WisenetWAVE (hanwha)
+ARG RUNTIME_NAME="hanwha"

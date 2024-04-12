@@ -18,6 +18,7 @@
 			"domainname",
 			"dwspectrum",
 			"filesystems",
+			"Hanwha",
 			"IPVMS",
 			"lsio",
 			"lsiobase",
@@ -41,6 +42,7 @@
 			"posixacl",
 			"PUID",
 			"relatime",
+			"Repot",
 			"schemamatrix",
 			"schemaversion",
 			"Serilog",
@@ -56,6 +58,9 @@
 			"Unraid",
 			"usermod",
 			"Viljoen",
+			"whitelabel",
+			"Wisenet",
+			"wisenetwave",
 			"WORKDIR",
 			"xattr"
 		]

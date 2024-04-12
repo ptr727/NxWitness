@@ -50,9 +50,11 @@ function BuildDockerfile {
 docker buildx create --name "nxwitness" --use || true
 
 # Build Dockerfiles
-BuildDockerfile "DWSpectrum"
-BuildDockerfile "DWSpectrum-LSIO"
 BuildDockerfile "NxMeta"
 BuildDockerfile "NxMeta-LSIO"
 BuildDockerfile "NxWitness"
 BuildDockerfile "NxWitness-LSIO"
+BuildDockerfile "DWSpectrum"
+BuildDockerfile "DWSpectrum-LSIO"
+BuildDockerfile "WisenetWAVE"
+BuildDockerfile "WisenetWAVE-LSIO"

@@ -14,22 +14,55 @@ public class ProductInfo
         None,
         NxMeta,
         NxWitness,
-        // ReSharper disable once InconsistentNaming
-        DWSpectrum
+        DWSpectrum,
+        WisenetWAVE
     }
 
     public ProductType Product { get; set; }
 
     public List<VersionInfo> Versions { get; set; } = [];
 
-    private string GetProductShortName()
+    public string GetCompany() => GetCompany(Product);
+
+    public string GetRelease() => GetRelease(Product);
+
+    public string GetDescription() => GetDescription(Product);
+
+    // Used for release JSON API https://updates.vmsproxy.com/{release}/releases.json path
+    public static string GetRelease(ProductType productType)
     {
-        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        return Product switch
+        return productType switch
         {
             ProductType.NxMeta => "metavms",
             ProductType.NxWitness => "default",
             ProductType.DWSpectrum => "digitalwatchdog",
+            ProductType.WisenetWAVE => "hanwha",
+            _ => throw new InvalidEnumArgumentException(nameof(Product))
+        };
+    }
+
+    // Used for ${COMPANY_NAME} mediaserver install path and user account
+    public static string GetCompany(ProductType productType)
+    {
+        return productType switch
+        {
+            ProductType.NxMeta => "networkoptix-metavms",
+            ProductType.NxWitness => "networkoptix",
+            ProductType.DWSpectrum => "digitalwatchdog",
+            ProductType.WisenetWAVE => "hanwha",
+            _ => throw new InvalidEnumArgumentException(nameof(Product))
+        };
+    }
+
+    // Used for ${LABEL_DESCRIPTION} in Dockerfile
+    public static string GetDescription(ProductType productType)
+    {
+        return productType switch
+        {
+            ProductType.NxMeta => "Nx Meta VMS",
+            ProductType.NxWitness => "Nx Witness VMS",
+            ProductType.DWSpectrum => "DW Spectrum IPVMS",
+            ProductType.WisenetWAVE => "Wisenet WAVE VMS",
             _ => throw new InvalidEnumArgumentException(nameof(Product))
         };
     }
@@ -59,7 +92,7 @@ public class ProductInfo
             using HttpClient httpClient = new();
 
             // Get all releases
-            var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetProductShortName());
+            var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetRelease());
             foreach (var release in releasesList)
             {
                 // We expect only "vms" products
@@ -77,7 +110,7 @@ public class ProductInfo
                 var buildNumber = versionInfo.GetBuildNumber();
 
                 // Get available packages for this release
-                var packageList = PackagesJsonSchema.GetPackages(httpClient, GetProductShortName(), buildNumber);
+                var packageList = PackagesJsonSchema.GetPackages(httpClient, GetRelease(), buildNumber);
 
                 // Get the x64 and arm64 server ubuntu server packages
                 var packageX64 = packageList.Find(item => item.IsX64Server());
@@ -89,8 +122,8 @@ public class ProductInfo
 
                 // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionInfo.UriX64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageX64.File}";
-                versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetProductShortName()}/{buildNumber}/{packageArm64.File}";
+                versionInfo.UriX64 = $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageX64.File}";
+                versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}";
 
                 // Verify and add to list
                 if (VerifyVersion(versionInfo)) 

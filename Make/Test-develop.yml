@@ -1,5 +1,8 @@
 version: "3.7"
 
+# Copy from Test.yml and replace local test_ image tags with docker.io:develop to image tags
+# E.g. test_nxmeta -> docker.io/ptr727/nxmeta:develop
+
 # Use docker hub published develop tag builds
 
 volumes:

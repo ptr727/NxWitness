@@ -59,11 +59,11 @@ public class PackagesJsonSchema
         return jsonSchema;
     }
 
-    public static List<Package> GetPackages(HttpClient httpClient, string productName, int buildNumber)
+    public static List<Package> GetPackages(HttpClient httpClient, string releaseName, int buildNumber)
     {
         // Load packages JSON
         // https://updates.networkoptix.com/{product}/{build}/packages.json
-        Uri packagesUri = new($"https://updates.networkoptix.com/{productName}/{buildNumber}/packages.json");
+        Uri packagesUri = new($"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json");
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
         var jsonString = httpClient.GetStringAsync(packagesUri).Result;
 

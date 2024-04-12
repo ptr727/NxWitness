@@ -10,89 +10,50 @@ version: "3.7"
 
 volumes:
 
-  test_dwspectrum_etc:
-  test_dwspectrum_ini:
-  test_dwspectrum_var:
-  test_dwspectrum_media:
-
-  test_dwspectrum-lsio_config:
-  test_dwspectrum-lsio_media:
-
-  test_nxwitness_etc:
-  test_nxwitness_ini:
-  test_nxwitness_var:
-  test_nxwitness_media:
-
-  test_nxwitness-lsio_config:
-  test_nxwitness-lsio_media:
-
+  # NxMeta
   test_nxmeta_etc:
   test_nxmeta_ini:
   test_nxmeta_var:
   test_nxmeta_media:
 
+  # NxMeta LSIO
   test_nxmeta-lsio_config:
   test_nxmeta-lsio_media:
 
+  # NxWitness
+  test_nxwitness_etc:
+  test_nxwitness_ini:
+  test_nxwitness_var:
+  test_nxwitness_media:
+
+  # NxWitness LSIO
+  test_nxwitness-lsio_config:
+  test_nxwitness-lsio_media:
+
+  # DWSpectrum
+  test_dwspectrum_etc:
+  test_dwspectrum_ini:
+  test_dwspectrum_var:
+  test_dwspectrum_media:
+
+  # DWSpectrum LSIO
+  test_dwspectrum-lsio_config:
+  test_dwspectrum-lsio_media:
+
+  # WisenetWAVE
+  test_wisenetwave_etc:
+  test_wisenetwave_ini:
+  test_wisenetwave_var:
+  test_wisenetwave_media:
+
+  # WisenetWAVE LSIO
+  test_wisenetwave-lsio_config:
+  test_wisenetwave-lsio_media:
+
 services:
 
-  digitalwatchdog:
-    image: test_dwspectrum
-    container_name: test_dwspectrum-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_dwspectrum_etc:/opt/digitalwatchdog/mediaserver/etc
-      - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
-      - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
-      - test_dwspectrum_media:/media
-    network_mode: bridge
-    ports:
-      - 7101:7001
-
-  digitalwatchdog-lsio:
-    image: test_dwspectrum-lsio
-    container_name: test_dwspectrum-lsio-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_dwspectrum-lsio_config:/config
-      - test_dwspectrum-lsio_media:/media
-    network_mode: bridge
-    ports:
-      - 7111:7001
-
-  networkoptix:
-    image: test_nxwitness
-    container_name: test-networkoptix-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_nxwitness_etc:/opt/networkoptix/mediaserver/etc
-      - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
-      - test_nxwitness_var:/opt/networkoptix/mediaserver/var
-      - test_nxwitness_media:/media
-    network_mode: bridge
-    ports:
-      - 7102:7001
-
-  networkoptix-lsio:
-    image: test_nxwitness-lsio
-    container_name: test_nxwitness-lsio-container
-    restart: unless-stopped
-    environment:
-      - TZ=Americas/Los_Angeles
-    volumes:
-      - test_nxwitness-lsio_config:/config
-      - test_nxwitness-lsio_media:/media
-    network_mode: bridge
-    ports:
-      - 7112:7001
-
-  networkoptix-metavms:
+  # NxMeta Port 7101
+  nxmeta:
     image: test_nxmeta
     container_name: test_nxmeta-container
     restart: unless-stopped
@@ -105,9 +66,10 @@ services:
       - test_nxmeta_media:/media
     network_mode: bridge
     ports:
-      - 7103:7001
+      - 7101:7001
 
-  networkoptix-metavms-lsio:
+  # NxMeta LSIO Port 7111
+  nxmeta-lsio:
     image: test_nxmeta-lsio
     container_name: test_nxmeta-lsio-container
     restart: unless-stopped
@@ -118,4 +80,94 @@ services:
       - test_nxmeta-lsio_media:/media
     network_mode: bridge
     ports:
+      - 7111:7001
+
+  # NxWitness Port 7102
+  nxwitness:
+    image: test_nxwitness
+    container_name: test_nxwitness-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxwitness_etc:/opt/networkoptix/mediaserver/etc
+      - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
+      - test_nxwitness_var:/opt/networkoptix/mediaserver/var
+      - test_nxwitness_media:/media
+    network_mode: bridge
+    ports:
+      - 7102:7001
+
+  # NxWitness LSIO Port 7112
+  nxwitness-lsio:
+    image: test_nxwitness-lsio
+    container_name: test_nxwitness-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_nxwitness-lsio_config:/config
+      - test_nxwitness-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7112:7001
+
+  # DWSpectrum Port 7103
+  dwspectrum:
+    image: test_dwspectrum
+    container_name: test_dwspectrum-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_dwspectrum_etc:/opt/digitalwatchdog/mediaserver/etc
+      - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
+      - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
+      - test_dwspectrum_media:/media
+    network_mode: bridge
+    ports:
+      - 7103:7001
+
+  # DWSpectrum LSIO Port 7113
+  dwspectrum-lsio:
+    image: test_dwspectrum-lsio
+    container_name: test_dwspectrum-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_dwspectrum-lsio_config:/config
+      - test_dwspectrum-lsio_media:/media
+    network_mode: bridge
+    ports:
       - 7113:7001
+
+  # WisenetWAVE Port 7104
+  wisenetwave:
+    image: test_wisenetwave
+    container_name: test_wisenetwave-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_wisenetwave_etc:/opt/hanwha/mediaserver/etc
+      - test_wisenetwave_ini:/home/hanwha/.config/nx_ini
+      - test_wisenetwave_var:/opt/hanwha/mediaserver/var
+      - test_wisenetwave_media:/media
+    network_mode: bridge
+    ports:
+      - 7104:7001
+
+  # WisenetWAVE LSIO Port 7114
+  wisenetwave-lsio:
+    image: test_wisenetwave-lsio
+    container_name: test_wisenetwave-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    volumes:
+      - test_wisenetwave-lsio_config:/config
+      - test_wisenetwave-lsio_media:/media
+    network_mode: bridge
+    ports:
+      - 7114:7001

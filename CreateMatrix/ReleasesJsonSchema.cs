@@ -6,10 +6,11 @@ using Serilog;
 
 namespace CreateMatrix;
 
-// https://updates.vmsproxy.com/{product}/releases.json
+// https://updates.vmsproxy.com/{release}/releases.json
 // https://updates.vmsproxy.com/default/releases.json
 // https://updates.vmsproxy.com/metavms/releases.json
 // https://updates.vmsproxy.com/digitalwatchdog/releases.json
+// https://updates.vmsproxy.com/hanwha/releases.json
 
 public class Release
 {

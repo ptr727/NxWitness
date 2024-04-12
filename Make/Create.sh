@@ -14,9 +14,11 @@ dotnet run --project ../CreateMatrix -- matrix --update
 dotnet run --project ../CreateMatrix -- make
 
 # Create Dockerfiles from M4 files
-CreateDockerfile "DWSpectrum"
-CreateDockerfile "DWSpectrum-LSIO"
 CreateDockerfile "NxMeta"
 CreateDockerfile "NxMeta-LSIO"
 CreateDockerfile "NxWitness"
 CreateDockerfile "NxWitness-LSIO"
+CreateDockerfile "DWSpectrum"
+CreateDockerfile "DWSpectrum-LSIO"
+CreateDockerfile "WisenetWAVE"
+CreateDockerfile "WisenetWAVE-LSIO"

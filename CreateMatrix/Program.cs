@@ -52,6 +52,16 @@ public static class Program
             description: "Update version information",
             getDefaultValue: () => false);
 
+        var makeOption = new Option<string>(
+            name: "--make",
+            description: "Make directory.",
+            getDefaultValue: () => "./Make");
+
+        var dockerOption = new Option<string>(
+            name: "--docker",
+            description: "Docker directory.",
+            getDefaultValue: () => "./Docker");
+
         var versionCommand = new Command("version", "Create version information file")
             {
                 versionOption
@@ -66,20 +76,22 @@ public static class Program
             };
         matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
 
-        var schemaCommand = new Command("schema", "Write version and matrix schema files")
+        var schemaCommand = new Command("schema", "Write Version and Matrix JSON schema files")
             {
                 schemaVersionOption,
                 schemaMatrixOption
             };
         schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
-        var makeCommand = new Command("make", "Write latest versions from matrix to make files")
+        var makeCommand = new Command("make", "Create Docker and Compose files from Matrix file")
             {
-                matrixOption
+                matrixOption,
+                makeOption,
+                dockerOption
             };
-        makeCommand.SetHandler(MakeHandler, matrixOption);
+        makeCommand.SetHandler(MakeHandler, matrixOption, makeOption, dockerOption);
 
-        var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from a list of product versions")
+        var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from product versions")
             {
                 versionCommand,
                 matrixCommand,
@@ -110,7 +122,7 @@ public static class Program
     {
         // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
-        Log.Logger.Information("Getting online version information...");
+        Log.Logger.Information("Getting version information online...");
         versionSchema.Products = ProductInfo.GetProducts();
         versionSchema.Products.ForEach(item => item.GetVersions());
         versionSchema.Products.ForEach(item => item.LogInformation());
@@ -138,7 +150,7 @@ public static class Program
         {
             // Get versions for all products using releases API
             VersionJsonSchema onlineSchema = new();
-            Log.Logger.Information("Getting online version information...");
+            Log.Logger.Information("Getting version information online...");
             onlineSchema.Products = ProductInfo.GetProducts();
             onlineSchema.Products.ForEach(item => item.GetVersions());
             onlineSchema.Products.ForEach(item => item.LogInformation());
@@ -165,68 +177,20 @@ public static class Program
         matrixSchema.Images.ForEach(item => item.LogInformation());
 
         // Write matrix
-        Log.Logger.Information("Writing matrix to {Path}", matrixPath);
+        Log.Logger.Information("Writing matrix information to {Path}", matrixPath);
         MatrixJsonSchema.ToFile(matrixPath, matrixSchema);
 
         return Task.FromResult(0);
     }
 
-    private static Task<int> MakeHandler(string matrixPath)
+    private static Task<int> MakeHandler(string versionPath, string makePath, string dockerPath)
     {
-        // Load matrix info from file
-        Log.Logger.Information("Reading version information from {Path}", matrixPath);
-        var matrixSchema = MatrixJsonSchema.FromFile(matrixPath);
+        // Load version info from file
+        Log.Logger.Information("Reading version information from {Path}", versionPath);
+        var versionSchema = VersionJsonSchema.FromFile(versionPath);
 
-        // Use the same path as the matrix file, could be empty
-        var makePath = Path.GetDirectoryName(matrixPath) ?? "";
-
-        // List of product to path mappings
-        var makeProductList = new List<Tuple<string, string>>
-        {
-            new ("NxMeta", "nxmeta.docker"),
-            new ("NxWitness", "nxwitness.docker"),
-            new ("DWSpectrum", "dwspectrum.docker")
-        };
-
-        // List of args
-        var argList = new List<string> { ImageInfo.DownloadVersion, ImageInfo.DownloadX64Url, ImageInfo.DownloadArm64Url };
-
-        // Rewrite the args
-        foreach (var tuple in makeProductList)
-        {
-            // Make file path
-            var filePath = Path.Combine(makePath, tuple.Item2);
-
-            // Read all lines from the file
-            Log.Logger.Information("Reading make information from {Path}", filePath);
-            var fileLines = File.ReadAllLines(filePath).ToList();
-
-            // Get latest product entry from matrix
-            var imageInfo = matrixSchema.Images.Find(image => string.Equals(image.Name, tuple.Item1) && image.Tags.Any(tag => tag.Contains("latest")));
-            Debug.Assert(imageInfo != null);
-
-            // Replace the args
-            foreach (var arg in argList)
-            {
-                // Get arg from image
-                var latestArg = imageInfo.Args.Find(item => item.StartsWith(arg));
-                Debug.Assert(latestArg != null);
-                var latestParts = latestArg.Split('=');
-                Debug.Assert(latestParts.Length == 2);
-
-                // Get arg from file
-                var fileArg = fileLines.FindIndex(item => item.Contains(arg));
-                Debug.Assert(fileArg != -1);
-
-                // Rewrite file arg
-                fileLines[fileArg] = $"ARG {arg}=\"{latestParts[1]}\"";
-                Log.Logger.Information("Rewriting: {Arg}", fileLines[fileArg]);
-            }
-
-            // Rewrite the file
-            Log.Logger.Information("Writing make information to {Path}", filePath);
-            File.WriteAllLines(filePath, fileLines);
-        }
+        // Create Dockerfile's
+        Dockerfile.Create(versionSchema.Products, dockerPath);
 
         return Task.FromResult(0);
     }
