@@ -2,8 +2,10 @@
     "recommendations": [
         "yzhang.markdown-all-in-one",
         "ms-dotnettools.csharp",
-        "ms-dotnettools.csdevkit",
         "ms-azuretools.vscode-docker",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-dotnettools.csdevkit",
+        "streetsidesoftware.code-spell-checker"
     ]
 }

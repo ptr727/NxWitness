@@ -163,15 +163,19 @@ public static class Program
             // Make sure the labelled version numbers do not regress
             ReleaseVersionForward.Verify(fileSchema.Products, onlineSchema.Products);
 
-            // Update the file version with the online version
+            // Verify URL's
             onlineSchema.Products.ForEach(item => item.VerifyUrls());
+
+            // Update the file version with the online version
             Log.Logger.Information("Writing version information to {Path}", versionPath);
             VersionJsonSchema.ToFile(versionPath, onlineSchema);
             fileSchema = onlineSchema;
         }
-
-        // Verify all versions
-        fileSchema.Products.ForEach(item => item.VerifyUrls());
+        else
+        {
+            // Verify URL's
+            fileSchema.Products.ForEach(item => item.VerifyUrls());
+        }
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");

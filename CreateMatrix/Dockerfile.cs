@@ -182,7 +182,7 @@ public class DockerFile
             # Install the mediaserver and dependencies
             RUN apt-get update \
                 && apt-get install --no-install-recommends --yes \
-                    file \ # https://github.com/ptr727/NxWitness/issues/142
+                    file \
                     gdb \
 
             """;
