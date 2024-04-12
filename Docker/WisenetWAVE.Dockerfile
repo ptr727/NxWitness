@@ -1,27 +1,27 @@
 ﻿# Dockerfile created by CreateMatrix, do not modify by hand
-# Product: DWSpectrum
-# Description: DW Spectrum IPVMS
-# Company: digitalwatchdog
-# Release: digitalwatchdog
-# LSIO: True
+# Product: WisenetWAVE
+# Description: Wisenet WAVE VMS
+# Company: hanwha
+# Release: hanwha
+# LSIO: False
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
 # Latest Ubuntu supported for v5.1 is Jammy
-FROM lsiobase/ubuntu:jammy
+FROM ubuntu:jammy
 
 # Labels
-ARG LABEL_NAME="DWSpectrum-LSIO"
-ARG LABEL_DESCRIPTION="DW Spectrum IPVMS"
+ARG LABEL_NAME="WisenetWAVE"
+ARG LABEL_DESCRIPTION="Wisenet WAVE VMS"
 ARG LABEL_VERSION="6.0.0.38488"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_arm64-beta.zip"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_arm64-beta.zip"
 ARG DOWNLOAD_VERSION="6.0.0.38488"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
-ARG RUNTIME_NAME="digitalwatchdog"
+ARG RUNTIME_NAME="hanwha"
 
 # Global builder variables
 # https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -67,24 +67,12 @@ WORKDIR /temp
 RUN chmod +x download.sh \
     && ./download.sh
 
-# LSIO maps the host PUID and PGID environment variables to "abc" in the container.
-# The mediaserver calls "chown ${COMPANY_NAME}" at runtime
-# We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
-# LSIO does not officially support changing the "abc" username
-# https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
-# Change user "abc" to ${COMPANY_NAME}
-RUN usermod -l ${COMPANY_NAME} abc \
-# Change group "abc" to ${COMPANY_NAME}
-    && groupmod -n ${COMPANY_NAME} abc \
-# Replace "abc" with ${COMPANY_NAME}
-    && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
-
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         file \
         gdb \
+        sudo \
         ./vms_server.deb \
 # Cleanup        
     && apt-get clean \
@@ -92,23 +80,27 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /temp
 
-# Set ownership permissions
-RUN chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin \
-    && chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
+# Add the mediaserver ${COMPANY_NAME} user to the sudoers group
+# Only allow sudo no password access to the root-tool
+RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
-# Copy etc init and services files
-# https://github.com/just-containers/s6-overlay#container-environment
-# https://www.linuxserver.io/blog/how-is-container-formed
-COPY s6-overlay /etc/s6-overlay
+# Copy the entrypoint.sh launch script
+# entrypoint.sh will run the mediaserver and root-tool
+COPY entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
+
+# Run the entrypoint as the mediaserver ${COMPANY_NAME} user
+# Note that this user exists in the container and does not directly map to a user on the host
+USER ${COMPANY_NAME}
+
+# Runs entrypoint.sh on container start
+ENTRYPOINT ["/opt/entrypoint.sh"]
 
 # Expose port 7001
 EXPOSE 7001
 
-# Create mount points
-# Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
-# /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
-# /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
-# /root/.config/nx_ini links -> /config/ini
-# /config is for configuration
-# /media is for media recording
-VOLUME /config /media
+# Link volumes directly, e.g.
+# /mnt/config/etc:opt/hanwha/mediaserver/etc
+# /mnt/config/nx_ini:/home/hanwha/.config/nx_ini
+# /mnt/config/var:/opt/hanwha/mediaserver/var
+# /mnt/media:/media

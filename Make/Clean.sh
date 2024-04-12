@@ -11,9 +11,11 @@ function DeleteImage {
 ./Down.sh
 
 # Delete images
-DeleteImage "DWSpectrum"
-DeleteImage "DWSpectrum-LSIO"
 DeleteImage "NxMeta"
 DeleteImage "NxMeta-LSIO"
 DeleteImage "NxWitness"
 DeleteImage "NxWitness-LSIO"
+DeleteImage "DWSpectrum"
+DeleteImage "DWSpectrum-LSIO"
+DeleteImage "WisenetWAVE"
+DeleteImage "WisenetWAVE-LSIO"

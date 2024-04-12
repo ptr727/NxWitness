@@ -1,8 +1,8 @@
 ﻿# Dockerfile created by CreateMatrix, do not modify by hand
-# Product: DWSpectrum
-# Description: DW Spectrum IPVMS
-# Company: digitalwatchdog
-# Release: digitalwatchdog
+# Product: WisenetWAVE
+# Description: Wisenet WAVE VMS
+# Company: hanwha
+# Release: hanwha
 # LSIO: True
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
@@ -10,18 +10,18 @@
 FROM lsiobase/ubuntu:jammy
 
 # Labels
-ARG LABEL_NAME="DWSpectrum-LSIO"
-ARG LABEL_DESCRIPTION="DW Spectrum IPVMS"
+ARG LABEL_NAME="WisenetWAVE-LSIO"
+ARG LABEL_DESCRIPTION="Wisenet WAVE VMS"
 ARG LABEL_VERSION="6.0.0.38488"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_arm64-beta.zip"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_arm64-beta.zip"
 ARG DOWNLOAD_VERSION="6.0.0.38488"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
-ARG RUNTIME_NAME="digitalwatchdog"
+ARG RUNTIME_NAME="hanwha"
 
 # Global builder variables
 # https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope

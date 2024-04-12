@@ -1,20 +1,26 @@
-# https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported for v5.1 is Jammy
-# https://hub.docker.com/r/lsiobase/ubuntu/tags?page=1&name=jammy
-FROM lsiobase/ubuntu:jammy
+﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Product: NxMeta
+# Description: Nx Meta VMS
+# Company: networkoptix-metavms
+# Release: metavms
+# LSIO: True
 
+# https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+# Latest Ubuntu supported for v5.1 is Jammy
+FROM lsiobase/ubuntu:jammy
 
 # Labels
 ARG LABEL_NAME="NxMeta-LSIO"
-ARG LABEL_DESCRIPTION="Nx Meta VMS Docker based on LinuxServer"
+ARG LABEL_DESCRIPTION="Nx Meta VMS"
+ARG LABEL_VERSION="6.0.0.38488"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_x64.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_arm64.zip"
-ARG DOWNLOAD_VERSION="5.1.3.38363"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.0.0.38488"
 
-# NxWitness (networkoptix) or DWSpectrum (digitalwatchdog) or NxMeta (networkoptix-metavms)
+# Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix-metavms"
 
 # Global builder variables
@@ -36,11 +42,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Media server user and directory name
 ENV COMPANY_NAME=${RUNTIME_NAME}
-
-# Build tool version set as build argument
-ARG LABEL_VERSION="1.0.0.0"
-
-# LABEL_NAME and LABEL_DESCRIPTION set in specific variant of build
 
 # Labels
 LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
@@ -111,4 +112,3 @@ EXPOSE 7001
 # /config is for configuration
 # /media is for media recording
 VOLUME /config /media
-

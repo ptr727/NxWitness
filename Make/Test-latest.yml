@@ -52,7 +52,7 @@ services:
   # Dockerfile : NxMeta
   # Port : 7101
   nxmeta:
-    image: docker.io/ptr727/nxmeta:develop
+    image: docker.io/ptr727/nxmeta:latest
     container_name: nxmeta-container
     restart: unless-stopped
     environment:
@@ -69,7 +69,7 @@ services:
   # Dockerfile : NxMeta-LSIO
   # Port : 7201
   nxmeta-lsio:
-    image: docker.io/ptr727/nxmeta-lsio:develop
+    image: docker.io/ptr727/nxmeta-lsio:latest
     container_name: nxmeta-lsio-container
     restart: unless-stopped
     environment:
@@ -84,7 +84,7 @@ services:
   # Dockerfile : NxWitness
   # Port : 7102
   nxwitness:
-    image: docker.io/ptr727/nxwitness:develop
+    image: docker.io/ptr727/nxwitness:latest
     container_name: nxwitness-container
     restart: unless-stopped
     environment:
@@ -101,7 +101,7 @@ services:
   # Dockerfile : NxWitness-LSIO
   # Port : 7202
   nxwitness-lsio:
-    image: docker.io/ptr727/nxwitness-lsio:develop
+    image: docker.io/ptr727/nxwitness-lsio:latest
     container_name: nxwitness-lsio-container
     restart: unless-stopped
     environment:
@@ -116,7 +116,7 @@ services:
   # Dockerfile : DWSpectrum
   # Port : 7103
   dwspectrum:
-    image: docker.io/ptr727/dwspectrum:develop
+    image: docker.io/ptr727/dwspectrum:latest
     container_name: dwspectrum-container
     restart: unless-stopped
     environment:
@@ -133,7 +133,7 @@ services:
   # Dockerfile : DWSpectrum-LSIO
   # Port : 7203
   dwspectrum-lsio:
-    image: docker.io/ptr727/dwspectrum-lsio:develop
+    image: docker.io/ptr727/dwspectrum-lsio:latest
     container_name: dwspectrum-lsio-container
     restart: unless-stopped
     environment:
@@ -148,7 +148,7 @@ services:
   # Dockerfile : WisenetWAVE
   # Port : 7104
   wisenetwave:
-    image: docker.io/ptr727/wisenetwave:develop
+    image: docker.io/ptr727/wisenetwave:latest
     container_name: wisenetwave-container
     restart: unless-stopped
     environment:
@@ -165,7 +165,7 @@ services:
   # Dockerfile : WisenetWAVE-LSIO
   # Port : 7204
   wisenetwave-lsio:
-    image: docker.io/ptr727/wisenetwave-lsio:develop
+    image: docker.io/ptr727/wisenetwave-lsio:latest
     container_name: wisenetwave-lsio-container
     restart: unless-stopped
     environment:

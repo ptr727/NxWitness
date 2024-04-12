@@ -2,9 +2,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace CreateMatrix;
 
@@ -78,7 +75,6 @@ public class ImageInfo
         return imageList;
     }
 
-    // ReSharper disable once ReturnTypeCanBeEnumerable.Local
     private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
