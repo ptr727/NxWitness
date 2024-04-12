@@ -1,13 +1,5 @@
 ﻿# Compose file created by CreateMatrix, do not modify by hand
 
-version: "3.7"
-
-# Volume sub-paths are only supported on Moby v26+
-# https://github.com/moby/moby/pull/45687
-
-# tmpfs is only supported on Linux
-# tmpfs: /tmp
-
 volumes:
 
   # Dockerfile : NxMeta

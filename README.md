@@ -17,17 +17,17 @@ Licensed under the [MIT License][license].
 
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
-  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files.
+  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
 - Version 2.3:
   - Added unit test project to verify the release and upgrade control logic.
   - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
   - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142](https://github.com/ptr727/NxWitness/issues/142).
 - Version 2.2:
-  - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile` (that I found too difficult to maintain and debug).
+  - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile`.
 - Version 2.1:
   - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
     - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
-  - Updated build scripts to use `docker compose` (vs. `docker-compose`) and `docker buildx` (vs. `docker build`) per current  Docker/Moby v25+ [release](https://docs.docker.com/engine/install/).
+  - Updated build scripts to use `docker compose` (vs. `docker-compose`) and `docker buildx` (vs. `docker build`) per current Docker/Moby v25+ [release](https://docs.docker.com/engine/install/).
   - Updated `CreateMatrix` tooling to use the newest version for the `latest` tag when multiple versions are available.
 - Version 2.0:
   - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
@@ -40,10 +40,10 @@ Licensed under the [MIT License][license].
 
 The project supports the following product variants:
 
-- [Network Optix][networkoptix] [Nx Witness VMS][nxwitness].
-- [Network Optix][networkoptix] [Nx Meta VMS][nxmeta], the developer test and preview version of Nx Witness.
-- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Digital Watchdog][digitalwatchdog].
-- [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Hanwha Vision][hanwhavision].
+- [Network Optix][networkoptix] [Nx Witness VMS][nxwitness] (not available for purchase in the US)
+- [Network Optix][networkoptix] [Nx Meta VMS][nxmeta] (developer and early access version of Nx Witness)
+- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
+- [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
 
 ## Releases
 

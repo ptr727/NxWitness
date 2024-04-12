@@ -28,19 +28,14 @@ public class ComposeFile
 
     private static string CreateComposefile(string? label)
     {
+        // TODO: Switch to volume sub-paths on Moby v26+
+        // https://github.com/moby/moby/pull/45687
+
         // Compose file header
         var stringBuilder = new StringBuilder();
         stringBuilder.Append("""
             # Compose file created by CreateMatrix, do not modify by hand
 
-            version: "3.7"
-
-            # Volume sub-paths are only supported on Moby v26+
-            # https://github.com/moby/moby/pull/45687
-
-            # tmpfs is only supported on Linux
-            # tmpfs: /tmp
-            
             """);
         stringBuilder.AppendLine();
 
