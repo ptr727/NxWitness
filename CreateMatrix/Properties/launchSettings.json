@@ -17,7 +17,7 @@
     "Schema": {
       "commandName": "Project",
       "commandLineArgs": "schema --schemaversion ./JSON/Version.schema.json --schemamatrix ./JSON/Matrix.schema.json",
-      "workingDirectory": "$(SolutionDir)"
+      "workingDirectory": "$(ProjectDir)"
     },
     "Make": {
       "commandName": "Project",

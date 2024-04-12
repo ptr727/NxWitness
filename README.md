@@ -15,6 +15,9 @@ Licensed under the [MIT License][license].
 
 ## Release Notes
 
+- Version 2.3:
+  - Added unit test project to verify the release and upgrade control logic.
+  - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
 - Version 2.2:
   - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile` (that I found too difficult to maintain and debug).
 - Version 2.1:

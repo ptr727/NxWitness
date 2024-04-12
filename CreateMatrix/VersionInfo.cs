@@ -1,17 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+﻿using System.Text.Json.Serialization;
 
 namespace CreateMatrix;
 
 public class VersionInfo
 {
-    // JSON serialized must be public get and set
-
-    // Serialize enums as strings
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum LabelType 
     {
         None,
@@ -54,7 +47,7 @@ public class VersionInfo
         return Compare(Version, rhs);
     }
 
-    internal static int Compare(string lhs, string rhs)
+    public static int Compare(string lhs, string rhs)
     {
         // Compare version numbers using Version class
         var lhsVersion = new Version(lhs);

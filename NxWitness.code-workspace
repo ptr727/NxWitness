@@ -4,9 +4,7 @@
 			"path": "."
 		}
 	],
-	"remoteAuthority": "wsl+ubuntu-20.04",
 	"settings": {
-		"makefile.extensionOutputFolder": "./.vscode",
 		"cSpell.words": [
 			"adduser",
 			"appdata",
@@ -60,12 +58,6 @@
 			"Viljoen",
 			"WORKDIR",
 			"xattr"
-		],
-		"cSpell.ignoreWords": [
-			"Repot"
-		],
-		"yaml.schemas": {
-			"https://json.schemastore.org/github-issue-config.json": "file:///home/pieter/NxWitness/.github/ISSUE_TEMPLATE/config.yml"
-		}
+		]
 	}
 }

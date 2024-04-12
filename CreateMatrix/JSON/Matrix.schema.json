@@ -1,79 +1,46 @@
 {
-  "$schema": "https://json-schema.org/draft-06/schema",
-  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json",
-  "title": "CreateMatrix Matrix Schema",
-  "definitions": {
-    "ImageInfo": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "Name": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "Branch": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "CacheScope": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "Tags": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        },
-        "Args": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        }
-      }
-    }
-  },
   "type": "object",
   "properties": {
-    "$schema": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "SchemaVersion": {
-      "type": "integer",
-      "default": 0
-    },
     "Images": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/ImageInfo"
+        "type": "object",
+        "properties": {
+          "Args": {
+            "$ref": "#/$defs/listOfString"
+          },
+          "Branch": {
+            "type": "string"
+          },
+          "CacheScope": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Tags": {
+            "$ref": "#/$defs/listOfString"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string",
+      "readOnly": true
+    },
+    "SchemaVersion": {
+      "type": "integer"
+    }
+  },
+  "$defs": {
+    "listOfString": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },
-  "required": [
-    "Images"
-  ]
+  "title": "CreateMatrix Matrix Schema",
+  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

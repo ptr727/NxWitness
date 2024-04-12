@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Diagnostics;
-using Serilog;
+﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.ComponentModel;
+using Serilog;
 
 namespace CreateMatrix;
 
@@ -9,64 +10,63 @@ namespace CreateMatrix;
 // https://updates.vmsproxy.com/default/releases.json
 // https://updates.vmsproxy.com/metavms/releases.json
 // https://updates.vmsproxy.com/digitalwatchdog/releases.json
+
+public class Release
+{
+    [JsonPropertyName("product")]
+    public string Product { get; set; } = "";
+
+    [JsonPropertyName("version")]
+    public string Version { get; set; } = "";
+
+    [JsonPropertyName("publication_type")]
+    public string PublicationType { get; set; } = "";
+
+    [JsonPropertyName("release_date")]
+    public long? ReleaseDate { get; set; }
+
+    [JsonPropertyName("release_delivery_days")]
+    public long? ReleaseDeliveryDays { get; set; }
+
+    public VersionInfo.LabelType GetLabel()
+    {
+        // Determine the equivalent label
+        return PublicationType switch
+        {
+            // Use Stable or Latest based on if published or not
+            ReleasePublication => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
+            RcPublication => VersionInfo.LabelType.RC,
+            BetaPublication => VersionInfo.LabelType.Beta,
+            _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
+        };
+    }
+    public const string ReleasePublication = "release";
+    public const string RcPublication = "rc";
+    public const string BetaPublication = "beta";
+    public const string VmsProduct = "vms";
+
+    private bool IsPublished()
+    {
+        // Logic follows similar patterns as used in C++ Desktop Client
+        // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
+        // releases_info.cpp: ReleasesInfo::selectVmsRelease(), isBuildPublished(), canReceiveUnpublishedBuild()
+        return ReleaseDate > 0 && ReleaseDeliveryDays >= 0;
+    }
+}
+
 public class ReleasesJsonSchema
 {
-    private static readonly JsonSerializerSettings Settings = new()
-    {
-        Formatting = Formatting.Indented,
-        StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
-        NullValueHandling = NullValueHandling.Ignore,
-        MissingMemberHandling = MissingMemberHandling.Ignore,
-        ObjectCreationHandling = ObjectCreationHandling.Replace
-    };
-
-    public class Release
-    {
-        [JsonProperty("product")] public string Product { get; set; } = "";
-
-        [JsonProperty("version")] public string Version { get; set; } = "";
-
-        [JsonProperty("protocol_version")] public int ProtocolVersion { get; set; }
-
-        [JsonProperty("publication_type")] public string PublicationType { get; set; } = "";
-
-        [JsonProperty("release_date")] public long ReleaseDate { get; set; }
-
-        [JsonProperty("release_delivery_days")] public int ReleaseDeliveryDays { get; set; }
-
-        internal VersionInfo.LabelType GetLabel()
-        {
-            // Determine the equivalent label
-            return PublicationType switch
-            {
-                // Use Stable or Latest based on if published or not
-                "release" => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
-                "rc" => VersionInfo.LabelType.RC,
-                "beta" => VersionInfo.LabelType.Beta,
-                _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
-            };
-        }
-        private bool IsPublished()
-        {
-            // Logic follows similar patterns as used in C++ Desktop Client
-            // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
-            // releases_info.cpp: ReleasesInfo::selectVmsRelease(), isBuildPublished(), canReceiveUnpublishedBuild()
-            return ReleaseDate > 0 && ReleaseDeliveryDays >= 0;
-        }
-    }
-
-    [JsonProperty("packages_urls")] public List<string> PackagesUrls { get; set; } = [];
-
-    [JsonProperty("releases")] public List<Release> Releases { get; set; } = [];
+    [JsonPropertyName("releases")]
+    public List<Release> Releases { get; set; } = [];
 
     private static ReleasesJsonSchema FromJson(string jsonString)
     {
-        var jsonSchema = JsonConvert.DeserializeObject<ReleasesJsonSchema>(jsonString, Settings);
+        var jsonSchema = JsonSerializer.Deserialize<ReleasesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
 
-    internal static List<Release> GetReleases(HttpClient httpClient, string productName)
+    public static List<Release> GetReleases(HttpClient httpClient, string productName)
     {
         // Load releases JSON
         // https://updates.vmsproxy.com/{product}/releases.json
