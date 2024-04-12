@@ -1,6 +1,6 @@
-# Docker Projects for Nx Witness and Nx Meta and DW Spectrum
+# Docker Projects for Network Optix VMS Products
 
-This is a project to build docker containers for [Network Optix Nx Witness VMS](https://www.networkoptix.com/nx-witness/), and [Network Optix Nx Meta VMS](https://meta.nxvms.com/), the developer test and preview version of Nx Witness, and [Digital Watchdog DW Spectrum IPVMS](https://digital-watchdog.com/productdetail/DW-Spectrum-IPVMS/), the US licensed and OEM branded version of Nx Witness.
+This is a project to build and publish docker images for various [Network Optix](https://www.networkoptix.com/) VMS products.
 
 ## License
 
@@ -9,4 +9,4 @@ Licensed under the [MIT License](https://github.com/ptr727/NxWitness/blob/main/L
 
 ## Project
 
-NxWitness project is on [GitHub](https://github.com/ptr727/NxWitness/)
+Refer to the [GitHub NxWitness](https://github.com/ptr727/NxWitness/) project for usage and details.

@@ -1,6 +1,6 @@
-# Docker Projects for Nx Witness and Variants
+# Docker Projects for Network Optix VMS Products
 
-This is a project to build docker containers for [Network Optix Nx Witness VMS][nxwitness], [Network Optix Nx Meta VMS][nxmeta], [Digital Watchdog DW Spectrum IPVMS][dwspectrum], and [Hanwha Vision Wisenet WAVE VMS][hanwhawave].
+This is a project to build and publish docker images for various [Network Optix][networkoptix] VMS products.
 
 ## License
 
@@ -35,6 +35,15 @@ Licensed under the [MIT License][license].
   - Due to the Jammy dependency versions older than v5.1 are no longer being built.
   - Build scripts removed support for old v4 variants.
   - Added a link from `/root/.config/nx_ini` to `/config/ini` for additional INI configuration files.
+
+## Products
+
+The project supports the following product variants:
+
+- [Network Optix][networkoptix] [Nx Witness VMS][nxwitness].
+- [Network Optix][networkoptix] [Nx Meta VMS][nxmeta], the developer test and preview version of Nx Witness.
+- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Digital Watchdog][digitalwatchdog].
+- [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Hanwha Vision][hanwhavision].
 
 ## Releases
 
@@ -123,15 +132,6 @@ I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking f
 I started with individual repositories for Nx Witness, Nx Meta, and DW Spectrum, but that soon became cumbersome with lots of duplication, and I combined all product flavors into this one project.
 
 Today Network Optix supports [Docker][nx_docker], and they publish [build scripts][nx_github_docker], but they do not publish container images.
-
-### Products
-
-The project supports the following product variants:
-
-- [Network Optix Nx Witness VMS][nxwitness].
-- [Network Optix Nx Meta VMS][nxmeta], the developer test and preview version of Nx Witness.
-- [Digital Watchdog DW Spectrum IPVMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Digital Watchdog][digitalwatchdog].
-- [Hanwha Vision Wisenet WAVE VMS][dwspectrum], a US licensed and OEM branded version of Nx Witness distributed by [Hanwha Vision][hanwhavision].
 
 ### Base Images
 
@@ -460,6 +460,8 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [digitalwatchdog]: https://digital-watchdog.com/
 [docker_nonroot]: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
 [dw_upgrades]: https://dwspectrum.com/upgrades/
+[dwspectrum_download]: https://dwspectrum.digital-watchdog.com/download/linux
+[dwspectrum_releasenotes]: https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html
 [dwspectrum_releases]: https://updates.vmsproxy.com/digitalwatchdog/releases.json
 [dwspectrum]: https://dwspectrum.com/
 [hanwhavision]: https://hanwhavisionamerica.com/
@@ -514,6 +516,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [lsio_puid]: https://docs.linuxserver.io/general/understanding-puid-and-pgid
 [lsio]: https://www.linuxserver.io/
 [milestone]: https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm
+[networkoptix]: https://www.networkoptix.com/
 [nx_cloud]: https://www.networkoptix.com/nx-witness/nx-witness-cloud/
 [nx_crunchbase]: https://www.crunchbase.com/organization/network-optix
 [nx_debuglogging]: https://support.networkoptix.com/hc/en-us/articles/236033688-How-to-change-software-logging-level-and-how-to-get-logs
@@ -528,8 +531,13 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [nx_releasenotes]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
 [nx_support]: https://support.networkoptix.com/hc/en-us/community/topics
 [nx_webadmin]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
+[nxmeta_betadownload]: https://meta.nxvms.com/downloads/betas
+[nxmeta_download]: https://meta.nxvms.com/download/linux
 [nxmeta_releases]: https://updates.vmsproxy.com/metavms/releases.json
 [nxmeta]: https://meta.nxvms.com/
+[nxwitness_betadownload]: https://beta.networkoptix.com/beta-builds/default
+[nxwitness_download]: https://nxvms.com/download/linux
+[nxwitness_releasenotes]: https://www.networkoptix.com/all-nx-witness-release-notes
 [nxwitness_releases]: https://updates.vmsproxy.com/default/releases.json
 [nxwitness]: https://www.networkoptix.com/nx-witness/
 [repo]: https://github.com/ptr727/NxWitness
@@ -538,14 +546,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [ubuntu_docker]: https://hub.docker.com/_/ubuntu
 [ubuntu_lsio_docker]: https://hub.docker.com/r/lsiobase/ubuntu
 [ubuntu]: https://ubuntu.com/
-[wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
-[workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github
 [wisenetwave_download]: https://wavevms.com/download/linux
 [wisenetwave_releasenotes]: https://wavevms.com/release-notes/
-[dwspectrum_releasenotes]: https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html
-[dwspectrum_download]: https://dwspectrum.digital-watchdog.com/download/linux
-[nxmeta_betadownload]: https://meta.nxvms.com/downloads/betas
-[nxmeta_download]: https://meta.nxvms.com/download/linux
-[nxwitness_releasenotes]: https://www.networkoptix.com/all-nx-witness-release-notes
-[nxwitness_betadownload]: https://beta.networkoptix.com/beta-builds/default
-[nxwitness_download]: https://nxvms.com/download/linux
+[wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
+[workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github

@@ -28,6 +28,8 @@ jobs:
             ptr727/nxwitness-lsio,
             ptr727/dwspectrum,
             ptr727/dwspectrum-lsio,
+            ptr727/wisenetwave,
+            ptr727/wisenetwave-lsio,
           ]
 
     steps:
