@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using System.Diagnostics;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -30,22 +29,22 @@ public static class Program
         var versionOption = new Option<string>(
             name: "--version",
             description: "Version JSON file.",
-            getDefaultValue: () => "Version.json");
+            getDefaultValue: () => "./Make/Version.json");
 
         var matrixOption = new Option<string>(
             name: "--matrix",
             description: "Matrix JSON file.",
-            getDefaultValue: () => "Matrix.json");
+            getDefaultValue: () => "./Make/Matrix.json");
 
         var schemaVersionOption = new Option<string>(
             name: "--schemaversion",
             description: "Version JSON schema file.",
-            getDefaultValue: () => "Version.schema.json");
+            getDefaultValue: () => "./JSON/Version.schema.json");
 
         var schemaMatrixOption = new Option<string>(
             name: "--schemamatrix",
             description: "Matrix JSON schema file.",
-            getDefaultValue: () => "Matrix.schema.json");
+            getDefaultValue: () => "./JSON/Matrix.schema.json");
 
         var updateOption = new Option<bool>(
             name: "--update",
@@ -61,6 +60,11 @@ public static class Program
             name: "--docker",
             description: "Docker directory.",
             getDefaultValue: () => "./Docker");
+
+        var labelOption = new Option<VersionInfo.LabelType>(
+            name: "--label",
+            description: "Version label.",
+            getDefaultValue: () => VersionInfo.LabelType.Latest);
 
         var versionCommand = new Command("version", "Create version information file")
             {
@@ -83,13 +87,14 @@ public static class Program
             };
         schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
-        var makeCommand = new Command("make", "Create Docker and Compose files from Matrix file")
+        var makeCommand = new Command("make", "Create Docker and Compose files from Version file")
             {
-                matrixOption,
+                versionOption,
                 makeOption,
-                dockerOption
+                dockerOption,
+                labelOption
             };
-        makeCommand.SetHandler(MakeHandler, matrixOption, makeOption, dockerOption);
+        makeCommand.SetHandler(MakeHandler, versionOption, makeOption, dockerOption, labelOption);
 
         var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from product versions")
             {
@@ -183,14 +188,17 @@ public static class Program
         return Task.FromResult(0);
     }
 
-    private static Task<int> MakeHandler(string versionPath, string makePath, string dockerPath)
+    private static Task<int> MakeHandler(string versionPath, string makePath, string dockerPath, VersionInfo.LabelType label)
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
         var versionSchema = VersionJsonSchema.FromFile(versionPath);
 
-        // Create Dockerfile's
-        Dockerfile.Create(versionSchema.Products, dockerPath);
+        // Create Compose files
+        ComposeFile.Create(makePath);
+
+        // Create Docker files
+        DockerFile.Create(versionSchema.Products, dockerPath, label);
 
         return Task.FromResult(0);
     }

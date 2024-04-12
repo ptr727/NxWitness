@@ -2,23 +2,8 @@
 
 set -e
 
-# Create Dockerfile from M4 file
-function CreateDockerfile {
-    rm ../Docker/$1.Dockerfile || true
-    m4 $1.m4 >../Docker/$1.Dockerfile
-}
+# Update Version.json and create Matrix.json
+dotnet run --project ../CreateMatrix -- matrix --update --version=Version.json --matrix=Matrix.json
 
-# Update Version.json and create MAtrix.json
-dotnet run --project ../CreateMatrix -- matrix --update
-# Update M4 snippets using Matrix.json versions
-dotnet run --project ../CreateMatrix -- make
-
-# Create Dockerfiles from M4 files
-CreateDockerfile "NxMeta"
-CreateDockerfile "NxMeta-LSIO"
-CreateDockerfile "NxWitness"
-CreateDockerfile "NxWitness-LSIO"
-CreateDockerfile "DWSpectrum"
-CreateDockerfile "DWSpectrum-LSIO"
-CreateDockerfile "WisenetWAVE"
-CreateDockerfile "WisenetWAVE-LSIO"
+# Create Dockerfiles
+dotnet run --project ../CreateMatrix -- make --version=Version.json --make=./ --docker=../Docker

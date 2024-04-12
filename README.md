@@ -1,4 +1,4 @@
-# Docker Projects for Nx Witness and Nx Meta and DW Spectrum
+# Docker Projects for Nx Witness and Variants
 
 This is a project to build docker containers for [Network Optix Nx Witness VMS][nxwitness], [Network Optix Nx Meta VMS][nxmeta], [Digital Watchdog DW Spectrum IPVMS][dwspectrum], and [Hanwha Vision Wisenet WAVE VMS][hanwhawave].
 
@@ -17,7 +17,7 @@ Licensed under the [MIT License][license].
 
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
-  - Using the `CreateMatrix` utility instead of M4 to create Dockerfile's and test scripts.
+  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files.
 - Version 2.3:
   - Added unit test project to verify the release and upgrade control logic.
   - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
@@ -295,10 +295,7 @@ services:
 
 Build overview:
 
-- [Build scripts](./Make/) are used to create the [`Dockerfile`'s](./Docker/) for all permutations of "Entrypoint", "LSIO", "NxMeta", "NxWitness" and "DWSpectrum" variants and products.
-- Docker does [not support](https://github.com/moby/moby/issues/735) a native `include` directive, instead the [M4 macro processor](https://www.gnu.org/software/m4/) is used to assemble common snippets.
-- The `Dockerfile` [downloads](./Docker/download.sh) and installs the mediaserver installer at build time using environment variables for the URLs.
-- [`CreateMatrix`](./CreateMatrix/) is a custom app used to update available product versions and download URLs.
+- [`CreateMatrix`](./CreateMatrix/) is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
 - The logic follows the same pattern as used by the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client logic.
 - The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitness_releases] must be greater than `0`
@@ -309,7 +306,7 @@ Build overview:
 Local testing:
 
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
-  - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s from the snippets using M4 and update the latest version information using `CreateMatrix`.
+  - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
   - [`Build.sh`](./Make/Build.sh): Builds the `Dockerfile`'s using `docker buildx build`.
   - [`Up.sh`](./Make/Up.sh): Launch a docker compose stack [`Test.yaml`](./Make/Test.yml) to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.

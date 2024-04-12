@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 
@@ -71,7 +70,7 @@ public class PackagesJsonSchema
         var packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
         ArgumentNullException.ThrowIfNull(packagesSchema.Packages);
-        Debug.Assert(packagesSchema.Packages.Count > 0);
+        ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
 
         // Return packages
         return packagesSchema.Packages;

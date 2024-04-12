@@ -28,6 +28,8 @@ public class ProductInfo
 
     public string GetDescription() => GetDescription(Product);
 
+    public string GetDocker(bool lsio) => GetDocker(Product, lsio);
+
     // Used for release JSON API https://updates.vmsproxy.com/{release}/releases.json path
     public static string GetRelease(ProductType productType)
     {
@@ -65,6 +67,13 @@ public class ProductInfo
             ProductType.WisenetWAVE => "Wisenet WAVE VMS",
             _ => throw new InvalidEnumArgumentException(nameof(Product))
         };
+    }
+
+    // Dockerfile name, excluding the .Dockerfile extension
+    // TODO: Consolidate with ImageInfo.SetName(), e.g. add enum for Ubuntu, LSIO, etc.
+    public static string GetDocker(ProductType productType, bool lsio)
+    {
+        return $"{productType}{(lsio ? "-LSIO" : "")}";
     }
 
     public static IEnumerable<ProductType> GetProductTypes()
@@ -202,7 +211,7 @@ public class ProductInfo
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
             var latest = FindMissingLabel(VersionInfo.LabelType.Latest, [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]);
-            Debug.Assert(latest != default(VersionInfo));
+            ArgumentNullException.ThrowIfNull(latest);
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
 
@@ -210,7 +219,7 @@ public class ProductInfo
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
             var stable = FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest]);
-            Debug.Assert(stable != default(VersionInfo));
+            ArgumentNullException.ThrowIfNull(stable);
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
 
@@ -221,12 +230,12 @@ public class ProductInfo
         Versions.ForEach(item => item.Labels.Sort());
 
         // Must have 1 Latest and 1 Stable label
-        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)) == 1);
-        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)) == 1);
+        ArgumentOutOfRangeException.ThrowIfNotEqual(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)), 1);
+        ArgumentOutOfRangeException.ThrowIfNotEqual(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)), 1);
 
         // Must have no more than 1 Beta or RC labels
-        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)) <= 1);
-        Debug.Assert(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)) <= 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)), 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)), 1);
     }
 
     public void LogInformation()

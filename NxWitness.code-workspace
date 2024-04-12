@@ -13,6 +13,7 @@
 			"BUILDPLATFORM",
 			"buildx",
 			"cloudhost",
+			"Composefile",
 			"digitalwatchdog",
 			"dockerenv",
 			"domainname",

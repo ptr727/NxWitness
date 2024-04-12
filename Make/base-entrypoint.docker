@@ -1,4 +1,0 @@
-# https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest supported for v5.1 is Jammy
-# https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy
-FROM ubuntu:jammy
