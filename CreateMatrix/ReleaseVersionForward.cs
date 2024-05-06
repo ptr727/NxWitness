@@ -22,13 +22,23 @@ public static class ReleaseVersionForward
 
     private static void Verify(ProductInfo oldProduct, ProductInfo newProduct, VersionInfo.LabelType label)
     {
-        // Find label in old product, skip if not present
+        // TODO: It is possible that a label is released, then pulled, then re-released with a lesser version
+
+        // Find label in old and new product, skip if not present
         var oldVersion = oldProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
         if (oldVersion == default(VersionInfo))
+        {
+            Log.Logger.Warning("{Product}:{Label} : Label not found", oldProduct.Product, label);
             return;
+        }
 
-        // New product must have the same label
-        var newVersion = newProduct.Versions.First(item => item.Labels.Contains(label));
+        // Find label in new product, skip if not present
+        var newVersion = newProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+        if (newVersion == default(VersionInfo))
+        {
+            Log.Logger.Warning("{Product}:{Label} : Label not found", newProduct.Product, label);
+            return;
+        }
 
         // New version must be >= old version
         if (oldVersion.CompareTo(newVersion) <= 0) 
