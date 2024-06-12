@@ -71,10 +71,8 @@ Notes:
 
 - `latest` and `stable` may be the same version if all builds are released builds.
 - `rc` and `beta` tags are only built when RC and Beta builds are published by Nx, and may be older than current `latest` or `stable` builds.
-- See [Build Process](#build-process) for determination of the "released" status of a build.
-
-The images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.  
-See the [Build Process](#build-process) section for more details on how versions and builds are managed.
+- Images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.
+- See [Build Process](#build-process) for more details.
 
 [NxWitness][hub_nxwitness]:  
 [![NxWitness Stable][hub_nxwitness_stable_shield]][hub_nxwitness]

@@ -46,7 +46,7 @@ function BuildDockerfile {
 	docker buildx build --platform linux/amd64 --load --tag test_${1,,} --file ../Docker/$1.Dockerfile ../Docker
 }
 
-# Create and use multi platfiorm build environment
+# Create and use multi platform build environment
 docker buildx create --name "nxwitness" --use || true
 
 # Build Dockerfiles
