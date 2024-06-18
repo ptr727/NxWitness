@@ -145,7 +145,7 @@ jobs:
       # https://docs.docker.com/build/ci/github-actions/cache/
       # https://github.com/moby/buildkit#github-actions-cache-experimental
       - name: Build and Push Images
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           cache-from: type=gha,scope=${{ matrix.images.cachescope }}
           cache-to: type=gha,mode=max,scope=${{ matrix.images.cachescope }}
