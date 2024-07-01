@@ -95,9 +95,9 @@
           ]
         },
         {
-          "Version": "6.0.0.38488",
-          "UriX64": "https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_arm64-beta.zip",
+          "Version": "6.0.0.38908",
+          "UriX64": "https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
