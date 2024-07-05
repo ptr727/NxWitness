@@ -6,25 +6,18 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "5.1.3.38363",
-          "UriX64": "https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/38363/metavms-server_update-5.1.3.38363-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "5.1.4.38659",
           "UriX64": "https://updates.networkoptix.com/metavms/38659/metavms-server_update-5.1.4.38659-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/38659/metavms-server_update-5.1.4.38659-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         },
         {
-          "Version": "6.0.0.38488",
-          "UriX64": "https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_arm64-beta.zip",
+          "Version": "6.0.0.38908",
+          "UriX64": "https://updates.networkoptix.com/metavms/38908/metavms-server_update-6.0.0.38908-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/38908/metavms-server_update-6.0.0.38908-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
@@ -44,9 +37,9 @@
           ]
         },
         {
-          "Version": "6.0.0.38488",
-          "UriX64": "https://updates.networkoptix.com/default/38488/nxwitness-server_update-6.0.0.38488-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/38488/nxwitness-server_update-6.0.0.38488-linux_arm64-beta.zip",
+          "Version": "6.0.0.38908",
+          "UriX64": "https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
@@ -73,9 +66,9 @@
           ]
         },
         {
-          "Version": "6.0.0.38488",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_arm64-beta.zip",
+          "Version": "6.0.0.38908",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38908/dwspectrum-server_update-6.0.0.38908-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38908/dwspectrum-server_update-6.0.0.38908-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
@@ -102,9 +95,9 @@
           ]
         },
         {
-          "Version": "6.0.0.38488",
-          "UriX64": "https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/38488/wave-server_update-6.0.0.38488-linux_arm64-beta.zip",
+          "Version": "6.0.0.38908",
+          "UriX64": "https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]

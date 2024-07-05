@@ -12,13 +12,13 @@ FROM lsiobase/ubuntu:jammy
 # Labels
 ARG LABEL_NAME="NxMeta-LSIO"
 ARG LABEL_DESCRIPTION="Nx Meta VMS"
-ARG LABEL_VERSION="6.0.0.38488"
+ARG LABEL_VERSION="6.0.0.38908"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/38488/metavms-server_update-6.0.0.38488-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.0.0.38488"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/38908/metavms-server_update-6.0.0.38908-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/38908/metavms-server_update-6.0.0.38908-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.0.0.38908"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix-metavms"
@@ -54,8 +54,6 @@ RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
         ca-certificates \
-        mc \
-        nano \
         unzip \
         wget
 
@@ -83,7 +81,6 @@ RUN usermod -l ${COMPANY_NAME} abc \
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        file \
         gdb \
         ./vms_server.deb \
 # Cleanup        

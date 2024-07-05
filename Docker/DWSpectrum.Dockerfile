@@ -12,13 +12,13 @@ FROM ubuntu:jammy
 # Labels
 ARG LABEL_NAME="DWSpectrum"
 ARG LABEL_DESCRIPTION="DW Spectrum IPVMS"
-ARG LABEL_VERSION="6.0.0.38488"
+ARG LABEL_VERSION="6.0.0.38908"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/digitalwatchdog/38488/dwspectrum-server_update-6.0.0.38488-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.0.0.38488"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/digitalwatchdog/38908/dwspectrum-server_update-6.0.0.38908-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/digitalwatchdog/38908/dwspectrum-server_update-6.0.0.38908-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.0.0.38908"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="digitalwatchdog"
@@ -54,8 +54,6 @@ RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes \
         ca-certificates \
-        mc \
-        nano \
         unzip \
         wget
 
@@ -70,7 +68,6 @@ RUN chmod +x download.sh \
 # Install the mediaserver and dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        file \
         gdb \
         sudo \
         ./vms_server.deb \
