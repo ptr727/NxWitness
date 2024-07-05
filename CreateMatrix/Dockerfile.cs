@@ -147,8 +147,6 @@ public class DockerFile
                 && apt-get upgrade --yes \
                 && apt-get install --no-install-recommends --yes \
                     ca-certificates \
-                    mc \
-                    nano \
                     unzip \
                     wget
 
@@ -182,7 +180,6 @@ public class DockerFile
             # Install the mediaserver and dependencies
             RUN apt-get update \
                 && apt-get install --no-install-recommends --yes \
-                    file \
                     gdb \
 
             """;
