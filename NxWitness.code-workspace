@@ -64,6 +64,22 @@
 			"wisenetwave",
 			"WORKDIR",
 			"xattr"
+		],
+		"files.trimTrailingWhitespace": true,
+		"[markdown]": {
+			"files.trimTrailingWhitespace": false
+		},
+		"[plaintext]": {
+			"files.trimTrailingWhitespace": false
+		},
+		"diffEditor.ignoreTrimWhitespace": false,
+		"editor.renderWhitespace": "boundary"
+	},
+	"extensions": {
+		"recommendations": [
+			"davidanson.vscode-markdownlint",
+			"gruntfuggly.todo-tree",
+			"streetsidesoftware.code-spell-checker",
 		]
 	}
 }
