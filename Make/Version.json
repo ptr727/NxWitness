@@ -10,7 +10,14 @@
           "UriX64": "https://updates.networkoptix.com/metavms/38659/metavms-server_update-5.1.4.38659-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/38659/metavms-server_update-5.1.4.38659-linux_arm64.zip",
           "Labels": [
-            "Stable",
+            "Stable"
+          ]
+        },
+        {
+          "Version": "5.1.5.39242",
+          "UriX64": "https://updates.networkoptix.com/metavms/39242/metavms-server_update-5.1.5.39242-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/39242/metavms-server_update-5.1.5.39242-linux_arm64.zip",
+          "Labels": [
             "Latest"
           ]
         },
@@ -32,7 +39,14 @@
           "UriX64": "https://updates.networkoptix.com/default/38659/nxwitness-server_update-5.1.4.38659-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/default/38659/nxwitness-server_update-5.1.4.38659-linux_arm64.zip",
           "Labels": [
-            "Stable",
+            "Stable"
+          ]
+        },
+        {
+          "Version": "5.1.5.39242",
+          "UriX64": "https://updates.networkoptix.com/default/39242/nxwitness-server_update-5.1.5.39242-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/39242/nxwitness-server_update-5.1.5.39242-linux_arm64.zip",
+          "Labels": [
             "Latest"
           ]
         },
@@ -58,9 +72,9 @@
           ]
         },
         {
-          "Version": "5.1.4.38659",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38659/dwspectrum-server_update-5.1.4.38659-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38659/dwspectrum-server_update-5.1.4.38659-linux_arm64.zip",
+          "Version": "5.1.5.39242",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/39242/dwspectrum-server_update-5.1.5.39242-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/39242/dwspectrum-server_update-5.1.5.39242-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
@@ -87,9 +101,9 @@
           ]
         },
         {
-          "Version": "5.1.4.38659",
-          "UriX64": "https://updates.networkoptix.com/hanwha/38659/wave-server_update-5.1.4.38659-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/38659/wave-server_update-5.1.4.38659-linux_arm64.zip",
+          "Version": "5.1.5.39242",
+          "UriX64": "https://updates.networkoptix.com/hanwha/39242/wave-server_update-5.1.5.39242-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/39242/wave-server_update-5.1.5.39242-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
