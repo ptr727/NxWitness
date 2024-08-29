@@ -43,6 +43,7 @@ The project supports the following product variants:
 - [Network Optix][networkoptix] [Nx Witness VMS][nxwitness] (not available for purchase in the US)
 - [Network Optix][networkoptix] [Nx Meta VMS][nxmeta] (developer and early access version of Nx Witness)
 - [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
+- [Network Optix][networkoptix] [Nx Go VMS][nxgo] (version of Nx Witness targeted at transportation sector)
 - [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
 
 ## Releases
@@ -53,6 +54,8 @@ Images are published on [Docker Hub][hub]:
 - [NxWitness-LSIO][hub_nxwitness-lsio]: `docker pull docker.io/ptr727/nxwitness-lsio`
 - [NxMeta][hub_nxmeta]: `docker pull docker.io/ptr727/nxmeta`
 - [NxMeta-LSIO][hub_nxmeta-lsio]: `docker pull docker.io/ptr727/nxmeta-lsio`
+- [NxGo][hub_nxwitness]: `docker pull docker.io/ptr727/nxgo`
+- [NxGo-LSIO][hub_nxwitness-lsio]: `docker pull docker.io/ptr727/nxgo-lsio`
 - [DWSpectrum][hub_dwspectrum]: `docker pull docker.io/ptr727/dwspectrum`
 - [DWSpectrum-LSIO][hub_dwspectrum-lsio]: `docker pull docker.io/ptr727/dwspectrum-lsio`
 - [WisenetWAVE][hub_wisenetwave]: `docker pull docker.io/ptr727/wisenetwave`
@@ -538,6 +541,11 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [nxwitness_releasenotes]: https://www.networkoptix.com/all-nx-witness-release-notes
 [nxwitness_releases]: https://updates.vmsproxy.com/default/releases.json
 [nxwitness]: https://www.networkoptix.com/nx-witness/
+[nxgo_betadownload]: https://cloud.nxgo.io/download/betas/linux
+[nxgo_download]: https://cloud.nxgo.io/download/releases/linux
+[nxgo_releasenotes]: https://updates.networkoptix.com/nxgo/#releases_list
+[nxgo_releases]: https://updates.networkoptix.com/nxgo/releases.json
+[nxgo]: https://updates.networkoptix.com/nxgo
 [repo]: https://github.com/ptr727/NxWitness
 [s6]: https://github.com/just-containers/s6-overlay
 [thehomerepo]: https://github.com/thehomerepot/nxwitness
