@@ -12,6 +12,7 @@ public class ProductInfo
     public enum ProductType
     {
         None,
+        NxGo,
         NxMeta,
         NxWitness,
         DWSpectrum,
@@ -35,6 +36,7 @@ public class ProductInfo
     {
         return productType switch
         {
+            ProductType.NxGo => "nxgo",
             ProductType.NxMeta => "metavms",
             ProductType.NxWitness => "default",
             ProductType.DWSpectrum => "digitalwatchdog",
@@ -48,6 +50,7 @@ public class ProductInfo
     {
         return productType switch
         {
+            ProductType.NxGo => "networkoptix",
             ProductType.NxMeta => "networkoptix-metavms",
             ProductType.NxWitness => "networkoptix",
             ProductType.DWSpectrum => "digitalwatchdog",
@@ -61,6 +64,7 @@ public class ProductInfo
     {
         return productType switch
         {
+            ProductType.NxGo => "Nx Go VMS",
             ProductType.NxMeta => "Nx Meta VMS",
             ProductType.NxWitness => "Nx Witness VMS",
             ProductType.DWSpectrum => "DW Spectrum IPVMS",
@@ -93,7 +97,7 @@ public class ProductInfo
         // Match the logic with ReleasesTests.CreateProductInfo()
         // TODO: Refactor to reduce duplication and chance of divergence
 
-        // Get version information using releases.json and package.json 
+        // Get version information using releases.json and package.json
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
         {
@@ -135,7 +139,7 @@ public class ProductInfo
                 versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}";
 
                 // Verify and add to list
-                if (VerifyVersion(versionInfo)) 
+                if (VerifyVersion(versionInfo))
                     Versions.Add(versionInfo);
             }
 
@@ -154,9 +158,9 @@ public class ProductInfo
         // Static rules:
 
         // Ubuntu Jammy requires version 5.1 or later
-        if (versionInfo.CompareTo("5.1") >= 0) 
+        if (versionInfo.CompareTo("5.1") >= 0)
             return true;
-        
+
         Log.Logger.Warning("{Product}:{Version} : Ubuntu Jammy requires v5.1+", Product, versionInfo.Version);
         return false;
     }
@@ -177,9 +181,9 @@ public class ProductInfo
         }
 
         // Is this version larger than the other version
-        if (versionInfo.CompareTo(existingVersion) <= 0) 
+        if (versionInfo.CompareTo(existingVersion) <= 0)
             return;
-        
+
         Log.Logger.Warning("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
 
         // Remove from other version and add to this version
@@ -250,7 +254,7 @@ public class ProductInfo
         {
             using HttpClient httpClient = new();
             foreach (var versionUri in Versions)
-            { 
+            {
                 // Will throw on error
                 VerifyUrl(httpClient, versionUri.UriX64);
                 VerifyUrl(httpClient, versionUri.UriArm64);

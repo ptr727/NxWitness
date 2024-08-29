@@ -1,7 +1,29 @@
 {
-  "$schema": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
+  "$schema": "https://raw.githubusercontent.com/kinnairdclan/NxWitness/nxgo/CreateMatrix/JSON/Version.schema.json",
   "SchemaVersion": 2,
   "Products": [
+    {
+      "Product": "NxGo",
+      "Versions": [
+        {
+          "Version": "5.1.5.39242",
+          "UriX64": "https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_x64.deb",
+          "UriArm64": "https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+          "Labels": [
+            "Stable",
+            "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.0.39148",
+          "UriX64": "https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_x64.deb",
+          "UriArm64": "https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64.deb",
+          "Labels": [
+            "RC"
+          ]
+        }
+      ]
+    },
     {
       "Product": "NxMeta",
       "Versions": [
