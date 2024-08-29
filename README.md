@@ -42,8 +42,8 @@ The project supports the following product variants:
 
 - [Network Optix][networkoptix] [Nx Witness VMS][nxwitness] (not available for purchase in the US)
 - [Network Optix][networkoptix] [Nx Meta VMS][nxmeta] (developer and early access version of Nx Witness)
-- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
 - [Network Optix][networkoptix] [Nx Go VMS][nxgo] (version of Nx Witness targeted at transportation sector)
+- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
 - [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
 
 ## Releases
@@ -276,6 +276,11 @@ services:
   - [Request Developer Licenses](hhttps://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers)
   - [Downloads][nxmeta_download]
   - [Beta Downloads][nxmeta_betadownload]
+- Nx Go:
+  - [Releases JSON API][nxgo_releases]
+  - [Downloads][nxgo_download]
+  - [Beta Downloads][nxgo_betadownload]
+  - [Release Notes][nxgo_releasenotes]
 - DW Spectrum:
   - [Releases JSON API][dwspectrum_releases]
   - [Downloads][dwspectrum_download]
