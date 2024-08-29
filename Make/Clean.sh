@@ -11,6 +11,7 @@ function DeleteImage {
 ./Down.sh
 
 # Delete images
+DeleteImage "NxGo"
 DeleteImage "NxMeta"
 DeleteImage "NxMeta-LSIO"
 DeleteImage "NxWitness"
