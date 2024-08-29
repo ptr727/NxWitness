@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/kinnairdclan/NxWitness/nxgo/CreateMatrix/JSON/Version.schema.json",
+  "$schema": "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json",
   "SchemaVersion": 2,
   "Products": [
     {
