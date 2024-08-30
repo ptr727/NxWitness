@@ -3,6 +3,64 @@
   "SchemaVersion": 2,
   "Images": [
     {
+      "Name": "NxGo",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxgo:5.1.5.39242",
+        "docker.io/ptr727/nxgo:latest",
+        "docker.io/ptr727/nxgo:stable"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+        "DOWNLOAD_VERSION=5.1.5.39242",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-5.1.5.39242-linux_x64.deb"
+      ]
+    },
+    {
+      "Name": "NxGo",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxgo:6.0.0.39148",
+        "docker.io/ptr727/nxgo:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64-rc.deb",
+        "DOWNLOAD_VERSION=6.0.0.39148",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39148/linux/nxgo-server-6.0.0.39148-linux_x64-rc.deb"
+      ]
+    },
+    {
+      "Name": "NxGo-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxgo-lsio:5.1.5.39242",
+        "docker.io/ptr727/nxgo-lsio:latest",
+        "docker.io/ptr727/nxgo-lsio:stable"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+        "DOWNLOAD_VERSION=5.1.5.39242",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-5.1.5.39242-linux_x64.deb"
+      ]
+    },
+    {
+      "Name": "NxGo-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxgo-lsio:6.0.0.39148",
+        "docker.io/ptr727/nxgo-lsio:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64-rc.deb",
+        "DOWNLOAD_VERSION=6.0.0.39148",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39148/linux/nxgo-server-6.0.0.39148-linux_x64-rc.deb"
+      ]
+    },
+    {
       "Name": "NxMeta",
       "Branch": "main",
       "CacheScope": "default",
@@ -284,6 +342,66 @@
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39148/wave-server_update-6.0.0.39148-linux_arm64-rc.zip",
         "DOWNLOAD_VERSION=6.0.0.39148",
         "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39148/wave-server_update-6.0.0.39148-linux_x64-rc.zip"
+      ]
+    },
+    {
+      "Name": "NxGo",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxgo:develop",
+        "docker.io/ptr727/nxgo:develop-5.1.5.39242",
+        "docker.io/ptr727/nxgo:develop-latest",
+        "docker.io/ptr727/nxgo:develop-stable"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+        "DOWNLOAD_VERSION=5.1.5.39242",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-5.1.5.39242-linux_x64.deb"
+      ]
+    },
+    {
+      "Name": "NxGo",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxgo:develop-6.0.0.39148",
+        "docker.io/ptr727/nxgo:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64-rc.deb",
+        "DOWNLOAD_VERSION=6.0.0.39148",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39148/linux/nxgo-server-6.0.0.39148-linux_x64-rc.deb"
+      ]
+    },
+    {
+      "Name": "NxGo-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxgo-lsio:develop",
+        "docker.io/ptr727/nxgo-lsio:develop-5.1.5.39242",
+        "docker.io/ptr727/nxgo-lsio:develop-latest",
+        "docker.io/ptr727/nxgo-lsio:develop-stable"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+        "DOWNLOAD_VERSION=5.1.5.39242",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-5.1.5.39242-linux_x64.deb"
+      ]
+    },
+    {
+      "Name": "NxGo-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxgo-lsio:develop-6.0.0.39148",
+        "docker.io/ptr727/nxgo-lsio:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64-rc.deb",
+        "DOWNLOAD_VERSION=6.0.0.39148",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/nxgo/39148/linux/nxgo-server-6.0.0.39148-linux_x64-rc.deb"
       ]
     },
     {

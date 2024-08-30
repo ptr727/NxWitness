@@ -2,6 +2,17 @@
 
 volumes:
 
+  # Dockerfile : NxGo
+  test_nxgo_etc:
+  test_nxgo_ini:
+  test_nxgo_var:
+  test_nxgo_media:
+
+
+  # Dockerfile : NxGo-LSIO
+  test_nxgo-lsio_config:
+  test_nxgo-lsio_media:
+
   # Dockerfile : NxMeta
   test_nxmeta_etc:
   test_nxmeta_ini:
@@ -49,8 +60,40 @@ volumes:
 
 services:
 
-  # Dockerfile : NxMeta
+  # Dockerfile : NxGo
   # Port : 7101
+  nxgo:
+    image: docker.io/ptr727/nxgo:develop
+    container_name: nxgo-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7101:7001
+    volumes:
+      - test_nxgo_etc:/opt/networkoptix/mediaserver/etc
+      - test_nxgo_ini:/home/networkoptix/.config/nx_ini
+      - test_nxgo_var:/opt/networkoptix/mediaserver/var
+      - test_nxgo_media:/media
+
+  # Dockerfile : NxGo-LSIO
+  # Port : 7201
+  nxgo-lsio:
+    image: docker.io/ptr727/nxgo-lsio:develop
+    container_name: nxgo-lsio-container
+    restart: unless-stopped
+    environment:
+      - TZ=Americas/Los_Angeles
+    network_mode: bridge
+    ports:
+      - 7201:7001
+    volumes:
+      - test_nxgo-lsio_config:/config
+      - test_nxgo-lsio_media:/media
+
+  # Dockerfile : NxMeta
+  # Port : 7102
   nxmeta:
     image: docker.io/ptr727/nxmeta:develop
     container_name: nxmeta-container
@@ -59,7 +102,7 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7101:7001
+      - 7102:7001
     volumes:
       - test_nxmeta_etc:/opt/networkoptix-metavms/mediaserver/etc
       - test_nxmeta_ini:/home/networkoptix-metavms/.config/nx_ini
@@ -67,7 +110,7 @@ services:
       - test_nxmeta_media:/media
 
   # Dockerfile : NxMeta-LSIO
-  # Port : 7201
+  # Port : 7202
   nxmeta-lsio:
     image: docker.io/ptr727/nxmeta-lsio:develop
     container_name: nxmeta-lsio-container
@@ -76,13 +119,13 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7201:7001
+      - 7202:7001
     volumes:
       - test_nxmeta-lsio_config:/config
       - test_nxmeta-lsio_media:/media
 
   # Dockerfile : NxWitness
-  # Port : 7102
+  # Port : 7103
   nxwitness:
     image: docker.io/ptr727/nxwitness:develop
     container_name: nxwitness-container
@@ -91,7 +134,7 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7102:7001
+      - 7103:7001
     volumes:
       - test_nxwitness_etc:/opt/networkoptix/mediaserver/etc
       - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
@@ -99,7 +142,7 @@ services:
       - test_nxwitness_media:/media
 
   # Dockerfile : NxWitness-LSIO
-  # Port : 7202
+  # Port : 7203
   nxwitness-lsio:
     image: docker.io/ptr727/nxwitness-lsio:develop
     container_name: nxwitness-lsio-container
@@ -108,13 +151,13 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7202:7001
+      - 7203:7001
     volumes:
       - test_nxwitness-lsio_config:/config
       - test_nxwitness-lsio_media:/media
 
   # Dockerfile : DWSpectrum
-  # Port : 7103
+  # Port : 7104
   dwspectrum:
     image: docker.io/ptr727/dwspectrum:develop
     container_name: dwspectrum-container
@@ -123,7 +166,7 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7103:7001
+      - 7104:7001
     volumes:
       - test_dwspectrum_etc:/opt/digitalwatchdog/mediaserver/etc
       - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
@@ -131,7 +174,7 @@ services:
       - test_dwspectrum_media:/media
 
   # Dockerfile : DWSpectrum-LSIO
-  # Port : 7203
+  # Port : 7204
   dwspectrum-lsio:
     image: docker.io/ptr727/dwspectrum-lsio:develop
     container_name: dwspectrum-lsio-container
@@ -140,13 +183,13 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7203:7001
+      - 7204:7001
     volumes:
       - test_dwspectrum-lsio_config:/config
       - test_dwspectrum-lsio_media:/media
 
   # Dockerfile : WisenetWAVE
-  # Port : 7104
+  # Port : 7105
   wisenetwave:
     image: docker.io/ptr727/wisenetwave:develop
     container_name: wisenetwave-container
@@ -155,7 +198,7 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7104:7001
+      - 7105:7001
     volumes:
       - test_wisenetwave_etc:/opt/hanwha/mediaserver/etc
       - test_wisenetwave_ini:/home/hanwha/.config/nx_ini
@@ -163,7 +206,7 @@ services:
       - test_wisenetwave_media:/media
 
   # Dockerfile : WisenetWAVE-LSIO
-  # Port : 7204
+  # Port : 7205
   wisenetwave-lsio:
     image: docker.io/ptr727/wisenetwave-lsio:develop
     container_name: wisenetwave-lsio-container
@@ -172,7 +215,7 @@ services:
       - TZ=Americas/Los_Angeles
     network_mode: bridge
     ports:
-      - 7204:7001
+      - 7205:7001
     volumes:
       - test_wisenetwave-lsio_config:/config
       - test_wisenetwave-lsio_media:/media

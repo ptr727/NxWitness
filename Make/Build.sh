@@ -50,6 +50,7 @@ function BuildDockerfile {
 docker buildx create --name "nxwitness" --use || true
 
 # Build Dockerfiles
+BuildDockerfile "NxGo"
 BuildDockerfile "NxMeta"
 BuildDockerfile "NxMeta-LSIO"
 BuildDockerfile "NxWitness"
