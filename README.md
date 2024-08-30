@@ -15,6 +15,8 @@ Licensed under the [MIT License][license].
 
 ## Release Notes
 
+- Version 2.5:
+  - Added [NxGo][nxgo] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
   - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
@@ -572,7 +574,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [nxgo_download]: https://cloud.nxgo.io/download/releases/linux
 [nxgo_releasenotes]: https://updates.networkoptix.com/nxgo/#releases_list
 [nxgo_releases]: https://updates.networkoptix.com/nxgo/releases.json
-[nxgo]: https://updates.networkoptix.com/nxgo
+[nxgo]: https://www.networkoptix.com/nx-go
 [repo]: https://github.com/ptr727/NxWitness
 [s6]: https://github.com/just-containers/s6-overlay
 [thehomerepo]: https://github.com/thehomerepot/nxwitness
