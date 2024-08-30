@@ -9,6 +9,7 @@
           "Product": {
             "enum": [
               "None",
+              "NxGo",
               "NxMeta",
               "NxWitness",
               "DWSpectrum"
