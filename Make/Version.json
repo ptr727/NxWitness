@@ -72,9 +72,9 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
-          "Version": "5.1.2.37996",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_arm64.zip",
+          "Version": "5.1.4.38659",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/38659/dwspectrum-server_update-5.1.4.38659-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/38659/dwspectrum-server_update-5.1.4.38659-linux_arm64.zip",
           "Labels": [
             "Stable"
           ]
