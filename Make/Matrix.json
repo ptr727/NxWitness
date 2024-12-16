@@ -195,27 +195,13 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/wisenetwave:6.0.0.39503",
+        "docker.io/ptr727/wisenetwave:6.0.1.40042",
         "docker.io/ptr727/wisenetwave:latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.0.39503",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Branch": "main",
-      "CacheScope": "default",
-      "Tags": [
-        "docker.io/ptr727/wisenetwave:6.0.1.39719",
-        "docker.io/ptr727/wisenetwave:rc"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_arm64-rc.zip",
-        "DOWNLOAD_VERSION=6.0.1.39719",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_x64-rc.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40042",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
       ]
     },
     {
@@ -237,27 +223,13 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:6.0.0.39503",
+        "docker.io/ptr727/wisenetwave-lsio:6.0.1.40042",
         "docker.io/ptr727/wisenetwave-lsio:latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.0.39503",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Branch": "main",
-      "CacheScope": "lsio",
-      "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:6.0.1.39719",
-        "docker.io/ptr727/wisenetwave-lsio:rc"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_arm64-rc.zip",
-        "DOWNLOAD_VERSION=6.0.1.39719",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_x64-rc.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40042",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
       ]
     },
     {
@@ -462,27 +434,13 @@
       "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/wisenetwave:develop",
-        "docker.io/ptr727/wisenetwave:develop-6.0.0.39503",
+        "docker.io/ptr727/wisenetwave:develop-6.0.1.40042",
         "docker.io/ptr727/wisenetwave:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.0.39503",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Branch": "develop",
-      "CacheScope": "default",
-      "Tags": [
-        "docker.io/ptr727/wisenetwave:develop-6.0.1.39719",
-        "docker.io/ptr727/wisenetwave:develop-rc"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_arm64-rc.zip",
-        "DOWNLOAD_VERSION=6.0.1.39719",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_x64-rc.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40042",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
       ]
     },
     {
@@ -505,27 +463,13 @@
       "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:develop",
-        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.0.39503",
+        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.1.40042",
         "docker.io/ptr727/wisenetwave-lsio:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.0.39503",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39503/wave-server_update-6.0.0.39503-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Branch": "develop",
-      "CacheScope": "lsio",
-      "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.1.39719",
-        "docker.io/ptr727/wisenetwave-lsio:develop-rc"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_arm64-rc.zip",
-        "DOWNLOAD_VERSION=6.0.1.39719",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/39719/wave-server_update-6.0.1.39719-linux_x64-rc.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40042",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
       ]
     }
   ]
