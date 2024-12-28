@@ -108,8 +108,12 @@ public class ProductInfo
             var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetRelease());
             foreach (var release in releasesList)
             {
-                // We expect only "vms" products
-                Debug.Assert(release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase));
+                // Only process "vms" products
+                if (!release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase))
+                {
+                    Log.Logger.Warning("{Product}: Skipping {ReleaseProduct}", Product, release.Product);
+                    continue;
+                }
 
                 // Set version
                 VersionInfo versionInfo = new();
