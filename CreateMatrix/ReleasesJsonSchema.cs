@@ -44,6 +44,7 @@ public class Release
     public const string RcPublication = "rc";
     public const string BetaPublication = "beta";
     public const string VmsProduct = "vms";
+    public const string DesktopProduct = "desktop_client";
 
     private bool IsPublished()
     {
