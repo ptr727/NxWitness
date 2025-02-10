@@ -29,9 +29,9 @@
           ]
         },
         {
-          "Version": "6.1.0.39707",
-          "UriX64": "https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_arm64-beta.zip",
+          "Version": "6.1.0.40308",
+          "UriX64": "https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
