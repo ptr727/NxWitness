@@ -52,13 +52,13 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:6.1.0.39707",
+        "docker.io/ptr727/nxmeta:6.1.0.40308",
         "docker.io/ptr727/nxmeta:beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.39707",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.40308",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip"
       ]
     },
     {
@@ -81,13 +81,13 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:6.1.0.39707",
+        "docker.io/ptr727/nxmeta-lsio:6.1.0.40308",
         "docker.io/ptr727/nxmeta-lsio:beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.39707",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.40308",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip"
       ]
     },
     {
@@ -106,6 +106,20 @@
       ]
     },
     {
+      "Name": "NxWitness",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxwitness:6.0.2.40229",
+        "docker.io/ptr727/nxwitness:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "NxWitness-LSIO",
       "Branch": "main",
       "CacheScope": "lsio",
@@ -118,6 +132,20 @@
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_arm64.zip",
         "DOWNLOAD_VERSION=6.0.1.39873",
         "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "NxWitness-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxwitness-lsio:6.0.2.40229",
+        "docker.io/ptr727/nxwitness-lsio:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     },
     {
@@ -149,6 +177,20 @@
       ]
     },
     {
+      "Name": "DWSpectrum",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/dwspectrum:6.0.2.40229",
+        "docker.io/ptr727/dwspectrum:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "DWSpectrum-LSIO",
       "Branch": "main",
       "CacheScope": "lsio",
@@ -177,6 +219,20 @@
       ]
     },
     {
+      "Name": "DWSpectrum-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/dwspectrum-lsio:6.0.2.40229",
+        "docker.io/ptr727/dwspectrum-lsio:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "WisenetWAVE",
       "Branch": "main",
       "CacheScope": "default",
@@ -195,13 +251,27 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/wisenetwave:6.0.1.40042",
+        "docker.io/ptr727/wisenetwave:6.0.1.40221",
         "docker.io/ptr727/wisenetwave:latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.1.40042",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40221",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "WisenetWAVE",
+      "Branch": "main",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/wisenetwave:6.0.2.40229",
+        "docker.io/ptr727/wisenetwave:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     },
     {
@@ -223,13 +293,27 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:6.0.1.40042",
+        "docker.io/ptr727/wisenetwave-lsio:6.0.1.40221",
         "docker.io/ptr727/wisenetwave-lsio:latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.1.40042",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40221",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "WisenetWAVE-LSIO",
+      "Branch": "main",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/wisenetwave-lsio:6.0.2.40229",
+        "docker.io/ptr727/wisenetwave-lsio:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     },
     {
@@ -285,13 +369,13 @@
       "Branch": "develop",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:develop-6.1.0.39707",
+        "docker.io/ptr727/nxmeta:develop-6.1.0.40308",
         "docker.io/ptr727/nxmeta:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.39707",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.40308",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip"
       ]
     },
     {
@@ -315,13 +399,13 @@
       "Branch": "develop",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:develop-6.1.0.39707",
+        "docker.io/ptr727/nxmeta-lsio:develop-6.1.0.40308",
         "docker.io/ptr727/nxmeta-lsio:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.39707",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/39707/metavms-server_update-6.1.0.39707-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.40308",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip"
       ]
     },
     {
@@ -341,6 +425,20 @@
       ]
     },
     {
+      "Name": "NxWitness",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/nxwitness:develop-6.0.2.40229",
+        "docker.io/ptr727/nxwitness:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "NxWitness-LSIO",
       "Branch": "develop",
       "CacheScope": "lsio",
@@ -354,6 +452,20 @@
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_arm64.zip",
         "DOWNLOAD_VERSION=6.0.1.39873",
         "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "NxWitness-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxwitness-lsio:develop-6.0.2.40229",
+        "docker.io/ptr727/nxwitness-lsio:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/default/40229/nxwitness-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     },
     {
@@ -386,6 +498,20 @@
       ]
     },
     {
+      "Name": "DWSpectrum",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/dwspectrum:develop-6.0.2.40229",
+        "docker.io/ptr727/dwspectrum:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "DWSpectrum-LSIO",
       "Branch": "develop",
       "CacheScope": "lsio",
@@ -415,6 +541,20 @@
       ]
     },
     {
+      "Name": "DWSpectrum-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/dwspectrum-lsio:develop-6.0.2.40229",
+        "docker.io/ptr727/dwspectrum-lsio:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/digitalwatchdog/40229/dwspectrum-server_update-6.0.2.40229-linux_x64-rc.zip"
+      ]
+    },
+    {
       "Name": "WisenetWAVE",
       "Branch": "develop",
       "CacheScope": "default",
@@ -434,13 +574,27 @@
       "CacheScope": "default",
       "Tags": [
         "docker.io/ptr727/wisenetwave:develop",
-        "docker.io/ptr727/wisenetwave:develop-6.0.1.40042",
+        "docker.io/ptr727/wisenetwave:develop-6.0.1.40221",
         "docker.io/ptr727/wisenetwave:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.1.40042",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40221",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "WisenetWAVE",
+      "Branch": "develop",
+      "CacheScope": "default",
+      "Tags": [
+        "docker.io/ptr727/wisenetwave:develop-6.0.2.40229",
+        "docker.io/ptr727/wisenetwave:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     },
     {
@@ -463,13 +617,27 @@
       "CacheScope": "lsio",
       "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:develop",
-        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.1.40042",
+        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.1.40221",
         "docker.io/ptr727/wisenetwave-lsio:develop-latest"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.0.1.40042",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40042/wave-server_update-6.0.1.40042-linux_x64.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_arm64.zip",
+        "DOWNLOAD_VERSION=6.0.1.40221",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40221/wave-server_update-6.0.1.40221-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "WisenetWAVE-LSIO",
+      "Branch": "develop",
+      "CacheScope": "lsio",
+      "Tags": [
+        "docker.io/ptr727/wisenetwave-lsio:develop-6.0.2.40229",
+        "docker.io/ptr727/wisenetwave-lsio:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.0.2.40229",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/40229/wave-server_update-6.0.2.40229-linux_x64-rc.zip"
       ]
     }
   ]
