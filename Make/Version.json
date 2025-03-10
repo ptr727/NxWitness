@@ -6,18 +6,11 @@
       "Product": "NxGo",
       "Versions": [
         {
-          "Version": "6.0.1.39873",
-          "UriX64": "https://updates.networkoptix.com/nxgo/39873/nxgo-server_update-6.0.1.39873-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/nxgo/39873/nxgo-server_update-6.0.1.39873-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "6.0.2.40414",
           "UriX64": "https://updates.networkoptix.com/nxgo/40414/nxgo-server_update-6.0.2.40414-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/nxgo/40414/nxgo-server_update-6.0.2.40414-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         }
@@ -27,18 +20,11 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "6.0.1.39873",
-          "UriX64": "https://updates.networkoptix.com/metavms/39873/metavms-server_update-6.0.1.39873-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/39873/metavms-server_update-6.0.1.39873-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "6.0.2.40414",
           "UriX64": "https://updates.networkoptix.com/metavms/40414/metavms-server_update-6.0.2.40414-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/40414/metavms-server_update-6.0.2.40414-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         },
@@ -56,18 +42,11 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "6.0.1.39873",
-          "UriX64": "https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/39873/nxwitness-server_update-6.0.1.39873-linux_arm64.zip",
-          "Labels": [
-            "Stable"
-          ]
-        },
-        {
           "Version": "6.0.2.40414",
           "UriX64": "https://updates.networkoptix.com/default/40414/nxwitness-server_update-6.0.2.40414-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/default/40414/nxwitness-server_update-6.0.2.40414-linux_arm64.zip",
           "Labels": [
+            "Stable",
             "Latest"
           ]
         }
