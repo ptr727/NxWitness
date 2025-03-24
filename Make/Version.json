@@ -29,6 +29,14 @@
           ]
         },
         {
+          "Version": "6.0.3.40568",
+          "UriX64": "https://updates.networkoptix.com/metavms/40568/metavms-server_update-6.0.3.40568-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/40568/metavms-server_update-6.0.3.40568-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
+        {
           "Version": "6.1.0.40308",
           "UriX64": "https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_x64-beta.zip",
           "UriArm64": "https://updates.networkoptix.com/metavms/40308/metavms-server_update-6.1.0.40308-linux_arm64-beta.zip",
@@ -48,6 +56,14 @@
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.3.40568",
+          "UriX64": "https://updates.networkoptix.com/default/40568/nxwitness-server_update-6.0.3.40568-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/40568/nxwitness-server_update-6.0.3.40568-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         }
       ]
@@ -70,6 +86,14 @@
           "Labels": [
             "Latest"
           ]
+        },
+        {
+          "Version": "6.0.3.40568",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/40568/dwspectrum-server_update-6.0.3.40568-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/40568/dwspectrum-server_update-6.0.3.40568-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
         }
       ]
     },
@@ -90,6 +114,14 @@
           "UriArm64": "https://updates.networkoptix.com/hanwha/40414/wave-server_update-6.0.2.40414-linux_arm64.zip",
           "Labels": [
             "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.3.40568",
+          "UriX64": "https://updates.networkoptix.com/hanwha/40568/wave-server_update-6.0.3.40568-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/40568/wave-server_update-6.0.3.40568-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         }
       ]
