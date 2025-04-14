@@ -5,7 +5,7 @@ updates:
   # main
 - package-ecosystem: "nuget"
   target-branch: "main"
-  directory: "/CreateMatrix"
+  directory: "/"
   schedule:
     interval: "daily"
   groups:
@@ -25,7 +25,7 @@ updates:
   # develop
 - package-ecosystem: "nuget"
   target-branch: "develop"
-  directory: "/CreateMatrix"
+  directory: "/"
   schedule:
     interval: "daily"
   groups:
