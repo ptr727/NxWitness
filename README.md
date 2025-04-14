@@ -17,7 +17,7 @@ Licensed under the [MIT License][license].
 
 - Version 2.6:
   - Updated to Ubuntu Noble 24.04 LTS base images in [support][nx_os_support] of v6 products.
-  - Update to .NET 9 and stricter `dotnet format` using `.editorconfig`.
+  - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
 - Version 2.5:
   - Added [NxGo][nxgo] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
 - Version 2.4:
@@ -211,7 +211,7 @@ See [LSIO docs][lsio_puid] for usage of `PUID` and `PGID` that allow the mediase
 
 ### Network Mode
 
-Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended][nx_github_networking].
+Due to the hardware bound licensing `host` mode is [recommended][nx_github_networking], alternatively use a `macvlan` network with a static IP and MAC address.
 
 ## Examples
 
@@ -270,6 +270,55 @@ services:
       - /mnt/nxwitness/media:/media
 ```
 
+### Docker Compose with Static IP and MAC
+
+```shell
+docker network create --driver macvlan \
+    --subnet=${PUBLIC_NETWORK_SUBNET} \
+    --gateway=${PUBLIC_NETWORK_GATEWAY} \
+    --opt parent=${PUBLIC_NETWORK_PARENT} \
+    ${PUBLIC_NETWORK_NAME}
+
+docker network create --driver bridge ${LOCAL_NETWORK_NAME}
+```
+
+```yaml
+networks:
+  public_network:
+    name: ${PUBLIC_NETWORK_NAME}
+    external: true
+  local_network:
+    name: ${LOCAL_NETWORK_NAME}
+    external: true
+
+services:
+  nxmeta:
+    image: docker.io/ptr727/nxmeta-lsio:latest
+    container_name: nxmeta
+    hostname: nxmeta
+    domainname: ${DOMAIN_NAME}
+    restart: unless-stopped
+    user: root
+    environment:
+      - TZ=${TZ}
+      - PUID=${USER_NONROOT_ID}
+      - PGID=${USERS_GROUP_ID}
+    volumes:
+      - ${APPDATA_DIR}/nxmeta/config:/config
+      - ${NVR_DIR}/media:/media
+      - ${NVR_DIR}/backup:/backup
+    networks:
+      public_network:
+        ipv4_address: ${NXMETA_IP}
+        mac_address: ${NXMETA_MAC}
+      local_network:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta${DOMAIN_REGEX}$$`)
+      - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
+      - traefik.http.services.nxmeta.loadbalancer.server.port=7001
+```
+
 ### Unraid Template
 
 - Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/main/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
@@ -316,7 +365,7 @@ services:
 
 ## Build Process
 
-Build overview:
+### Build Overview
 
 - [`CreateMatrix`](./CreateMatrix/) is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
@@ -326,8 +375,9 @@ Build overview:
 - Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
-Local testing:
+### Local Testing
 
+- Install prerequisites listed in [`./Build.sh`](./Make/Build.sh).
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
   - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
   - [`Build.sh`](./Make/Build.sh): Builds the `Dockerfile`'s using `docker buildx build`.
@@ -341,7 +391,7 @@ Local testing:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx to fix: Associate licenses with the [Cloud Account][nx_cloud] not the local hardware.
+  - Nx to fix: Associate licenses with the [Cloud Account][nx_cloud] not the local hardware. (To my knowledge cloud licensing will only be available in [Gen6 Enterprise][gen6_enterprise]).
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
   - Filesystem types are filtered out if not on the [supported list][nx_github_storage].
@@ -365,7 +415,7 @@ Local testing:
   - Nx makes no distinction between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
   - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
   - Nx to fix: Implement something akin to archiving in [Milestone XProtect VMS][milestone] where recording storage is separate from long term archival storage.
-- Image Publication:
+- Docker Image Publication:
   - Nx relies on end-users or projects like this one to create and publish docker images.
   - Nx to fix: Publish up-to-date images for all product variants and release channels.
 - Break-Fix-Version-Forward:
@@ -379,7 +429,19 @@ Local testing:
 
 I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.
 If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).
-Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test accordingly.
+Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test thoroughly in your environment.
+
+### License Hardware Changes
+
+Licensing is tied to the system hardware, and changes to motherboards or network cards can invalidate the hardware id.  
+Using host networking, or a `macvlan` network with a static IP and a static MAC address may help prevent license invalidation.
+
+Verify the following items in the `mediaserver.conf`:
+
+- `guidIsHWID=no` do not use hardware for GUID generation, see [this article][nx_virtual_env] for more details.
+- `serverGuid={xxx}` the GUID used for licensing, see [this article][nx_guidgen] for more details.
+- `storedMac=xxx` the MAC address used for licensing, use the MAC address of the IP used for `if`, see [this article][nx_multi_nic] for more details.
+- `if=xxx` route all traffic only through this IP, and use that IP's interface MAC for licensing (also helps to avoid Nx auto binding to all available docker networks).
 
 ### Missing Storage
 
@@ -588,3 +650,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [wisenetwave_releasenotes]: https://wavevms.com/release-notes/
 [wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
 [workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github
+[gen6_enterprise]: https://www.networkoptix.com/landing/gen-6-enterprise
+[nx_virtual_env]: https://support.networkoptix.com/hc/en-us/articles/360037429854-Using-Nx-Witness-in-a-virtual-environment
+[nx_guidgen]: https://support.networkoptix.com/hc/en-us/articles/115008344267-Nx-Witness-terminates-right-away-in-my-virtual-machine
+[nx_multi_nic]: https://support.networkoptix.com/hc/en-us/articles/215567037-Troubleshooting-HWID-Changes-in-Multi-NIC-Environment

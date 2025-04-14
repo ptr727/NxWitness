@@ -3,8 +3,10 @@
 set -e
 
 ## Dependencies:
-# Docker v25+, .NET SDK v8+
-# sudo apt update && sudo apt install m4 dotnet-sdk-8.0 docker-compose-plugin docker-buildx-plugin
+# sudo apt update && sudo apt upgrade --yes
+# sudo add-apt-repository ppa:dotnet/backports --yes && sudo apt update
+# sudo apt install m4 dotnet-sdk-9.0 docker-compose docker-buildx --yes
+# sudo apt autoremove --yes
 
 
 ## Test installing in container:
@@ -51,6 +53,7 @@ docker buildx create --name "nxwitness" --use || true
 
 # Build Dockerfiles
 BuildDockerfile "NxGo"
+BuildDockerfile "NxGo-LSIO"
 BuildDockerfile "NxMeta"
 BuildDockerfile "NxMeta-LSIO"
 BuildDockerfile "NxWitness"
