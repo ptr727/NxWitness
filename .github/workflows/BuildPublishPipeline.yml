@@ -108,9 +108,6 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      # Keep building even if one job fails, helps with troubleshooting when there are multiple errors
-      fail-fast: false
-
       # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         images: ${{ fromJson(needs.setmatrix.outputs.matrix).images }}
@@ -123,9 +120,6 @@ jobs:
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
-        # https://github.com/ptr727/NxWitness/issues/191
-        with:
-          image: tonistiigi/binfmt:qemu-v7.0.0-28
 
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Setup Docker Buildx
