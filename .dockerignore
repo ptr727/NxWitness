@@ -1,3 +1,4 @@
+**/.mount
 **/.classpath
 **/.dockerignore
 **/.env
@@ -15,11 +16,12 @@
 **/bin
 **/charts
 **/docker-compose*
-**/compose*
 **/Dockerfile*
 **/node_modules
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+LICENSE
 README.md
+auth.conf

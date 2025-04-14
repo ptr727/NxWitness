@@ -1,4 +1,4 @@
-using CreateMatrix;
+﻿using CreateMatrix;
 
 namespace CreateMatrixTests;
 
@@ -8,7 +8,7 @@ public class ReleasesTests
     public void MatchLabels()
     {
         // Create test releases
-        var releasesSchema = new ReleasesJsonSchema
+        ReleasesJsonSchema releasesSchema = new()
         {
             Releases = [
                 // Stable, published and released
@@ -21,9 +21,9 @@ public class ReleasesTests
                 new Release { PublicationType = Release.BetaPublication, Version = "4.0" }
                 ]
         };
-        
+
         // Create ProductInfo from schema
-        var productInfo = CreateProductInfo(releasesSchema);
+        ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 4 versions
         Assert.Equal(4, productInfo.Versions.Count);
@@ -45,7 +45,7 @@ public class ReleasesTests
         // Similar to MissingStable()
 
         // Create test releases
-        var releasesSchema = new ReleasesJsonSchema
+        ReleasesJsonSchema releasesSchema = new()
         {
             Releases = [
                 // Stable, published and released
@@ -58,7 +58,7 @@ public class ReleasesTests
         };
 
         // Create ProductInfo from schema
-        var productInfo = CreateProductInfo(releasesSchema);
+        ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 3 versions
         Assert.Equal(3, productInfo.Versions.Count);
@@ -70,13 +70,13 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)));
         // 1 Beta
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
-        
+
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
+        IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        _ = Assert.Single(latestVersions);
         // Should have Latest and Stable labels
-        var version = latestVersions.First();
+        VersionInfo version = latestVersions.First();
         Assert.Equal(2, version.Labels.Count);
     }
 
@@ -86,7 +86,7 @@ public class ReleasesTests
         // Similar to MissingLatest()
 
         // Create test releases
-        var releasesSchema = new ReleasesJsonSchema
+        ReleasesJsonSchema releasesSchema = new()
         {
             Releases = [
                 // Latest, published not released
@@ -99,7 +99,7 @@ public class ReleasesTests
         };
 
         // Create ProductInfo from schema
-        var productInfo = CreateProductInfo(releasesSchema);
+        ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 3 versions
         Assert.Equal(3, productInfo.Versions.Count);
@@ -113,11 +113,11 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
 
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
+        IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        _ = Assert.Single(latestVersions);
         // Should have Latest and Stable labels
-        var version = latestVersions.First();
+        VersionInfo version = latestVersions.First();
         Assert.Equal(2, version.Labels.Count);
     }
 
@@ -125,7 +125,7 @@ public class ReleasesTests
     public void MultipleReleases()
     {
         // Create test releases
-        var releasesSchema = new ReleasesJsonSchema
+        ReleasesJsonSchema releasesSchema = new()
         {
             Releases = [
                 // Published not released
@@ -136,10 +136,10 @@ public class ReleasesTests
         };
 
         // Create ProductInfo from schema
-        var productInfo = CreateProductInfo(releasesSchema);
+        ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 1 version
-        Assert.Single(productInfo.Versions);
+        _ = Assert.Single(productInfo.Versions);
         // 2 labels per version
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Count == 2));
         // 1 Latest
@@ -148,11 +148,11 @@ public class ReleasesTests
         Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)));
 
         // Select all Latest or Stable labels
-        var latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
+        IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item => item.Labels.Contains(VersionInfo.LabelType.Latest) || item.Labels.Contains(VersionInfo.LabelType.Stable));
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        _ = Assert.Single(latestVersions);
         // Should have Latest and Stable labels
-        var version = latestVersions.First();
+        VersionInfo version = latestVersions.First();
         Assert.Equal(2, version.Labels.Count);
 
         // Should be the v4.0 version
@@ -164,7 +164,7 @@ public class ReleasesTests
         // Match the logic with ProductInfo.GetVersions()
         // TODO: Refactor to reduce duplication and chance of divergence
         ProductInfo productInfo = new();
-        foreach (var release in releasesSchema.Releases)
+        foreach (Release release in releasesSchema.Releases)
         {
             VersionInfo versionInfo = new();
             versionInfo.SetVersion(release.Version);

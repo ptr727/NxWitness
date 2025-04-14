@@ -6,19 +6,19 @@
 # LSIO: True
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest Ubuntu supported for v5.1 is Jammy
-FROM lsiobase/ubuntu:jammy
+# Latest Ubuntu supported for v6 is Noble
+FROM lsiobase/ubuntu:noble
 
 # Labels
 ARG LABEL_NAME="NxWitness-LSIO"
 ARG LABEL_DESCRIPTION="Nx Witness VMS"
-ARG LABEL_VERSION="6.0.0.38908"
+ARG LABEL_VERSION="6.1.0.40638"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.0.0.38908"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/40638/nxwitness-server_update-6.1.0.40638-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/40638/nxwitness-server_update-6.1.0.40638-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.1.0.40638"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix"
@@ -66,12 +66,12 @@ RUN chmod +x download.sh \
     && ./download.sh
 
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
-# The mediaserver calls "chown ${COMPANY_NAME}" at runtime
-# We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
+# https://docs.linuxserver.io/misc/non-root/
 # LSIO does not officially support changing the "abc" username
 # https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
-# Change user "abc" to ${COMPANY_NAME}
+# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/noble/root/etc/s6-overlay/s6-rc.d/init-adduser/run
+# The mediaserver calls "chown ${COMPANY_NAME}" at runtime
+# Change LSIO user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
 # Change group "abc" to ${COMPANY_NAME}
     && groupmod -n ${COMPANY_NAME} abc \
@@ -83,7 +83,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \
         ./vms_server.deb \
-# Cleanup        
+# Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

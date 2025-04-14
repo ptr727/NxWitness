@@ -8,8 +8,8 @@ public class ComposeFile
     public static void Create(string makePath)
     {
         // Create local Compose file
-        var composeFile = CreateComposefile(null);
-        var filePath = Path.Combine(makePath, "Test.yml");
+        string composeFile = CreateComposefile(null);
+        string filePath = Path.Combine(makePath, "Test.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
         File.WriteAllText(filePath, composeFile, Encoding.UTF8);
 
@@ -32,90 +32,85 @@ public class ComposeFile
         // https://github.com/moby/moby/pull/45687
 
         // Compose file header
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append("""
+        StringBuilder stringBuilder = new();
+        _ = stringBuilder.Append("""
             # Compose file created by CreateMatrix, do not modify by hand
 
             """);
-        stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLine();
 
         // Create volumes
-        stringBuilder.Append(CreateVolumes());
-        stringBuilder.AppendLine();
+        _ = stringBuilder.Append(CreateVolumes());
+        _ = stringBuilder.AppendLine();
 
         // Create services
-        stringBuilder.Append(CreateServices(label));
-        stringBuilder.AppendLine();
+        _ = stringBuilder.Append(CreateServices(label));
+        _ = stringBuilder.AppendLine();
 
         return stringBuilder.ToString().Replace("\r\n", "\n").Trim();
     }
 
     private static string CreateVolumes()
     {
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append("""
+        StringBuilder stringBuilder = new();
+        _ = stringBuilder.Append("""
             volumes:
 
             """);
-        stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLine();
 
         // Create a volume for every product
-        foreach (var productType in ProductInfo.GetProductTypes())
+        foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            stringBuilder.Append(CreateVolume(productType, false));
-            stringBuilder.AppendLine();
+            _ = stringBuilder.Append(CreateVolume(productType, false));
+            _ = stringBuilder.AppendLine();
 
             // LSIO
-            stringBuilder.Append(CreateVolume(productType, true));
-            stringBuilder.AppendLine();
+            _ = stringBuilder.Append(CreateVolume(productType, true));
+            _ = stringBuilder.AppendLine();
         }
 
         return stringBuilder.ToString();
     }
 
-    private static string CreateVolume(ProductInfo.ProductType productType, bool lsio)
-    {
-        if (lsio) 
-            return $$"""
+    private static string CreateVolume(ProductInfo.ProductType productType, bool lsio) =>
+        lsio ? $$"""
               # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_config:
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_media:
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_config:
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
+
+            """
+            : $$"""
+              # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_etc:
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_ini:
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_var:
+              test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
+
 
             """;
-        else
-            return $$"""
-              # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_etc:
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_ini:
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_var:
-              test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_media:
-
-            
-            """
-            ;
-    }
 
     private static string CreateServices(string? label)
     {
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append("""
+        StringBuilder stringBuilder = new();
+        _ = stringBuilder.Append("""
             services:
 
             """);
-        stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLine();
 
         // Create a service for every product
         int standardPort = 7101, lsioPort = 7201;
-        foreach (var productType in ProductInfo.GetProductTypes())
+        foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            stringBuilder.Append(CreateService(productType, false, standardPort ++, label));
-            stringBuilder.AppendLine();
+            _ = stringBuilder.Append(CreateService(productType, false, standardPort++, label));
+            _ = stringBuilder.AppendLine();
 
             // LSIO
-            stringBuilder.Append(CreateService(productType, true, lsioPort ++, label));
-            stringBuilder.AppendLine();
+            _ = stringBuilder.Append(CreateService(productType, true, lsioPort++, label));
+            _ = stringBuilder.AppendLine();
         }
 
         return stringBuilder.ToString();
@@ -123,13 +118,13 @@ public class ComposeFile
 
     private static string CreateService(ProductInfo.ProductType productType, bool lsio, int port, string? label)
     {
-        var image = string.IsNullOrEmpty(label) ? $"test_{ProductInfo.GetDocker(productType, lsio).ToLower()}" : $"docker.io/ptr727/{ProductInfo.GetDocker(productType, lsio).ToLower()}:{label}";
-        var service = $$"""
+        string image = string.IsNullOrEmpty(label) ? $"test_{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}" : $"docker.io/ptr727/{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}:{label}";
+        string service = $$"""
               # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
               # Port : {{port}}
-              {{ProductInfo.GetDocker(productType, lsio).ToLower()}}:
+              {{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}:
                 image: {{image}}
-                container_name: {{ProductInfo.GetDocker(productType, lsio).ToLower()}}-container
+                container_name: {{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}-container
                 restart: unless-stopped
                 environment:
                   - TZ=Americas/Los_Angeles
@@ -140,21 +135,25 @@ public class ComposeFile
             """;
 
         if (lsio)
+        {
             service += $$"""
                 volumes:
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_config:/config
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_media:/media
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_config:/config
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:/media
 
             """;
+        }
         else
+        {
             service += $$"""
                 volumes:
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_etc:/opt/{{ProductInfo.GetCompany(productType).ToLower()}}/mediaserver/etc
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_ini:/home/{{ProductInfo.GetCompany(productType).ToLower()}}/.config/nx_ini
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_var:/opt/{{ProductInfo.GetCompany(productType).ToLower()}}/mediaserver/var
-                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLower()}}_media:/media
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_etc:/opt/{{ProductInfo.GetCompany(productType).ToLowerInvariant()}}/mediaserver/etc
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_ini:/home/{{ProductInfo.GetCompany(productType).ToLowerInvariant()}}/.config/nx_ini
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_var:/opt/{{ProductInfo.GetCompany(productType).ToLowerInvariant()}}/mediaserver/var
+                  - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:/media
 
             """;
+        }
 
         return service;
     }

@@ -32,10 +32,10 @@ jobs:
     steps:
 
       # https://github.com/marketplace/actions/setup-net-core-sdk
-      - name: Setup .NET SDK 8
+      - name: Setup .NET SDK 9
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
@@ -105,8 +105,7 @@ jobs:
   buildpush:
     needs: [setmatrix, getversion]
     name: Build and Publish Docker Images
-    # https://github.com/ptr727/NxWitness/issues/191
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     strategy:
       # Keep building even if one job fails, helps with troubleshooting when there are multiple errors

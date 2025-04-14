@@ -96,6 +96,10 @@
 			"davidanson.vscode-markdownlint",
 			"gruntfuggly.todo-tree",
 			"streetsidesoftware.code-spell-checker",
-		]
+            "github.vscode-github-actions",
+            "ms-azuretools.vscode-docker",
+            "ms-dotnettools.csdevkit",
+            "yzhang.markdown-all-in-one"
+            ]
 	}
 }

@@ -8,10 +8,10 @@ public class VersionForwardTests
     public void VersionForward()
     {
         // Create test releases
-        var oldProductList = new List<ProductInfo>
-        { 
+        List<ProductInfo> oldProductList =
+        [
             new()
-            { 
+            {
                 Product = ProductInfo.ProductType.NxMeta,
                 Versions =
                 [
@@ -21,9 +21,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
                 ]
             }
-        };
-        var newProductList = new List<ProductInfo>
-        {
+        ];
+        List<ProductInfo> newProductList =
+        [
             new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
@@ -35,13 +35,13 @@ public class VersionForwardTests
                     new VersionInfo { Version = "4.1", Labels = [VersionInfo.LabelType.Beta] }
                 ]
             }
-        };
+        ];
 
         // newProductList will be updated in-place
         // Only Stable and Latest is tested
         // Versions with multiple labels will update the version not the individual labels
         ReleaseVersionForward.Verify(oldProductList, newProductList);
-        var productInfo = newProductList.First();
+        ProductInfo productInfo = newProductList.First();
 
         // 4 versions
         Assert.Equal(4, productInfo.Versions.Count);
@@ -70,8 +70,8 @@ public class VersionForwardTests
     public void VersionRegress()
     {
         // Create test releases
-        var oldProductList = new List<ProductInfo>
-        {
+        List<ProductInfo> oldProductList =
+        [
             new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
@@ -83,9 +83,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
                 ]
             }
-        };
-        var newProductList = new List<ProductInfo>
-        {
+        ];
+        List<ProductInfo> newProductList =
+        [
             new()
             {
                 Product = ProductInfo.ProductType.NxMeta,
@@ -97,13 +97,13 @@ public class VersionForwardTests
                     new VersionInfo { Version = "3.9", Labels = [VersionInfo.LabelType.Beta] }
                 ]
             }
-        };
+        ];
 
         // newProductList will be updated in-place
         // Only Stable and Latest is tested
         // Versions with multiple labels will update the version not the individual labels
         ReleaseVersionForward.Verify(oldProductList, newProductList);
-        var productInfo = newProductList.First();
+        ProductInfo productInfo = newProductList.First();
 
         // 4 versions
         Assert.Equal(4, productInfo.Versions.Count);

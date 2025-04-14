@@ -4,17 +4,20 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## License
 
-Licensed under the [MIT License][license].  
+Licensed under the [MIT License][license].
 ![License Shield][license_shield]
 
 ## Build Status
 
-[![Last Commit][last_commit_shield]][repo]  
-[![Workflow Status][workflow_status_shield]][actions]  
+[![Last Commit][last_commit_shield]][repo]
+[![Workflow Status][workflow_status_shield]][actions]
 [![Last Build][last_build_shield]][actions]
 
 ## Release Notes
 
+- Version 2.6:
+  - Updated to Ubuntu Noble 24.04 LTS base images in [support][nx_os_support] of v6 products.
+  - Update to .NET 9 and stricter `dotnet format` using `.editorconfig`.
 - Version 2.5:
   - Added [NxGo][nxgo] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
 - Version 2.4:
@@ -79,61 +82,61 @@ Notes:
 - Images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.
 - See [Build Process](#build-process) for more details.
 
-[NxWitness][hub_nxwitness]:  
+[NxWitness][hub_nxwitness]:
 [![NxWitness Stable][hub_nxwitness_stable_shield]][hub_nxwitness]
 [![NxWitness Latest][hub_nxwitness_latest_shield]][hub_nxwitness]
 [![NxWitness RC][hub_nxwitness_rc_shield]][hub_nxwitness]
 [![NxWitness Beta][hub_nxwitness_beta_shield]][hub_nxwitness]
 
-[NxWitness-LSIO][hub_nxwitness-lsio]:  
+[NxWitness-LSIO][hub_nxwitness-lsio]:
 [![NxWitness-LSIO Stable][hub_nxwitness-lsio_stable_shield]][hub_nxwitness-lsio]
 [![NxWitness-LSIO Latest][hub_nxwitness-lsio_latest_shield]][hub_nxwitness-lsio]
 [![NxWitness-LSIO RC][hub_nxwitness-lsio_rc_shield]][hub_nxwitness-lsio]
 [![NxWitness-LSIO Beta][hub_nxwitness-lsio_beta_shield]][hub_nxwitness-lsio]
 
-[NxMeta][hub_nxmeta]:  
+[NxMeta][hub_nxmeta]:
 [![NxMeta Stable][hub_nxmeta_stable_shield]][hub_nxmeta]
 [![NxMeta Latest][hub_nxmeta_latest_shield]][hub_nxmeta]
 [![NxMeta RC][hub_nxmeta_rc_shield]][hub_nxmeta]
 [![NxMeta Beta][hub_nxmeta_beta_shield]][hub_nxmeta]
 
-[NxMeta-LSIO][hub_nxmeta-lsio]:  
+[NxMeta-LSIO][hub_nxmeta-lsio]:
 [![NxMeta-LSIO Stable][hub_nxmeta-lsio_stable_shield]][hub_nxmeta-lsio]
 [![NxMeta-LSIO Latest][hub_nxmeta-lsio_latest_shield]][hub_nxmeta-lsio]
 [![NxMeta-LSIO RC][hub_nxmeta-lsio_rc_shield]][hub_nxmeta-lsio]
 [![NxMeta-LSIO Beta][hub_nxmeta-lsio_beta_shield]][hub_nxmeta-lsio]
 
-[NxGo][hub_nxgo]:  
+[NxGo][hub_nxgo]:
 [![NxGo Stable][hub_nxgo_stable_shield]][hub_nxgo]
 [![NxGo Latest][hub_nxgo_latest_shield]][hub_nxgo]
 [![NxGo RC][hub_nxgo_rc_shield]][hub_nxgo]
 [![NxGo Beta][hub_nxgo_beta_shield]][hub_nxgo]
 
-[NxGo-LSIO][hub_nxgo-lsio]:  
+[NxGo-LSIO][hub_nxgo-lsio]:
 [![NxGo-LSIO Stable][hub_nxgo-lsio_stable_shield]][hub_nxgo-lsio]
 [![NxGo-LSIO Latest][hub_nxgo-lsio_latest_shield]][hub_nxgo-lsio]
 [![NxGo-LSIO RC][hub_nxgo-lsio_rc_shield]][hub_nxgo-lsio]
 [![NxGo-LSIO Beta][hub_nxgo-lsio_beta_shield]][hub_nxgo-lsio]
 
-[DWSpectrum][hub_dwspectrum]:  
+[DWSpectrum][hub_dwspectrum]:
 [![DWSpectrum Stable][hub_dwspectrum_stable_shield]][hub_dwspectrum]
 [![DWSpectrum Latest][hub_dwspectrum_latest_shield]][hub_dwspectrum]
 [![DWSpectrum RC][hub_dwspectrum_rc_shield]][hub_dwspectrum]
 [![DWSpectrum Beta][hub_dwspectrum_beta_shield]][hub_dwspectrum]
 
-[DWSpectrum-LSIO][hub_dwspectrum-lsio]:  
+[DWSpectrum-LSIO][hub_dwspectrum-lsio]:
 [![DWSpectrum-LSIO Stable][hub_dwspectrum-lsio_stable_shield]][hub_dwspectrum-lsio]
 [![DWSpectrum-LSIO Latest][hub_dwspectrum-lsio_latest_shield]][hub_dwspectrum-lsio]
 [![DWSpectrum-LSIO RC][hub_dwspectrum-lsio_rc_shield]][hub_dwspectrum-lsio]
 [![DWSpectrum-LSIO Beta][hub_dwspectrum-lsio_beta_shield]][hub_dwspectrum-lsio]
 
-[WisenetWAVE][hub_wisenetwave]:  
+[WisenetWAVE][hub_wisenetwave]:
 [![WisenetWAVE Stable][hub_wisenetwave_stable_shield]][hub_wisenetwave]
 [![WisenetWAVE Latest][hub_wisenetwave_latest_shield]][hub_wisenetwave]
 [![WisenetWAVE RC][hub_wisenetwave_rc_shield]][hub_wisenetwave]
 [![WisenetWAVE Beta][hub_wisenetwave_beta_shield]][hub_wisenetwave]
 
-[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:  
+[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:
 [![WisenetWAVE-LSIO Stable][hub_wisenetwave-lsio_stable_shield]][hub_wisenetwave-lsio]
 [![WisenetWAVE-LSIO Latest][hub_wisenetwave-lsio_latest_shield]][hub_wisenetwave-lsio]
 [![WisenetWAVE-LSIO RC][hub_wisenetwave-lsio_rc_shield]][hub_wisenetwave-lsio]
@@ -143,7 +146,7 @@ Notes:
 
 ### Introduction
 
-I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomerepo] project, that inspired me to create this project.  
+I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomerepo] project, that inspired me to create this project.
 I started with individual repositories for Nx Witness, Nx Meta, and DW Spectrum, but that soon became cumbersome with lots of duplication, and I combined all product flavors into this one project.
 
 Today Network Optix supports [Docker][nx_docker], and they publish [build scripts][nx_github_docker], but they do not publish container images.
@@ -152,8 +155,8 @@ Today Network Optix supports [Docker][nx_docker], and they publish [build script
 
 The project creates two variants of each product using different base images:
 
-- [Ubuntu][ubuntu] using [ubuntu:jammy][ubuntu_docker] base image.
-- [LinuxServer][lsio] using [lsiobase/ubuntu:jammy][ubuntu_lsio_docker] base image.
+- [Ubuntu][ubuntu] using [ubuntu:noble][ubuntu_docker] base image.
+- [LinuxServer][lsio] using [lsiobase/ubuntu:noble][ubuntu_lsio_docker] base image.
 
 Note that smaller base images like [Alpine][alpine] are not [supported][nx_os_support] by the mediaserver.
 
@@ -374,20 +377,20 @@ Local testing:
 
 ## Troubleshooting
 
-I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.  
-If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).  
+I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.
+If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).
 Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test accordingly.
 
 ### Missing Storage
 
-The following section will help troubleshoot common problems with missing storage.  
-If this does not help, please contact [Network Optix Support][nx_support].  
+The following section will help troubleshoot common problems with missing storage.
+If this does not help, please contact [Network Optix Support][nx_support].
 Please do not open a GitHub issue unless you are positive the issue is with the `Dockerfile`.
 
 Confirm that all the mounted volumes are listed in the available storage locations in the [web admin][nx_webadmin] portal.
 
-Enable [debug logging][nx_debuglogging] in the mediaserver:  
-Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.  
+Enable [debug logging][nx_debuglogging] in the mediaserver:
+Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.
 Look for clues in `/config/var/log/log_file.log`.
 
 E.g.
@@ -422,8 +425,8 @@ nvrpool/nvr /media zfs rw,noatime,xattr,posixacl 0 0
 ssdpool/docker /archive zfs rw,noatime,xattr,posixacl 0 0
 ```
 
-Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.  
-Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.  
+Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.
+Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.
 Mount `/archive` is on device `ssdpool/docker` and filesystem is `zfs`.
 
 In this case the devices are unique and will not be filtered, but `zfs` is not supported and needs to be registered.
@@ -446,7 +449,7 @@ VERBOSE nx::vms::server::fs: shfs /media fuse.shfs - added
 VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate
 ```
 
-The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.  
+The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.
 Alternative use the "Unassigned Devices" plugin and dedicate e.g. a XFS formatted SSD drive to `/media` and/or `/config`.
 
 Example output for Unraid BTRFS:
@@ -470,7 +473,7 @@ In this example the `/test` volume was accepted, but all other volumes on `/dev/
 Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.
 Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
-Alternatively call the configuration API directly:  
+Alternatively call the configuration API directly:
 `wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.
 
 To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nx_support] and ask them to stop filtering filesystem types and devices.

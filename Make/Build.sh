@@ -8,8 +8,8 @@ set -e
 
 
 ## Test installing in container:
-# docker run -it --rm ubuntu:jammy /bin/bash
-# docker run -it --rm lsiobase/ubuntu:jammy /bin/bash
+# docker run -it --rm ubuntu:noble /bin/bash
+# docker run -it --rm lsiobase/ubuntu:noble /bin/bash
 # export DEBIAN_FRONTEND=noninteractive
 # apt-get update && apt-get upgrade --yes
 # apt-get install --no-install-recommends --yes ca-certificates unzip wget mc nano strace gdb

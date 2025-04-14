@@ -5,7 +5,7 @@ namespace CreateMatrix;
 public class VersionInfo
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum LabelType 
+    public enum LabelType
     {
         None,
         Stable,
@@ -24,7 +24,7 @@ public class VersionInfo
         // Extract the build number using the Version class (vs. regex)
         // 5.0.0.35271 -> 35271
         // 5.1.0.35151 R1 -> 35151
-        var version = new Version(Version);
+        Version version = new(Version);
         return version.Revision;
     }
 
@@ -32,50 +32,36 @@ public class VersionInfo
     {
         // Remove Rxx from version string
         // "5.0.0.35134 R10" -> "5.0.0.35134"
-        var spaceIndex = version.IndexOf(' ');
+        int spaceIndex = version.IndexOf(' ');
         Version = spaceIndex == -1 ? version : version[..spaceIndex];
     }
 
-    public int CompareTo(VersionInfo rhs)
-    {
-        return Compare(this, rhs);
-    }
+    public int CompareTo(VersionInfo rhs) => Compare(this, rhs);
 
-    public int CompareTo(string rhs)
-    {
-        return Compare(Version, rhs);
-    }
+    public int CompareTo(string rhs) => Compare(Version, rhs);
 
     public static int Compare(string lhs, string rhs)
     {
         // Compare version numbers using Version class
-        var lhsVersion = new Version(lhs);
-        var rhsVersion = new Version(rhs);
+        Version lhsVersion = new(lhs);
+        Version rhsVersion = new(rhs);
         return lhsVersion.CompareTo(rhsVersion);
     }
 
-    public static int Compare(VersionInfo lhs, VersionInfo rhs) 
-    {
-        return Compare(lhs.Version, rhs.Version);
-    }
+    public static int Compare(VersionInfo lhs, VersionInfo rhs) => Compare(lhs.Version, rhs.Version);
 
-    public static IEnumerable<LabelType> GetLabelTypes()
-    {
+    public static IEnumerable<LabelType> GetLabelTypes() =>
         // Create list of label types
-        return Enum.GetValues(typeof(LabelType)).Cast<LabelType>().Where(labelType => labelType != LabelType.None).ToList();
-    }
+        [.. Enum.GetValues<LabelType>().Cast<LabelType>().Where(labelType => labelType != LabelType.None)];
 }
 
 public class VersionInfoComparer : Comparer<VersionInfo>
 {
     // Compare using version numbers
-    public override int Compare(VersionInfo? x, VersionInfo? y)
+    public override int Compare(VersionInfo? x, VersionInfo? y) => x switch
     {
-        return x switch
-        {
-            null when y == null => 0,
-            null => -1,
-            _ => y == null ? 1 : VersionInfo.Compare(x, y)
-        };
-    }
+        null when y == null => 0,
+        null => -1,
+        _ => y == null ? 1 : VersionInfo.Compare(x, y)
+    };
 }

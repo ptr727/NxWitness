@@ -32,65 +32,52 @@ public class ProductInfo
     public string GetDocker(bool lsio) => GetDocker(Product, lsio);
 
     // Used for release JSON API https://updates.vmsproxy.com/{release}/releases.json path
-    public static string GetRelease(ProductType productType)
+    public static string GetRelease(ProductType productType) => productType switch
     {
-        return productType switch
-        {
-            ProductType.NxGo => "nxgo",
-            ProductType.NxMeta => "metavms",
-            ProductType.NxWitness => "default",
-            ProductType.DWSpectrum => "digitalwatchdog",
-            ProductType.WisenetWAVE => "hanwha",
-            _ => throw new InvalidEnumArgumentException(nameof(Product))
-        };
-    }
+        ProductType.NxGo => "nxgo",
+        ProductType.NxMeta => "metavms",
+        ProductType.NxWitness => "default",
+        ProductType.DWSpectrum => "digitalwatchdog",
+        ProductType.WisenetWAVE => "hanwha",
+        ProductType.None => throw new NotImplementedException(),
+        _ => throw new InvalidEnumArgumentException(nameof(Product))
+    };
 
     // Used for ${COMPANY_NAME} mediaserver install path and user account
-    public static string GetCompany(ProductType productType)
+    public static string GetCompany(ProductType productType) => productType switch
     {
-        return productType switch
-        {
-            ProductType.NxGo => "networkoptix",
-            ProductType.NxMeta => "networkoptix-metavms",
-            ProductType.NxWitness => "networkoptix",
-            ProductType.DWSpectrum => "digitalwatchdog",
-            ProductType.WisenetWAVE => "hanwha",
-            _ => throw new InvalidEnumArgumentException(nameof(Product))
-        };
-    }
+        ProductType.NxGo => "networkoptix",
+        ProductType.NxMeta => "networkoptix-metavms",
+        ProductType.NxWitness => "networkoptix",
+        ProductType.DWSpectrum => "digitalwatchdog",
+        ProductType.WisenetWAVE => "hanwha",
+        ProductType.None => throw new NotImplementedException(),
+        _ => throw new InvalidEnumArgumentException(nameof(Product))
+    };
 
     // Used for ${LABEL_DESCRIPTION} in Dockerfile
-    public static string GetDescription(ProductType productType)
+    public static string GetDescription(ProductType productType) => productType switch
     {
-        return productType switch
-        {
-            ProductType.NxGo => "Nx Go VMS",
-            ProductType.NxMeta => "Nx Meta VMS",
-            ProductType.NxWitness => "Nx Witness VMS",
-            ProductType.DWSpectrum => "DW Spectrum IPVMS",
-            ProductType.WisenetWAVE => "Wisenet WAVE VMS",
-            _ => throw new InvalidEnumArgumentException(nameof(Product))
-        };
-    }
+        ProductType.NxGo => "Nx Go VMS",
+        ProductType.NxMeta => "Nx Meta VMS",
+        ProductType.NxWitness => "Nx Witness VMS",
+        ProductType.DWSpectrum => "DW Spectrum IPVMS",
+        ProductType.WisenetWAVE => "Wisenet WAVE VMS",
+        ProductType.None => throw new NotImplementedException(),
+        _ => throw new InvalidEnumArgumentException(nameof(Product))
+    };
 
     // Dockerfile name, excluding the .Dockerfile extension
     // TODO: Consolidate with ImageInfo.SetName(), e.g. add enum for Ubuntu, LSIO, etc.
-    public static string GetDocker(ProductType productType, bool lsio)
-    {
-        return $"{productType}{(lsio ? "-LSIO" : "")}";
-    }
+    public static string GetDocker(ProductType productType, bool lsio) => $"{productType}{(lsio ? "-LSIO" : "")}";
 
-    public static IEnumerable<ProductType> GetProductTypes()
-    {
+    public static IEnumerable<ProductType> GetProductTypes() =>
         // Create list of product types
-        return Enum.GetValues(typeof(ProductType)).Cast<ProductType>().Where(productType => productType != ProductType.None).ToList();
-    }
+        [.. Enum.GetValues<ProductType>().Cast<ProductType>().Where(productType => productType != ProductType.None)];
 
-    public static List<ProductInfo> GetProducts()
-    {
+    public static List<ProductInfo> GetProducts() =>
         // Create list of all known products
-        return (from ProductType productType in GetProductTypes() select new ProductInfo { Product = productType }).ToList();
-    }
+        [.. from ProductType productType in GetProductTypes() select new ProductInfo { Product = productType }];
 
     public void GetVersions()
     {
@@ -105,8 +92,8 @@ public class ProductInfo
             using HttpClient httpClient = new();
 
             // Get all releases
-            var releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetRelease());
-            foreach (var release in releasesList)
+            List<Release> releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetRelease());
+            foreach (Release release in releasesList)
             {
                 // Only process "vms" products
                 if (!release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase))
@@ -124,16 +111,16 @@ public class ProductInfo
                 AddLabel(versionInfo, release.GetLabel());
 
                 // Get the build number from the version
-                var buildNumber = versionInfo.GetBuildNumber();
+                int buildNumber = versionInfo.GetBuildNumber();
 
                 // Get available packages for this release
-                var packageList = PackagesJsonSchema.GetPackages(httpClient, GetRelease(), buildNumber);
+                List<Package> packageList = PackagesJsonSchema.GetPackages(httpClient, GetRelease(), buildNumber);
 
                 // Get the x64 and arm64 server ubuntu server packages
-                var packageX64 = packageList.Find(item => item.IsX64Server());
+                Package? packageX64 = packageList.Find(item => item.IsX64Server());
                 Debug.Assert(packageX64 != default(Package));
                 Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
-                var packageArm64 = packageList.Find(item => item.IsArm64Server());
+                Package? packageArm64 = packageList.Find(item => item.IsArm64Server());
                 Debug.Assert(packageArm64 != default(Package));
                 Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
 
@@ -144,7 +131,9 @@ public class ProductInfo
 
                 // Verify and add to list
                 if (VerifyVersion(versionInfo))
+                {
                     Versions.Add(versionInfo);
+                }
             }
 
             // Make sure all labels are correct
@@ -161,11 +150,13 @@ public class ProductInfo
     {
         // Static rules:
 
-        // Ubuntu Jammy requires version 5.1 or later
-        if (versionInfo.CompareTo("5.1") >= 0)
+        // Ubuntu Noble requires version 6.0 or later
+        if (versionInfo.CompareTo("6.0") >= 0)
+        {
             return true;
+        }
 
-        Log.Logger.Warning("{Product}:{Version} : Ubuntu Jammy requires v5.1+", Product, versionInfo.Version);
+        Log.Logger.Warning("{Product}:{Version} : Ubuntu Noble requires v6.0+", Product, versionInfo.Version);
         return false;
     }
 
@@ -173,10 +164,12 @@ public class ProductInfo
     {
         // Ignore if label is None
         if (label == VersionInfo.LabelType.None)
+        {
             return;
+        }
 
         // Does this label already exists in other versions
-        var existingVersion = Versions.Find(item => item.Labels.Contains(label));
+        VersionInfo? existingVersion = Versions.Find(item => item.Labels.Contains(label));
         if (existingVersion == default(VersionInfo))
         {
             // New label
@@ -186,21 +179,23 @@ public class ProductInfo
 
         // Is this version larger than the other version
         if (versionInfo.CompareTo(existingVersion) <= 0)
+        {
             return;
+        }
 
         Log.Logger.Warning("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
 
         // Remove from other version and add to this version
-        existingVersion.Labels.Remove(label);
+        _ = existingVersion.Labels.Remove(label);
         versionInfo.Labels.Add(label);
     }
 
     private VersionInfo? FindMissingLabel(VersionInfo.LabelType targetLabel, List<VersionInfo.LabelType> sourceLabels)
     {
-        foreach (var label in sourceLabels)
+        foreach (VersionInfo.LabelType label in sourceLabels)
         {
             // Find last matching item, must be sorted
-            var version = Versions.FindLast(item => item.Labels.Contains(label));
+            VersionInfo? version = Versions.FindLast(item => item.Labels.Contains(label));
             if (version != default(VersionInfo))
             {
                 Log.Logger.Warning("{Product}: Using {SourceLabel} for {TargetLabel}", Product, label, targetLabel);
@@ -218,7 +213,7 @@ public class ProductInfo
         // If no Latest label is set, use Stable or RC or Beta as Latest
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
-            var latest = FindMissingLabel(VersionInfo.LabelType.Latest, [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]);
+            VersionInfo? latest = FindMissingLabel(VersionInfo.LabelType.Latest, [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]);
             ArgumentNullException.ThrowIfNull(latest);
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
@@ -226,13 +221,13 @@ public class ProductInfo
         // If no Stable label is set, use Latest as stable
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
-            var stable = FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest]);
+            VersionInfo? stable = FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest]);
             ArgumentNullException.ThrowIfNull(stable);
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
 
         // Remove all versions without labels
-        Versions.RemoveAll(item => item.Labels.Count == 0);
+        _ = Versions.RemoveAll(item => item.Labels.Count == 0);
 
         // Sort by label
         Versions.ForEach(item => item.Labels.Sort());
@@ -248,8 +243,10 @@ public class ProductInfo
 
     public void LogInformation()
     {
-        foreach (var version in Versions)
+        foreach (VersionInfo version in Versions)
+        {
             Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}", Product, version.Version, version.Labels, version.UriX64, version.UriArm64);
+        }
     }
 
     public void VerifyUrls()
@@ -257,7 +254,7 @@ public class ProductInfo
         try
         {
             using HttpClient httpClient = new();
-            foreach (var versionUri in Versions)
+            foreach (VersionInfo versionUri in Versions)
             {
                 // Will throw on error
                 VerifyUrl(httpClient, versionUri.UriX64);
@@ -276,10 +273,10 @@ public class ProductInfo
         // Will throw on failure
 
         // Get URL
-        var uri = new Uri(url);
+        Uri uri = new(url);
         Log.Logger.Information("Verifying Url: {Url}", url);
-        var httpResponse = httpClient.GetAsync(uri).Result;
-        httpResponse.EnsureSuccessStatusCode();
+        HttpResponseMessage httpResponse = httpClient.GetAsync(uri).Result;
+        _ = httpResponse.EnsureSuccessStatusCode();
 
         // Get filename from httpResponse or Uri path
         string? fileName = null;
@@ -299,12 +296,12 @@ public class ProductInfo
 
         // Verify each version
         List<VersionInfo> removeVersions = [];
-        foreach (var version in Versions.Where(version => !VerifyVersion(version)))
+        foreach (VersionInfo? version in Versions.Where(version => !VerifyVersion(version)))
         {
             Log.Logger.Warning("{Product} : Removing {Version}", Product, version.Version);
             removeVersions.Add(version);
         }
-        Versions.RemoveAll(item => removeVersions.Contains(item));
+        _ = Versions.RemoveAll(removeVersions.Contains);
 
         // Verify labels
         VerifyLabels();
