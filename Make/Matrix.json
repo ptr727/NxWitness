@@ -343,22 +343,9 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/wisenetwave:5.1.1.37512",
-        "docker.io/ptr727/wisenetwave:stable"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_arm64.zip",
-        "DOWNLOAD_VERSION=5.1.1.37512",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Branch": "main",
-      "CacheScope": "default",
-      "Tags": [
         "docker.io/ptr727/wisenetwave:6.0.3.40736",
-        "docker.io/ptr727/wisenetwave:latest"
+        "docker.io/ptr727/wisenetwave:latest",
+        "docker.io/ptr727/wisenetwave:stable"
       ],
       "Args": [
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40736/wave-server_update-6.0.3.40736-linux_arm64.zip",
@@ -385,22 +372,9 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:5.1.1.37512",
-        "docker.io/ptr727/wisenetwave-lsio:stable"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_arm64.zip",
-        "DOWNLOAD_VERSION=5.1.1.37512",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Branch": "main",
-      "CacheScope": "lsio",
-      "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:6.0.3.40736",
-        "docker.io/ptr727/wisenetwave-lsio:latest"
+        "docker.io/ptr727/wisenetwave-lsio:latest",
+        "docker.io/ptr727/wisenetwave-lsio:stable"
       ],
       "Args": [
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40736/wave-server_update-6.0.3.40736-linux_arm64.zip",
@@ -771,23 +745,10 @@
       "Branch": "develop",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/wisenetwave:develop-5.1.1.37512",
-        "docker.io/ptr727/wisenetwave:develop-stable"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_arm64.zip",
-        "DOWNLOAD_VERSION=5.1.1.37512",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Branch": "develop",
-      "CacheScope": "default",
-      "Tags": [
         "docker.io/ptr727/wisenetwave:develop",
         "docker.io/ptr727/wisenetwave:develop-6.0.3.40736",
-        "docker.io/ptr727/wisenetwave:develop-latest"
+        "docker.io/ptr727/wisenetwave:develop-latest",
+        "docker.io/ptr727/wisenetwave:develop-stable"
       ],
       "Args": [
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40736/wave-server_update-6.0.3.40736-linux_arm64.zip",
@@ -814,23 +775,10 @@
       "Branch": "develop",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:develop-5.1.1.37512",
-        "docker.io/ptr727/wisenetwave-lsio:develop-stable"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_arm64.zip",
-        "DOWNLOAD_VERSION=5.1.1.37512",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Branch": "develop",
-      "CacheScope": "lsio",
-      "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:develop",
         "docker.io/ptr727/wisenetwave-lsio:develop-6.0.3.40736",
-        "docker.io/ptr727/wisenetwave-lsio:develop-latest"
+        "docker.io/ptr727/wisenetwave-lsio:develop-latest",
+        "docker.io/ptr727/wisenetwave-lsio:develop-stable"
       ],
       "Args": [
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/40736/wave-server_update-6.0.3.40736-linux_arm64.zip",
