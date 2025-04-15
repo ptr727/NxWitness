@@ -4,17 +4,20 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## License
 
-Licensed under the [MIT License][license].  
+Licensed under the [MIT License][license].\
 ![License Shield][license_shield]
 
 ## Build Status
 
-[![Last Commit][last_commit_shield]][repo]  
-[![Workflow Status][workflow_status_shield]][actions]  
+[![Last Commit][last_commit_shield]][repo]\
+[![Workflow Status][workflow_status_shield]][actions]\
 [![Last Build][last_build_shield]][actions]
 
 ## Release Notes
 
+- Version 2.6:
+  - Updated to Ubuntu Noble 24.04 LTS base images in [support][nx_os_support] of v6 products.
+  - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
 - Version 2.5:
   - Added [NxGo][nxgo] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
 - Version 2.4:
@@ -79,71 +82,71 @@ Notes:
 - Images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.
 - See [Build Process](#build-process) for more details.
 
-[NxWitness][hub_nxwitness]:  
-[![NxWitness Stable][hub_nxwitness_stable_shield]][hub_nxwitness]
-[![NxWitness Latest][hub_nxwitness_latest_shield]][hub_nxwitness]
-[![NxWitness RC][hub_nxwitness_rc_shield]][hub_nxwitness]
+[NxWitness][hub_nxwitness]:\
+[![NxWitness Stable][hub_nxwitness_stable_shield]][hub_nxwitness]\
+[![NxWitness Latest][hub_nxwitness_latest_shield]][hub_nxwitness]\
+[![NxWitness RC][hub_nxwitness_rc_shield]][hub_nxwitness]\
 [![NxWitness Beta][hub_nxwitness_beta_shield]][hub_nxwitness]
 
-[NxWitness-LSIO][hub_nxwitness-lsio]:  
-[![NxWitness-LSIO Stable][hub_nxwitness-lsio_stable_shield]][hub_nxwitness-lsio]
-[![NxWitness-LSIO Latest][hub_nxwitness-lsio_latest_shield]][hub_nxwitness-lsio]
-[![NxWitness-LSIO RC][hub_nxwitness-lsio_rc_shield]][hub_nxwitness-lsio]
+[NxWitness-LSIO][hub_nxwitness-lsio]:\
+[![NxWitness-LSIO Stable][hub_nxwitness-lsio_stable_shield]][hub_nxwitness-lsio]\
+[![NxWitness-LSIO Latest][hub_nxwitness-lsio_latest_shield]][hub_nxwitness-lsio]\
+[![NxWitness-LSIO RC][hub_nxwitness-lsio_rc_shield]][hub_nxwitness-lsio]\
 [![NxWitness-LSIO Beta][hub_nxwitness-lsio_beta_shield]][hub_nxwitness-lsio]
 
-[NxMeta][hub_nxmeta]:  
-[![NxMeta Stable][hub_nxmeta_stable_shield]][hub_nxmeta]
-[![NxMeta Latest][hub_nxmeta_latest_shield]][hub_nxmeta]
-[![NxMeta RC][hub_nxmeta_rc_shield]][hub_nxmeta]
+[NxMeta][hub_nxmeta]:\
+[![NxMeta Stable][hub_nxmeta_stable_shield]][hub_nxmeta]\
+[![NxMeta Latest][hub_nxmeta_latest_shield]][hub_nxmeta]\
+[![NxMeta RC][hub_nxmeta_rc_shield]][hub_nxmeta]\
 [![NxMeta Beta][hub_nxmeta_beta_shield]][hub_nxmeta]
 
-[NxMeta-LSIO][hub_nxmeta-lsio]:  
-[![NxMeta-LSIO Stable][hub_nxmeta-lsio_stable_shield]][hub_nxmeta-lsio]
-[![NxMeta-LSIO Latest][hub_nxmeta-lsio_latest_shield]][hub_nxmeta-lsio]
-[![NxMeta-LSIO RC][hub_nxmeta-lsio_rc_shield]][hub_nxmeta-lsio]
+[NxMeta-LSIO][hub_nxmeta-lsio]:\
+[![NxMeta-LSIO Stable][hub_nxmeta-lsio_stable_shield]][hub_nxmeta-lsio]\
+[![NxMeta-LSIO Latest][hub_nxmeta-lsio_latest_shield]][hub_nxmeta-lsio]\
+[![NxMeta-LSIO RC][hub_nxmeta-lsio_rc_shield]][hub_nxmeta-lsio]\
 [![NxMeta-LSIO Beta][hub_nxmeta-lsio_beta_shield]][hub_nxmeta-lsio]
 
-[NxGo][hub_nxgo]:  
-[![NxGo Stable][hub_nxgo_stable_shield]][hub_nxgo]
-[![NxGo Latest][hub_nxgo_latest_shield]][hub_nxgo]
-[![NxGo RC][hub_nxgo_rc_shield]][hub_nxgo]
+[NxGo][hub_nxgo]:\
+[![NxGo Stable][hub_nxgo_stable_shield]][hub_nxgo]\
+[![NxGo Latest][hub_nxgo_latest_shield]][hub_nxgo]\
+[![NxGo RC][hub_nxgo_rc_shield]][hub_nxgo]\
 [![NxGo Beta][hub_nxgo_beta_shield]][hub_nxgo]
 
-[NxGo-LSIO][hub_nxgo-lsio]:  
-[![NxGo-LSIO Stable][hub_nxgo-lsio_stable_shield]][hub_nxgo-lsio]
-[![NxGo-LSIO Latest][hub_nxgo-lsio_latest_shield]][hub_nxgo-lsio]
-[![NxGo-LSIO RC][hub_nxgo-lsio_rc_shield]][hub_nxgo-lsio]
+[NxGo-LSIO][hub_nxgo-lsio]:\
+[![NxGo-LSIO Stable][hub_nxgo-lsio_stable_shield]][hub_nxgo-lsio]\
+[![NxGo-LSIO Latest][hub_nxgo-lsio_latest_shield]][hub_nxgo-lsio]\
+[![NxGo-LSIO RC][hub_nxgo-lsio_rc_shield]][hub_nxgo-lsio]\
 [![NxGo-LSIO Beta][hub_nxgo-lsio_beta_shield]][hub_nxgo-lsio]
 
-[DWSpectrum][hub_dwspectrum]:  
-[![DWSpectrum Stable][hub_dwspectrum_stable_shield]][hub_dwspectrum]
-[![DWSpectrum Latest][hub_dwspectrum_latest_shield]][hub_dwspectrum]
-[![DWSpectrum RC][hub_dwspectrum_rc_shield]][hub_dwspectrum]
+[DWSpectrum][hub_dwspectrum]:\
+[![DWSpectrum Stable][hub_dwspectrum_stable_shield]][hub_dwspectrum]\
+[![DWSpectrum Latest][hub_dwspectrum_latest_shield]][hub_dwspectrum]\
+[![DWSpectrum RC][hub_dwspectrum_rc_shield]][hub_dwspectrum]\
 [![DWSpectrum Beta][hub_dwspectrum_beta_shield]][hub_dwspectrum]
 
-[DWSpectrum-LSIO][hub_dwspectrum-lsio]:  
-[![DWSpectrum-LSIO Stable][hub_dwspectrum-lsio_stable_shield]][hub_dwspectrum-lsio]
-[![DWSpectrum-LSIO Latest][hub_dwspectrum-lsio_latest_shield]][hub_dwspectrum-lsio]
-[![DWSpectrum-LSIO RC][hub_dwspectrum-lsio_rc_shield]][hub_dwspectrum-lsio]
+[DWSpectrum-LSIO][hub_dwspectrum-lsio]:\
+[![DWSpectrum-LSIO Stable][hub_dwspectrum-lsio_stable_shield]][hub_dwspectrum-lsio]\
+[![DWSpectrum-LSIO Latest][hub_dwspectrum-lsio_latest_shield]][hub_dwspectrum-lsio]\
+[![DWSpectrum-LSIO RC][hub_dwspectrum-lsio_rc_shield]][hub_dwspectrum-lsio]\
 [![DWSpectrum-LSIO Beta][hub_dwspectrum-lsio_beta_shield]][hub_dwspectrum-lsio]
 
-[WisenetWAVE][hub_wisenetwave]:  
-[![WisenetWAVE Stable][hub_wisenetwave_stable_shield]][hub_wisenetwave]
-[![WisenetWAVE Latest][hub_wisenetwave_latest_shield]][hub_wisenetwave]
-[![WisenetWAVE RC][hub_wisenetwave_rc_shield]][hub_wisenetwave]
+[WisenetWAVE][hub_wisenetwave]:\
+[![WisenetWAVE Stable][hub_wisenetwave_stable_shield]][hub_wisenetwave]\
+[![WisenetWAVE Latest][hub_wisenetwave_latest_shield]][hub_wisenetwave]\
+[![WisenetWAVE RC][hub_wisenetwave_rc_shield]][hub_wisenetwave]\
 [![WisenetWAVE Beta][hub_wisenetwave_beta_shield]][hub_wisenetwave]
 
-[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:  
-[![WisenetWAVE-LSIO Stable][hub_wisenetwave-lsio_stable_shield]][hub_wisenetwave-lsio]
-[![WisenetWAVE-LSIO Latest][hub_wisenetwave-lsio_latest_shield]][hub_wisenetwave-lsio]
-[![WisenetWAVE-LSIO RC][hub_wisenetwave-lsio_rc_shield]][hub_wisenetwave-lsio]
+[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:\
+[![WisenetWAVE-LSIO Stable][hub_wisenetwave-lsio_stable_shield]][hub_wisenetwave-lsio]\
+[![WisenetWAVE-LSIO Latest][hub_wisenetwave-lsio_latest_shield]][hub_wisenetwave-lsio]\
+[![WisenetWAVE-LSIO RC][hub_wisenetwave-lsio_rc_shield]][hub_wisenetwave-lsio]\
 [![WisenetWAVE-LSIO Beta][hub_wisenetwave-lsio_beta_shield]][hub_wisenetwave-lsio]
 
 ## Overview
 
 ### Introduction
 
-I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomerepo] project, that inspired me to create this project.  
+I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomerepo] project, that inspired me to create this project.\
 I started with individual repositories for Nx Witness, Nx Meta, and DW Spectrum, but that soon became cumbersome with lots of duplication, and I combined all product flavors into this one project.
 
 Today Network Optix supports [Docker][nx_docker], and they publish [build scripts][nx_github_docker], but they do not publish container images.
@@ -152,8 +155,8 @@ Today Network Optix supports [Docker][nx_docker], and they publish [build script
 
 The project creates two variants of each product using different base images:
 
-- [Ubuntu][ubuntu] using [ubuntu:jammy][ubuntu_docker] base image.
-- [LinuxServer][lsio] using [lsiobase/ubuntu:jammy][ubuntu_lsio_docker] base image.
+- [Ubuntu][ubuntu] using [ubuntu:noble][ubuntu_docker] base image.
+- [LinuxServer][lsio] using [lsiobase/ubuntu:noble][ubuntu_lsio_docker] base image.
 
 Note that smaller base images like [Alpine][alpine] are not [supported][nx_os_support] by the mediaserver.
 
@@ -208,7 +211,7 @@ See [LSIO docs][lsio_puid] for usage of `PUID` and `PGID` that allow the mediase
 
 ### Network Mode
 
-Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended][nx_github_networking].
+Due to the hardware bound licensing `host` mode is [recommended][nx_github_networking], alternatively use a `macvlan` network with a static IP and MAC address.
 
 ## Examples
 
@@ -267,6 +270,55 @@ services:
       - /mnt/nxwitness/media:/media
 ```
 
+### Docker Compose with Static IP and MAC
+
+```shell
+docker network create --driver macvlan \
+    --subnet=${PUBLIC_NETWORK_SUBNET} \
+    --gateway=${PUBLIC_NETWORK_GATEWAY} \
+    --opt parent=${PUBLIC_NETWORK_PARENT} \
+    ${PUBLIC_NETWORK_NAME}
+
+docker network create --driver bridge ${LOCAL_NETWORK_NAME}
+```
+
+```yaml
+networks:
+  public_network:
+    name: ${PUBLIC_NETWORK_NAME}
+    external: true
+  local_network:
+    name: ${LOCAL_NETWORK_NAME}
+    external: true
+
+services:
+  nxmeta:
+    image: docker.io/ptr727/nxmeta-lsio:latest
+    container_name: nxmeta
+    hostname: nxmeta
+    domainname: ${DOMAIN_NAME}
+    restart: unless-stopped
+    user: root
+    environment:
+      - TZ=${TZ}
+      - PUID=${USER_NONROOT_ID}
+      - PGID=${USERS_GROUP_ID}
+    volumes:
+      - ${APPDATA_DIR}/nxmeta/config:/config
+      - ${NVR_DIR}/media:/media
+      - ${NVR_DIR}/backup:/backup
+    networks:
+      public_network:
+        ipv4_address: ${NXMETA_IP}
+        mac_address: ${NXMETA_MAC}
+      local_network:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta${DOMAIN_REGEX}$$`)
+      - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
+      - traefik.http.services.nxmeta.loadbalancer.server.port=7001
+```
+
 ### Unraid Template
 
 - Add the template [URL](./Unraid) `https://github.com/ptr727/NxWitness/tree/main/Unraid` to the "Template Repositories" section, at the bottom of the "Docker" configuration tab, and click "Save".
@@ -286,8 +338,8 @@ services:
   - [Release Notes][nxwitness_releasenotes]
 - Nx Meta:
   - [Releases JSON API][nxmeta_releases]
-  - [Signup for Nx Meta](https://www.networkoptix.com/nx-meta/get-started-with-meta)
-  - [Request Developer Licenses](hhttps://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers)
+  - [Signup for Nx Meta][nxmeta_signup]
+  - [Request Developer Licenses][nxmeta_dev_license]
   - [Downloads][nxmeta_download]
   - [Beta Downloads][nxmeta_betadownload]
 - Nx Go:
@@ -313,7 +365,7 @@ services:
 
 ## Build Process
 
-Build overview:
+### Build Overview
 
 - [`CreateMatrix`](./CreateMatrix/) is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
@@ -323,8 +375,9 @@ Build overview:
 - Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
-Local testing:
+### Local Testing
 
+- Install prerequisites listed in [`./Build.sh`](./Make/Build.sh).
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
   - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
   - [`Build.sh`](./Make/Build.sh): Builds the `Dockerfile`'s using `docker buildx build`.
@@ -335,60 +388,72 @@ Local testing:
 ## Known Issues
 
 - Licensing:
-  - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
-  - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
-  - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx to fix: Associate licenses with the [Cloud Account][nx_cloud] not the local hardware.
+  - Camera recording license keys are activated and bound to hardware attributes of the host server.
+  - Docker containers are supposed to be portable, and recreating or moving containers between hosts may break license activation.
+  - It is [unfeasible][nx_crunchbase] to sustain a business with ongoing expenses while using perpetual one-off income licenses.
+  - ["Lifetime Upgrades and No Annual Agreements"][dw_upgrades] is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
+  - Cloud licensing in a SaaS model is only be available for the high end [Gen6 Enterprise][gen6_enterprise] product line.
+  - **Nx to fix**: Associate licenses for all product variants with the [Cloud Account][nx_cloud] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
   - Filesystem types are filtered out if not on the [supported list][nx_github_storage].
   - Mounted volumes are ignored if backed by the same physical storage, even if logically separate.
   - Unwanted `Nx MetaVMS Media` directories are created on any discoverable writable storage.
-  - Nx to fix: Eliminate the elaborate filesystem filter logic and use only the admin specified storage locations.
+  - **Nx to fix**: Eliminate the elaborate filesystem filter logic and use only the admin specified storage locations.
 - Configuration Files:
   - `.conf` configuration files are located in a static `mediaserver/etc` location while `.ini` configuration files are in a user-account dependent location, e.g. `/home/networkoptix/.config/nx_ini` or `/root/.config/nx_ini`.
   - There is no value in having a server use per-user configuration directories, and it is inconsistent to mix configuration file locations.
-  - Nx to fix: Store all configuration files in `mediaserver/etc`.
+  - **Nx to fix**: Store all configuration files in `mediaserver/etc`.
 - External Plugins:
-  - Custom or [Marketplace][nx_marketplace] plugins are installed in the `mediaserver/bin/plugins` directory.
+  - Custom or [Marketplace][nx_marketplace] plugins must be installed in the `mediaserver/bin/plugins` directory.
   - The `mediaserver/bin/plugins` directory is already pre-populated with Nx installed plugins.
   - It is not possible to use external plugins from a mounted volume as the directory is already in-use.
-  - Nx to fix: Load plugins from `mediaserver/var/plugins` or from sub-directories mounted below `mediaserver/bin/plugins`, e.g. `mediaserver/bin/plugins/external`
-- Lifetime Upgrades:
-  - Nx is a cloud product, free to view, free upgrades, comes with ongoing costs of hosting, maintenance, and support, it is [unfeasible][nx_crunchbase] to sustain a business with ongoing costs using perpetual one-off licenses.
-  - My personal experience with [Digital Watchdog][digitalwatchdog] and their [Lifetime Upgrades and No Annual Agreements][dw_upgrades] is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
-  - Nx to fix: Yearly camera license renewals covering the cost of support and upgrades.
-- Archiving:
+  - **Nx to fix**: Load external plugins from `mediaserver/var/plugins` or from sub-directories mounted below `mediaserver/bin/plugins`, e.g. `mediaserver/bin/plugins/external`
+- Video Archiving:
   - Nx makes no distinction between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
   - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
-  - Nx to fix: Implement something akin to archiving in [Milestone XProtect VMS][milestone] where recording storage is separate from long term archival storage.
-- Image Publication:
+  - **Nx to fix**: Implement something akin to excellent archiving support in [Milestone XProtect VMS][milestone] where recording storage is separate from long term archival storage.
+- Docker Image Publication:
   - Nx relies on end-users or projects like this one to create and publish docker images.
-  - Nx to fix: Publish up-to-date images for all product variants and release channels.
+  - **Nx to fix**: Publish up-to-date images for all product variants and release channels.
 - Break-Fix-Version-Forward:
   - Nx product versions published via their releases API occasionally go backwards, e.g. `release`: v4.3 -> v5.0 -> v4.3.
   - Nx supports forward-only in-place upgrades, e.g. v4.3 to v5.0, but not v5.0 to v4.3.
   - Publishing generic tags, e.g. `latest`, using a version that regresses, e.g. v4.3 -> v5.0 -> v4.3 breaks deployments, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details.
   - `CreateMatrix` tooling keeps track of published versions, and prevents version regression of generic `latest`, `rc` and `beta` tags.
-  - Nx to fix: Release break-fix-version-forward only via release API's.
+  - **Nx to fix**: Release break-fix-version-forward only via release API's.
 
 ## Troubleshooting
 
-I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.  
-If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).  
-Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test accordingly.
+I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.\
+If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).\
+Note that I only test and run `nxmeta-lsio:latest` in my home lab, other images get very little to no testing, please test thoroughly in your own environments.
+
+### License Hardware Changes
+
+Licensing is tied to the system hardware, and changes to motherboards, network cards, or network configuration, may change the hardware id and deactivate the license.\
+Docker is supposed to be portable, and using a `macvlan` network with a static IP and a static MAC address may help prevent license invalidation when recreating or moving the containers between systems.
+
+Verify the following config in the `mediaserver.conf`:
+
+- `guidIsHWID=no` do not use hardware for GUID generation, see [this article][nx_virtual_env] for more details.
+- `serverGuid={xxx}` the GUID used for licensing, see [this article][nx_guidgen] for more details.
+- `storedMac=xxx` the MAC address being used for licensing, should be the MAC address of the IP used for `if`, see [this article][nx_multi_nic] for more details.
+- `if=xxx` route all traffic only through this IP, and use that IP's interface MAC for licensing (also helps to avoid Nx auto binding to all available docker networks).
+
+Hardware information is reported in `system.log`, compare the computed historic values with the current information reported in the Nx client license administration UI.
 
 ### Missing Storage
 
-The following section will help troubleshoot common problems with missing storage.  
-If this does not help, please contact [Network Optix Support][nx_support].  
+The following section will help troubleshoot common problems with missing storage.\
+If this does not help, please contact [Network Optix Support][nx_support].\
 Please do not open a GitHub issue unless you are positive the issue is with the `Dockerfile`.
 
 Confirm that all the mounted volumes are listed in the available storage locations in the [web admin][nx_webadmin] portal.
 
-Enable [debug logging][nx_debuglogging] in the mediaserver:  
-Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.  
-Look for clues in `/config/var/log/log_file.log`.
+Enable [debug logging][nx_debuglogging] in the mediaserver:
+Edit `mediaserver.conf`, set `mainLogLevel=verbose`, restart the server.
+Look for clues in `/config/var/log/main.log`.
 
 E.g.
 
@@ -422,8 +487,8 @@ nvrpool/nvr /media zfs rw,noatime,xattr,posixacl 0 0
 ssdpool/docker /archive zfs rw,noatime,xattr,posixacl 0 0
 ```
 
-Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.  
-Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.  
+Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.
+Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.
 Mount `/archive` is on device `ssdpool/docker` and filesystem is `zfs`.
 
 In this case the devices are unique and will not be filtered, but `zfs` is not supported and needs to be registered.
@@ -446,7 +511,7 @@ VERBOSE nx::vms::server::fs: shfs /media fuse.shfs - added
 VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate
 ```
 
-The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.  
+The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.
 Alternative use the "Unassigned Devices" plugin and dedicate e.g. a XFS formatted SSD drive to `/media` and/or `/config`.
 
 Example output for Unraid BTRFS:
@@ -467,10 +532,10 @@ VERBOSE nx::vms::server::fs: /dev/sdb8 /archive btrfs - duplicate
 
 In this example the `/test` volume was accepted, but all other volumes on `/dev/sdb8` was ignored as duplicates.
 
-Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.
+Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.\
 Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
-Alternatively call the configuration API directly:  
+Alternatively call the configuration API directly:\
 `wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.
 
 To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nx_support] and ask them to stop filtering filesystem types and devices.
@@ -585,3 +650,9 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [wisenetwave_releasenotes]: https://wavevms.com/release-notes/
 [wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
 [workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github
+[gen6_enterprise]: https://www.networkoptix.com/landing/gen-6-enterprise
+[nx_virtual_env]: https://support.networkoptix.com/hc/en-us/articles/360037429854-Using-Nx-Witness-in-a-virtual-environment
+[nx_guidgen]: https://support.networkoptix.com/hc/en-us/articles/115008344267-Nx-Witness-terminates-right-away-in-my-virtual-machine
+[nx_multi_nic]: https://support.networkoptix.com/hc/en-us/articles/215567037-Troubleshooting-HWID-Changes-in-Multi-NIC-Environment
+[nxmeta_signup]: https://www.networkoptix.com/nx-meta/get-started-with-meta
+[nxmeta_dev_license]: https://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers

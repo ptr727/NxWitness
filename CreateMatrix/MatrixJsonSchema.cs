@@ -1,8 +1,8 @@
-﻿using Json.Schema.Generation;
-using Json.Schema;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Json.Schema;
+using Json.Schema.Generation;
 
 namespace CreateMatrix;
 
@@ -27,38 +27,29 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     [JsonRequired]
     public List<ImageInfo> Images { get; set; } = [];
 
-    public static MatrixJsonSchema FromFile(string path)
-    {
-        return FromJson(File.ReadAllText(path));
-    }
+    public static MatrixJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
 
-    public static void ToFile(string path, MatrixJsonSchema jsonSchema)
-    {
-        File.WriteAllText(path, ToJson(jsonSchema));
-    }
+    public static void ToFile(string path, MatrixJsonSchema jsonSchema) => File.WriteAllText(path, ToJson(jsonSchema));
 
-    private static string ToJson(MatrixJsonSchema jsonSchema)
-    {
-        return JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
-    }
+    private static string ToJson(MatrixJsonSchema jsonSchema) => JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
 
     private static MatrixJsonSchema FromJson(string jsonString)
     {
-        var matrixJsonSchemaBase = JsonSerializer.Deserialize<MatrixJsonSchemaBase>(jsonString, JsonReadOptions);
+        MatrixJsonSchemaBase? matrixJsonSchemaBase = JsonSerializer.Deserialize<MatrixJsonSchemaBase>(jsonString, JsonReadOptions);
         ArgumentNullException.ThrowIfNull(matrixJsonSchemaBase);
 
         // Deserialize the correct version
-        var schemaVersion = matrixJsonSchemaBase.SchemaVersion;
+        int schemaVersion = matrixJsonSchemaBase.SchemaVersion;
         switch (schemaVersion)
         {
             // Current version
             case Version:
-                var schema = JsonSerializer.Deserialize<MatrixJsonSchema>(jsonString, JsonReadOptions);
+                MatrixJsonSchema? schema = JsonSerializer.Deserialize<MatrixJsonSchema>(jsonString, JsonReadOptions);
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
             // case 1:
-                // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
-                // Breaking change, UriArm64 is required in ARM64 docker builds
+            // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
+            // Breaking change, UriArm64 is required in ARM64 docker builds
             // Unknown version
             default:
                 throw new NotImplementedException();
@@ -68,12 +59,12 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     public static void GenerateSchema(string path)
     {
         const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
-        var schemaBuilder = new JsonSchemaBuilder().FromType<MatrixJsonSchema>(new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName })
+        JsonSchema schemaBuilder = new JsonSchemaBuilder().FromType<MatrixJsonSchema>(new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName })
             .Title("CreateMatrix Matrix Schema")
             .Id(new Uri(SchemaUri))
             .Schema(new Uri(schemaVersion))
             .Build();
-        var jsonSchema = JsonSerializer.Serialize(schemaBuilder, JsonWriteOptions);
+        string jsonSchema = JsonSerializer.Serialize(schemaBuilder, JsonWriteOptions);
         File.WriteAllText(path, jsonSchema);
     }
 
@@ -99,14 +90,18 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     {
         // Only process objects
         if (typeInfo.Kind != JsonTypeInfoKind.Object)
+        {
             return;
+        }
 
         // Iterate over all properties
-        foreach (var property in typeInfo.Properties)
+        foreach (JsonPropertyInfo property in typeInfo.Properties)
         {
             // Do not serialize [Obsolete] items
             if (property.AttributeProvider?.IsDefined(typeof(ObsoleteAttribute), true) == true)
+            {
                 property.ShouldSerialize = (_, _) => false;
+            }
         }
     }
 }

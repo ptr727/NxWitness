@@ -17,6 +17,7 @@
 			"cachescope",
 			"cloudhost",
 			"Composefile",
+			"contenv",
 			"datebadge",
 			"digitalwatchdog",
 			"dockerenv",
@@ -26,11 +27,13 @@
 			"FJSON",
 			"getversion",
 			"Hanwha",
+			"HWID",
 			"IPVMS",
 			"kinnairdclan",
 			"lastbuild",
 			"lsio",
 			"lsiobase",
+			"macvlan",
 			"mediaserver",
 			"metavms",
 			"Moby",
@@ -41,6 +44,7 @@
 			"noatime",
 			"nodev",
 			"noninteractive",
+			"NONROOT",
 			"NOPASSWD",
 			"nosuid",
 			"nvrpool",
@@ -60,6 +64,7 @@
 			"schemaversion",
 			"Serilog",
 			"setmatrix",
+			"setuidgid",
 			"shfs",
 			"Signup",
 			"softprops",
@@ -71,6 +76,7 @@
 			"TARGETPLATFORM",
 			"tmpfs",
 			"tonistiigi",
+			"traefik",
 			"trunc",
 			"Unraid",
 			"usermod",
@@ -96,6 +102,10 @@
 			"davidanson.vscode-markdownlint",
 			"gruntfuggly.todo-tree",
 			"streetsidesoftware.code-spell-checker",
-		]
+            "github.vscode-github-actions",
+            "ms-azuretools.vscode-docker",
+            "ms-dotnettools.csdevkit",
+            "yzhang.markdown-all-in-one"
+            ]
 	}
 }

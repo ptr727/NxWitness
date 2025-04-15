@@ -6,19 +6,19 @@
 # LSIO: False
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest Ubuntu supported for v5.1 is Jammy
-FROM ubuntu:jammy
+# Latest Ubuntu supported for v6 is Noble
+FROM ubuntu:noble
 
 # Labels
 ARG LABEL_NAME="WisenetWAVE"
 ARG LABEL_DESCRIPTION="Wisenet WAVE VMS"
-ARG LABEL_VERSION="6.0.0.38908"
+ARG LABEL_VERSION="6.1.0.40638"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/hanwha/38908/wave-server_update-6.0.0.38908-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.0.0.38908"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/hanwha/40638/wave-server_update-6.1.0.40638-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/hanwha/40638/wave-server_update-6.1.0.40638-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.1.0.40638"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="hanwha"
@@ -71,7 +71,7 @@ RUN apt-get update \
         gdb \
         sudo \
         ./vms_server.deb \
-# Cleanup        
+# Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

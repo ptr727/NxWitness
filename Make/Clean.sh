@@ -12,6 +12,7 @@ function DeleteImage {
 
 # Delete images
 DeleteImage "NxGo"
+DeleteImage "NxGo-LSIO"
 DeleteImage "NxMeta"
 DeleteImage "NxMeta-LSIO"
 DeleteImage "NxWitness"

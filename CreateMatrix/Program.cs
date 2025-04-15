@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Globalization;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -17,7 +18,7 @@ public static class Program
         ConfigureLogger();
 
         // Create command line options
-        var rootCommand = CreateCommandLine();
+        RootCommand rootCommand = CreateCommandLine();
 
         // Run
         // 0 == ok, 1 == error
@@ -26,53 +27,53 @@ public static class Program
 
     private static RootCommand CreateCommandLine()
     {
-        var versionOption = new Option<string>(
+        Option<string> versionOption = new(
             name: "--version",
             description: "Version JSON file.",
             getDefaultValue: () => "./Make/Version.json");
 
-        var matrixOption = new Option<string>(
+        Option<string> matrixOption = new(
             name: "--matrix",
             description: "Matrix JSON file.",
             getDefaultValue: () => "./Make/Matrix.json");
 
-        var schemaVersionOption = new Option<string>(
+        Option<string> schemaVersionOption = new(
             name: "--schemaversion",
             description: "Version JSON schema file.",
             getDefaultValue: () => "./JSON/Version.schema.json");
 
-        var schemaMatrixOption = new Option<string>(
+        Option<string> schemaMatrixOption = new(
             name: "--schemamatrix",
             description: "Matrix JSON schema file.",
             getDefaultValue: () => "./JSON/Matrix.schema.json");
 
-        var updateOption = new Option<bool>(
+        Option<bool> updateOption = new(
             name: "--update",
             description: "Update version information",
             getDefaultValue: () => false);
 
-        var makeOption = new Option<string>(
+        Option<string> makeOption = new(
             name: "--make",
             description: "Make directory.",
             getDefaultValue: () => "./Make");
 
-        var dockerOption = new Option<string>(
+        Option<string> dockerOption = new(
             name: "--docker",
             description: "Docker directory.",
             getDefaultValue: () => "./Docker");
 
-        var labelOption = new Option<VersionInfo.LabelType>(
+        Option<VersionInfo.LabelType> labelOption = new(
             name: "--label",
             description: "Version label.",
             getDefaultValue: () => VersionInfo.LabelType.Latest);
 
-        var versionCommand = new Command("version", "Create version information file")
+        Command versionCommand = new("version", "Create version information file")
             {
                 versionOption
             };
         versionCommand.SetHandler(VersionHandler, versionOption);
 
-        var matrixCommand = new Command("matrix", "Create matrix information file")
+        Command matrixCommand = new("matrix", "Create matrix information file")
             {
                 versionOption,
                 matrixOption,
@@ -80,14 +81,14 @@ public static class Program
             };
         matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
 
-        var schemaCommand = new Command("schema", "Write Version and Matrix JSON schema files")
+        Command schemaCommand = new("schema", "Write Version and Matrix JSON schema files")
             {
                 schemaVersionOption,
                 schemaMatrixOption
             };
         schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
-        var makeCommand = new Command("make", "Create Docker and Compose files from Version file")
+        Command makeCommand = new("make", "Create Docker and Compose files from Version file")
             {
                 versionOption,
                 makeOption,
@@ -96,7 +97,7 @@ public static class Program
             };
         makeCommand.SetHandler(MakeHandler, versionOption, makeOption, dockerOption, labelOption);
 
-        var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from product versions")
+        RootCommand rootCommand = new("CreateMatrix utility to create a matrix of builds from product versions")
             {
                 versionCommand,
                 matrixCommand,
@@ -111,7 +112,7 @@ public static class Program
         // Configure serilog console logging
         SelfLog.Enable(Console.Error);
         LoggerConfiguration loggerConfiguration = new();
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
+        _ = loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}", formatProvider: CultureInfo.InvariantCulture);
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
@@ -144,7 +145,7 @@ public static class Program
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
-        var fileSchema = VersionJsonSchema.FromFile(versionPath);
+        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(versionPath);
 
         // Re-verify as rules may have changed after file was written
         fileSchema.Products.ForEach(item => item.Verify());
@@ -182,7 +183,7 @@ public static class Program
         MatrixJsonSchema matrixSchema = new() { Images = ImageInfo.CreateImages(fileSchema.Products) };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
-       // Log info
+        // Log info
         matrixSchema.Images.ForEach(item => item.LogInformation());
 
         // Write matrix
@@ -196,7 +197,7 @@ public static class Program
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
-        var versionSchema = VersionJsonSchema.FromFile(versionPath);
+        VersionJsonSchema versionSchema = VersionJsonSchema.FromFile(versionPath);
 
         // Create Compose files
         ComposeFile.Create(makePath);

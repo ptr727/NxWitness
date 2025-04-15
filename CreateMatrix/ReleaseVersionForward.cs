@@ -9,14 +9,16 @@ public static class ReleaseVersionForward
         // newProductList will be updated in-place
 
         // Verify against all products in the old list
-        foreach (var oldProduct in oldProductList)
+        foreach (ProductInfo oldProduct in oldProductList)
         {
             // Find matching new product, must be present
-            var newProduct = newProductList.First(item => item.Product == oldProduct.Product);
+            ProductInfo newProduct = newProductList.First(item => item.Product == oldProduct.Product);
 
             // Verify all labels
-            foreach (var label in VersionInfo.GetLabelTypes()) 
+            foreach (VersionInfo.LabelType label in VersionInfo.GetLabelTypes())
+            {
                 Verify(oldProduct, newProduct, label);
+            }
         }
     }
 
@@ -25,7 +27,7 @@ public static class ReleaseVersionForward
         // TODO: It is possible that a label is released, then pulled, then re-released with a lesser version
 
         // Find label in old and new product, skip if not present
-        var oldVersion = oldProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+        VersionInfo? oldVersion = oldProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
         if (oldVersion == default(VersionInfo))
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", oldProduct.Product, label);
@@ -33,7 +35,7 @@ public static class ReleaseVersionForward
         }
 
         // Find label in new product, skip if not present
-        var newVersion = newProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
+        VersionInfo? newVersion = newProduct.Versions.FirstOrDefault(item => item.Labels.Contains(label));
         if (newVersion == default(VersionInfo))
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", newProduct.Product, label);
@@ -41,18 +43,20 @@ public static class ReleaseVersionForward
         }
 
         // New version must be >= old version
-        if (oldVersion.CompareTo(newVersion) <= 0) 
+        if (oldVersion.CompareTo(newVersion) <= 0)
+        {
             return;
-        
+        }
+
         Log.Logger.Error("{Product}:{Label} : OldVersion: {OldVersion} > NewVersion: {NewVersion}", newProduct.Product, label, oldVersion.Version, newVersion.Version);
 
         // Do all the labels match
-        if (oldVersion.Labels.SequenceEqual(newVersion.Labels)) 
+        if (oldVersion.Labels.SequenceEqual(newVersion.Labels))
         {
             Log.Logger.Warning("{Product}:{Label} Using OldVersion: {OldVersion} instead of NewVersion: {NewVersion}", newProduct.Product, label, oldVersion.Version, newVersion.Version);
 
             // Replace the new version with the old version
-            newProduct.Versions.Remove(newVersion);
+            _ = newProduct.Versions.Remove(newVersion);
             newProduct.Versions.Add(oldVersion);
         }
         else

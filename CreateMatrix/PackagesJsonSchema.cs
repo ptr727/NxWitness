@@ -29,21 +29,17 @@ public class Package
     [JsonPropertyName("variants")]
     public List<Variant> Variants { get; set; } = [];
 
-    public bool IsX64Server()
-    {
+    public bool IsX64Server() =>
         // Test for Server and x64 and Ubuntu
-        return Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
             PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) &&
             Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
-    }
 
-    public bool IsArm64Server()
-    {
+    public bool IsArm64Server() =>
         // Test for Server and Arm64 and Ubuntu
-        return Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
             PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase) &&
             Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
-    }
 }
 
 public class PackagesJsonSchema
@@ -53,7 +49,7 @@ public class PackagesJsonSchema
 
     private static PackagesJsonSchema FromJson(string jsonString)
     {
-        var jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
+        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
@@ -64,10 +60,10 @@ public class PackagesJsonSchema
         // https://updates.networkoptix.com/{product}/{build}/packages.json
         Uri packagesUri = new($"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json");
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
-        var jsonString = httpClient.GetStringAsync(packagesUri).Result;
+        string jsonString = httpClient.GetStringAsync(packagesUri).Result;
 
         // Deserialize JSON
-        var packagesSchema = FromJson(jsonString);
+        PackagesJsonSchema packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
         ArgumentNullException.ThrowIfNull(packagesSchema.Packages);
         ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);

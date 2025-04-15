@@ -1,7 +1,7 @@
-﻿using Serilog;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using Serilog;
 
 namespace CreateMatrix;
 
@@ -15,8 +15,8 @@ public class ImageInfo
     public List<string> Tags { get; set; } = [];
     public List<string> Args { get; set; } = [];
 
-    private static readonly string[] BaseNames = ["", "LSIO"];
-    private static readonly string[] RegistryNames = ["docker.io/ptr727" /*, "ghcr.io/ptr727"*/];
+    private static readonly string[] s_baseNames = ["", "LSIO"];
+    private static readonly string[] s_registryNames = ["docker.io/ptr727"];
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
@@ -37,10 +37,10 @@ public class ImageInfo
     private void AddTag(string tag, string? tagPrefix = null)
     {
         // E.g. latest, develop-latest
-        var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
+        string prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
         // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
-        foreach (var registry in RegistryNames)
+        foreach (string registry in s_registryNames)
         {
             Tags.Add($"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
         }
@@ -50,18 +50,26 @@ public class ImageInfo
     {
         // Create images for all products
         List<ImageInfo> imageList = [];
-        foreach (var productInfo in productList)
-            foreach (var baseName in BaseNames)
+        foreach (ProductInfo productInfo in productList)
+        {
+            foreach (string baseName in s_baseNames)
+            {
                 imageList.AddRange(CreateImages(productInfo, baseName));
+            }
+        }
 
         // Set branch as "main" on all images
         imageList.ForEach(item => item.Branch = "main");
 
         // Create develop tagged images for all products
         List<ImageInfo> developList = [];
-        foreach (var productInfo in productList)
-            foreach (var baseName in BaseNames)
+        foreach (ProductInfo productInfo in productList)
+        {
+            foreach (string baseName in s_baseNames)
+            {
                 developList.AddRange(CreateImages(productInfo, baseName, "develop"));
+            }
+        }
 
         // Set branch as "develop"
         developList.ForEach(item => item.Branch = "develop");
@@ -70,7 +78,7 @@ public class ImageInfo
         imageList.AddRange(developList);
 
         // Sort args and tags to make diffs easier
-        imageList.ForEach(item => { item.Args.Sort(); item.Tags.Sort(); } );
+        imageList.ForEach(item => { item.Args.Sort(); item.Tags.Sort(); });
 
         return imageList;
     }
@@ -78,12 +86,12 @@ public class ImageInfo
     private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
     {
         // Create a set by unique versions
-        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
+        ImmutableSortedSet<VersionInfo> versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
-        
+
         // Create images for each version
         List<ImageInfo> imageList = [];
-        foreach (var versionUri in versionSet)
+        foreach (VersionInfo? versionUri in versionSet)
         {
             // Create image
             ImageInfo imageInfo = new();

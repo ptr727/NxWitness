@@ -62,8 +62,7 @@ then
     chown --verbose --no-dereference ${COMPANY_NAME}:${COMPANY_NAME} /root/.config/nx_ini
 fi
 
-# Make sure that ../mediaserver/var/data does not exist
-# TODO: Is this still required?
+# Make sure that ../mediaserver/var/data does not exist else it will be used for storage
 if [[ -d /opt/${COMPANY_NAME}/mediaserver/var/data ]]
 then
     echo "../mediaserver/var/data exists, deleting"

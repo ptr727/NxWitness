@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "Build CreateMatrix",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -14,26 +14,14 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "publish",
+            "label": "Build CreateMatrixTest",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "publish",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj",
+                "build",
+                "${workspaceFolder}/CreateMatrixTest/CreateMatrixTest.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
