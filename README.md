@@ -433,15 +433,17 @@ Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images 
 
 ### License Hardware Changes
 
-Licensing is tied to the system hardware, and changes to motherboards or network cards can invalidate the hardware id.  
-Using host networking, or a `macvlan` network with a static IP and a static MAC address may help prevent license invalidation.
+Licensing is tied to the system hardware, and changes to motherboards or network cards may invalidate the hardware id and deactivate the license.  
+Docker is supposed to be portable, and using a `macvlan` network with a static IP and a static MAC address may help prevent license invalidation when recreating or moving the containers between systems.
 
-Verify the following items in the `mediaserver.conf`:
+Verify the following config in the `mediaserver.conf`:
 
 - `guidIsHWID=no` do not use hardware for GUID generation, see [this article][nx_virtual_env] for more details.
 - `serverGuid={xxx}` the GUID used for licensing, see [this article][nx_guidgen] for more details.
-- `storedMac=xxx` the MAC address used for licensing, use the MAC address of the IP used for `if`, see [this article][nx_multi_nic] for more details.
+- `storedMac=xxx` the MAC address being used for licensing, should be the MAC address of the IP used for `if`, see [this article][nx_multi_nic] for more details.
 - `if=xxx` route all traffic only through this IP, and use that IP's interface MAC for licensing (also helps to avoid Nx auto binding to all available docker networks).
+
+Hardware information is reported in `system.log`, compare the computed historic values with the current information reported in the Nx client license administration UI.
 
 ### Missing Storage
 
@@ -452,8 +454,8 @@ Please do not open a GitHub issue unless you are positive the issue is with the 
 Confirm that all the mounted volumes are listed in the available storage locations in the [web admin][nx_webadmin] portal.
 
 Enable [debug logging][nx_debuglogging] in the mediaserver:
-Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.
-Look for clues in `/config/var/log/log_file.log`.
+Edit `mediaserver.conf`, set `mainLogLevel=verbose`, restart the server.
+Look for clues in `/config/var/log/main.log`.
 
 E.g.
 
