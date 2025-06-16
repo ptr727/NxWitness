@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: NxWitness
 # Description: Nx Witness VMS
 # Company: networkoptix

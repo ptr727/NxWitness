@@ -1,4 +1,4 @@
-﻿# Compose file created by CreateMatrix, do not modify by hand
+# Compose file created by CreateMatrix, do not modify by hand
 
 volumes:
 
@@ -7,7 +7,6 @@ volumes:
   test_nxgo_ini:
   test_nxgo_var:
   test_nxgo_media:
-
 
   # Dockerfile : NxGo-LSIO
   test_nxgo-lsio_config:
@@ -19,7 +18,6 @@ volumes:
   test_nxmeta_var:
   test_nxmeta_media:
 
-
   # Dockerfile : NxMeta-LSIO
   test_nxmeta-lsio_config:
   test_nxmeta-lsio_media:
@@ -29,7 +27,6 @@ volumes:
   test_nxwitness_ini:
   test_nxwitness_var:
   test_nxwitness_media:
-
 
   # Dockerfile : NxWitness-LSIO
   test_nxwitness-lsio_config:
@@ -41,7 +38,6 @@ volumes:
   test_dwspectrum_var:
   test_dwspectrum_media:
 
-
   # Dockerfile : DWSpectrum-LSIO
   test_dwspectrum-lsio_config:
   test_dwspectrum-lsio_media:
@@ -51,7 +47,6 @@ volumes:
   test_wisenetwave_ini:
   test_wisenetwave_var:
   test_wisenetwave_media:
-
 
   # Dockerfile : WisenetWAVE-LSIO
   test_wisenetwave-lsio_config:

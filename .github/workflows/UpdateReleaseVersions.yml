@@ -1,0 +1,55 @@
+name: Update Release Versions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 2 * * MON
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  update:
+    name: Update release versions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+
+      # https://github.com/marketplace/actions/setup-net-core-sdk
+      - name: Setup .NET SDK 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish
+      - name: Build CreateMatrix Tool
+        run: dotnet publish ./CreateMatrix/CreateMatrix.csproj --self-contained false --output ${{ runner.temp }}/publish
+
+      # Execute the compiled version to make sure that the build breaks for a non-0 exit code
+      - name: Run CreateMatrix Tool
+        run: ${{ runner.temp }}/publish/CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update
+
+      - name: CSharpier format code
+        run: |
+          dotnet tool restore
+          dotnet csharpier format --log-level=debug .
+          git status
+
+      # https://github.com/marketplace/actions/create-pull-request
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: update-version
+          title: 'Update release versions'
+          body: 'This PR updates version metadata files.'
+          commit-message: 'Update release versions'
+          delete-branch: true

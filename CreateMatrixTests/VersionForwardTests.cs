@@ -1,4 +1,4 @@
-﻿using CreateMatrix;
+using CreateMatrix;
 
 namespace CreateMatrixTests;
 
@@ -18,9 +18,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "1.0", Labels = [VersionInfo.LabelType.Stable] },
                     new VersionInfo { Version = "2.0", Labels = [VersionInfo.LabelType.Latest] },
                     new VersionInfo { Version = "3.0", Labels = [VersionInfo.LabelType.RC] },
-                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
-                ]
-            }
+                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] },
+                ],
+            },
         ];
         List<ProductInfo> newProductList =
         [
@@ -32,9 +32,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "1.1", Labels = [VersionInfo.LabelType.Stable] },
                     new VersionInfo { Version = "2.1", Labels = [VersionInfo.LabelType.Latest] },
                     new VersionInfo { Version = "3.1", Labels = [VersionInfo.LabelType.RC] },
-                    new VersionInfo { Version = "4.1", Labels = [VersionInfo.LabelType.Beta] }
-                ]
-            }
+                    new VersionInfo { Version = "4.1", Labels = [VersionInfo.LabelType.Beta] },
+                ],
+            },
         ];
 
         // newProductList will be updated in-place
@@ -46,24 +46,56 @@ public class VersionForwardTests
         // 4 versions
         Assert.Equal(4, productInfo.Versions.Count);
         // 1 Latest
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+        );
         // 1 Stable
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+        );
         // 1 RC
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+        );
         // 1 Beta
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+        );
         // 1 label per version
         Assert.Equal(4, productInfo.Versions.Count(item => item.Labels.Count == 1));
 
         // Stable 1.1
-        Assert.Equal("1.1", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Stable))?.Version);
+        Assert.Equal(
+            "1.1",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+                ?.Version
+        );
         // Latest 2.1
-        Assert.Equal("2.1", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest))?.Version);
+        Assert.Equal(
+            "2.1",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+                ?.Version
+        );
         // RC 3.1
-        Assert.Equal("3.1", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.RC))?.Version);
+        Assert.Equal(
+            "3.1",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+                ?.Version
+        );
         // Beta 4.1
-        Assert.Equal("4.1", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Beta))?.Version);
+        Assert.Equal(
+            "4.1",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+                ?.Version
+        );
     }
 
     [Fact]
@@ -80,9 +112,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "1.0", Labels = [VersionInfo.LabelType.Stable] },
                     new VersionInfo { Version = "2.0", Labels = [VersionInfo.LabelType.Latest] },
                     new VersionInfo { Version = "3.0", Labels = [VersionInfo.LabelType.RC] },
-                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] }
-                ]
-            }
+                    new VersionInfo { Version = "4.0", Labels = [VersionInfo.LabelType.Beta] },
+                ],
+            },
         ];
         List<ProductInfo> newProductList =
         [
@@ -94,9 +126,9 @@ public class VersionForwardTests
                     new VersionInfo { Version = "0.9", Labels = [VersionInfo.LabelType.Stable] },
                     new VersionInfo { Version = "1.9", Labels = [VersionInfo.LabelType.Latest] },
                     new VersionInfo { Version = "2.9", Labels = [VersionInfo.LabelType.RC] },
-                    new VersionInfo { Version = "3.9", Labels = [VersionInfo.LabelType.Beta] }
-                ]
-            }
+                    new VersionInfo { Version = "3.9", Labels = [VersionInfo.LabelType.Beta] },
+                ],
+            },
         ];
 
         // newProductList will be updated in-place
@@ -108,23 +140,55 @@ public class VersionForwardTests
         // 4 versions
         Assert.Equal(4, productInfo.Versions.Count);
         // 1 Latest
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+        );
         // 1 Stable
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+        );
         // 1 RC
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+        );
         // 1 Beta
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)));
+        Assert.Equal(
+            1,
+            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+        );
         // 1 label per version
         Assert.Equal(4, productInfo.Versions.Count(item => item.Labels.Count == 1));
 
         // Stable 1.0
-        Assert.Equal("1.0", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Stable))?.Version);
+        Assert.Equal(
+            "1.0",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+                ?.Version
+        );
         // Latest 2.0
-        Assert.Equal("2.0", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest))?.Version);
+        Assert.Equal(
+            "2.0",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+                ?.Version
+        );
         // RC 3.0
-        Assert.Equal("3.0", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.RC))?.Version);
+        Assert.Equal(
+            "3.0",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+                ?.Version
+        );
         // Beta 4.0
-        Assert.Equal("4.0", productInfo.Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Beta))?.Version);
+        Assert.Equal(
+            "4.0",
+            productInfo
+                .Versions.Find(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+                ?.Version
+        );
     }
 }

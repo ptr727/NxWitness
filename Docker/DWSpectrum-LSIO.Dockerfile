@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: DWSpectrum
 # Description: DW Spectrum IPVMS
 # Company: digitalwatchdog

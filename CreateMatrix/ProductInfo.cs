@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -16,7 +16,7 @@ public class ProductInfo
         NxMeta,
         NxWitness,
         DWSpectrum,
-        WisenetWAVE
+        WisenetWAVE,
     }
 
     public ProductType Product { get; set; }
@@ -32,52 +32,63 @@ public class ProductInfo
     public string GetDocker(bool lsio) => GetDocker(Product, lsio);
 
     // Used for release JSON API https://updates.vmsproxy.com/{release}/releases.json path
-    public static string GetRelease(ProductType productType) => productType switch
-    {
-        ProductType.NxGo => "nxgo",
-        ProductType.NxMeta => "metavms",
-        ProductType.NxWitness => "default",
-        ProductType.DWSpectrum => "digitalwatchdog",
-        ProductType.WisenetWAVE => "hanwha",
-        ProductType.None => throw new NotImplementedException(),
-        _ => throw new InvalidEnumArgumentException(nameof(Product))
-    };
+    public static string GetRelease(ProductType productType) =>
+        productType switch
+        {
+            ProductType.NxGo => "nxgo",
+            ProductType.NxMeta => "metavms",
+            ProductType.NxWitness => "default",
+            ProductType.DWSpectrum => "digitalwatchdog",
+            ProductType.WisenetWAVE => "hanwha",
+            ProductType.None => throw new NotImplementedException(),
+            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+        };
 
     // Used for ${COMPANY_NAME} mediaserver install path and user account
-    public static string GetCompany(ProductType productType) => productType switch
-    {
-        ProductType.NxGo => "networkoptix",
-        ProductType.NxMeta => "networkoptix-metavms",
-        ProductType.NxWitness => "networkoptix",
-        ProductType.DWSpectrum => "digitalwatchdog",
-        ProductType.WisenetWAVE => "hanwha",
-        ProductType.None => throw new NotImplementedException(),
-        _ => throw new InvalidEnumArgumentException(nameof(Product))
-    };
+    public static string GetCompany(ProductType productType) =>
+        productType switch
+        {
+            ProductType.NxGo => "networkoptix",
+            ProductType.NxMeta => "networkoptix-metavms",
+            ProductType.NxWitness => "networkoptix",
+            ProductType.DWSpectrum => "digitalwatchdog",
+            ProductType.WisenetWAVE => "hanwha",
+            ProductType.None => throw new NotImplementedException(),
+            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+        };
 
     // Used for ${LABEL_DESCRIPTION} in Dockerfile
-    public static string GetDescription(ProductType productType) => productType switch
-    {
-        ProductType.NxGo => "Nx Go VMS",
-        ProductType.NxMeta => "Nx Meta VMS",
-        ProductType.NxWitness => "Nx Witness VMS",
-        ProductType.DWSpectrum => "DW Spectrum IPVMS",
-        ProductType.WisenetWAVE => "Wisenet WAVE VMS",
-        ProductType.None => throw new NotImplementedException(),
-        _ => throw new InvalidEnumArgumentException(nameof(Product))
-    };
+    public static string GetDescription(ProductType productType) =>
+        productType switch
+        {
+            ProductType.NxGo => "Nx Go VMS",
+            ProductType.NxMeta => "Nx Meta VMS",
+            ProductType.NxWitness => "Nx Witness VMS",
+            ProductType.DWSpectrum => "DW Spectrum IPVMS",
+            ProductType.WisenetWAVE => "Wisenet WAVE VMS",
+            ProductType.None => throw new NotImplementedException(),
+            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+        };
 
     // Dockerfile name, excluding the .Dockerfile extension
     // TODO: Consolidate with ImageInfo.SetName(), e.g. add enum for Ubuntu, LSIO, etc.
-    public static string GetDocker(ProductType productType, bool lsio) => $"{productType}{(lsio ? "-LSIO" : "")}";
+    public static string GetDocker(ProductType productType, bool lsio) =>
+        $"{productType}{(lsio ? "-LSIO" : "")}";
 
     public static IEnumerable<ProductType> GetProductTypes() =>
         // Create list of product types
-        [.. Enum.GetValues<ProductType>().Cast<ProductType>().Where(productType => productType != ProductType.None)];
+        [
+            .. Enum.GetValues<ProductType>()
+                .Cast<ProductType>()
+                .Where(productType => productType != ProductType.None),
+        ];
 
     public static List<ProductInfo> GetProducts() =>
         // Create list of all known products
-        [.. from ProductType productType in GetProductTypes() select new ProductInfo { Product = productType }];
+        [
+            .. from ProductType productType in GetProductTypes()
+            select new ProductInfo { Product = productType },
+        ];
 
     public void GetVersions()
     {
@@ -98,7 +109,11 @@ public class ProductInfo
                 // Only process "vms" products
                 if (!release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase))
                 {
-                    Log.Logger.Warning("{Product}: Skipping {ReleaseProduct}", Product, release.Product);
+                    Log.Logger.Warning(
+                        "{Product}: Skipping {ReleaseProduct}",
+                        Product,
+                        release.Product
+                    );
                     continue;
                 }
 
@@ -114,7 +129,11 @@ public class ProductInfo
                 int buildNumber = versionInfo.GetBuildNumber();
 
                 // Get available packages for this release
-                List<Package> packageList = PackagesJsonSchema.GetPackages(httpClient, GetRelease(), buildNumber);
+                List<Package> packageList = PackagesJsonSchema.GetPackages(
+                    httpClient,
+                    GetRelease(),
+                    buildNumber
+                );
 
                 // Get the x64 and arm64 server ubuntu server packages
                 Package? packageX64 = packageList.Find(item => item.IsX64Server());
@@ -126,8 +145,10 @@ public class ProductInfo
 
                 // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionInfo.UriX64 = $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageX64.File}";
-                versionInfo.UriArm64 = $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}";
+                versionInfo.UriX64 =
+                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageX64.File}";
+                versionInfo.UriArm64 =
+                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}";
 
                 // Verify and add to list
                 if (VerifyVersion(versionInfo))
@@ -156,7 +177,11 @@ public class ProductInfo
             return true;
         }
 
-        Log.Logger.Warning("{Product}:{Version} : Ubuntu Noble requires v6.0+", Product, versionInfo.Version);
+        Log.Logger.Warning(
+            "{Product}:{Version} : Ubuntu Noble requires v6.0+",
+            Product,
+            versionInfo.Version
+        );
         return false;
     }
 
@@ -183,14 +208,23 @@ public class ProductInfo
             return;
         }
 
-        Log.Logger.Warning("{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}", Product, label, existingVersion.Version, versionInfo.Version);
+        Log.Logger.Warning(
+            "{Product}: Replacing {Label} from {ExistingVersion} to {NewVersion}",
+            Product,
+            label,
+            existingVersion.Version,
+            versionInfo.Version
+        );
 
         // Remove from other version and add to this version
         _ = existingVersion.Labels.Remove(label);
         versionInfo.Labels.Add(label);
     }
 
-    private VersionInfo? FindMissingLabel(VersionInfo.LabelType targetLabel, List<VersionInfo.LabelType> sourceLabels)
+    private VersionInfo? FindMissingLabel(
+        VersionInfo.LabelType targetLabel,
+        List<VersionInfo.LabelType> sourceLabels
+    )
     {
         foreach (VersionInfo.LabelType label in sourceLabels)
         {
@@ -198,7 +232,12 @@ public class ProductInfo
             VersionInfo? version = Versions.FindLast(item => item.Labels.Contains(label));
             if (version != default(VersionInfo))
             {
-                Log.Logger.Warning("{Product}: Using {SourceLabel} for {TargetLabel}", Product, label, targetLabel);
+                Log.Logger.Warning(
+                    "{Product}: Using {SourceLabel} for {TargetLabel}",
+                    Product,
+                    label,
+                    targetLabel
+                );
                 return version;
             }
         }
@@ -213,7 +252,10 @@ public class ProductInfo
         // If no Latest label is set, use Stable or RC or Beta as Latest
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
-            VersionInfo? latest = FindMissingLabel(VersionInfo.LabelType.Latest, [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]);
+            VersionInfo? latest = FindMissingLabel(
+                VersionInfo.LabelType.Latest,
+                [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]
+            );
             ArgumentNullException.ThrowIfNull(latest);
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
@@ -221,7 +263,10 @@ public class ProductInfo
         // If no Stable label is set, use Latest as stable
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
-            VersionInfo? stable = FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest]);
+            VersionInfo? stable = FindMissingLabel(
+                VersionInfo.LabelType.Stable,
+                [VersionInfo.LabelType.Latest]
+            );
             ArgumentNullException.ThrowIfNull(stable);
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
@@ -233,19 +278,38 @@ public class ProductInfo
         Versions.ForEach(item => item.Labels.Sort());
 
         // Must have 1 Latest and 1 Stable label
-        ArgumentOutOfRangeException.ThrowIfNotEqual(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)), 1);
-        ArgumentOutOfRangeException.ThrowIfNotEqual(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)), 1);
+        ArgumentOutOfRangeException.ThrowIfNotEqual(
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)),
+            1
+        );
+        ArgumentOutOfRangeException.ThrowIfNotEqual(
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)),
+            1
+        );
 
         // Must have no more than 1 Beta or RC labels
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)), 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)), 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)),
+            1
+        );
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)),
+            1
+        );
     }
 
     public void LogInformation()
     {
         foreach (VersionInfo version in Versions)
         {
-            Log.Logger.Information("{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}", Product, version.Version, version.Labels, version.UriX64, version.UriArm64);
+            Log.Logger.Information(
+                "{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}",
+                Product,
+                version.Version,
+                version.Labels,
+                version.UriX64,
+                version.UriArm64
+            );
         }
     }
 
@@ -284,10 +348,12 @@ public class ProductInfo
         fileName ??= Path.GetFileName(uri.LocalPath);
 
         // Log details
-        Log.Logger.Information("File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}",
+        Log.Logger.Information(
+            "File Name: {FileName}, File Size: {FileSize}, Last Modified: {LastModified}",
             fileName,
             httpResponse.Content.Headers.ContentLength,
-            httpResponse.Content.Headers.LastModified);
+            httpResponse.Content.Headers.LastModified
+        );
     }
 
     public void Verify()

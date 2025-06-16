@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using Serilog;
@@ -21,10 +21,14 @@ public class ImageInfo
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
-        Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType}-{baseName}";
+        Name = string.IsNullOrEmpty(baseName)
+            ? productType.ToString()
+            : $"{productType}-{baseName}";
 
         // E.g. default, lsio
-        CacheScope = string.IsNullOrEmpty(baseName) ? "default" : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
+        CacheScope = string.IsNullOrEmpty(baseName)
+            ? "default"
+            : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
     }
 
     private void AddArgs(VersionInfo versionInfo)
@@ -42,7 +46,9 @@ public class ImageInfo
         // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
         foreach (string registry in s_registryNames)
         {
-            Tags.Add($"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
+            Tags.Add(
+                $"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}"
+            );
         }
     }
 
@@ -78,15 +84,25 @@ public class ImageInfo
         imageList.AddRange(developList);
 
         // Sort args and tags to make diffs easier
-        imageList.ForEach(item => { item.Args.Sort(); item.Tags.Sort(); });
+        imageList.ForEach(item =>
+        {
+            item.Args.Sort();
+            item.Tags.Sort();
+        });
 
         return imageList;
     }
 
-    private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
+    private static List<ImageInfo> CreateImages(
+        ProductInfo productInfo,
+        string baseName,
+        string? tagPrefix = null
+    )
     {
         // Create a set by unique versions
-        ImmutableSortedSet<VersionInfo> versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
+        ImmutableSortedSet<VersionInfo> versionSet = productInfo.Versions.ToImmutableSortedSet(
+            new VersionInfoComparer()
+        );
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
 
         // Create images for each version
@@ -104,7 +120,10 @@ public class ImageInfo
             versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
             // Add prefix as a standalone tag for latest
-            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.Latest))
+            if (
+                !string.IsNullOrEmpty(tagPrefix)
+                && versionUri.Labels.Contains(VersionInfo.LabelType.Latest)
+            )
             {
                 imageInfo.AddTag(tagPrefix);
             }
@@ -122,7 +141,13 @@ public class ImageInfo
 
     public void LogInformation()
     {
-        Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", Name, Branch, Tags.Count, Args.Count);
+        Log.Logger.Information(
+            "Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}",
+            Name,
+            Branch,
+            Tags.Count,
+            Args.Count
+        );
         Tags.ForEach(item => Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, item));
         Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
     }

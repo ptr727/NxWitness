@@ -1,0 +1,54 @@
+name: Merge Bot Generated PR's
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  merge-dependabot:
+    name: Merge dependabot PR's
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+
+    # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#enable-auto-merge-on-a-pull-request
+    steps:
+
+      # https://github.com/marketplace/actions/fetch-metadata-from-dependabot-prs
+      - name: Get dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      # https://cli.github.com/manual/gh_pr_merge
+      # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#ignore--
+      - name: Merge dependabot non-major updates
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  merge-version:
+    name: Merge new version PR's
+    runs-on: ubuntu-latest
+    if: github.actor == 'github-actions[bot]' && github.event.pull_request.base.ref == 'update-version'
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+
+      # https://cli.github.com/manual/gh_pr_merge
+      - name: Merge new version PR's
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

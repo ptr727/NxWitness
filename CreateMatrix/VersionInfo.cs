@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace CreateMatrix;
 
@@ -11,7 +11,7 @@ public class VersionInfo
         Stable,
         Latest,
         Beta,
-        RC
+        RC,
     }
 
     public string Version { get; set; } = "";
@@ -48,20 +48,26 @@ public class VersionInfo
         return lhsVersion.CompareTo(rhsVersion);
     }
 
-    public static int Compare(VersionInfo lhs, VersionInfo rhs) => Compare(lhs.Version, rhs.Version);
+    public static int Compare(VersionInfo lhs, VersionInfo rhs) =>
+        Compare(lhs.Version, rhs.Version);
 
     public static IEnumerable<LabelType> GetLabelTypes() =>
         // Create list of label types
-        [.. Enum.GetValues<LabelType>().Cast<LabelType>().Where(labelType => labelType != LabelType.None)];
+        [
+            .. Enum.GetValues<LabelType>()
+                .Cast<LabelType>()
+                .Where(labelType => labelType != LabelType.None),
+        ];
 }
 
 public class VersionInfoComparer : Comparer<VersionInfo>
 {
     // Compare using version numbers
-    public override int Compare(VersionInfo? x, VersionInfo? y) => x switch
-    {
-        null when y == null => 0,
-        null => -1,
-        _ => y == null ? 1 : VersionInfo.Compare(x, y)
-    };
+    public override int Compare(VersionInfo? x, VersionInfo? y) =>
+        x switch
+        {
+            null when y == null => 0,
+            null => -1,
+            _ => y == null ? 1 : VersionInfo.Compare(x, y),
+        };
 }
