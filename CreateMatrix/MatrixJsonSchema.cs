@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Json.Schema;
@@ -8,7 +8,6 @@ namespace CreateMatrix;
 
 public class MatrixJsonSchemaBase
 {
-
     [JsonPropertyName("$schema")]
     [JsonPropertyOrder(-3)]
     public string Schema { get; } = SchemaUri;
@@ -17,7 +16,8 @@ public class MatrixJsonSchemaBase
     [JsonPropertyOrder(-2)]
     public int SchemaVersion { get; set; } = MatrixJsonSchema.Version;
 
-    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
+    protected const string SchemaUri =
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
 }
 
 public class MatrixJsonSchema : MatrixJsonSchemaBase
@@ -29,13 +29,16 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
 
     public static MatrixJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
 
-    public static void ToFile(string path, MatrixJsonSchema jsonSchema) => File.WriteAllText(path, ToJson(jsonSchema));
+    public static void ToFile(string path, MatrixJsonSchema jsonSchema) =>
+        File.WriteAllText(path, ToJson(jsonSchema));
 
-    private static string ToJson(MatrixJsonSchema jsonSchema) => JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
+    private static string ToJson(MatrixJsonSchema jsonSchema) =>
+        JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
 
     private static MatrixJsonSchema FromJson(string jsonString)
     {
-        MatrixJsonSchemaBase? matrixJsonSchemaBase = JsonSerializer.Deserialize<MatrixJsonSchemaBase>(jsonString, JsonReadOptions);
+        MatrixJsonSchemaBase? matrixJsonSchemaBase =
+            JsonSerializer.Deserialize<MatrixJsonSchemaBase>(jsonString, JsonReadOptions);
         ArgumentNullException.ThrowIfNull(matrixJsonSchemaBase);
 
         // Deserialize the correct version
@@ -44,7 +47,10 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
         {
             // Current version
             case Version:
-                MatrixJsonSchema? schema = JsonSerializer.Deserialize<MatrixJsonSchema>(jsonString, JsonReadOptions);
+                MatrixJsonSchema? schema = JsonSerializer.Deserialize<MatrixJsonSchema>(
+                    jsonString,
+                    JsonReadOptions
+                );
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
             // case 1:
@@ -59,7 +65,10 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     public static void GenerateSchema(string path)
     {
         const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
-        JsonSchema schemaBuilder = new JsonSchemaBuilder().FromType<MatrixJsonSchema>(new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName })
+        JsonSchema schemaBuilder = new JsonSchemaBuilder()
+            .FromType<MatrixJsonSchema>(
+                new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName }
+            )
             .Title("CreateMatrix Matrix Schema")
             .Id(new Uri(SchemaUri))
             .Schema(new Uri(schemaVersion))
@@ -74,16 +83,18 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
         IncludeFields = true,
         NumberHandling = JsonNumberHandling.AllowReadingFromString,
         PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
-        ReadCommentHandling = JsonCommentHandling.Skip
+        ReadCommentHandling = JsonCommentHandling.Skip,
     };
 
     public static readonly JsonSerializerOptions JsonWriteOptions = new()
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         IncludeFields = true,
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
-            .WithAddedModifier(ExcludeObsoletePropertiesModifier),
-        WriteIndented = true
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver().WithAddedModifier(
+            ExcludeObsoletePropertiesModifier
+        ),
+        WriteIndented = true,
+        NewLine = "\r\n",
     };
 
     private static void ExcludeObsoletePropertiesModifier(JsonTypeInfo typeInfo)

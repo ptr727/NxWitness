@@ -1,4 +1,4 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.Globalization;
 using Serilog;
 using Serilog.Debugging;
@@ -30,80 +30,90 @@ public static class Program
         Option<string> versionOption = new(
             name: "--version",
             description: "Version JSON file.",
-            getDefaultValue: () => "./Make/Version.json");
+            getDefaultValue: () => "./Make/Version.json"
+        );
 
         Option<string> matrixOption = new(
             name: "--matrix",
             description: "Matrix JSON file.",
-            getDefaultValue: () => "./Make/Matrix.json");
+            getDefaultValue: () => "./Make/Matrix.json"
+        );
 
         Option<string> schemaVersionOption = new(
             name: "--schemaversion",
             description: "Version JSON schema file.",
-            getDefaultValue: () => "./JSON/Version.schema.json");
+            getDefaultValue: () => "./JSON/Version.schema.json"
+        );
 
         Option<string> schemaMatrixOption = new(
             name: "--schemamatrix",
             description: "Matrix JSON schema file.",
-            getDefaultValue: () => "./JSON/Matrix.schema.json");
+            getDefaultValue: () => "./JSON/Matrix.schema.json"
+        );
 
         Option<bool> updateOption = new(
             name: "--update",
             description: "Update version information",
-            getDefaultValue: () => false);
+            getDefaultValue: () => false
+        );
 
         Option<string> makeOption = new(
             name: "--make",
             description: "Make directory.",
-            getDefaultValue: () => "./Make");
+            getDefaultValue: () => "./Make"
+        );
 
         Option<string> dockerOption = new(
             name: "--docker",
             description: "Docker directory.",
-            getDefaultValue: () => "./Docker");
+            getDefaultValue: () => "./Docker"
+        );
 
         Option<VersionInfo.LabelType> labelOption = new(
             name: "--label",
             description: "Version label.",
-            getDefaultValue: () => VersionInfo.LabelType.Latest);
+            getDefaultValue: () => VersionInfo.LabelType.Latest
+        );
 
         Command versionCommand = new("version", "Create version information file")
-            {
-                versionOption
-            };
+        {
+            versionOption,
+        };
         versionCommand.SetHandler(VersionHandler, versionOption);
 
         Command matrixCommand = new("matrix", "Create matrix information file")
-            {
-                versionOption,
-                matrixOption,
-                updateOption
-            };
+        {
+            versionOption,
+            matrixOption,
+            updateOption,
+        };
         matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
 
         Command schemaCommand = new("schema", "Write Version and Matrix JSON schema files")
-            {
-                schemaVersionOption,
-                schemaMatrixOption
-            };
+        {
+            schemaVersionOption,
+            schemaMatrixOption,
+        };
         schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
 
         Command makeCommand = new("make", "Create Docker and Compose files from Version file")
-            {
-                versionOption,
-                makeOption,
-                dockerOption,
-                labelOption
-            };
+        {
+            versionOption,
+            makeOption,
+            dockerOption,
+            labelOption,
+        };
         makeCommand.SetHandler(MakeHandler, versionOption, makeOption, dockerOption, labelOption);
 
-        RootCommand rootCommand = new("CreateMatrix utility to create a matrix of builds from product versions")
-            {
-                versionCommand,
-                matrixCommand,
-                schemaCommand,
-                makeCommand
-            };
+        RootCommand rootCommand = new(
+            "CreateMatrix utility to create a matrix of builds from product versions"
+        )
+        {
+            versionCommand,
+            matrixCommand,
+            schemaCommand,
+            makeCommand,
+        };
         return rootCommand;
     }
 
@@ -112,13 +122,21 @@ public static class Program
         // Configure serilog console logging
         SelfLog.Enable(Console.Error);
         LoggerConfiguration loggerConfiguration = new();
-        _ = loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}", formatProvider: CultureInfo.InvariantCulture);
+        _ = loggerConfiguration.WriteTo.Console(
+            theme: AnsiConsoleTheme.Code,
+            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}",
+            formatProvider: CultureInfo.InvariantCulture
+        );
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
     private static Task<int> SchemaHandler(string schemaVersionPath, string schemaMatrixPath)
     {
-        Log.Logger.Information("Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}", schemaVersionPath, schemaMatrixPath);
+        Log.Logger.Information(
+            "Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}",
+            schemaVersionPath,
+            schemaMatrixPath
+        );
         VersionJsonSchema.GenerateSchema(schemaVersionPath);
         MatrixJsonSchema.GenerateSchema(schemaMatrixPath);
         return Task.FromResult(0);
@@ -141,7 +159,11 @@ public static class Program
         return Task.FromResult(0);
     }
 
-    private static Task<int> MatrixHandler(string versionPath, string matrixPath, bool updateVersion)
+    private static Task<int> MatrixHandler(
+        string versionPath,
+        string matrixPath,
+        bool updateVersion
+    )
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
@@ -180,7 +202,10 @@ public static class Program
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
-        MatrixJsonSchema matrixSchema = new() { Images = ImageInfo.CreateImages(fileSchema.Products) };
+        MatrixJsonSchema matrixSchema = new()
+        {
+            Images = ImageInfo.CreateImages(fileSchema.Products),
+        };
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
         // Log info
@@ -193,7 +218,12 @@ public static class Program
         return Task.FromResult(0);
     }
 
-    private static Task<int> MakeHandler(string versionPath, string makePath, string dockerPath, VersionInfo.LabelType label)
+    private static Task<int> MakeHandler(
+        string versionPath,
+        string makePath,
+        string dockerPath,
+        VersionInfo.LabelType label
+    )
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);

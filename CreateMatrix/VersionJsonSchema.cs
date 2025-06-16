@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Json.Schema;
 using Json.Schema.Generation;
@@ -15,7 +15,8 @@ public class VersionJsonSchemaBase
     [JsonPropertyOrder(-2)]
     public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
 
-    protected const string SchemaUri = "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
+    protected const string SchemaUri =
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
 }
 
 public class VersionJsonSchema : VersionJsonSchemaBase
@@ -33,11 +34,16 @@ public class VersionJsonSchema : VersionJsonSchemaBase
         File.WriteAllText(path, ToJson(jsonSchema));
     }
 
-    private static string ToJson(VersionJsonSchema jsonSchema) => JsonSerializer.Serialize(jsonSchema, MatrixJsonSchema.JsonWriteOptions);
+    private static string ToJson(VersionJsonSchema jsonSchema) =>
+        JsonSerializer.Serialize(jsonSchema, MatrixJsonSchema.JsonWriteOptions);
 
     private static VersionJsonSchema FromJson(string jsonString)
     {
-        VersionJsonSchemaBase? versionJsonSchemaBase = JsonSerializer.Deserialize<VersionJsonSchemaBase>(jsonString, MatrixJsonSchema.JsonReadOptions);
+        VersionJsonSchemaBase? versionJsonSchemaBase =
+            JsonSerializer.Deserialize<VersionJsonSchemaBase>(
+                jsonString,
+                MatrixJsonSchema.JsonReadOptions
+            );
         ArgumentNullException.ThrowIfNull(versionJsonSchemaBase);
 
         // Deserialize the correct version
@@ -45,7 +51,10 @@ public class VersionJsonSchema : VersionJsonSchemaBase
         switch (schemaVersion)
         {
             case Version:
-                VersionJsonSchema? schema = JsonSerializer.Deserialize<VersionJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
+                VersionJsonSchema? schema = JsonSerializer.Deserialize<VersionJsonSchema>(
+                    jsonString,
+                    MatrixJsonSchema.JsonReadOptions
+                );
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
             // case 1:
@@ -60,12 +69,18 @@ public class VersionJsonSchema : VersionJsonSchemaBase
     public static void GenerateSchema(string path)
     {
         const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
-        JsonSchema schemaBuilder = new JsonSchemaBuilder().FromType<VersionJsonSchema>(new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName })
+        JsonSchema schemaBuilder = new JsonSchemaBuilder()
+            .FromType<VersionJsonSchema>(
+                new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName }
+            )
             .Title("CreateMatrix Version Schema")
             .Id(new Uri(SchemaUri))
             .Schema(new Uri(schemaVersion))
             .Build();
-        string jsonSchema = JsonSerializer.Serialize(schemaBuilder, MatrixJsonSchema.JsonWriteOptions);
+        string jsonSchema = JsonSerializer.Serialize(
+            schemaBuilder,
+            MatrixJsonSchema.JsonWriteOptions
+        );
         File.WriteAllText(path, jsonSchema);
     }
 }

@@ -1,29 +1,94 @@
+// dotnet new tool-manifest
+// dotnet tool install csharpier
+// dotnet tool install husky
+// dotnet husky install
+// dotnet husky add pre-commit -c "dotnet husky run"
+// winget install nektos.act
+
+// dotnet tool update --all
+// winget upgrade nektos.act
+
 {
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build CreateMatrix",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
+            "label": ".Net Build",
+            "type": "dotnet",
+            "task": "build",
+            "group": "build",
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
         },
         {
-            "label": "Build CreateMatrixTest",
-            "command": "dotnet",
+            "label": ".Net Format",
             "type": "process",
+            "command": "dotnet",
             "args": [
-                "build",
-                "${workspaceFolder}/CreateMatrixTest/CreateMatrixTest.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "format",
+                "--verify-no-changes",
+                "--severity=info",
+                "--verbosity=detailed"
             ],
-            "problemMatcher": "$msCompile"
-        }
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "CSharpier Format",
+            "type": "process",
+            "command": "csharpier",
+            "args": [
+                "format",
+                "--log-level=debug",
+                "."
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": ".Net Tool Update",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tool",
+                "update",
+                "--all"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Husky.Net Run",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "husky",
+                "run"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
     ]
 }

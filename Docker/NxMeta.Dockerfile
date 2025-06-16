@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: NxMeta
 # Description: Nx Meta VMS
 # Company: networkoptix-metavms
@@ -12,13 +12,13 @@ FROM ubuntu:noble
 # Labels
 ARG LABEL_NAME="NxMeta"
 ARG LABEL_DESCRIPTION="Nx Meta VMS"
-ARG LABEL_VERSION="6.1.0.40638"
+ARG LABEL_VERSION="6.1.0.41083"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/40638/metavms-server_update-6.1.0.40638-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/40638/metavms-server_update-6.1.0.40638-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.1.0.40638"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.1.0.41083"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix-metavms"

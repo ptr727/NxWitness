@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: WisenetWAVE
 # Description: Wisenet WAVE VMS
 # Company: hanwha

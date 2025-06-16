@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
@@ -33,11 +33,16 @@ public class Release
         PublicationType switch
         {
             // Use Stable or Latest based on if published or not
-            ReleasePublication => IsPublished() ? VersionInfo.LabelType.Stable : VersionInfo.LabelType.Latest,
+            ReleasePublication => IsPublished()
+                ? VersionInfo.LabelType.Stable
+                : VersionInfo.LabelType.Latest,
             RcPublication => VersionInfo.LabelType.RC,
             BetaPublication => VersionInfo.LabelType.Beta,
-            _ => throw new InvalidEnumArgumentException($"Unknown PublicationType: {PublicationType}")
+            _ => throw new InvalidEnumArgumentException(
+                $"Unknown PublicationType: {PublicationType}"
+            ),
         };
+
     public const string ReleasePublication = "release";
     public const string RcPublication = "rc";
     public const string BetaPublication = "beta";
@@ -48,7 +53,8 @@ public class Release
         // Logic follows similar patterns as used in C++ Desktop Client
         // https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L57
         // releases_info.cpp: ReleasesInfo::selectVmsRelease(), isBuildPublished(), canReceiveUnpublishedBuild()
-        ReleaseDate > 0 && ReleaseDeliveryDays >= 0;
+        ReleaseDate > 0
+        && ReleaseDeliveryDays >= 0;
 }
 
 public class ReleasesJsonSchema
@@ -58,7 +64,10 @@ public class ReleasesJsonSchema
 
     private static ReleasesJsonSchema FromJson(string jsonString)
     {
-        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize<ReleasesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
+        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize<ReleasesJsonSchema>(
+            jsonString,
+            MatrixJsonSchema.JsonReadOptions
+        );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }

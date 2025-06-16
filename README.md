@@ -2,11 +2,6 @@
 
 This is a project to build and publish docker images for various [Network Optix][networkoptix] VMS products.
 
-## License
-
-Licensed under the [MIT License][license].\
-![License Shield][license_shield]
-
 ## Build Status
 
 [![Last Commit][last_commit_shield]][repo]\
@@ -15,6 +10,8 @@ Licensed under the [MIT License][license].\
 
 ## Release Notes
 
+- Version 2.7:
+  - Modified version update checking actions to create a PR vs. comitting changes directly.
 - Version 2.6:
   - Updated to Ubuntu Noble 24.04 LTS base images in [support][nx_os_support] of v6 products.
   - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
@@ -656,3 +653,8 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [nx_multi_nic]: https://support.networkoptix.com/hc/en-us/articles/215567037-Troubleshooting-HWID-Changes-in-Multi-NIC-Environment
 [nxmeta_signup]: https://www.networkoptix.com/nx-meta/get-started-with-meta
 [nxmeta_dev_license]: https://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers
+
+## License
+
+Licensed under the [MIT License][license].\
+![License Shield][license_shield]

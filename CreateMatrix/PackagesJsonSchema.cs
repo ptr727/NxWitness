@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 
@@ -31,15 +31,19 @@ public class Package
 
     public bool IsX64Server() =>
         // Test for Server and x64 and Ubuntu
-        Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
-            PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) &&
-            Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase)
+        && PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase)
+        && Variants.Any(variant =>
+            variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)
+        );
 
     public bool IsArm64Server() =>
         // Test for Server and Arm64 and Ubuntu
-        Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
-            PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase) &&
-            Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase)
+        && PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase)
+        && Variants.Any(variant =>
+            variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)
+        );
 }
 
 public class PackagesJsonSchema
@@ -49,16 +53,25 @@ public class PackagesJsonSchema
 
     private static PackagesJsonSchema FromJson(string jsonString)
     {
-        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
+        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(
+            jsonString,
+            MatrixJsonSchema.JsonReadOptions
+        );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
 
-    public static List<Package> GetPackages(HttpClient httpClient, string releaseName, int buildNumber)
+    public static List<Package> GetPackages(
+        HttpClient httpClient,
+        string releaseName,
+        int buildNumber
+    )
     {
         // Load packages JSON
         // https://updates.networkoptix.com/{product}/{build}/packages.json
-        Uri packagesUri = new($"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json");
+        Uri packagesUri = new(
+            $"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json"
+        );
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
         string jsonString = httpClient.GetStringAsync(packagesUri).Result;
 

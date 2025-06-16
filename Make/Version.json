@@ -37,9 +37,9 @@
           ]
         },
         {
-          "Version": "6.1.0.40638",
-          "UriX64": "https://updates.networkoptix.com/metavms/40638/metavms-server_update-6.1.0.40638-linux_x64-beta.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/40638/metavms-server_update-6.1.0.40638-linux_arm64-beta.zip",
+          "Version": "6.1.0.41083",
+          "UriX64": "https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip",
           "Labels": [
             "Beta"
           ]
@@ -56,6 +56,14 @@
           "Labels": [
             "Stable",
             "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.4.41061",
+          "UriX64": "https://updates.networkoptix.com/default/41061/nxwitness-server_update-6.0.4.41061-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/41061/nxwitness-server_update-6.0.4.41061-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         },
         {
@@ -85,6 +93,14 @@
           "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/40736/dwspectrum-server_update-6.0.3.40736-linux_arm64.zip",
           "Labels": [
             "Latest"
+          ]
+        },
+        {
+          "Version": "6.0.4.41061",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/41061/dwspectrum-server_update-6.0.4.41061-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/41061/dwspectrum-server_update-6.0.4.41061-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
           ]
         },
         {
