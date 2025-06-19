@@ -73,7 +73,13 @@ jobs:
           # Get all history for version calculation
           fetch-depth: 0
 
-      # Run Nerdbank.GitVersioning
+      # https://github.com/marketplace/actions/setup-net-core-sdk
+      - name: Setup .NET SDK 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+
+          # Run Nerdbank.GitVersioning
       # https://github.com/marketplace/actions/nerdbank-gitversioning
       - name: Run Nerdbank.GitVersioning tool
         id: nbgv
