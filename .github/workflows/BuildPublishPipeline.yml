@@ -79,7 +79,7 @@ jobs:
         with:
           dotnet-version: 9.x
 
-          # Run Nerdbank.GitVersioning
+      # Run Nerdbank.GitVersioning
       # https://github.com/marketplace/actions/nerdbank-gitversioning
       - name: Run Nerdbank.GitVersioning tool
         id: nbgv
