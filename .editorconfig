@@ -29,14 +29,17 @@ end_of_line = crlf
 # Xml files
 [*.{xml,csproj,props,targets}]
 end_of_line = crlf
+indent_size = 2
 
 # YAML files
 [*.{yml,yaml}]
 end_of_line = crlf
+indent_size = 2
 
 # JSON files
 [*.json]
 end_of_line = crlf
+indent_size = 2
 
 # Linux scripts
 [*.sh]
