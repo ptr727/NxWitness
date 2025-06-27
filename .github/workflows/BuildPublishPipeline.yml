@@ -31,12 +31,6 @@ jobs:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps
     steps:
 
-      # https://github.com/marketplace/actions/setup-net-core-sdk
-      - name: Setup .NET SDK 9
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.x
-
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,7 +49,7 @@ jobs:
           echo "$FJSON"
           echo "matrix=${FJSON}" >> $GITHUB_OUTPUT
 
-  # Get version information after the new Version.json and Matrix.json files were committed
+  # Get version information
   getversion:
     needs: setmatrix
     name: Get Version
