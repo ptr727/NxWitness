@@ -21,6 +21,10 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# S6 Overlay
+[Docker/s6-overlay/**]
+end_of_line = lf
+
 # Markdown files
 [*.md]
 trim_trailing_whitespace = false
