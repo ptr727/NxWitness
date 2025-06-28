@@ -1,9 +1,9 @@
-name: Update Release Versions
+name: Update Released Versions
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 2 * * MON
+    - cron: 0 2 * * *
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,7 +12,7 @@ concurrency:
 jobs:
 
   update:
-    name: Update release versions
+    name: Update Released Versions
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -49,7 +49,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           branch: update-version
-          title: 'Update release versions'
+          title: 'Update released versions'
           body: 'This PR updates version metadata files.'
-          commit-message: 'Update release versions'
+          commit-message: 'Update released versions'
           delete-branch: true
