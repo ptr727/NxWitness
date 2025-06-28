@@ -33,7 +33,6 @@ jobs:
 
   setmatrix:
     name: Set Matrix
-    needs: unittests
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.setmatrix.outputs.matrix }}
@@ -108,3 +107,28 @@ jobs:
             ${{ join(matrix.images.args, '
             ') }}
             LABEL_VERSION=1.0.0.1
+
+  # TODO: GH does not support selecting an entire task as a dependency
+  # https://github.com/orgs/community/discussions/12395#discussioncomment-12970019
+
+  # Check workflow result
+  check-workflow-status:
+    name: Check Workflow Status
+    runs-on: ubuntu-latest
+    needs:
+      [
+        unittests,
+        builddocker,
+      ]
+    if: always()
+    steps:
+      - name: Check Workflow Status
+        run: |
+          exit_on_result() {
+            if [[ "$2" == "failure" || "$2" == "cancelled" ]]; then
+              echo "Job '$1' failed or was cancelled."
+              exit 1
+            fi
+          }
+          exit_on_result "check-labels" "${{ needs.unittests.result }}"
+          exit_on_result "run-tests" "${{ needs.builddocker.result }}"
