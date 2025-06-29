@@ -39,7 +39,7 @@ jobs:
       - name: Load Matrix JSON
         id: setmatrix
         run: |
-          JSON=$(cat ./Make/Matrix.json | jq '.Images[] | select(.Branch == "${{github.ref_name}}") | {Images: [.]}')
+          JSON=$(cat ./Make/Matrix.json | jq '{ Images: [ .Images[] | select(.Branch == "${{github.ref_name}}") ] }')
           echo "JSON:"
           echo "$JSON"
           echo "Flat JSON:"
