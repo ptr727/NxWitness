@@ -22,64 +22,67 @@ public static class Program
 
         // Run
         // 0 == ok, 1 == error
-        return await rootCommand.InvokeAsync(args);
+        return await rootCommand.Parse(args).InvokeAsync();
     }
 
     private static RootCommand CreateCommandLine()
     {
-        Option<string> versionOption = new(
-            name: "--version",
-            description: "Version JSON file.",
-            getDefaultValue: () => "./Make/Version.json"
-        );
+        Option<string> versionOption = new("--version")
+        {
+            Description = "Version JSON file.",
+            DefaultValueFactory = _ => "./Make/Version.json",
+        };
 
-        Option<string> matrixOption = new(
-            name: "--matrix",
-            description: "Matrix JSON file.",
-            getDefaultValue: () => "./Make/Matrix.json"
-        );
+        Option<string> matrixOption = new("--matrix")
+        {
+            Description = "Matrix JSON file.",
+            DefaultValueFactory = _ => "./Make/Matrix.json",
+        };
 
-        Option<string> schemaVersionOption = new(
-            name: "--schemaversion",
-            description: "Version JSON schema file.",
-            getDefaultValue: () => "./JSON/Version.schema.json"
-        );
+        Option<string> schemaVersionOption = new("--schemaversion")
+        {
+            Description = "Version JSON schema file.",
+            DefaultValueFactory = _ => "./JSON/Version.schema.json",
+        };
 
-        Option<string> schemaMatrixOption = new(
-            name: "--schemamatrix",
-            description: "Matrix JSON schema file.",
-            getDefaultValue: () => "./JSON/Matrix.schema.json"
-        );
+        Option<string> schemaMatrixOption = new("--schemamatrix")
+        {
+            Description = "Matrix JSON schema file.",
+            DefaultValueFactory = _ => "./JSON/Matrix.schema.json",
+        };
 
-        Option<bool> updateOption = new(
-            name: "--update",
-            description: "Update version information",
-            getDefaultValue: () => false
-        );
+        Option<bool> updateOption = new("--update")
+        {
+            Description = "Update version information",
+            DefaultValueFactory = _ => false,
+        };
 
-        Option<string> makeOption = new(
-            name: "--make",
-            description: "Make directory.",
-            getDefaultValue: () => "./Make"
-        );
+        Option<string> makeOption = new("--make")
+        {
+            Description = "Make directory.",
+            DefaultValueFactory = _ => "./Make",
+        };
 
-        Option<string> dockerOption = new(
-            name: "--docker",
-            description: "Docker directory.",
-            getDefaultValue: () => "./Docker"
-        );
+        Option<string> dockerOption = new("--docker")
+        {
+            Description = "Docker directory.",
+            DefaultValueFactory = _ => "./Docker",
+        };
 
-        Option<VersionInfo.LabelType> labelOption = new(
-            name: "--label",
-            description: "Version label.",
-            getDefaultValue: () => VersionInfo.LabelType.Latest
-        );
+        Option<VersionInfo.LabelType> labelOption = new("--label")
+        {
+            Description = "Version label.",
+            DefaultValueFactory = _ => VersionInfo.LabelType.Latest,
+        };
 
         Command versionCommand = new("version", "Create version information file")
         {
             versionOption,
         };
-        versionCommand.SetHandler(VersionHandler, versionOption);
+        versionCommand.SetAction(parseResult =>
+        {
+            return VersionHandler(parseResult.GetValue(versionOption));
+        });
 
         Command matrixCommand = new("matrix", "Create matrix information file")
         {
@@ -87,14 +90,27 @@ public static class Program
             matrixOption,
             updateOption,
         };
-        matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
+        matrixCommand.SetAction(parseResult =>
+        {
+            return MatrixHandler(
+                parseResult.GetValue(versionOption),
+                parseResult.GetValue(matrixOption),
+                parseResult.GetValue(updateOption)
+            );
+        });
 
         Command schemaCommand = new("schema", "Write Version and Matrix JSON schema files")
         {
             schemaVersionOption,
             schemaMatrixOption,
         };
-        schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
+        schemaCommand.SetAction(parseResult =>
+        {
+            return SchemaHandler(
+                parseResult.GetValue(schemaVersionOption),
+                parseResult.GetValue(schemaMatrixOption)
+            );
+        });
 
         Command makeCommand = new("make", "Create Docker and Compose files from Version file")
         {
@@ -103,8 +119,17 @@ public static class Program
             dockerOption,
             labelOption,
         };
-        makeCommand.SetHandler(MakeHandler, versionOption, makeOption, dockerOption, labelOption);
+        makeCommand.SetAction(parseResult =>
+        {
+            return MakeHandler(
+                parseResult.GetValue(versionOption),
+                parseResult.GetValue(makeOption),
+                parseResult.GetValue(dockerOption),
+                parseResult.GetValue(labelOption)
+            );
+        });
 
+#pragma warning disable IDE0028 // Simplify collection initialization
         RootCommand rootCommand = new(
             "CreateMatrix utility to create a matrix of builds from product versions"
         )
@@ -114,6 +139,7 @@ public static class Program
             schemaCommand,
             makeCommand,
         };
+#pragma warning restore IDE0028 // Simplify collection initialization
         return rootCommand;
     }
 

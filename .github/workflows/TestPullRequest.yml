@@ -33,7 +33,6 @@ jobs:
 
   setmatrix:
     name: Set Matrix
-    needs: unittests
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.setmatrix.outputs.matrix }}
@@ -44,15 +43,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Load Matrix.json from file
+      # Load Matrix.json and select only images that match the current branch and have the "latest" tag
+      # TODO: Add support for multiple branches, e.g. select develop if not main
+      # Convert the JSON to a single flat line to avoid having to escape the multiline output
       - name: Load Matrix JSON
         id: setmatrix
         run: |
-          # Load JSON from file
-          JSON=$(cat ./Make/Matrix.json)
+          JSON=$(cat ./Make/Matrix.json | jq '{ Images: [ .Images[] | select(.Branch == "${{github.event.pull_request.base.ref}}") | select(.Tags | any(contains("latest"))) ] }')
           echo "JSON:"
           echo "$JSON"
-          # Convert the JSON to a single flat line to avoid having to escape the multiline output
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
@@ -108,3 +107,28 @@ jobs:
             ${{ join(matrix.images.args, '
             ') }}
             LABEL_VERSION=1.0.0.1
+
+  # TODO: GH does not support selecting an entire task as a dependency
+  # https://github.com/orgs/community/discussions/12395#discussioncomment-12970019
+
+  # Check workflow result
+  check-workflow-status:
+    name: Check Workflow Status
+    runs-on: ubuntu-latest
+    needs:
+      [
+        unittests,
+        builddocker,
+      ]
+    if: always()
+    steps:
+      - name: Check Workflow Status
+        run: |
+          exit_on_result() {
+            if [[ "$2" == "failure" || "$2" == "cancelled" ]]; then
+              echo "Job '$1' failed or was cancelled."
+              exit 1
+            fi
+          }
+          exit_on_result "check-labels" "${{ needs.unittests.result }}"
+          exit_on_result "run-tests" "${{ needs.builddocker.result }}"
