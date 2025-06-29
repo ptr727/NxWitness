@@ -12,13 +12,13 @@ FROM ubuntu:noble
 # Labels
 ARG LABEL_NAME="NxWitness"
 ARG LABEL_DESCRIPTION="Nx Witness VMS"
-ARG LABEL_VERSION="6.1.0.40638"
+ARG LABEL_VERSION="6.1.0.41209"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/40638/nxwitness-server_update-6.1.0.40638-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/40638/nxwitness-server_update-6.1.0.40638-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.1.0.40638"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/41209/nxwitness-server_update-6.1.0.41209-linux_x64-beta.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/41209/nxwitness-server_update-6.1.0.41209-linux_arm64-beta.zip"
+ARG DOWNLOAD_VERSION="6.1.0.41209"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix"

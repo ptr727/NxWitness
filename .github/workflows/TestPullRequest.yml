@@ -43,15 +43,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Load Matrix.json from file
+      # Load Matrix.json and select only images that match the current branch and have the "latest" tag
+      # TODO: Add support for multiple branches, e.g. select develop if not main
+      # Convert the JSON to a single flat line to avoid having to escape the multiline output
       - name: Load Matrix JSON
         id: setmatrix
         run: |
-          # Load JSON from file
-          JSON=$(cat ./Make/Matrix.json)
+          JSON=$(cat ./Make/Matrix.json | jq '{ Images: [ .Images[] | select(.Branch == "${{github.event.pull_request.base.ref}}") | select(.Tags | any(contains("latest"))) ] }')
           echo "JSON:"
           echo "$JSON"
-          # Convert the JSON to a single flat line to avoid having to escape the multiline output
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
