@@ -75,8 +75,6 @@ public static class Program
             DefaultValueFactory = _ => VersionInfo.LabelType.Latest,
         };
 
-        // TODO: Possible null reference
-        // https://github.com/dotnet/command-line-api/discussions/2602
         Command versionCommand = new("version", "Create version information file")
         {
             versionOption,
