@@ -4,8 +4,6 @@ on:
   push:
     branches: [ main ]
     paths: [HubREADME.md, .github/workflows/DockerHubDescription.yml]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 concurrency:
