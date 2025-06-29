@@ -7,8 +7,6 @@ name: Build and Publish Docker Images
 on:
   push:
     branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
   workflow_dispatch:
   schedule:
     - cron: 0 3 * * MON
@@ -35,15 +33,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Load Matrix.json from file
+      # Load Matrix.json and select only images that match the current branch
+      # TODO: Add support for multiple branches, e.g. select develop if not main
+      # Convert the JSON to a single flat line to avoid having to escape the multiline output
       - name: Load Matrix JSON
         id: setmatrix
         run: |
-          # Load JSON from file
-          JSON=$(cat ./Make/Matrix.json)
+          JSON=$(cat ./Make/Matrix.json | jq '{ Images: [ .Images[] | select(.Branch == "${{github.ref_name}}") ] }')
           echo "JSON:"
           echo "$JSON"
-          # Convert the JSON to a single flat line to avoid having to escape the multiline output
           echo "Flat JSON:"
           FJSON=$(echo "$JSON" | jq --compact-output)
           echo "$FJSON"
@@ -125,8 +123,8 @@ jobs:
           context: Docker
           file: Docker/${{ matrix.images.name }}.Dockerfile
           platforms: linux/amd64,linux/arm64
-          # Push only if not a pull request and branch name matches current branch
-          push: ${{ (github.event_name != 'pull_request') && (github.ref_name == matrix.images.branch) }}
+          # Push if not a pull request
+          push: ${{ (github.event_name != 'pull_request') }}
           # Convert tag and args from array to multiline strings
           tags: |-
             ${{ join(matrix.images.tags, '
