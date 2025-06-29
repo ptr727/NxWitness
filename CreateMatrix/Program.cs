@@ -75,13 +75,15 @@ public static class Program
             DefaultValueFactory = _ => VersionInfo.LabelType.Latest,
         };
 
+        // TODO: Possible null reference
+        // https://github.com/dotnet/command-line-api/discussions/2602
         Command versionCommand = new("version", "Create version information file")
         {
             versionOption,
         };
         versionCommand.SetAction(parseResult =>
         {
-            return VersionHandler(parseResult.GetValue(versionOption));
+            return VersionHandler(parseResult.GetRequiredValue(versionOption));
         });
 
         Command matrixCommand = new("matrix", "Create matrix information file")
@@ -93,9 +95,9 @@ public static class Program
         matrixCommand.SetAction(parseResult =>
         {
             return MatrixHandler(
-                parseResult.GetValue(versionOption),
-                parseResult.GetValue(matrixOption),
-                parseResult.GetValue(updateOption)
+                parseResult.GetRequiredValue(versionOption),
+                parseResult.GetRequiredValue(matrixOption),
+                parseResult.GetRequiredValue(updateOption)
             );
         });
 
@@ -107,8 +109,8 @@ public static class Program
         schemaCommand.SetAction(parseResult =>
         {
             return SchemaHandler(
-                parseResult.GetValue(schemaVersionOption),
-                parseResult.GetValue(schemaMatrixOption)
+                parseResult.GetRequiredValue(schemaVersionOption),
+                parseResult.GetRequiredValue(schemaMatrixOption)
             );
         });
 
@@ -122,10 +124,10 @@ public static class Program
         makeCommand.SetAction(parseResult =>
         {
             return MakeHandler(
-                parseResult.GetValue(versionOption),
-                parseResult.GetValue(makeOption),
-                parseResult.GetValue(dockerOption),
-                parseResult.GetValue(labelOption)
+                parseResult.GetRequiredValue(versionOption),
+                parseResult.GetRequiredValue(makeOption),
+                parseResult.GetRequiredValue(dockerOption),
+                parseResult.GetRequiredValue(labelOption)
             );
         });
 
