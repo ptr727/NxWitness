@@ -14,9 +14,9 @@
           ]
         },
         {
-          "Version": "6.0.4.41185",
-          "UriX64": "https://updates.networkoptix.com/nxgo/41185/nxgo-server_update-6.0.4.41185-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/nxgo/41185/nxgo-server_update-6.0.4.41185-linux_arm64.zip",
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/nxgo/41290/nxgo-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/nxgo/41290/nxgo-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
@@ -43,9 +43,9 @@
           ]
         },
         {
-          "Version": "6.0.4.41185",
-          "UriX64": "https://updates.networkoptix.com/metavms/41185/metavms-server_update-6.0.4.41185-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/41185/metavms-server_update-6.0.4.41185-linux_arm64.zip",
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/metavms/41290/metavms-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/41290/metavms-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
@@ -72,9 +72,17 @@
           ]
         },
         {
-          "Version": "6.0.4.41185",
-          "UriX64": "https://updates.networkoptix.com/default/41185/nxwitness-server_update-6.0.4.41185-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/41185/nxwitness-server_update-6.0.4.41185-linux_arm64.zip",
+          "Version": "6.0.4.41061",
+          "UriX64": "https://updates.networkoptix.com/default/41061/nxwitness-server_update-6.0.4.41061-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/41061/nxwitness-server_update-6.0.4.41061-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
+        {
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/default/41290/nxwitness-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/41290/nxwitness-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
@@ -93,17 +101,17 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
-          "Version": "6.0.2.40414",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/40414/dwspectrum-server_update-6.0.2.40414-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/40414/dwspectrum-server_update-6.0.2.40414-linux_arm64.zip",
+          "Version": "6.0.3.40736",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/40736/dwspectrum-server_update-6.0.3.40736-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/40736/dwspectrum-server_update-6.0.3.40736-linux_arm64.zip",
           "Labels": [
             "Stable"
           ]
         },
         {
-          "Version": "6.0.4.41185",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/41185/dwspectrum-server_update-6.0.4.41185-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/41185/dwspectrum-server_update-6.0.4.41185-linux_arm64.zip",
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/41290/dwspectrum-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/41290/dwspectrum-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
@@ -130,9 +138,9 @@
           ]
         },
         {
-          "Version": "6.0.4.41185",
-          "UriX64": "https://updates.networkoptix.com/hanwha/41185/wave-server_update-6.0.4.41185-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/41185/wave-server_update-6.0.4.41185-linux_arm64.zip",
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/hanwha/41290/wave-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/41290/wave-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Latest"
           ]
