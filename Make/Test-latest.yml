@@ -7,50 +7,70 @@ volumes:
   test_nxgo_ini:
   test_nxgo_var:
   test_nxgo_media:
+  test_nxgo_backup:
+  test_nxgo_analytics:
 
   # Dockerfile : NxGo-LSIO
   test_nxgo-lsio_config:
   test_nxgo-lsio_media:
+  test_nxgo-lsio_backup:
+  test_nxgo-lsio_analytics:
 
   # Dockerfile : NxMeta
   test_nxmeta_etc:
   test_nxmeta_ini:
   test_nxmeta_var:
   test_nxmeta_media:
+  test_nxmeta_backup:
+  test_nxmeta_analytics:
 
   # Dockerfile : NxMeta-LSIO
   test_nxmeta-lsio_config:
   test_nxmeta-lsio_media:
+  test_nxmeta-lsio_backup:
+  test_nxmeta-lsio_analytics:
 
   # Dockerfile : NxWitness
   test_nxwitness_etc:
   test_nxwitness_ini:
   test_nxwitness_var:
   test_nxwitness_media:
+  test_nxwitness_backup:
+  test_nxwitness_analytics:
 
   # Dockerfile : NxWitness-LSIO
   test_nxwitness-lsio_config:
   test_nxwitness-lsio_media:
+  test_nxwitness-lsio_backup:
+  test_nxwitness-lsio_analytics:
 
   # Dockerfile : DWSpectrum
   test_dwspectrum_etc:
   test_dwspectrum_ini:
   test_dwspectrum_var:
   test_dwspectrum_media:
+  test_dwspectrum_backup:
+  test_dwspectrum_analytics:
 
   # Dockerfile : DWSpectrum-LSIO
   test_dwspectrum-lsio_config:
   test_dwspectrum-lsio_media:
+  test_dwspectrum-lsio_backup:
+  test_dwspectrum-lsio_analytics:
 
   # Dockerfile : WisenetWAVE
   test_wisenetwave_etc:
   test_wisenetwave_ini:
   test_wisenetwave_var:
   test_wisenetwave_media:
+  test_wisenetwave_backup:
+  test_wisenetwave_analytics:
 
   # Dockerfile : WisenetWAVE-LSIO
   test_wisenetwave-lsio_config:
   test_wisenetwave-lsio_media:
+  test_wisenetwave-lsio_backup:
+  test_wisenetwave-lsio_analytics:
 
 
 services:
@@ -71,6 +91,8 @@ services:
       - test_nxgo_ini:/home/networkoptix/.config/nx_ini
       - test_nxgo_var:/opt/networkoptix/mediaserver/var
       - test_nxgo_media:/media
+      - test_nxgobackup:/backup
+      - test_nxgo_analytics:/analytics
 
   # Dockerfile : NxGo-LSIO
   # Port : 7201
@@ -86,6 +108,8 @@ services:
     volumes:
       - test_nxgo-lsio_config:/config
       - test_nxgo-lsio_media:/media
+      - test_nxgo-lsio_backup:/backup
+      - test_nxgo-lsio_analytics:/analytics
 
   # Dockerfile : NxMeta
   # Port : 7102
@@ -103,6 +127,8 @@ services:
       - test_nxmeta_ini:/home/networkoptix-metavms/.config/nx_ini
       - test_nxmeta_var:/opt/networkoptix-metavms/mediaserver/var
       - test_nxmeta_media:/media
+      - test_nxmetabackup:/backup
+      - test_nxmeta_analytics:/analytics
 
   # Dockerfile : NxMeta-LSIO
   # Port : 7202
@@ -118,6 +144,8 @@ services:
     volumes:
       - test_nxmeta-lsio_config:/config
       - test_nxmeta-lsio_media:/media
+      - test_nxmeta-lsio_backup:/backup
+      - test_nxmeta-lsio_analytics:/analytics
 
   # Dockerfile : NxWitness
   # Port : 7103
@@ -135,6 +163,8 @@ services:
       - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
       - test_nxwitness_var:/opt/networkoptix/mediaserver/var
       - test_nxwitness_media:/media
+      - test_nxwitnessbackup:/backup
+      - test_nxwitness_analytics:/analytics
 
   # Dockerfile : NxWitness-LSIO
   # Port : 7203
@@ -150,6 +180,8 @@ services:
     volumes:
       - test_nxwitness-lsio_config:/config
       - test_nxwitness-lsio_media:/media
+      - test_nxwitness-lsio_backup:/backup
+      - test_nxwitness-lsio_analytics:/analytics
 
   # Dockerfile : DWSpectrum
   # Port : 7104
@@ -167,6 +199,8 @@ services:
       - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
       - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
       - test_dwspectrum_media:/media
+      - test_dwspectrumbackup:/backup
+      - test_dwspectrum_analytics:/analytics
 
   # Dockerfile : DWSpectrum-LSIO
   # Port : 7204
@@ -182,6 +216,8 @@ services:
     volumes:
       - test_dwspectrum-lsio_config:/config
       - test_dwspectrum-lsio_media:/media
+      - test_dwspectrum-lsio_backup:/backup
+      - test_dwspectrum-lsio_analytics:/analytics
 
   # Dockerfile : WisenetWAVE
   # Port : 7105
@@ -199,6 +235,8 @@ services:
       - test_wisenetwave_ini:/home/hanwha/.config/nx_ini
       - test_wisenetwave_var:/opt/hanwha/mediaserver/var
       - test_wisenetwave_media:/media
+      - test_wisenetwavebackup:/backup
+      - test_wisenetwave_analytics:/analytics
 
   # Dockerfile : WisenetWAVE-LSIO
   # Port : 7205
@@ -214,3 +252,5 @@ services:
     volumes:
       - test_wisenetwave-lsio_config:/config
       - test_wisenetwave-lsio_media:/media
+      - test_wisenetwave-lsio_backup:/backup
+      - test_wisenetwave-lsio_analytics:/analytics

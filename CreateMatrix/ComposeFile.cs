@@ -88,6 +88,8 @@ public class ComposeFile
                   # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_config:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_backup:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_analytics:
 
                 """
             : $$"""
@@ -96,6 +98,8 @@ public class ComposeFile
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_ini:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_var:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_backup:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_analytics:
 
                 """;
 
@@ -164,6 +168,14 @@ public class ComposeFile
                     productType,
                     lsio
                 ).ToLowerInvariant()}}_media:/media
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_backup:/backup
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_analytics:/analytics
 
                 """;
         }
@@ -193,6 +205,14 @@ public class ComposeFile
                     productType,
                     lsio
                 ).ToLowerInvariant()}}_media:/media
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}backup:/backup
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_analytics:/analytics
 
                 """;
         }

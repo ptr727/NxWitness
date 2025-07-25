@@ -102,10 +102,12 @@ COPY s6-overlay /etc/s6-overlay
 EXPOSE 7001
 
 # Create mount points
-# Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+# Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
 # /root/.config/nx_ini links -> /config/ini
 # /config is for configuration
-# /media is for media recording
-VOLUME /config /media
+# /media is for recordings
+# /backup is for backups
+# /analytics is for analytics
+VOLUME /config /media /backup /analytics
