@@ -31,7 +31,7 @@ public class VersionJsonSchema : VersionJsonSchemaBase
     public static void ToFile(string path, VersionJsonSchema jsonSchema)
     {
         jsonSchema.SchemaVersion = Version;
-        File.WriteAllText(path, ToJson(jsonSchema));
+        Program.WriteFile(path, ToJson(jsonSchema));
     }
 
     private static string ToJson(VersionJsonSchema jsonSchema) =>
@@ -81,6 +81,6 @@ public class VersionJsonSchema : VersionJsonSchemaBase
             schemaBuilder,
             MatrixJsonSchema.JsonWriteOptions
         );
-        File.WriteAllText(path, jsonSchema);
+        Program.WriteFile(path, jsonSchema);
     }
 }

@@ -44,7 +44,7 @@ public class DockerFile
                 $"{ProductInfo.GetDocker(productType, false)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile);
+            Program.WriteFile(filePath, dockerFile);
 
             // Create the LSIO Docker file
             dockerFile = CreateDockerFile(productType, versionInfo, true);
@@ -53,7 +53,7 @@ public class DockerFile
                 $"{ProductInfo.GetDocker(productType, true)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile);
+            Program.WriteFile(filePath, dockerFile);
         }
     }
 
@@ -65,16 +65,16 @@ public class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLine(CreateFrom(productType, lsio));
+        _ = stringBuilder.Append(CreateFrom(productType, lsio) + "\r\n");
 
         // Args
-        _ = stringBuilder.AppendLine(CreateArgs(productType, versionInfo, lsio));
+        _ = stringBuilder.Append(CreateArgs(productType, versionInfo, lsio) + "\r\n");
 
         // Install
-        _ = stringBuilder.AppendLine(CreateInstall(lsio));
+        _ = stringBuilder.Append(CreateInstall(lsio) + "\r\n");
 
         // Entrypoint
-        _ = stringBuilder.AppendLine(CreateEntryPoint(productType, lsio));
+        _ = stringBuilder.Append(CreateEntryPoint(productType, lsio) + "\r\n");
 
         return stringBuilder.ToString();
     }

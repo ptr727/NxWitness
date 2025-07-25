@@ -12,6 +12,18 @@ namespace CreateMatrix;
 
 public static class Program
 {
+    internal static void WriteFile(string fileName, string value)
+    {
+        // Always write as CRLF with newline at the end
+        if (value.Contains('\n') && !value.Contains('\r'))
+        {
+            // Replace LF with CRLF
+            value = value.Replace("\n", "\r\n");
+        }
+        value = value.TrimEnd() + "\r\n";
+        File.WriteAllText(fileName, value);
+    }
+
     private static async Task<int> Main(string[] args)
     {
         // Configure logger

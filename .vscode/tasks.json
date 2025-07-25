@@ -8,6 +8,9 @@
 // dotnet tool update --all
 // winget upgrade nektos.act
 
+// dotnet tool restore
+// dotnet husky install
+
 {
     "version": "2.0.0",
     "tasks": [
