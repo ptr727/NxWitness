@@ -91,7 +91,7 @@ services:
       - test_nxgo_ini:/home/networkoptix/.config/nx_ini
       - test_nxgo_var:/opt/networkoptix/mediaserver/var
       - test_nxgo_media:/media
-      - test_nxgobackup:/backup
+      - test_nxgo_backup:/backup
       - test_nxgo_analytics:/analytics
 
   # Dockerfile : NxGo-LSIO
@@ -127,7 +127,7 @@ services:
       - test_nxmeta_ini:/home/networkoptix-metavms/.config/nx_ini
       - test_nxmeta_var:/opt/networkoptix-metavms/mediaserver/var
       - test_nxmeta_media:/media
-      - test_nxmetabackup:/backup
+      - test_nxmeta_backup:/backup
       - test_nxmeta_analytics:/analytics
 
   # Dockerfile : NxMeta-LSIO
@@ -163,7 +163,7 @@ services:
       - test_nxwitness_ini:/home/networkoptix/.config/nx_ini
       - test_nxwitness_var:/opt/networkoptix/mediaserver/var
       - test_nxwitness_media:/media
-      - test_nxwitnessbackup:/backup
+      - test_nxwitness_backup:/backup
       - test_nxwitness_analytics:/analytics
 
   # Dockerfile : NxWitness-LSIO
@@ -199,7 +199,7 @@ services:
       - test_dwspectrum_ini:/home/digitalwatchdog/.config/nx_ini
       - test_dwspectrum_var:/opt/digitalwatchdog/mediaserver/var
       - test_dwspectrum_media:/media
-      - test_dwspectrumbackup:/backup
+      - test_dwspectrum_backup:/backup
       - test_dwspectrum_analytics:/analytics
 
   # Dockerfile : DWSpectrum-LSIO
@@ -235,7 +235,7 @@ services:
       - test_wisenetwave_ini:/home/hanwha/.config/nx_ini
       - test_wisenetwave_var:/opt/hanwha/mediaserver/var
       - test_wisenetwave_media:/media
-      - test_wisenetwavebackup:/backup
+      - test_wisenetwave_backup:/backup
       - test_wisenetwave_analytics:/analytics
 
   # Dockerfile : WisenetWAVE-LSIO

@@ -187,7 +187,7 @@ public class ComposeFile
                       - test_{{ProductInfo.GetDocker(
                     productType,
                     lsio
-                ).ToLowerInvariant()}}backup:/backup
+                ).ToLowerInvariant()}}_backup:/backup
                       - test_{{ProductInfo.GetDocker(
                     productType,
                     lsio
