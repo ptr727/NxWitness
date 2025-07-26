@@ -44,7 +44,7 @@ public class DockerFile
                 $"{ProductInfo.GetDocker(productType, false)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile);
+            Program.WriteFile(filePath, dockerFile);
 
             // Create the LSIO Docker file
             dockerFile = CreateDockerFile(productType, versionInfo, true);
@@ -53,7 +53,7 @@ public class DockerFile
                 $"{ProductInfo.GetDocker(productType, true)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile);
+            Program.WriteFile(filePath, dockerFile);
         }
     }
 
@@ -65,16 +65,16 @@ public class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLine(CreateFrom(productType, lsio));
+        _ = stringBuilder.Append(CreateFrom(productType, lsio) + "\r\n");
 
         // Args
-        _ = stringBuilder.AppendLine(CreateArgs(productType, versionInfo, lsio));
+        _ = stringBuilder.Append(CreateArgs(productType, versionInfo, lsio) + "\r\n");
 
         // Install
-        _ = stringBuilder.AppendLine(CreateInstall(lsio));
+        _ = stringBuilder.Append(CreateInstall(lsio) + "\r\n");
 
         // Entrypoint
-        _ = stringBuilder.AppendLine(CreateEntryPoint(productType, lsio));
+        _ = stringBuilder.Append(CreateEntryPoint(productType, lsio) + "\r\n");
 
         return stringBuilder.ToString();
     }
@@ -261,13 +261,15 @@ public class DockerFile
                 EXPOSE 7001
 
                 # Create mount points
-                # Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+                # Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
                 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
                 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
                 # /root/.config/nx_ini links -> /config/ini
                 # /config is for configuration
-                # /media is for media recording
-                VOLUME /config /media
+                # /media is for recordings
+                # /backup is for backups
+                # /analytics is for analytics
+                VOLUME /config /media /backup /analytics
                 """
             : $$"""
                 # Copy the entrypoint.sh launch script
@@ -285,7 +287,8 @@ public class DockerFile
                 # Expose port 7001
                 EXPOSE 7001
 
-                # Link volumes directly, e.g.
+                # Create mount points
+                # Link config directly to internal paths
                 # /mnt/config/etc:opt/{{ProductInfo.GetCompany(
                     productType
                 ).ToLowerInvariant()}}/mediaserver/etc
@@ -295,6 +298,9 @@ public class DockerFile
                 # /mnt/config/var:/opt/{{ProductInfo.GetCompany(
                     productType
                 ).ToLowerInvariant()}}/mediaserver/var
-                # /mnt/media:/media
+                # /media is for recordings
+                # /backup is for backups
+                # /analytics is for analytics
+                VOLUME /media /backup /analytics
                 """;
 }

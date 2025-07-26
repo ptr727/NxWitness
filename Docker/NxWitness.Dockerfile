@@ -96,8 +96,12 @@ ENTRYPOINT ["/opt/entrypoint.sh"]
 # Expose port 7001
 EXPOSE 7001
 
-# Link volumes directly, e.g.
+# Create mount points
+# Link config directly to internal paths
 # /mnt/config/etc:opt/networkoptix/mediaserver/etc
 # /mnt/config/nx_ini:/home/networkoptix/.config/nx_ini
 # /mnt/config/var:/opt/networkoptix/mediaserver/var
-# /mnt/media:/media
+# /media is for recordings
+# /backup is for backups
+# /analytics is for analytics
+VOLUME /media /backup /analytics

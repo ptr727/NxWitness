@@ -30,7 +30,7 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
     public static MatrixJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
 
     public static void ToFile(string path, MatrixJsonSchema jsonSchema) =>
-        File.WriteAllText(path, ToJson(jsonSchema));
+        Program.WriteFile(path, ToJson(jsonSchema));
 
     private static string ToJson(MatrixJsonSchema jsonSchema) =>
         JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
@@ -74,7 +74,7 @@ public class MatrixJsonSchema : MatrixJsonSchemaBase
             .Schema(new Uri(schemaVersion))
             .Build();
         string jsonSchema = JsonSerializer.Serialize(schemaBuilder, JsonWriteOptions);
-        File.WriteAllText(path, jsonSchema);
+        Program.WriteFile(path, jsonSchema);
     }
 
     public static readonly JsonSerializerOptions JsonReadOptions = new()

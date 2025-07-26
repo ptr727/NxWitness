@@ -10,33 +10,16 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release Notes
 
+- Version 2.8:
+  - Add default `analytics` volume, along with `media` and `backup` volumes, media server complains when sharing analytics storage.
 - Version 2.7:
-  - Modified version update checking actions to create a PR vs. comitting changes directly.
+  - Modified version update checking actions to create a PR vs. committing changes directly.
 - Version 2.6:
   - Updated to Ubuntu Noble 24.04 LTS base images in [support][nx_os_support] of v6 products.
   - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
 - Version 2.5:
   - Added [NxGo][nxgo] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
-- Version 2.4:
-  - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
-  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
-- Version 2.3:
-  - Added unit test project to verify the release and upgrade control logic.
-  - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
-  - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142](https://github.com/ptr727/NxWitness/issues/142).
-- Version 2.2:
-  - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile`.
-- Version 2.1:
-  - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
-    - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
-  - Updated build scripts to use `docker compose` (vs. `docker-compose`) and `docker buildx` (vs. `docker build`) per current Docker/Moby v25+ [release](https://docs.docker.com/engine/install/).
-  - Updated `CreateMatrix` tooling to use the newest version for the `latest` tag when multiple versions are available.
-- Version 2.0:
-  - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
-  - Nx released v5.1 across all product brands, v5.1 [supports][nx_os_support] Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
-  - Due to the Jammy dependency versions older than v5.1 are no longer being built.
-  - Build scripts removed support for old v4 variants.
-  - Added a link from `/root/.config/nx_ini` to `/config/ini` for additional INI configuration files.
+- See [Release History](./HISTORY.md) for older Release Notes.
 
 ## Products
 
@@ -184,6 +167,8 @@ The LSIO images [re-link](./LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run) va
   - `/root/.config/nx_ini` links to `/config/ini` : Additional configuration.
   - `/opt/${COMPANY_NAME}/mediaserver/var` links to `/config/var` : State and logs.
 - `/media` : Recording files.
+- `/backup` : Backup files.
+- `/analytics` : Analytics files.
 
 ### Non-LSIO Volumes
 
@@ -193,6 +178,8 @@ The non-LSIO images must be mapped directly to the installed paths, refer to the
 - `/home/${COMPANY_NAME}/.config/nx_ini` : Additional configuration.
 - `/opt/${COMPANY_NAME}/mediaserver/var` : State and logs.
 - `/media` : Recording files.
+- `/backup` : Backup files.
+- `/analytics` : Analytics files.
 
 ### Ports
 
@@ -224,6 +211,8 @@ docker create \
   --env TZ=America/Los_Angeles \
   --volume /mnt/nxwitness/config:/config:rw \
   --volume /mnt/nxwitness/media:/media:rw \
+  --volume /mnt/nxwitness/backup:/backup:rw \
+  --volume /mnt/nxwitness/analytics:/analytics:rw \
   docker.io/ptr727/nxwitness-lsio:stable
 
 docker start nxwitness-lsio-test-container
@@ -247,6 +236,8 @@ services:
     volumes:
       - /mnt/nxwitness/config:/config
       - /mnt/nxwitness/media:/media
+      - /mnt/nxwitness/backup:/backup
+      - /mnt/nxwitness/analytics:/analytics
 ```
 
 ### Non-LSIO Docker Compose
@@ -265,6 +256,8 @@ services:
       - /mnt/nxwitness/config/nx_ini:/home/networkoptix/.config/nx_ini
       - /mnt/nxwitness/config/var:/opt/networkoptix/mediaserver/var
       - /mnt/nxwitness/media:/media
+      - /mnt/nxwitness/backup:/backup
+      - /mnt/nxwitness/analytics:/analytics
 ```
 
 ### Docker Compose with Static IP and MAC
@@ -304,6 +297,7 @@ services:
       - ${APPDATA_DIR}/nxmeta/config:/config
       - ${NVR_DIR}/media:/media
       - ${NVR_DIR}/backup:/backup
+      - ${NVR_DIR}/analytics:/analytics
     networks:
       public_network:
         ipv4_address: ${NXMETA_IP}
@@ -547,7 +541,6 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 [dwspectrum_releases]: https://updates.vmsproxy.com/digitalwatchdog/releases.json
 [dwspectrum]: https://dwspectrum.com/
 [hanwhavision]: https://hanwhavisionamerica.com/
-[hanwhawave]: https://wavevms.com/
 [hub_dwspectrum_beta_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
 [hub_dwspectrum_latest_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
 [hub_dwspectrum_rc_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/rc?label=rc&logo=docker
