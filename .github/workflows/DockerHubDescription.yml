@@ -35,7 +35,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # https://github.com/marketplace/actions/docker-hub-description
       # Access tokens cannot update readme.md, we have to use the real password
