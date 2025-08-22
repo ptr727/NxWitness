@@ -80,13 +80,13 @@
       "Branch": "main",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:6.1.0.41083",
+        "docker.io/ptr727/nxmeta:6.1.0.41495",
         "docker.io/ptr727/nxmeta:beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.41083",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.41495",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_x64-beta.zip"
       ]
     },
     {
@@ -109,13 +109,13 @@
       "Branch": "main",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:6.1.0.41083",
+        "docker.io/ptr727/nxmeta-lsio:6.1.0.41495",
         "docker.io/ptr727/nxmeta-lsio:beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.41083",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.41495",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_x64-beta.zip"
       ]
     },
     {
@@ -453,13 +453,13 @@
       "Branch": "develop",
       "CacheScope": "default",
       "Tags": [
-        "docker.io/ptr727/nxmeta:develop-6.1.0.41083",
+        "docker.io/ptr727/nxmeta:develop-6.1.0.41495",
         "docker.io/ptr727/nxmeta:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.41083",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.41495",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_x64-beta.zip"
       ]
     },
     {
@@ -483,13 +483,13 @@
       "Branch": "develop",
       "CacheScope": "lsio",
       "Tags": [
-        "docker.io/ptr727/nxmeta-lsio:develop-6.1.0.41083",
+        "docker.io/ptr727/nxmeta-lsio:develop-6.1.0.41495",
         "docker.io/ptr727/nxmeta-lsio:develop-beta"
       ],
       "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip",
-        "DOWNLOAD_VERSION=6.1.0.41083",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_arm64-beta.zip",
+        "DOWNLOAD_VERSION=6.1.0.41495",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/41495/metavms-server_update-6.1.0.41495-linux_x64-beta.zip"
       ]
     },
     {
