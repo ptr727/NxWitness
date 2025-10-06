@@ -43,7 +43,7 @@ jobs:
       - name: "Update Docker Hub Description"
         # Skip pull requests
         if: ${{ github.event_name != 'pull_request' }}
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
