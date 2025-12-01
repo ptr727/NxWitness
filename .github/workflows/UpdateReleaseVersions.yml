@@ -22,13 +22,13 @@ jobs:
 
       # https://github.com/marketplace/actions/setup-net-core-sdk
       - name: Setup .NET SDK 9
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.x
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish
       - name: Build CreateMatrix Tool
