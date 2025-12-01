@@ -31,7 +31,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Load Matrix.json and select only images that match the current branch
       # TODO: Add support for multiple branches, e.g. select develop if not main
@@ -60,14 +60,14 @@ jobs:
       # Checkout code
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # Get all history for version calculation
           fetch-depth: 0
 
       # https://github.com/marketplace/actions/setup-net-core-sdk
       - name: Setup .NET SDK 9
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.x
 
@@ -92,7 +92,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Setup QEMU
@@ -142,7 +142,7 @@ jobs:
 
     # https://github.com/marketplace/actions/checkout
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     # Create GitHub release
     # https://github.com/marketplace/actions/gh-release
