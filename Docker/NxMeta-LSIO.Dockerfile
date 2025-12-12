@@ -12,13 +12,13 @@ FROM lsiobase/ubuntu:noble
 # Labels
 ARG LABEL_NAME="NxMeta-LSIO"
 ARG LABEL_DESCRIPTION="Nx Meta VMS"
-ARG LABEL_VERSION="6.1.0.41083"
+ARG LABEL_VERSION="6.1.0.42176"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/41083/metavms-server_update-6.1.0.41083-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.1.0.41083"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_arm64.zip"
+ARG DOWNLOAD_VERSION="6.1.0.42176"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix-metavms"
@@ -82,6 +82,7 @@ RUN usermod -l ${COMPANY_NAME} abc \
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         gdb \
+        libdrm2 \
         ./vms_server.deb \
 # Cleanup
     && apt-get clean \
