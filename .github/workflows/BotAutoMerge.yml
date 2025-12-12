@@ -1,4 +1,4 @@
-name: Merge Bot Generated PR's
+name: Merge Bot Generated PRs
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 jobs:
 
   merge-dependabot:
-    name: Merge dependabot PR's
+    name: Merge dependabot PRs
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     permissions:
@@ -29,7 +29,7 @@ jobs:
 
       # https://cli.github.com/manual/gh_pr_merge
       # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#ignore--
-      - name: Merge dependabot non-major updates
+      - name: Merge dependabot PR
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   merge-version:
-    name: Merge new version PR's
+    name: Merge new version PRs
     runs-on: ubuntu-latest
     if: github.actor == 'github-actions[bot]' && github.event.pull_request.base.ref == 'update-version'
     permissions:
@@ -46,8 +46,9 @@ jobs:
 
     steps:
 
+      # New versions committed in UpdateReleaseVersions.yml
       # https://cli.github.com/manual/gh_pr_merge
-      - name: Merge new version PR's
+      - name: Merge new version PR
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
