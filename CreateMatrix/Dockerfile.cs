@@ -201,11 +201,13 @@ public class DockerFile
                 """;
         }
 
+        // https://github.com/ptr727/NxWitness/issues/282
         install += """
             # Install the mediaserver and dependencies
             RUN apt-get update \
                 && apt-get install --no-install-recommends --yes \
                     gdb \
+                    libdrm2 \
 
             """;
         if (!lsio)
