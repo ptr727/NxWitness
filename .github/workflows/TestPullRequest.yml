@@ -19,13 +19,13 @@ jobs:
 
       # https://github.com/marketplace/actions/setup-net-core-sdk
       - name: Setup .NET SDK 9
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.x
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test
       - name: Run unit tests
@@ -41,7 +41,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Load Matrix.json and select only images that match the current branch and have the "latest" tag
       # TODO: Add support for multiple branches, e.g. select develop if not main
@@ -72,7 +72,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Setup QEMU
