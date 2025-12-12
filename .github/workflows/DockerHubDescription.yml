@@ -35,7 +35,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/docker-hub-description
       # Access tokens cannot update readme.md, we have to use the real password
@@ -43,7 +43,7 @@ jobs:
       - name: "Update Docker Hub Description"
         # Skip pull requests
         if: ${{ github.event_name != 'pull_request' }}
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
