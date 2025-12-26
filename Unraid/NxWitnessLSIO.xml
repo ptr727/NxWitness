@@ -84,6 +84,5 @@
     Display="always"
     Required="false"
     Mask="false"
-    >/mnt/user</Config
-  >
+    >/mnt/user</Config>
 </Container>
