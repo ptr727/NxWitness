@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JsonSchema.Net" Version="8.0.4" />
+    <PackageReference Include="JsonSchema.Net" Version="8.0.5" />
     <PackageReference Include="JsonSchema.Net.Generation" Version="6.0.0" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
