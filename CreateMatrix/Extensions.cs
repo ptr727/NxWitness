@@ -1,12 +1,27 @@
-﻿using Serilog;
+using System.Runtime.CompilerServices;
 
 namespace CreateMatrix;
 
-public static class Extensions
+internal static class LogExtensions
 {
-    public static bool LogAndHandle(this ILogger logger, Exception exception, string? function)
+    extension(ILogger logger)
     {
-        logger.Error(exception, "{Function}", function);
-        return true;
+        internal bool LogAndPropagate(
+            Exception exception,
+            [CallerMemberName] string function = "unknown"
+        )
+        {
+            logger.Error(exception, "{Function}", function);
+            return false;
+        }
+
+        internal bool LogAndHandle(
+            Exception exception,
+            [CallerMemberName] string function = "unknown"
+        )
+        {
+            logger.Error(exception, "{Function}", function);
+            return true;
+        }
     }
 }

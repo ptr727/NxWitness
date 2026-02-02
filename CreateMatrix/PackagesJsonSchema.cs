@@ -1,8 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Serilog;
-
-namespace CreateMatrix;
+﻿namespace CreateMatrix;
 
 // https://updates.networkoptix.com/{product}/{build}/packages.json
 // https://updates.networkoptix.com/metavms/35134/packages.json
@@ -17,6 +13,8 @@ public class Variant
 
 public class Package
 {
+    private readonly List<Variant> _variants = [];
+
     [JsonPropertyName("component")]
     public string Component { get; set; } = "";
 
@@ -27,52 +25,67 @@ public class Package
     public string File { get; set; } = "";
 
     [JsonPropertyName("variants")]
-    public List<Variant> Variants { get; set; } = [];
+    public ICollection<Variant> Variants => _variants;
 
-    public bool IsX64Server()
-    {
+    public bool IsX64Server() =>
         // Test for Server and x64 and Ubuntu
-        return Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
-            PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase) &&
-            Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
-    }
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase)
+        && PlatformName.Equals("linux_x64", StringComparison.OrdinalIgnoreCase)
+        && Variants.Any(variant =>
+            variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)
+        );
 
-    public bool IsArm64Server()
-    {
+    public bool IsArm64Server() =>
         // Test for Server and Arm64 and Ubuntu
-        return Component.Equals("server", StringComparison.OrdinalIgnoreCase) &&
-            PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase) &&
-            Variants.Any(variant => variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase));
-    }
+        Component.Equals("server", StringComparison.OrdinalIgnoreCase)
+        && PlatformName.Equals("linux_arm64", StringComparison.OrdinalIgnoreCase)
+        && Variants.Any(variant =>
+            variant.Name.Equals("ubuntu", StringComparison.OrdinalIgnoreCase)
+        );
 }
 
 public class PackagesJsonSchema
 {
+    private readonly List<Package> _packages = [];
+
     [JsonPropertyName("packages")]
-    public List<Package> Packages { get; set; } = [];
+    public ICollection<Package> Packages => _packages;
 
     private static PackagesJsonSchema FromJson(string jsonString)
     {
-        var jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(jsonString, MatrixJsonSchema.JsonReadOptions);
+        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(
+            jsonString,
+            MatrixJsonSchema.JsonReadOptions
+        );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
 
-    public static List<Package> GetPackages(HttpClient httpClient, string releaseName, int buildNumber)
+    public static async Task<IReadOnlyList<Package>> GetPackagesAsync(
+        string releaseName,
+        int buildNumber,
+        CancellationToken cancellationToken
+    )
     {
         // Load packages JSON
         // https://updates.networkoptix.com/{product}/{build}/packages.json
-        Uri packagesUri = new($"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json");
+        ArgumentNullException.ThrowIfNull(releaseName);
+
+        HttpClient httpClient = HttpClientFactory.GetHttpClient();
+        Uri packagesUri = new(
+            $"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json"
+        );
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
-        var jsonString = httpClient.GetStringAsync(packagesUri).Result;
+        string jsonString = await httpClient
+            .GetStringAsync(packagesUri, cancellationToken)
+            .ConfigureAwait(false);
 
         // Deserialize JSON
-        var packagesSchema = FromJson(jsonString);
+        PackagesJsonSchema packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
-        ArgumentNullException.ThrowIfNull(packagesSchema.Packages);
         ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
 
         // Return packages
-        return packagesSchema.Packages;
+        return packagesSchema._packages;
     }
 }

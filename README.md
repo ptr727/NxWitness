@@ -1,65 +1,123 @@
 # Docker Projects for Network Optix VMS Products
 
-This is a project to build and publish docker images for various [Network Optix][networkoptix] VMS products.
+This is a project to build and publish docker images for various [Network Optix][networkoptix-link] VMS products.
 
-## License
+## Build and Distribution
 
-Licensed under the [MIT License][license].  
-![License Shield][license_shield]
+### Build Status
 
-## Build Status
+[![Release Status][releasebuildstatus-shield]][actions-link]\
+[![Last Commit][lastcommit-shield]][github-link]\
+[![Last Build][lastbuild-shield]][actions-link]
 
-[![Last Commit][last_commit_shield]][repo]  
-[![Workflow Status][workflow_status_shield]][actions]  
-[![Last Build][last_build_shield]][actions]
+### Release Notes
 
-## Release Notes
+**Version: 2.5**:
 
-- Version 2.4:
-  - Added [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][hanwhawave] builds, another US OEM whitelabel version Nx Witness.
-  - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
-- Version 2.3:
-  - Added unit test project to verify the release and upgrade control logic.
-  - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
-  - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142](https://github.com/ptr727/NxWitness/issues/142).
-- Version 2.2:
-  - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile`.
-- Version 2.1:
-  - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
-    - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
-  - Updated build scripts to use `docker compose` (vs. `docker-compose`) and `docker buildx` (vs. `docker build`) per current Docker/Moby v25+ [release](https://docs.docker.com/engine/install/).
-  - Updated `CreateMatrix` tooling to use the newest version for the `latest` tag when multiple versions are available.
-- Version 2.0:
-  - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
-  - Nx released v5.1 across all product brands, v5.1 [supports][nx_os_support] Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
-  - Due to the Jammy dependency versions older than v5.1 are no longer being built.
-  - Build scripts removed support for old v4 variants.
-  - Added a link from `/root/.config/nx_ini` to `/config/ini` for additional INI configuration files.
+**Summary**:
+
+- Refactoring to match other projects.
+
+See [Release History](./HISTORY.md) for complete release notes and older versions.
+
+## Getting Started
+
+**Getting started with a docker compose service**:
+
+```yaml
+# compose.yaml
+
+# Test using non persistent docker volumes
+volumes:
+  test_nxwitness-lsio_config:
+  test_nxwitness-lsio_media:
+
+services:
+  nxwitness:
+    # Use the image matching your product
+    image: docker.io/ptr727/nxwitness-lsio:stable
+    container_name: nxwitness-lsio-test-container
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      # Expose the service on port 7203
+      - 7203:7001
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      # Map to your real storage in production
+      - test_nxwitness-lsio_config:/config
+      - test_nxwitness-lsio_media:/media
+```
+
+```shell
+# Launch the service
+docker compose up --detach
+
+# Open your web browser on the local machine port 7203
+echo "Nx Witness LSIO:" "https://$HOSTNAME:7203/"
+
+# Shut the service down
+docker compose down
+```
+
+## Table of Contents
+
+- [Build and Distribution](#build-and-distribution)
+  - [Build Status](#build-status)
+  - [Release Notes](#release-notes)
+- [Getting Started](#getting-started)
+- [Table of Contents](#table-of-contents)
+- [Products](#products)
+- [Releases](#releases)
+- [Overview](#overview)
+  - [Introduction](#introduction)
+  - [Base Images](#base-images)
+  - [LinuxServer](#linuxserver)
+- [Configuration](#configuration)
+  - [LSIO Volumes](#lsio-volumes)
+  - [Non-LSIO Volumes](#non-lsio-volumes)
+  - [Ports](#ports)
+  - [Environment Variables](#environment-variables)
+  - [Network Mode](#network-mode)
+- [Examples](#examples)
+  - [LSIO Docker Create](#lsio-docker-create)
+  - [LSIO Docker Compose](#lsio-docker-compose)
+  - [Non-LSIO Docker Compose](#non-lsio-docker-compose)
+  - [Unraid Template](#unraid-template)
+- [Product Information](#product-information)
+  - [Release Information](#release-information)
+  - [Advanced Configuration](#advanced-configuration)
+- [Build Process](#build-process)
+- [Known Issues](#known-issues)
+- [Troubleshooting](#troubleshooting)
+  - [Missing Storage](#missing-storage)
+- [License](#license)
 
 ## Products
 
 The project supports the following product variants:
 
-- [Network Optix][networkoptix] [Nx Witness VMS][nxwitness] (not available for purchase in the US)
-- [Network Optix][networkoptix] [Nx Meta VMS][nxmeta] (developer and early access version of Nx Witness)
-- [Network Optix][networkoptix] [Nx Go VMS][nxgo] (version of Nx Witness targeted at transportation sector)
-- [Digital Watchdog][digitalwatchdog] [DW Spectrum IPVMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
-- [Hanwha Vision][hanwhavision] [Wisenet WAVE VMS][dwspectrum] (US licensed and OEM branded version of Nx Witness)
+- [Network Optix][networkoptix-link] [Nx Witness VMS][nxwitness-link] (not available for purchase in the US)
+- [Network Optix][networkoptix-link] [Nx Meta VMS][nxmeta-link] (developer and early access version of Nx Witness)
+- [Network Optix][networkoptix-link] [Nx Go VMS][nxgo-link] (version of Nx Witness targeted at transportation sector)
+- [Digital Watchdog][digitalwatchdog-link] [DW Spectrum IPVMS][dwspectrum-link] (US licensed and OEM branded version of Nx Witness)
+- [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][dwspectrum-link] (US licensed and OEM branded version of Nx Witness)
 
 ## Releases
 
-Images are published on [Docker Hub][hub]:
+Images are published on [Docker Hub][hub-link]:
 
-- [NxWitness][hub_nxwitness]: `docker pull docker.io/ptr727/nxwitness`
-- [NxWitness-LSIO][hub_nxwitness-lsio]: `docker pull docker.io/ptr727/nxwitness-lsio`
-- [NxMeta][hub_nxmeta]: `docker pull docker.io/ptr727/nxmeta`
-- [NxMeta-LSIO][hub_nxmeta-lsio]: `docker pull docker.io/ptr727/nxmeta-lsio`
-- [NxGo][hub_nxgo]: `docker pull docker.io/ptr727/nxgo`
-- [NxGo-LSIO][hub_nxwitness-lsio]: `docker pull docker.io/ptr727/nxgo-lsio`
-- [DWSpectrum][hub_dwspectrum]: `docker pull docker.io/ptr727/dwspectrum`
-- [DWSpectrum-LSIO][hub_dwspectrum-lsio]: `docker pull docker.io/ptr727/dwspectrum-lsio`
-- [WisenetWAVE][hub_wisenetwave]: `docker pull docker.io/ptr727/wisenetwave`
-- [WisenetWAVE-LSIO][hub_wisenetwave-lsio]: `docker pull docker.io/ptr727/wisenetwave-lsio`
+- [NxWitness][hubnxwitness-link]: `docker pull docker.io/ptr727/nxwitness`
+- [NxWitness-LSIO][hubnxwitnesslsio-link]: `docker pull docker.io/ptr727/nxwitness-lsio`
+- [NxMeta][hubnxmeta-link]: `docker pull docker.io/ptr727/nxmeta`
+- [NxMeta-LSIO][hubnxmetalsio-link]: `docker pull docker.io/ptr727/nxmeta-lsio`
+- [NxGo][hubnxgo-link]: `docker pull docker.io/ptr727/nxgo`
+- [NxGo-LSIO][hubnxwitnesslsio-link]: `docker pull docker.io/ptr727/nxgo-lsio`
+- [DWSpectrum][hubdwspectrum-link]: `docker pull docker.io/ptr727/dwspectrum`
+- [DWSpectrum-LSIO][hubdwspectrumlsio-link]: `docker pull docker.io/ptr727/dwspectrum-lsio`
+- [WisenetWAVE][hubwisenetwave-link]: `docker pull docker.io/ptr727/wisenetwave`
+- [WisenetWAVE-LSIO][hubwisenetwavelsio-link]: `docker pull docker.io/ptr727/wisenetwave-lsio`
 
 Images are tagged as follows:
 
@@ -77,92 +135,94 @@ Notes:
 - Images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.
 - See [Build Process](#build-process) for more details.
 
-[NxWitness][hub_nxwitness]:  
-[![NxWitness Stable][hub_nxwitness_stable_shield]][hub_nxwitness]
-[![NxWitness Latest][hub_nxwitness_latest_shield]][hub_nxwitness]
-[![NxWitness RC][hub_nxwitness_rc_shield]][hub_nxwitness]
-[![NxWitness Beta][hub_nxwitness_beta_shield]][hub_nxwitness]
+**Docker releases**:
 
-[NxWitness-LSIO][hub_nxwitness-lsio]:  
-[![NxWitness-LSIO Stable][hub_nxwitness-lsio_stable_shield]][hub_nxwitness-lsio]
-[![NxWitness-LSIO Latest][hub_nxwitness-lsio_latest_shield]][hub_nxwitness-lsio]
-[![NxWitness-LSIO RC][hub_nxwitness-lsio_rc_shield]][hub_nxwitness-lsio]
-[![NxWitness-LSIO Beta][hub_nxwitness-lsio_beta_shield]][hub_nxwitness-lsio]
+[NxWitness][hubnxwitness-link]:\
+[![NxWitness Stable][hubnxwitnessstable-shield]][hubnxwitness-link]
+[![NxWitness Latest][hubnxwitnesslatest-shield]][hubnxwitness-link]
+[![NxWitness RC][hubnxwitnessrc-shield]][hubnxwitness-link]
+[![NxWitness Beta][hubnxwitnessbeta-shield]][hubnxwitness-link]
 
-[NxMeta][hub_nxmeta]:  
-[![NxMeta Stable][hub_nxmeta_stable_shield]][hub_nxmeta]
-[![NxMeta Latest][hub_nxmeta_latest_shield]][hub_nxmeta]
-[![NxMeta RC][hub_nxmeta_rc_shield]][hub_nxmeta]
-[![NxMeta Beta][hub_nxmeta_beta_shield]][hub_nxmeta]
+[NxWitness-LSIO][hubnxwitnesslsio-link]:\
+[![NxWitness-LSIO Stable][hubnxwitnesslsiostable-shield]][hubnxwitnesslsio-link]
+[![NxWitness-LSIO Latest][hubnxwitnesslsiolatest-shield]][hubnxwitnesslsio-link]
+[![NxWitness-LSIO RC][hubnxwitnesslsiorc-shield]][hubnxwitnesslsio-link]
+[![NxWitness-LSIO Beta][hubnxwitnesslsiobeta-shield]][hubnxwitnesslsio-link]
 
-[NxMeta-LSIO][hub_nxmeta-lsio]:  
-[![NxMeta-LSIO Stable][hub_nxmeta-lsio_stable_shield]][hub_nxmeta-lsio]
-[![NxMeta-LSIO Latest][hub_nxmeta-lsio_latest_shield]][hub_nxmeta-lsio]
-[![NxMeta-LSIO RC][hub_nxmeta-lsio_rc_shield]][hub_nxmeta-lsio]
-[![NxMeta-LSIO Beta][hub_nxmeta-lsio_beta_shield]][hub_nxmeta-lsio]
+[NxMeta][hubnxmeta-link]:\
+[![NxMeta Stable][hubnxmetastable-shield]][hubnxmeta-link]
+[![NxMeta Latest][hubnxmetalatest-shield]][hubnxmeta-link]
+[![NxMeta RC][hubnxmetarc-shield]][hubnxmeta-link]
+[![NxMeta Beta][hubnxmetabeta-shield]][hubnxmeta-link]
 
-[NxGo][hub_nxgo]:  
-[![NxGo Stable][hub_nxgo_stable_shield]][hub_nxgo]
-[![NxGo Latest][hub_nxgo_latest_shield]][hub_nxgo]
-[![NxGo RC][hub_nxgo_rc_shield]][hub_nxgo]
-[![NxGo Beta][hub_nxgo_beta_shield]][hub_nxgo]
+[NxMeta-LSIO][hubnxmetalsio-link]:\
+[![NxMeta-LSIO Stable][hubnxmetalsiostable-shield]][hubnxmetalsio-link]
+[![NxMeta-LSIO Latest][hubnxmetalsiolatest-shield]][hubnxmetalsio-link]
+[![NxMeta-LSIO RC][hubnxmetalsiorc-shield]][hubnxmetalsio-link]
+[![NxMeta-LSIO Beta][hubnxmetalsiobeta-shield]][hubnxmetalsio-link]
 
-[NxGo-LSIO][hub_nxgo-lsio]:  
-[![NxGo-LSIO Stable][hub_nxgo-lsio_stable_shield]][hub_nxgo-lsio]
-[![NxGo-LSIO Latest][hub_nxgo-lsio_latest_shield]][hub_nxgo-lsio]
-[![NxGo-LSIO RC][hub_nxgo-lsio_rc_shield]][hub_nxgo-lsio]
-[![NxGo-LSIO Beta][hub_nxgo-lsio_beta_shield]][hub_nxgo-lsio]
+[NxGo][hubnxgo-link]:\
+[![NxGo Stable][hubnxgostable-shield]][hubnxgo-link]
+[![NxGo Latest][hubnxgolatest-shield]][hubnxgo-link]
+[![NxGo RC][hubnxgorc-shield]][hubnxgo-link]
+[![NxGo Beta][hubnxgobeta-shield]][hubnxgo-link]
 
-[DWSpectrum][hub_dwspectrum]:  
-[![DWSpectrum Stable][hub_dwspectrum_stable_shield]][hub_dwspectrum]
-[![DWSpectrum Latest][hub_dwspectrum_latest_shield]][hub_dwspectrum]
-[![DWSpectrum RC][hub_dwspectrum_rc_shield]][hub_dwspectrum]
-[![DWSpectrum Beta][hub_dwspectrum_beta_shield]][hub_dwspectrum]
+[NxGo-LSIO][hubnxgolsio-link]:\
+[![NxGo-LSIO Stable][hubnxgolsiostable-shield]][hubnxgolsio-link]
+[![NxGo-LSIO Latest][hubnxgolsiolatest-shield]][hubnxgolsio-link]
+[![NxGo-LSIO RC][hubnxgolsiorc-shield]][hubnxgolsio-link]
+[![NxGo-LSIO Beta][hubnxgolsiobeta-shield]][hubnxgolsio-link]
 
-[DWSpectrum-LSIO][hub_dwspectrum-lsio]:  
-[![DWSpectrum-LSIO Stable][hub_dwspectrum-lsio_stable_shield]][hub_dwspectrum-lsio]
-[![DWSpectrum-LSIO Latest][hub_dwspectrum-lsio_latest_shield]][hub_dwspectrum-lsio]
-[![DWSpectrum-LSIO RC][hub_dwspectrum-lsio_rc_shield]][hub_dwspectrum-lsio]
-[![DWSpectrum-LSIO Beta][hub_dwspectrum-lsio_beta_shield]][hub_dwspectrum-lsio]
+[DWSpectrum][hubdwspectrum-link]:\
+[![DWSpectrum Stable][hubdwspectrumstable-shield]][hubdwspectrum-link]
+[![DWSpectrum Latest][hubdwspectrumlatest-shield]][hubdwspectrum-link]
+[![DWSpectrum RC][hubdwspectrumrc-shield]][hubdwspectrum-link]
+[![DWSpectrum Beta][hubdwspectrumbeta-shield]][hubdwspectrum-link]
 
-[WisenetWAVE][hub_wisenetwave]:  
-[![WisenetWAVE Stable][hub_wisenetwave_stable_shield]][hub_wisenetwave]
-[![WisenetWAVE Latest][hub_wisenetwave_latest_shield]][hub_wisenetwave]
-[![WisenetWAVE RC][hub_wisenetwave_rc_shield]][hub_wisenetwave]
-[![WisenetWAVE Beta][hub_wisenetwave_beta_shield]][hub_wisenetwave]
+[DWSpectrum-LSIO][hubdwspectrumlsio-link]:\
+[![DWSpectrum-LSIO Stable][hubdwspectrumlsiostable-shield]][hubdwspectrumlsio-link]
+[![DWSpectrum-LSIO Latest][hubdwspectrumlsiolatest-shield]][hubdwspectrumlsio-link]
+[![DWSpectrum-LSIO RC][hubdwspectrumlsiorc-shield]][hubdwspectrumlsio-link]
+[![DWSpectrum-LSIO Beta][hubdwspectrumlsiobeta-shield]][hubdwspectrumlsio-link]
 
-[WisenetWAVE-LSIO][hub_wisenetwave-lsio]:  
-[![WisenetWAVE-LSIO Stable][hub_wisenetwave-lsio_stable_shield]][hub_wisenetwave-lsio]
-[![WisenetWAVE-LSIO Latest][hub_wisenetwave-lsio_latest_shield]][hub_wisenetwave-lsio]
-[![WisenetWAVE-LSIO RC][hub_wisenetwave-lsio_rc_shield]][hub_wisenetwave-lsio]
-[![WisenetWAVE-LSIO Beta][hub_wisenetwave-lsio_beta_shield]][hub_wisenetwave-lsio]
+[WisenetWAVE][hubwisenetwave-link]:\
+[![WisenetWAVE Stable][hubwisenetwavestable-shield]][hubwisenetwave-link]
+[![WisenetWAVE Latest][hubwisenetwavelatest-shield]][hubwisenetwave-link]
+[![WisenetWAVE RC][hubwisenetwaverc-shield]][hubwisenetwave-link]
+[![WisenetWAVE Beta][hubwisenetwavebeta-shield]][hubwisenetwave-link]
+
+[WisenetWAVE-LSIO][hubwisenetwavelsio-link]:\
+[![WisenetWAVE-LSIO Stable][hubwisenetwavelsiostable-shield]][hubwisenetwavelsio-link]
+[![WisenetWAVE-LSIO Latest][hubwisenetwavelsiolatest-shield]][hubwisenetwavelsio-link]
+[![WisenetWAVE-LSIO RC][hubwisenetwavelsiorc-shield]][hubwisenetwavelsio-link]
+[![WisenetWAVE-LSIO Beta][hubwisenetwavelsiobeta-shield]][hubwisenetwavelsio-link]
 
 ## Overview
 
 ### Introduction
 
-I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomerepo] project, that inspired me to create this project.  
+I ran DW Spectrum in my home lab on an Ubuntu Virtual Machine, and was looking for a way to run it in Docker. At the time Network Optix provided no support for Docker, but I did find the [The Home Repot NxWitness][thehomegithub-link] project, that inspired me to create this project.\
 I started with individual repositories for Nx Witness, Nx Meta, and DW Spectrum, but that soon became cumbersome with lots of duplication, and I combined all product flavors into this one project.
 
-Today Network Optix supports [Docker][nx_docker], and they publish [build scripts][nx_github_docker], but they do not publish container images.
+Today Network Optix supports [Docker][nxdocker-link], and they publish [build scripts][nxgithubdocker-link], but they do not publish container images.
 
 ### Base Images
 
 The project creates two variants of each product using different base images:
 
-- [Ubuntu][ubuntu] using [ubuntu:jammy][ubuntu_docker] base image.
-- [LinuxServer][lsio] using [lsiobase/ubuntu:jammy][ubuntu_lsio_docker] base image.
+- [Ubuntu][ubuntu-link] using [ubuntu:jammy][ubuntudocker-link] base image.
+- [LinuxServer][lsio-link] using [lsiobase/ubuntu:jammy][ubuntulsiodocker-link] base image.
 
-Note that smaller base images like [Alpine][alpine] are not [supported][nx_os_support] by the mediaserver.
+Note that smaller base images like [Alpine][alpine-link] are not [supported][nxossupport-link] by the mediaserver.
 
 ### LinuxServer
 
-The [LinuxServer (LSIO)][lsio] base images provide valuable container functionality:
+The [LinuxServer (LSIO)][lsio-link] base images provide valuable container functionality:
 
-- The LSIO images are based on [s6-overlay][s6], are updated weekly, and LSIO [produces][lsio_fleet] containers for many popular open source applications.
-- LSIO allows us to [specify][lsio_puid] the user account to use when running the mediaserver, while still running the `root-tool` as `root` (required for license enforcement).
-- Running as non-root is a [best practice][docker_nonroot], and required if we need user specific permissions when accessing mapped volumes.
-- The [nxvms-docker][nx_github_compose] project takes a different approach running a compose stack that runs the mediaserver in one instance under the `${COMPANY_NAME}` account, and the root-tool in a second instance under the `root` account, using a shared `/tmp` volume for socket IPC between the mediaserver and root-tool, but the user account `${COMPANY_NAME}` does not readily map to a user on the host system.
+- The LSIO images are based on [s6-overlay][s6overlay-link], are updated weekly, and LSIO [produces][lsiofleet-link] containers for many popular open source applications.
+- LSIO allows us to [specify][lsiopuid-link] the user account to use when running the mediaserver, while still running the `root-tool` as `root` (required for license enforcement).
+- Running as non-root is a [best practice][dockernonroot-link], and required if we need user specific permissions when accessing mapped volumes.
+- The [nxvms-docker][nxgithubcompose-link] project takes a different approach running a compose stack that runs the mediaserver in one instance under the `${COMPANY_NAME}` account, and the root-tool in a second instance under the `root` account, using a shared `/tmp` volume for socket IPC between the mediaserver and root-tool, but the user account `${COMPANY_NAME}` does not readily map to a user on the host system.
 
 ## Configuration
 
@@ -185,7 +245,7 @@ The LSIO images [re-link](./LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run) va
 
 ### Non-LSIO Volumes
 
-The non-LSIO images must be mapped directly to the installed paths, refer to the [nxvms-docker][nx_github_volumes] page for details.
+The non-LSIO images must be mapped directly to the installed paths, refer to the [nxvms-docker][nxgithubvolumes-link] page for details.
 
 - `/opt/${COMPANY_NAME}/mediaserver/etc` : Configuration.
 - `/home/${COMPANY_NAME}/.config/nx_ini` : Additional configuration.
@@ -202,17 +262,17 @@ The non-LSIO images must be mapped directly to the installed paths, refer to the
 - `PGID` : Group Id, LSIO only, optional.
 - `TZ` : Timezone, e.g. `America/Los_Angeles`.
 
-See [LSIO docs][lsio_puid] for usage of `PUID` and `PGID` that allow the mediaserver to run under a user account and the root-tool to run as root.
+See [LSIO docs][lsiopuid-link] for usage of `PUID` and `PGID` that allow the mediaserver to run under a user account and the root-tool to run as root.
 
 ### Network Mode
 
-Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended][nx_github_networking].
+Any network mode can be used, but due to the hardware bound licensing, `host` mode is [recommended][nxgithubnetworking-link].
 
 ## Examples
 
 ### LSIO Docker Create
 
-```console
+```shell
 docker create \
   --name=nxwitness-lsio-test-container \
   --hostname=nxwitness-lsio-test-host \
@@ -230,8 +290,6 @@ docker start nxwitness-lsio-test-container
 ### LSIO Docker Compose
 
 ```yaml
-version: "3.7"
-
 services:
   nxwitness:
     image: docker.io/ptr727/nxwitness-lsio:stable
@@ -250,8 +308,6 @@ services:
 ### Non-LSIO Docker Compose
 
 ```yaml
-version: "3.7"
-
 services:
   nxwitness:
     image: docker.io/ptr727/nxwitness:stable
@@ -278,50 +334,50 @@ services:
 ### Release Information
 
 - Nx Witness:
-  - [Releases JSON API][nxwitness_releases]
-  - [Downloads][nxwitness_download]
-  - [Beta Downloads][nxwitness_betadownload]
-  - [Release Notes][nxwitness_releasenotes]
+  - [Releases JSON API][nxwitnessreleases-link]
+  - [Downloads][nxwitnessdownload-link]
+  - [Beta Downloads][nxwitnessbetadownload-link]
+  - [Release Notes][nxwitnessreleasenotes-link]
 - Nx Meta:
-  - [Releases JSON API][nxmeta_releases]
-  - [Signup for Nx Meta](https://www.networkoptix.com/nx-meta/get-started-with-meta)
-  - [Request Developer Licenses](hhttps://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers)
-  - [Downloads][nxmeta_download]
-  - [Beta Downloads][nxmeta_betadownload]
+  - [Releases JSON API][nxmetareleases-link]
+  - [Signup for Nx Meta][getstartedwithmeta-link]
+  - [Request Developer Licenses][getalicense-link]
+  - [Downloads][nxmetadownload-link]
+  - [Beta Downloads][nxmetabetadownload-link]
 - Nx Go:
-  - [Releases JSON API][nxgo_releases]
-  - [Downloads][nxgo_download]
-  - [Beta Downloads][nxgo_betadownload]
-  - [Release Notes][nxgo_releasenotes]
+  - [Releases JSON API][nxgoreleases-link]
+  - [Downloads][nxgodownload-link]
+  - [Beta Downloads][nxgobetadownload-link]
+  - [Release Notes][nxgoreleasenotes-link]
 - DW Spectrum:
-  - [Releases JSON API][dwspectrum_releases]
-  - [Downloads][dwspectrum_download]
-  - [Release Notes][dwspectrum_releasenotes]
+  - [Releases JSON API][dwspectrumreleases-link]
+  - [Downloads][dwspectrumdownload-link]
+  - [Release Notes][dwspectrumreleasenotes-link]
 - Wisenet WAVE:
-  - [Releases JSON API][wisenetwave_releases]
-  - [Downloads][wisenetwave_download]
-  - [Release Notes][wisenetwave_releasenotes]
+  - [Releases JSON API][wisenetwavereleases-link]
+  - [Downloads][wisenetwavedownload-link]
+  - [Release Notes][wisenetwavereleasenotes-link]
 
 ### Advanced Configuration
 
-- `mediaserver.conf` [Configuration](https://support.networkoptix.com/hc/en-us/articles/360036389693-How-to-access-Nx-Server-configuration-options): `https://[hostname]:[port]/#/server-documentation`
-- `nx_vms_server.ini` [Configuration](https://meta.nxvms.com/docs/developers/knowledgebase/241-configuring-via-ini-files--iniconfig): `https://[hostname]:[port]/api/iniConfig/`
+- `mediaserver.conf` [Configuration][configoptions-link]: `https://[hostname]:[port]/#/server-documentation`
+- `nx_vms_server.ini` [Configuration][iniconfig-link]: `https://[hostname]:[port]/api/iniConfig/`
 - Advanced Server Configuration: `https://[hostname]:[port]/#/settings/advanced`
 - Storage Reporting: `https://[hostname]:[port]/#/health/storages`
 
 ## Build Process
 
-Build overview:
+**Build overview**:
 
 - [`CreateMatrix`](./CreateMatrix/) is used to update available product versions, and to create Docker files for all product permutations.
-- [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitness_releases] and [Packages API](https://updates.networkoptix.com/default/38363/packages.json).
-- The logic follows the same pattern as used by the [Nx Open](https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp) desktop client logic.
-- The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitness_releases] must be greater than `0`
-- [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) strategy.
+- [`Version.json`](./Make/Version.json) is updated using the mediaserver [Releases JSON API][nxwitnessreleases-link] and [Packages API][packages-link].
+- The logic follows the same pattern as used by the [Nx Open][releaseinfo-link] desktop client logic.
+- The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished-link] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`
+- [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
 - Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
-Local testing:
+**Local testing**:
 
 - Run `cd ./Make` and [`./Test.sh`](./Make/Test.sh), the following will be executed:
   - [`Create.sh`](./Make/Create.sh): Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
@@ -336,10 +392,10 @@ Local testing:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx to fix: Associate licenses with the [Cloud Account][nx_cloud] not the local hardware.
+  - Nx to fix: Associate licenses with the [Cloud Account][nxcloud-link] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
-  - Filesystem types are filtered out if not on the [supported list][nx_github_storage].
+  - Filesystem types are filtered out if not on the [supported list][nxgithubstorage-link].
   - Mounted volumes are ignored if backed by the same physical storage, even if logically separate.
   - Unwanted `Nx MetaVMS Media` directories are created on any discoverable writable storage.
   - Nx to fix: Eliminate the elaborate filesystem filter logic and use only the admin specified storage locations.
@@ -348,18 +404,18 @@ Local testing:
   - There is no value in having a server use per-user configuration directories, and it is inconsistent to mix configuration file locations.
   - Nx to fix: Store all configuration files in `mediaserver/etc`.
 - External Plugins:
-  - Custom or [Marketplace][nx_marketplace] plugins are installed in the `mediaserver/bin/plugins` directory.
+  - Custom or [Marketplace][nxmarketplace-link] plugins are installed in the `mediaserver/bin/plugins` directory.
   - The `mediaserver/bin/plugins` directory is already pre-populated with Nx installed plugins.
   - It is not possible to use external plugins from a mounted volume as the directory is already in-use.
   - Nx to fix: Load plugins from `mediaserver/var/plugins` or from sub-directories mounted below `mediaserver/bin/plugins`, e.g. `mediaserver/bin/plugins/external`
 - Lifetime Upgrades:
-  - Nx is a cloud product, free to view, free upgrades, comes with ongoing costs of hosting, maintenance, and support, it is [unfeasible][nx_crunchbase] to sustain a business with ongoing costs using perpetual one-off licenses.
-  - My personal experience with [Digital Watchdog][digitalwatchdog] and their [Lifetime Upgrades and No Annual Agreements][dw_upgrades] is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
+  - Nx is a cloud product, free to view, free upgrades, comes with ongoing costs of hosting, maintenance, and support, it is [unfeasible][nxcrunchbase-link] to sustain a business with ongoing costs using perpetual one-off licenses.
+  - My personal experience with [Digital Watchdog][digitalwatchdog-link] and their [Lifetime Upgrades and No Annual Agreements][dwupgrades-link] is an inflexible policy of three activations per license and you have to buy a new license, thus the "license lifetime" is a multiplier of the "hardware lifetime".
   - Nx to fix: Yearly camera license renewals covering the cost of support and upgrades.
 - Archiving:
   - Nx makes no distinction between recording and archiving storage, archive is basically just a recording mirror without any capacity or retention benefit.
   - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
-  - Nx to fix: Implement something akin to archiving in [Milestone XProtect VMS][milestone] where recording storage is separate from long term archival storage.
+  - Nx to fix: Implement something akin to archiving in [Milestone XProtect VMS][milestone-link] where recording storage is separate from long term archival storage.
 - Image Publication:
   - Nx relies on end-users or projects like this one to create and publish docker images.
   - Nx to fix: Publish up-to-date images for all product variants and release channels.
@@ -372,20 +428,20 @@ Local testing:
 
 ## Troubleshooting
 
-I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nx_support] for product support issues.  
-If there are issues with the docker build scripts used in this project, please create a [GitHub Issue](https://github.com/ptr727/NxWitness/issues).  
+I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nxsupport-link] for product support issues.\
+If there are issues with the docker build scripts used in this project, please create a [GitHub Issue][issues-link].\
 Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test accordingly.
 
 ### Missing Storage
 
-The following section will help troubleshoot common problems with missing storage.  
-If this does not help, please contact [Network Optix Support][nx_support].  
+The following section will help troubleshoot common problems with missing storage.\
+If this does not help, please contact [Network Optix Support][nxsupport-link].\
 Please do not open a GitHub issue unless you are positive the issue is with the `Dockerfile`.
 
-Confirm that all the mounted volumes are listed in the available storage locations in the [web admin][nx_webadmin] portal.
+Confirm that all the mounted volumes are listed in the available storage locations in the [web admin][nxwebadmin-link] portal.
 
-Enable [debug logging][nx_debuglogging] in the mediaserver:  
-Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.  
+Enable [debug logging][nxdebuglogging-link] in the mediaserver:\
+Edit `mediaserver.conf`, set `logLevel=verbose`, restart the server.\
 Look for clues in `/config/var/log/log_file.log`.
 
 E.g.
@@ -398,37 +454,37 @@ DEBUG QnStorageSpaceRestHandler(0x7f85043b0b00): Return 0 storages and 1 protoco
 
 Get a list of the mapped volume mounts in the running container, and verify that `/config` and `/media` are listed in the `Mounts` section:
 
-```console
+```shell
 docker ps --no-trunc
 docker container inspect [containername]
 ```
 
 Launch a shell in the running container and get a list of filesystems mounts:
 
-```console
+```shell
 docker ps --no-trunc
 docker exec --interactive --tty [containername] /bin/bash
 cat /proc/mounts
 exit
 ```
 
-Example output for ZFS (note that ZFS support [was added][nx_releasenotes] in v5.0):
+Example output for ZFS (note that ZFS support [was added][nxreleasenotes-link] in v5.0):
 
-```console
+```shell
 ssdpool/appdata /config zfs rw,noatime,xattr,posixacl 0 0
 nvrpool/nvr /media zfs rw,noatime,xattr,posixacl 0 0
 ssdpool/docker /archive zfs rw,noatime,xattr,posixacl 0 0
 ```
 
-Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.  
-Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.  
+Mount `/config` is on device `ssdpool/appdata` and filesystem is `zfs`.\
+Mount `/media` is on device `nvrpool/nvr` and filesystem is `zfs`.\
 Mount `/archive` is on device `ssdpool/docker` and filesystem is `zfs`.
 
 In this case the devices are unique and will not be filtered, but `zfs` is not supported and needs to be registered.
 
 Example output for UnRaid FUSE:
 
-```console
+```shell
 shfs /config fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0
 shfs /media fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0
 shfs /archive fuse.shfs rw,nosuid,nodev,noatime,user_id=0,group_id=0,allow_other 0 0
@@ -444,12 +500,12 @@ VERBOSE nx::vms::server::fs: shfs /media fuse.shfs - added
 VERBOSE nx::vms::server::fs: shfs /archive fuse.shfs - duplicate
 ```
 
-The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.  
+The `/archive` mount is classified as a duplicate and ignored, map just `/media`, do not map `/archive`.\
 Alternative use the "Unassigned Devices" plugin and dedicate e.g. a XFS formatted SSD drive to `/media` and/or `/config`.
 
 Example output for Unraid BTRFS:
 
-```console
+```shell
 /dev/sdb8 /test btrfs rw,relatime,space_cache,subvolid=5,subvol=/test 0 0
 /dev/sdb8 /config btrfs rw,relatime,space_cache,subvolid=5,subvol=/config 0 0
 /dev/sdb8 /media btrfs rw,relatime,space_cache,subvolid=5,subvol=/media 0 0
@@ -468,118 +524,130 @@ In this example the `/test` volume was accepted, but all other volumes on `/dev/
 Add the required filesystem types in the [advanced configuration](#advanced-configuration) menu.
 Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
-Alternatively call the configuration API directly:  
+Alternatively call the configuration API directly:\
 `wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.
 
-To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nx_support] and ask them to stop filtering filesystem types and devices.
+To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nxsupport-link] and ask them to stop filtering filesystem types and devices.
 
-[actions]: https://github.com/ptr727/NxWitness/actions
-[alpine]: https://alpinelinux.org/
-[digitalwatchdog]: https://digital-watchdog.com/
-[docker_nonroot]: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-[dw_upgrades]: https://dwspectrum.com/upgrades/
-[dwspectrum_download]: https://dwspectrum.digital-watchdog.com/download/linux
-[dwspectrum_releasenotes]: https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html
-[dwspectrum_releases]: https://updates.vmsproxy.com/digitalwatchdog/releases.json
-[dwspectrum]: https://dwspectrum.com/
-[hanwhavision]: https://hanwhavisionamerica.com/
-[hanwhawave]: https://wavevms.com/
-[hub_dwspectrum_beta_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
-[hub_dwspectrum_latest_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
-[hub_dwspectrum_rc_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/rc?label=rc&logo=docker
-[hub_dwspectrum_stable_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/stable?label=stable&logo=docker
-[hub_dwspectrum-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/beta?label=beta&logo=docker
-[hub_dwspectrum-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker
-[hub_dwspectrum-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/rc?label=rc&logo=docker
-[hub_dwspectrum-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker
-[hub_dwspectrum-lsio]: https://hub.docker.com/r/ptr727/dwspectrum-lsio
-[hub_dwspectrum]: https://hub.docker.com/r/ptr727/dwspectrum
-[hub_nxgo_beta_shield]: https://img.shields.io/docker/v/ptr727/nxgo/beta?label=beta&logo=docker
-[hub_nxgo_latest_shield]: https://img.shields.io/docker/v/ptr727/nxgo/latest?label=latest&logo=docker
-[hub_nxgo_rc_shield]: https://img.shields.io/docker/v/ptr727/nxgo/rc?label=rc&logo=docker
-[hub_nxgo_stable_shield]: https://img.shields.io/docker/v/ptr727/nxgo/stable?label=stable&logo=docker
-[hub_nxgo-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/beta?label=beta&logo=docker
-[hub_nxgo-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/latest?label=latest&logo=docker
-[hub_nxgo-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/rc?label=rc&logo=docker
-[hub_nxgo-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/stable?label=stable&logo=docker
-[hub_nxgo-lsio]: https://hub.docker.com/r/ptr727/nxgo-lsio
-[hub_nxgo]: https://hub.docker.com/r/ptr727/nxgo
-[hub_nxmeta_beta_shield]: https://img.shields.io/docker/v/ptr727/nxmeta/beta?label=beta&logo=docker
-[hub_nxmeta_latest_shield]: https://img.shields.io/docker/v/ptr727/nxmeta/latest?label=latest&logo=docker
-[hub_nxmeta_rc_shield]: https://img.shields.io/docker/v/ptr727/nxmeta/rc?label=rc&logo=docker
-[hub_nxmeta_stable_shield]: https://img.shields.io/docker/v/ptr727/nxmeta/stable?label=stable&logo=docker
-[hub_nxmeta-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/beta?label=beta&logo=docker
-[hub_nxmeta-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/latest?label=latest&logo=docker
-[hub_nxmeta-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/rc?label=rc&logo=docker
-[hub_nxmeta-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/stable?label=stable&logo=docker
-[hub_nxmeta-lsio]: https://hub.docker.com/r/ptr727/nxmeta-lsio
-[hub_nxmeta]: https://hub.docker.com/r/ptr727/nxmeta
-[hub_nxwitness_beta_shield]: https://img.shields.io/docker/v/ptr727/nxwitness/beta?label=beta&logo=docker
-[hub_nxwitness_latest_shield]: https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker
-[hub_nxwitness_rc_shield]: https://img.shields.io/docker/v/ptr727/nxwitness/rc?label=rc&logo=docker
-[hub_nxwitness_stable_shield]: https://img.shields.io/docker/v/ptr727/nxwitness/stable?label=stable&logo=docker
-[hub_nxwitness-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/beta?label=beta&logo=docker
-[hub_nxwitness-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/latest?label=latest&logo=docker
-[hub_nxwitness-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/rc?label=rc&logo=docker
-[hub_nxwitness-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker
-[hub_nxwitness-lsio]: https://hub.docker.com/r/ptr727/nxwitness-lsio
-[hub_nxwitness]: https://hub.docker.com/r/ptr727/nxwitness
-[hub_wisenetwave_beta_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/beta?label=beta&logo=docker
-[hub_wisenetwave_latest_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/latest?label=latest&logo=docker
-[hub_wisenetwave_rc_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/rc?label=rc&logo=docker
-[hub_wisenetwave_stable_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/stable?label=stable&logo=docker
-[hub_wisenetwave-lsio_beta_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/beta?label=beta&logo=docker
-[hub_wisenetwave-lsio_latest_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/latest?label=latest&logo=docker
-[hub_wisenetwave-lsio_rc_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/rc?label=rc&logo=docker
-[hub_wisenetwave-lsio_stable_shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/stable?label=stable&logo=docker
-[hub_wisenetwave-lsio]: https://hub.docker.com/r/ptr727/wisenetwave-lsio
-[hub_wisenetwave]: https://hub.docker.com/r/ptr727/wisenetwave
-[hub]: https://hub.docker.com/u/ptr727
-[isbuildpublished]: https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L31
-[last_build_shield]: https://byob.yarr.is/ptr727/NxWitness/lastbuild
-[last_commit_shield]: https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github
-[license_shield]: https://img.shields.io/github/license/ptr727/NxWitness
-[license]: ./LICENSE
-[lsio_fleet]: https://fleet.linuxserver.io/
-[lsio_puid]: https://docs.linuxserver.io/general/understanding-puid-and-pgid
-[lsio]: https://www.linuxserver.io/
-[milestone]: https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm
-[networkoptix]: https://www.networkoptix.com/
-[nx_cloud]: https://www.networkoptix.com/nx-witness/nx-witness-cloud/
-[nx_crunchbase]: https://www.crunchbase.com/organization/network-optix
-[nx_debuglogging]: https://support.networkoptix.com/hc/en-us/articles/236033688-How-to-change-software-logging-level-and-how-to-get-logs
-[nx_docker]: https://support.networkoptix.com/hc/en-us/articles/360037973573-Docker
-[nx_github_compose]: https://github.com/networkoptix/nxvms-docker/blob/master/docker-compose.yaml
-[nx_github_docker]: https://github.com/networkoptix/nxvms-docker
-[nx_github_networking]: https://github.com/networkoptix/nxvms-docker#networking
-[nx_github_storage]: https://github.com/networkoptix/nxvms-docker#notes-about-storage
-[nx_github_volumes]: https://github.com/networkoptix/nxvms-docker#volumes-description
-[nx_marketplace]: https://www.networkoptix.com/nx-meta/nx-integrations-marketplace/
-[nx_os_support]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-[nx_releasenotes]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
-[nx_support]: https://support.networkoptix.com/hc/en-us/community/topics
-[nx_webadmin]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
-[nxmeta_betadownload]: https://meta.nxvms.com/downloads/betas
-[nxmeta_download]: https://meta.nxvms.com/download/linux
-[nxmeta_releases]: https://updates.vmsproxy.com/metavms/releases.json
-[nxmeta]: https://meta.nxvms.com/
-[nxwitness_betadownload]: https://beta.networkoptix.com/beta-builds/default
-[nxwitness_download]: https://nxvms.com/download/linux
-[nxwitness_releasenotes]: https://www.networkoptix.com/all-nx-witness-release-notes
-[nxwitness_releases]: https://updates.vmsproxy.com/default/releases.json
-[nxwitness]: https://www.networkoptix.com/nx-witness/
-[nxgo_betadownload]: https://cloud.nxgo.io/download/betas/linux
-[nxgo_download]: https://cloud.nxgo.io/download/releases/linux
-[nxgo_releasenotes]: https://updates.networkoptix.com/nxgo/#releases_list
-[nxgo_releases]: https://updates.networkoptix.com/nxgo/releases.json
-[nxgo]: https://updates.networkoptix.com/nxgo
-[repo]: https://github.com/ptr727/NxWitness
-[s6]: https://github.com/just-containers/s6-overlay
-[thehomerepo]: https://github.com/thehomerepot/nxwitness
-[ubuntu_docker]: https://hub.docker.com/_/ubuntu
-[ubuntu_lsio_docker]: https://hub.docker.com/r/lsiobase/ubuntu
-[ubuntu]: https://ubuntu.com/
-[wisenetwave_download]: https://wavevms.com/download/linux
-[wisenetwave_releasenotes]: https://wavevms.com/release-notes/
-[wisenetwave_releases]: https://updates.vmsproxy.com/hanwha/releases.json
-[workflow_status_shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github
+## License
+
+Licensed under the [MIT License][license-link]\
+![GitHub License][license-shield]
+
+[actions-link]: https://github.com/ptr727/NxWitness/actions
+[alpine-link]: https://alpinelinux.org/
+[digitalwatchdog-link]: https://digital-watchdog.com/
+[dockernonroot-link]: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
+[dwupgrades-link]: https://dwspectrum.com/upgrades/
+[dwspectrumdownload-link]: https://dwspectrum.digital-watchdog.com/download/linux
+[dwspectrumreleasenotes-link]: https://digital-watchdog.com/DWSpectrum-Releasenote/DWSpectrum.html
+[dwspectrumreleases-link]: https://updates.vmsproxy.com/digitalwatchdog/releases.json
+[dwspectrum-link]: https://dwspectrum.com/
+[hanwhavision-link]: https://hanwhavisionamerica.com/
+[hubdwspectrumbeta-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
+[hubdwspectrumlatest-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
+[hubdwspectrumrc-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/rc?label=rc&logo=docker
+[hubdwspectrumstable-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/stable?label=stable&logo=docker
+[hubdwspectrumlsiobeta-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/beta?label=beta&logo=docker
+[hubdwspectrumlsiolatest-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/latest?label=latest&logo=docker
+[hubdwspectrumlsiorc-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/rc?label=rc&logo=docker
+[hubdwspectrumlsiostable-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum-lsio/stable?label=stable&logo=docker
+[hubdwspectrumlsio-link]: https://hub.docker.com/r/ptr727/dwspectrum-lsio
+[hubdwspectrum-link]: https://hub.docker.com/r/ptr727/dwspectrum
+[hubnxgobeta-shield]: https://img.shields.io/docker/v/ptr727/nxgo/beta?label=beta&logo=docker
+[hubnxgolatest-shield]: https://img.shields.io/docker/v/ptr727/nxgo/latest?label=latest&logo=docker
+[hubnxgorc-shield]: https://img.shields.io/docker/v/ptr727/nxgo/rc?label=rc&logo=docker
+[hubnxgostable-shield]: https://img.shields.io/docker/v/ptr727/nxgo/stable?label=stable&logo=docker
+[hubnxgolsiobeta-shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/beta?label=beta&logo=docker
+[hubnxgolsiolatest-shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/latest?label=latest&logo=docker
+[hubnxgolsiorc-shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/rc?label=rc&logo=docker
+[hubnxgolsiostable-shield]: https://img.shields.io/docker/v/ptr727/nxgo-lsio/stable?label=stable&logo=docker
+[hubnxgolsio-link]: https://hub.docker.com/r/ptr727/nxgo-lsio
+[hubnxgo-link]: https://hub.docker.com/r/ptr727/nxgo
+[hubnxmetabeta-shield]: https://img.shields.io/docker/v/ptr727/nxmeta/beta?label=beta&logo=docker
+[hubnxmetalatest-shield]: https://img.shields.io/docker/v/ptr727/nxmeta/latest?label=latest&logo=docker
+[hubnxmetarc-shield]: https://img.shields.io/docker/v/ptr727/nxmeta/rc?label=rc&logo=docker
+[hubnxmetastable-shield]: https://img.shields.io/docker/v/ptr727/nxmeta/stable?label=stable&logo=docker
+[hubnxmetalsiobeta-shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/beta?label=beta&logo=docker
+[hubnxmetalsiolatest-shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/latest?label=latest&logo=docker
+[hubnxmetalsiorc-shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/rc?label=rc&logo=docker
+[hubnxmetalsiostable-shield]: https://img.shields.io/docker/v/ptr727/nxmeta-lsio/stable?label=stable&logo=docker
+[hubnxmetalsio-link]: https://hub.docker.com/r/ptr727/nxmeta-lsio
+[hubnxmeta-link]: https://hub.docker.com/r/ptr727/nxmeta
+[hubnxwitnessbeta-shield]: https://img.shields.io/docker/v/ptr727/nxwitness/beta?label=beta&logo=docker
+[hubnxwitnesslatest-shield]: https://img.shields.io/docker/v/ptr727/nxwitness/latest?label=latest&logo=docker
+[hubnxwitnessrc-shield]: https://img.shields.io/docker/v/ptr727/nxwitness/rc?label=rc&logo=docker
+[hubnxwitnessstable-shield]: https://img.shields.io/docker/v/ptr727/nxwitness/stable?label=stable&logo=docker
+[hubnxwitnesslsiobeta-shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/beta?label=beta&logo=docker
+[hubnxwitnesslsiolatest-shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/latest?label=latest&logo=docker
+[hubnxwitnesslsiorc-shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/rc?label=rc&logo=docker
+[hubnxwitnesslsiostable-shield]: https://img.shields.io/docker/v/ptr727/nxwitness-lsio/stable?label=stable&logo=docker
+[hubnxwitnesslsio-link]: https://hub.docker.com/r/ptr727/nxwitness-lsio
+[hubnxwitness-link]: https://hub.docker.com/r/ptr727/nxwitness
+[hubwisenetwavebeta-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/beta?label=beta&logo=docker
+[hubwisenetwavelatest-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/latest?label=latest&logo=docker
+[hubwisenetwaverc-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/rc?label=rc&logo=docker
+[hubwisenetwavestable-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave/stable?label=stable&logo=docker
+[hubwisenetwavelsiobeta-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/beta?label=beta&logo=docker
+[hubwisenetwavelsiolatest-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/latest?label=latest&logo=docker
+[hubwisenetwavelsiorc-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/rc?label=rc&logo=docker
+[hubwisenetwavelsiostable-shield]: https://img.shields.io/docker/v/ptr727/wisenetwave-lsio/stable?label=stable&logo=docker
+[hubwisenetwavelsio-link]: https://hub.docker.com/r/ptr727/wisenetwave-lsio
+[hubwisenetwave-link]: https://hub.docker.com/r/ptr727/wisenetwave
+[hub-link]: https://hub.docker.com/u/ptr727
+[isbuildpublished-link]: https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L31
+[lastbuild-shield]: https://byob.yarr.is/ptr727/NxWitness/lastbuild
+[lastcommit-shield]: https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github&label=Last%20Commit
+[license-shield]: https://img.shields.io/github/license/ptr727/NxWitness
+[license-link]: ./LICENSE
+[lsiofleet-link]: https://fleet.linuxserver.io/
+[lsiopuid-link]: https://docs.linuxserver.io/general/understanding-puid-and-pgid
+[lsio-link]: https://www.linuxserver.io/
+[milestone-link]: https://doc.milestonesys.com/latest/en-US/standard_features/sf_mc/sf_systemoverview/mc_storageandarchivingexplained.htm
+[networkoptix-link]: https://www.networkoptix.com/
+[nxcloud-link]: https://www.networkoptix.com/nx-witness/nx-witness-cloud/
+[nxcrunchbase-link]: https://www.crunchbase.com/organization/network-optix
+[nxdebuglogging-link]: https://support.networkoptix.com/hc/en-us/articles/236033688-How-to-change-software-logging-level-and-how-to-get-logs
+[nxdocker-link]: https://support.networkoptix.com/hc/en-us/articles/360037973573-Docker
+[nxgithubcompose-link]: https://github.com/networkoptix/nxvms-docker/blob/master/docker-compose.yaml
+[nxgithubdocker-link]: https://github.com/networkoptix/nxvms-docker
+[nxgithubnetworking-link]: https://github.com/networkoptix/nxvms-docker#networking
+[nxgithubstorage-link]: https://github.com/networkoptix/nxvms-docker#notes-about-storage
+[nxgithubvolumes-link]: https://github.com/networkoptix/nxvms-docker#volumes-description
+[nxmarketplace-link]: https://www.networkoptix.com/nx-meta/nx-integrations-marketplace/
+[nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+[nxreleasenotes-link]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
+[nxsupport-link]: https://support.networkoptix.com/hc/en-us/community/topics
+[nxwebadmin-link]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
+[nxmetabetadownload-link]: https://meta.nxvms.com/downloads/betas
+[nxmetadownload-link]: https://meta.nxvms.com/download/linux
+[nxmetareleases-link]: https://updates.vmsproxy.com/metavms/releases.json
+[nxmeta-link]: https://meta.nxvms.com/
+[nxwitnessbetadownload-link]: https://beta.networkoptix.com/beta-builds/default
+[nxwitnessdownload-link]: https://nxvms.com/download/linux
+[nxwitnessreleasenotes-link]: https://www.networkoptix.com/all-nx-witness-release-notes
+[nxwitnessreleases-link]: https://updates.vmsproxy.com/default/releases.json
+[nxwitness-link]: https://www.networkoptix.com/nx-witness/
+[nxgobetadownload-link]: https://cloud.nxgo.io/download/betas/linux
+[nxgodownload-link]: https://cloud.nxgo.io/download/releases/linux
+[nxgoreleasenotes-link]: https://updates.networkoptix.com/nxgo/#releases_list
+[nxgoreleases-link]: https://updates.networkoptix.com/nxgo/releases.json
+[nxgo-link]: https://updates.networkoptix.com/nxgo
+[github-link]: https://github.com/ptr727/NxWitness
+[s6overlay-link]: https://github.com/just-containers/s6-overlay
+[thehomegithub-link]: https://github.com/thehomerepot/nxwitness
+[ubuntudocker-link]: https://hub.docker.com/_/ubuntu
+[ubuntulsiodocker-link]: https://hub.docker.com/r/lsiobase/ubuntu
+[ubuntu-link]: https://ubuntu.com/
+[wisenetwavedownload-link]: https://wavevms.com/download/linux
+[wisenetwavereleasenotes-link]: https://wavevms.com/release-notes/
+[wisenetwavereleases-link]: https://updates.vmsproxy.com/hanwha/releases.json
+[releasebuildstatus-shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github&label=Build%20Status
+[getstartedwithmeta-link]: https://www.networkoptix.com/nx-meta/get-started-with-meta
+[getalicense-link]: https://support.networkoptix.com/hc/en-us/articles/8693698259607-Get-a-License-for-Developers
+[configoptions-link]: https://support.networkoptix.com/hc/en-us/articles/360036389693-How-to-access-Nx-Server-configuration-options
+[iniconfig-link]: https://meta.nxvms.com/docs/developers/knowledgebase/241-configuring-via-ini-files--iniconfig
+[packages-link]: https://updates.networkoptix.com/default/38363/packages.json
+[releaseinfo-link]: https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp
+[matrix-link]: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+[issues-link]: https://github.com/ptr727/NxWitness/issues

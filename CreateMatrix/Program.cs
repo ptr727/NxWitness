@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -9,101 +8,29 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace CreateMatrix;
 
-public static class Program
+public sealed class Program(CancellationToken cancellationToken)
 {
+    private readonly CancellationToken _cancellationToken = cancellationToken;
+
     private static async Task<int> Main(string[] args)
     {
         // Configure logger
         ConfigureLogger();
 
         // Create command line options
-        var rootCommand = CreateCommandLine();
+        RootCommand rootCommand = CommandLine.CreateRootCommand();
 
         // Run
         // 0 == ok, 1 == error
-        return await rootCommand.InvokeAsync(args);
-    }
-
-    private static RootCommand CreateCommandLine()
-    {
-        var versionOption = new Option<string>(
-            name: "--version",
-            description: "Version JSON file.",
-            getDefaultValue: () => "./Make/Version.json");
-
-        var matrixOption = new Option<string>(
-            name: "--matrix",
-            description: "Matrix JSON file.",
-            getDefaultValue: () => "./Make/Matrix.json");
-
-        var schemaVersionOption = new Option<string>(
-            name: "--schemaversion",
-            description: "Version JSON schema file.",
-            getDefaultValue: () => "./JSON/Version.schema.json");
-
-        var schemaMatrixOption = new Option<string>(
-            name: "--schemamatrix",
-            description: "Matrix JSON schema file.",
-            getDefaultValue: () => "./JSON/Matrix.schema.json");
-
-        var updateOption = new Option<bool>(
-            name: "--update",
-            description: "Update version information",
-            getDefaultValue: () => false);
-
-        var makeOption = new Option<string>(
-            name: "--make",
-            description: "Make directory.",
-            getDefaultValue: () => "./Make");
-
-        var dockerOption = new Option<string>(
-            name: "--docker",
-            description: "Docker directory.",
-            getDefaultValue: () => "./Docker");
-
-        var labelOption = new Option<VersionInfo.LabelType>(
-            name: "--label",
-            description: "Version label.",
-            getDefaultValue: () => VersionInfo.LabelType.Latest);
-
-        var versionCommand = new Command("version", "Create version information file")
-            {
-                versionOption
-            };
-        versionCommand.SetHandler(VersionHandler, versionOption);
-
-        var matrixCommand = new Command("matrix", "Create matrix information file")
-            {
-                versionOption,
-                matrixOption,
-                updateOption
-            };
-        matrixCommand.SetHandler(MatrixHandler, versionOption, matrixOption, updateOption);
-
-        var schemaCommand = new Command("schema", "Write Version and Matrix JSON schema files")
-            {
-                schemaVersionOption,
-                schemaMatrixOption
-            };
-        schemaCommand.SetHandler(SchemaHandler, schemaVersionOption, schemaMatrixOption);
-
-        var makeCommand = new Command("make", "Create Docker and Compose files from Version file")
-            {
-                versionOption,
-                makeOption,
-                dockerOption,
-                labelOption
-            };
-        makeCommand.SetHandler(MakeHandler, versionOption, makeOption, dockerOption, labelOption);
-
-        var rootCommand = new RootCommand("CreateMatrix utility to create a matrix of builds from product versions")
-            {
-                versionCommand,
-                matrixCommand,
-                schemaCommand,
-                makeCommand
-            };
-        return rootCommand;
+        ParserConfiguration parserConfiguration = new();
+        ParseResult parseResult = rootCommand.Parse(args, parserConfiguration);
+        InvocationConfiguration invocationConfiguration = new()
+        {
+            ProcessTerminationTimeout = TimeSpan.FromSeconds(2),
+        };
+        return await parseResult
+            .InvokeAsync(invocationConfiguration, CancellationToken.None)
+            .ConfigureAwait(false);
     }
 
     private static void ConfigureLogger()
@@ -111,44 +38,66 @@ public static class Program
         // Configure serilog console logging
         SelfLog.Enable(Console.Error);
         LoggerConfiguration loggerConfiguration = new();
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}");
+        _ = loggerConfiguration.WriteTo.Console(
+            formatProvider: CultureInfo.InvariantCulture,
+            theme: AnsiConsoleTheme.Code,
+            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}"
+        );
         Log.Logger = loggerConfiguration.CreateLogger();
     }
 
-    private static Task<int> SchemaHandler(string schemaVersionPath, string schemaMatrixPath)
+    internal Task<int> SchemaHandler(string schemaVersionPath, string schemaMatrixPath)
     {
-        Log.Logger.Information("Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}", schemaVersionPath, schemaMatrixPath);
+        _cancellationToken.ThrowIfCancellationRequested();
+        Log.Logger.Information(
+            "Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}",
+            schemaVersionPath,
+            schemaMatrixPath
+        );
         VersionJsonSchema.GenerateSchema(schemaVersionPath);
         MatrixJsonSchema.GenerateSchema(schemaMatrixPath);
         return Task.FromResult(0);
     }
 
-    private static Task<int> VersionHandler(string versionPath)
+    internal async Task<int> VersionHandler(string versionPath)
     {
         // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
         Log.Logger.Information("Getting version information online...");
-        versionSchema.Products = ProductInfo.GetProducts();
-        versionSchema.Products.ForEach(item => item.GetVersions());
-        versionSchema.Products.ForEach(item => item.LogInformation());
-        versionSchema.Products.ForEach(item => item.VerifyUrls());
+        foreach (ProductInfo productInfo in ProductInfo.GetProducts())
+        {
+            versionSchema.Products.Add(productInfo);
+        }
+        foreach (ProductInfo productInfo in versionSchema.Products)
+        {
+            await productInfo.FetchVersionsAsync(_cancellationToken).ConfigureAwait(false);
+            productInfo.LogInformation();
+            await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+        }
 
         // Write to file
         Log.Logger.Information("Writing version information to {Path}", versionPath);
         VersionJsonSchema.ToFile(versionPath, versionSchema);
 
-        return Task.FromResult(0);
+        return 0;
     }
 
-    private static Task<int> MatrixHandler(string versionPath, string matrixPath, bool updateVersion)
+    internal async Task<int> MatrixHandler(
+        string versionPath,
+        string matrixPath,
+        bool updateVersion
+    )
     {
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
-        var fileSchema = VersionJsonSchema.FromFile(versionPath);
+        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(versionPath);
 
         // Re-verify as rules may have changed after file was written
-        fileSchema.Products.ForEach(item => item.Verify());
-        fileSchema.Products.ForEach(item => item.LogInformation());
+        foreach (ProductInfo productInfo in fileSchema.Products)
+        {
+            productInfo.Verify();
+            productInfo.LogInformation();
+        }
 
         // Update version information
         if (updateVersion)
@@ -156,15 +105,26 @@ public static class Program
             // Get versions for all products using releases API
             VersionJsonSchema onlineSchema = new();
             Log.Logger.Information("Getting version information online...");
-            onlineSchema.Products = ProductInfo.GetProducts();
-            onlineSchema.Products.ForEach(item => item.GetVersions());
-            onlineSchema.Products.ForEach(item => item.LogInformation());
+            foreach (ProductInfo productInfo in ProductInfo.GetProducts())
+            {
+                onlineSchema.Products.Add(productInfo);
+            }
+            foreach (ProductInfo productInfo in onlineSchema.Products)
+            {
+                await productInfo.FetchVersionsAsync(_cancellationToken).ConfigureAwait(false);
+                productInfo.LogInformation();
+            }
 
             // Make sure the labelled version numbers do not regress
-            ReleaseVersionForward.Verify(fileSchema.Products, onlineSchema.Products);
+            List<ProductInfo> fileProducts = [.. fileSchema.Products];
+            List<ProductInfo> onlineProducts = [.. onlineSchema.Products];
+            ReleaseVersionForward.Verify(fileProducts, onlineProducts);
 
             // Verify URL's
-            onlineSchema.Products.ForEach(item => item.VerifyUrls());
+            foreach (ProductInfo productInfo in onlineSchema.Products)
+            {
+                await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+            }
 
             // Update the file version with the online version
             Log.Logger.Information("Writing version information to {Path}", versionPath);
@@ -174,35 +134,54 @@ public static class Program
         else
         {
             // Verify URL's
-            fileSchema.Products.ForEach(item => item.VerifyUrls());
+            foreach (ProductInfo productInfo in fileSchema.Products)
+            {
+                await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+            }
         }
 
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
-        MatrixJsonSchema matrixSchema = new() { Images = ImageInfo.CreateImages(fileSchema.Products) };
+        MatrixJsonSchema matrixSchema = new();
+        List<ProductInfo> products = [.. fileSchema.Products];
+        IReadOnlyList<ImageInfo> images = ImageInfo.CreateImages(products);
+        foreach (ImageInfo imageInfo in images)
+        {
+            matrixSchema.Images.Add(imageInfo);
+        }
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
 
-       // Log info
-        matrixSchema.Images.ForEach(item => item.LogInformation());
+        // Log info
+        foreach (ImageInfo imageInfo in matrixSchema.Images)
+        {
+            imageInfo.LogInformation();
+        }
 
         // Write matrix
         Log.Logger.Information("Writing matrix information to {Path}", matrixPath);
         MatrixJsonSchema.ToFile(matrixPath, matrixSchema);
 
-        return Task.FromResult(0);
+        return 0;
     }
 
-    private static Task<int> MakeHandler(string versionPath, string makePath, string dockerPath, VersionInfo.LabelType label)
+    internal Task<int> MakeHandler(
+        string versionPath,
+        string makePath,
+        string dockerPath,
+        VersionInfo.LabelType label
+    )
     {
+        _cancellationToken.ThrowIfCancellationRequested();
         // Load version info from file
         Log.Logger.Information("Reading version information from {Path}", versionPath);
-        var versionSchema = VersionJsonSchema.FromFile(versionPath);
+        VersionJsonSchema versionSchema = VersionJsonSchema.FromFile(versionPath);
 
         // Create Compose files
         ComposeFile.Create(makePath);
 
         // Create Docker files
-        DockerFile.Create(versionSchema.Products, dockerPath, label);
+        List<ProductInfo> products = [.. versionSchema.Products];
+        DockerFile.Create(products, dockerPath, label);
 
         return Task.FromResult(0);
     }

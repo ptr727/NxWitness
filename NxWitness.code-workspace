@@ -6,19 +6,27 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"accessibilities",
 			"adduser",
+			"apikey",
 			"appdata",
 			"autoremove",
 			"btrfs",
 			"BUILDPLATFORM",
+			"buildtransitive",
 			"buildx",
 			"cloudhost",
 			"Composefile",
+			"contentfiles",
+			"csdevkit",
+			"davidanson",
 			"digitalwatchdog",
 			"dockerenv",
 			"domainname",
+			"dotnettools",
 			"dwspectrum",
 			"filesystems",
+			"gruntfuggly",
 			"Hanwha",
 			"IPVMS",
 			"lsio",
@@ -26,6 +34,7 @@
 			"mediaserver",
 			"metavms",
 			"Moby",
+			"nameof",
 			"networkoptix",
 			"Newtonsoft",
 			"noatime",
@@ -34,6 +43,7 @@
 			"NOPASSWD",
 			"nosuid",
 			"nvrpool",
+			"nxgo",
 			"NXMETA",
 			"nxvms",
 			"NXWITNESS",
@@ -44,11 +54,13 @@
 			"PUID",
 			"relatime",
 			"Repot",
+			"resharper",
 			"schemamatrix",
 			"schemaversion",
 			"Serilog",
 			"shfs",
 			"Signup",
+			"slnx",
 			"ssdpool",
 			"subvol",
 			"subvolid",
@@ -63,23 +75,45 @@
 			"Wisenet",
 			"wisenetwave",
 			"WORKDIR",
-			"xattr"
+			"xattr",
+			"xunit",
+			"yzhang"
 		],
-		"files.trimTrailingWhitespace": true,
-		"[markdown]": {
-			"files.trimTrailingWhitespace": false
-		},
-		"[plaintext]": {
-			"files.trimTrailingWhitespace": false
-		},
-		"diffEditor.ignoreTrimWhitespace": false,
-		"editor.renderWhitespace": "boundary"
+        "files.trimTrailingWhitespace": true,
+        "files.trimTrailingWhitespaceInRegexAndStrings": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.renderWhitespace": "boundary",
+        "dotnet.formatting.organizeImportsOnFormat": true,
+        "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": true,
+        "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": true,
+        "files.encoding": "utf8",
+        "[markdown]": {
+            "files.trimTrailingWhitespace": false,
+        },
+        "[plaintext]": {
+            "files.trimTrailingWhitespace": false,
+        },
+        "[csharp]": {
+            "editor.formatOnSave": true,
+            "editor.defaultFormatter": "csharpier.csharpier-vscode"
+        },
+        "chat.agent.maxRequests": 100,
+        "githubLocalActions.actCommand": "act --artifact-server-path ./.artifacts",
+        "git.alwaysSignOff": true,
+        "markdown.extension.toc.levels": "2..3",
+		"dotnet.defaultSolution": "NxWitness.slnx"
 	},
 	"extensions": {
 		"recommendations": [
-			"davidanson.vscode-markdownlint",
-			"gruntfuggly.todo-tree",
-			"streetsidesoftware.code-spell-checker",
+            "csharpier.csharpier-vscode",
+            "davidanson.vscode-markdownlint",
+            "editorconfig.editorconfig",
+            "github.vscode-github-actions",
+            "gruntfuggly.todo-tree",
+            "ms-azuretools.vscode-docker",
+            "ms-dotnettools.csdevkit",
+            "streetsidesoftware.code-spell-checker",
+            "yzhang.markdown-all-in-one",
 		]
 	}
 }

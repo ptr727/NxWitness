@@ -1,7 +1,4 @@
-﻿using Serilog;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Collections.Immutable;
 
 namespace CreateMatrix;
 
@@ -9,59 +6,81 @@ public class ImageInfo
 {
     // JSON serialized must be public get and set
 
+    private readonly List<string> _tags = [];
+    private readonly List<string> _args = [];
+
     public string Name { get; set; } = "";
     public string Branch { get; set; } = "";
     public string CacheScope { get; set; } = "";
-    public List<string> Tags { get; set; } = [];
-    public List<string> Args { get; set; } = [];
+    public ICollection<string> Tags => _tags;
+    public ICollection<string> Args => _args;
 
-    private static readonly string[] BaseNames = ["", "LSIO"];
-    private static readonly string[] RegistryNames = ["docker.io/ptr727" /*, "ghcr.io/ptr727"*/];
+    private static readonly string[] s_baseNames = ["", "LSIO"];
+    private static readonly string[] s_registryNames =
+    [
+        "docker.io/ptr727", /*, "ghcr.io/ptr727"*/
+    ];
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
         // E.g. NxMeta, NxMeta-LSIO
-        Name = string.IsNullOrEmpty(baseName) ? productType.ToString() : $"{productType}-{baseName}";
+        Name = string.IsNullOrEmpty(baseName)
+            ? productType.ToString()
+            : $"{productType}-{baseName}";
 
         // E.g. default, lsio
-        CacheScope = string.IsNullOrEmpty(baseName) ? "default" : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
+        CacheScope = string.IsNullOrEmpty(baseName)
+            ? "default"
+            : $"{baseName.ToLower(CultureInfo.InvariantCulture)}";
     }
 
     private void AddArgs(VersionInfo versionInfo)
     {
-        Args.Add($"{DownloadVersion}={versionInfo.Version}");
-        Args.Add($"{DownloadX64Url}={versionInfo.UriX64}");
-        Args.Add($"{DownloadArm64Url}={versionInfo.UriArm64}");
+        _args.Add($"{DownloadVersion}={versionInfo.Version}");
+        _args.Add($"{DownloadX64Url}={versionInfo.UriX64}");
+        _args.Add($"{DownloadArm64Url}={versionInfo.UriArm64}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
     {
         // E.g. latest, develop-latest
-        var prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
+        string prefixTag = string.IsNullOrEmpty(tagPrefix) ? tag : $"{tagPrefix}-{tag}";
 
         // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
-        foreach (var registry in RegistryNames)
+        foreach (string registry in s_registryNames)
         {
-            Tags.Add($"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}");
+            _tags.Add(
+                $"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}"
+            );
         }
     }
 
-    public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
+    public static IReadOnlyList<ImageInfo> CreateImages(IReadOnlyList<ProductInfo> productList)
     {
+        ArgumentNullException.ThrowIfNull(productList);
+
         // Create images for all products
         List<ImageInfo> imageList = [];
-        foreach (var productInfo in productList)
-            foreach (var baseName in BaseNames)
+        foreach (ProductInfo productInfo in productList)
+        {
+            foreach (string baseName in s_baseNames)
+            {
                 imageList.AddRange(CreateImages(productInfo, baseName));
+            }
+        }
 
         // Set branch as "main" on all images
         imageList.ForEach(item => item.Branch = "main");
 
         // Create develop tagged images for all products
         List<ImageInfo> developList = [];
-        foreach (var productInfo in productList)
-            foreach (var baseName in BaseNames)
+        foreach (ProductInfo productInfo in productList)
+        {
+            foreach (string baseName in s_baseNames)
+            {
                 developList.AddRange(CreateImages(productInfo, baseName, "develop"));
+            }
+        }
 
         // Set branch as "develop"
         developList.ForEach(item => item.Branch = "develop");
@@ -70,20 +89,26 @@ public class ImageInfo
         imageList.AddRange(developList);
 
         // Sort args and tags to make diffs easier
-        imageList.ForEach(item => { item.Args.Sort(); item.Tags.Sort(); } );
+        imageList.ForEach(item => item.SortMetadata());
 
         return imageList;
     }
 
-    private static List<ImageInfo> CreateImages(ProductInfo productInfo, string baseName, string? tagPrefix = null)
+    private static List<ImageInfo> CreateImages(
+        ProductInfo productInfo,
+        string baseName,
+        string? tagPrefix = null
+    )
     {
         // Create a set by unique versions
-        var versionSet = productInfo.Versions.ToImmutableSortedSet(new VersionInfoComparer());
+        ImmutableSortedSet<VersionInfo> versionSet = productInfo.Versions.ToImmutableSortedSet(
+            new VersionInfoComparer()
+        );
         Debug.Assert(versionSet.Count == productInfo.Versions.Count);
-        
+
         // Create images for each version
         List<ImageInfo> imageList = [];
-        foreach (var versionUri in versionSet)
+        foreach (VersionInfo? versionUri in versionSet)
         {
             // Create image
             ImageInfo imageInfo = new();
@@ -93,10 +118,16 @@ public class ImageInfo
             imageInfo.AddTag(versionUri.Version, tagPrefix);
 
             // Add tags for all labels
-            versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
+            foreach (VersionInfo.LabelType label in versionUri.Labels)
+            {
+                imageInfo.AddTag(label.ToString(), tagPrefix);
+            }
 
             // Add prefix as a standalone tag for latest
-            if (!string.IsNullOrEmpty(tagPrefix) && versionUri.Labels.Contains(VersionInfo.LabelType.Latest))
+            if (
+                !string.IsNullOrEmpty(tagPrefix)
+                && versionUri.Labels.Contains(VersionInfo.LabelType.Latest)
+            )
             {
                 imageInfo.AddTag(tagPrefix);
             }
@@ -114,12 +145,30 @@ public class ImageInfo
 
     public void LogInformation()
     {
-        Log.Logger.Information("Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}", Name, Branch, Tags.Count, Args.Count);
-        Tags.ForEach(item => Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, item));
-        Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
+        Log.Logger.Information(
+            "Name: {Name}, Branch: {Branch}, Tags: {Tags}, Args: {Args}",
+            Name,
+            Branch,
+            Tags.Count,
+            Args.Count
+        );
+        foreach (string tag in _tags)
+        {
+            Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, tag);
+        }
+        foreach (string arg in _args)
+        {
+            Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, arg);
+        }
     }
 
     public const string DownloadVersion = "DOWNLOAD_VERSION";
     public const string DownloadX64Url = "DOWNLOAD_X64_URL";
     public const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
+
+    internal void SortMetadata()
+    {
+        _args.Sort(StringComparer.Ordinal);
+        _tags.Sort(StringComparer.Ordinal);
+    }
 }

@@ -1,0 +1,30 @@
+﻿<Solution>
+    <Folder Name="/GitHub Actions/">
+        <File Path=".github/workflows/build-datebadge-task.yml" />
+        <File Path=".github/workflows/build-docker-task.yml" />
+        <File Path=".github/workflows/build-executable-task.yml" />
+        <File Path=".github/workflows/build-library-task.yml" />
+        <File Path=".github/workflows/build-release-task.yml" />
+        <File Path=".github/workflows/get-version-task.yml" />
+        <File Path=".github/workflows/merge-bot-pull-request.yml" />
+        <File Path=".github/workflows/publish-periodic-docker-release.yml" />
+        <File Path=".github/workflows/publish-release.yml" />
+        <File Path=".github/workflows/run-codegen-pull-request-task.yml" />
+        <File Path=".github/workflows/run-periodic-codegen-pull-request.yml" />
+        <File Path=".github/workflows/test-pull-request.yml" />
+        <File Path=".github/workflows/test-release-task.yml" />
+    </Folder>
+    <Folder Name="/Solution Items/">
+        <File Path=".dockerignore" />
+        <File Path=".editorconfig" />
+        <File Path=".gitattributes" />
+        <File Path=".gitignore" />
+        <File Path="LICENSE" />
+        <File Path="README.md" />
+        <File Path="version.json" />
+    </Folder>
+    <Project Path="CreateMatrix/CreateMatrix.csproj" />
+    <Project Path="CreateMatrixTests/CreateMatrixTests.csproj">
+        <BuildDependency Project="CreateMatrix/CreateMatrix.csproj" />
+    </Project>
+</Solution>

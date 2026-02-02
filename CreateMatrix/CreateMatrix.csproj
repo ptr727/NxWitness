@@ -1,21 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <InformationalVersion>1.0.0-pre</InformationalVersion>
+    <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <PublishAot>false</PublishAot>
+    <TargetFramework>net10.0</TargetFramework>
+    <Version>1.0.0</Version>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SelfContained>true</SelfContained>
+    <VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JsonSchema.Net.Generation" Version="4.5.0" />
-    <PackageReference Include="Serilog" Version="4.0.1" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.2.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.2" />
   </ItemGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="CreateMatrixTests" />
   </ItemGroup>
-
 </Project>

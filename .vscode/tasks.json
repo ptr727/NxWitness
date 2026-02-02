@@ -2,40 +2,96 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
-            "command": "dotnet",
+            "label": ".Net Build",
             "type": "process",
+            "command": "dotnet",
             "args": [
                 "build",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "${workspaceFolder}",
+                "--verbosity=diagnostic"
             ],
-            "problemMatcher": "$msCompile"
+            "group": "build",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
         },
         {
-            "label": "publish",
-            "command": "dotnet",
+            "label": ".Net Format",
             "type": "process",
+            "command": "dotnet",
             "args": [
-                "publish",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "format",
+                "style",
+                "--verify-no-changes",
+                "--severity=info",
+                "--verbosity=detailed"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "dependsOn": [
+                "CSharpier Format",
+                ".Net Build"
+            ]
         },
         {
-            "label": "watch",
-            "command": "dotnet",
+            "label": "CSharpier Format",
             "type": "process",
+            "command": "dotnet",
             "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/CreateMatrix/CreateMatrix.csproj"
+                "csharpier",
+                "format",
+                "--log-level=debug",
+                "."
             ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": ".Net Tool Update",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tool",
+                "update",
+                "--all"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Husky.Net Run",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "husky",
+                "run"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+   ]
 }
