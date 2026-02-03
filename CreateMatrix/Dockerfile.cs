@@ -4,10 +4,12 @@ internal static class DockerFile
 {
     public static void Create(
         IReadOnlyList<ProductInfo> productList,
-        string dockerPath,
+        DirectoryInfo dockerDirectory,
         VersionInfo.LabelType label
     )
     {
+        string dockerPath = dockerDirectory.FullName;
+
         // Create a Docker file for each product type
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {

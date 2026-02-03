@@ -110,10 +110,16 @@ public class ProductInfo
                 .ConfigureAwait(false);
             foreach (Release release in releasesList)
             {
-                // We expect only "vms" products
-                Debug.Assert(
-                    release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase)
-                );
+                // We process only "vms" products
+                if (!release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase))
+                {
+                    Log.Information(
+                        "{Product}: Skipping non-vms product: {ReleaseProduct}",
+                        Product,
+                        release.Product
+                    );
+                    continue;
+                }
 
                 // Set version
                 VersionInfo versionInfo = new();

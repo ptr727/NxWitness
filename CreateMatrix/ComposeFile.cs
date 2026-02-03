@@ -2,8 +2,10 @@
 
 internal static class ComposeFile
 {
-    public static void Create(string makePath)
+    public static void Create(DirectoryInfo makeDirectory)
     {
+        string makePath = makeDirectory.FullName;
+
         // Create local Compose file
         string composeFile = CreateComposefile(null);
         string filePath = Path.Combine(makePath, "Test.yml");

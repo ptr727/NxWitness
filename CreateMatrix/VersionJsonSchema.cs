@@ -16,12 +16,10 @@ public class VersionJsonSchemaBase
 
 public class VersionJsonSchema : VersionJsonSchemaBase
 {
-    private readonly List<ProductInfo> _products = [];
-
     public const int Version = 2;
 
     [JsonRequired]
-    public ICollection<ProductInfo> Products => _products;
+    public ICollection<ProductInfo> Products { get; init; } = [];
 
     public static VersionJsonSchema FromFile(string path)
     {

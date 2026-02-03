@@ -1,65 +1,71 @@
-﻿using System.CommandLine;
-using Serilog.Debugging;
-using Serilog.Sinks.SystemConsole.Themes;
+﻿using Serilog.Sinks.SystemConsole.Themes;
 
 // dotnet publish --self-contained false --output ./publish
-// ./publish/CreateMatrix matrix --update --matrix ./JSON/Matrix.json --version ./JSON/Version.json
+// ./publish/CreateMatrix matrix --updateversion --matrixpath ./JSON/Matrix.json --versionpath ./JSON/Version.json
 // echo $?
 
 namespace CreateMatrix;
 
-public sealed class Program(CancellationToken cancellationToken)
+internal sealed class Program(
+    CommandLine.Options commandLineOptions,
+    CancellationToken cancellationToken
+)
 {
-    private readonly CancellationToken _cancellationToken = cancellationToken;
-
-    private static async Task<int> Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
-        // Configure logger
-        ConfigureLogger();
-
-        // Create command line options
-        RootCommand rootCommand = CommandLine.CreateRootCommand();
-
-        // Run
-        // 0 == ok, 1 == error
-        ParserConfiguration parserConfiguration = new();
-        ParseResult parseResult = rootCommand.Parse(args, parserConfiguration);
-        InvocationConfiguration invocationConfiguration = new()
+        try
         {
-            ProcessTerminationTimeout = TimeSpan.FromSeconds(2),
-        };
-        return await parseResult
-            .InvokeAsync(invocationConfiguration, CancellationToken.None)
-            .ConfigureAwait(false);
+            // Parse commandline
+            CommandLine commandLine = new(args);
+
+            // Bypass startup for errors or help and version commands
+            if (CommandLine.BypassStartup(commandLine.Result))
+            {
+                return await commandLine.Result.InvokeAsync().ConfigureAwait(false);
+            }
+
+            // Log to the console
+            LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+                .Enrich.WithThreadId()
+                .WriteTo.Console(
+                    theme: AnsiConsoleTheme.Code,
+                    formatProvider: CultureInfo.InvariantCulture,
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [t:{ThreadId}{ThreadName}] {Message:lj}{NewLine}{Exception}"
+                );
+            Log.Logger = loggerConfiguration.CreateLogger();
+
+            // Invoke command
+            return await commandLine.Result.InvokeAsync().ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            Log.Logger.Warning("Operation was cancelled.");
+            return 130; // POSIX standard for SIGINT
+        }
+        catch (Exception ex) when (Log.Logger.LogAndHandle(ex))
+        {
+            return 1;
+        }
+        finally
+        {
+            await Log.CloseAndFlushAsync().ConfigureAwait(false);
+        }
     }
 
-    private static void ConfigureLogger()
+    internal async Task<int> ExecuteSchemaAsync()
     {
-        // Configure serilog console logging
-        SelfLog.Enable(Console.Error);
-        LoggerConfiguration loggerConfiguration = new();
-        _ = loggerConfiguration.WriteTo.Console(
-            formatProvider: CultureInfo.InvariantCulture,
-            theme: AnsiConsoleTheme.Code,
-            outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}"
-        );
-        Log.Logger = loggerConfiguration.CreateLogger();
-    }
-
-    internal Task<int> SchemaHandler(string schemaVersionPath, string schemaMatrixPath)
-    {
-        _cancellationToken.ThrowIfCancellationRequested();
         Log.Logger.Information(
             "Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}",
-            schemaVersionPath,
-            schemaMatrixPath
+            commandLineOptions.VersionSchemaPath,
+            commandLineOptions.MatrixSchemaPath
         );
-        VersionJsonSchema.GenerateSchema(schemaVersionPath);
-        MatrixJsonSchema.GenerateSchema(schemaMatrixPath);
-        return Task.FromResult(0);
+        VersionJsonSchema.GenerateSchema(commandLineOptions.VersionSchemaPath);
+        MatrixJsonSchema.GenerateSchema(commandLineOptions.MatrixSchemaPath);
+
+        return 0;
     }
 
-    internal async Task<int> VersionHandler(string versionPath)
+    internal async Task<int> ExecuteVersionAsync()
     {
         // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
@@ -70,28 +76,29 @@ public sealed class Program(CancellationToken cancellationToken)
         }
         foreach (ProductInfo productInfo in versionSchema.Products)
         {
-            await productInfo.FetchVersionsAsync(_cancellationToken).ConfigureAwait(false);
+            await productInfo.FetchVersionsAsync(cancellationToken).ConfigureAwait(false);
             productInfo.LogInformation();
-            await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+            await productInfo.VerifyUrlsAsync(cancellationToken).ConfigureAwait(false);
         }
 
         // Write to file
-        Log.Logger.Information("Writing version information to {Path}", versionPath);
-        VersionJsonSchema.ToFile(versionPath, versionSchema);
+        Log.Logger.Information(
+            "Writing version information to {Path}",
+            commandLineOptions.VersionPath
+        );
+        VersionJsonSchema.ToFile(commandLineOptions.VersionPath, versionSchema);
 
         return 0;
     }
 
-    internal async Task<int> MatrixHandler(
-        string versionPath,
-        string matrixPath,
-        bool updateVersion
-    )
+    internal async Task<int> ExecuteMatrixAsync()
     {
         // Load version info from file
-        Log.Logger.Information("Reading version information from {Path}", versionPath);
-        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(versionPath);
-
+        Log.Logger.Information(
+            "Reading version information from {Path}",
+            commandLineOptions.VersionPath
+        );
+        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(commandLineOptions.VersionPath);
         // Re-verify as rules may have changed after file was written
         foreach (ProductInfo productInfo in fileSchema.Products)
         {
@@ -100,7 +107,7 @@ public sealed class Program(CancellationToken cancellationToken)
         }
 
         // Update version information
-        if (updateVersion)
+        if (commandLineOptions.UpdateVersion)
         {
             // Get versions for all products using releases API
             VersionJsonSchema onlineSchema = new();
@@ -111,7 +118,7 @@ public sealed class Program(CancellationToken cancellationToken)
             }
             foreach (ProductInfo productInfo in onlineSchema.Products)
             {
-                await productInfo.FetchVersionsAsync(_cancellationToken).ConfigureAwait(false);
+                await productInfo.FetchVersionsAsync(cancellationToken).ConfigureAwait(false);
                 productInfo.LogInformation();
             }
 
@@ -123,12 +130,15 @@ public sealed class Program(CancellationToken cancellationToken)
             // Verify URL's
             foreach (ProductInfo productInfo in onlineSchema.Products)
             {
-                await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+                await productInfo.VerifyUrlsAsync(cancellationToken).ConfigureAwait(false);
             }
 
             // Update the file version with the online version
-            Log.Logger.Information("Writing version information to {Path}", versionPath);
-            VersionJsonSchema.ToFile(versionPath, onlineSchema);
+            Log.Logger.Information(
+                "Writing version information to {Path}",
+                commandLineOptions.VersionPath
+            );
+            VersionJsonSchema.ToFile(commandLineOptions.VersionPath, onlineSchema);
             fileSchema = onlineSchema;
         }
         else
@@ -136,7 +146,7 @@ public sealed class Program(CancellationToken cancellationToken)
             // Verify URL's
             foreach (ProductInfo productInfo in fileSchema.Products)
             {
-                await productInfo.VerifyUrlsAsync(_cancellationToken).ConfigureAwait(false);
+                await productInfo.VerifyUrlsAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -158,30 +168,36 @@ public sealed class Program(CancellationToken cancellationToken)
         }
 
         // Write matrix
-        Log.Logger.Information("Writing matrix information to {Path}", matrixPath);
-        MatrixJsonSchema.ToFile(matrixPath, matrixSchema);
+        Log.Logger.Information(
+            "Writing matrix information to {Path}",
+            commandLineOptions.MatrixPath
+        );
+        MatrixJsonSchema.ToFile(commandLineOptions.MatrixPath, matrixSchema);
 
         return 0;
     }
 
-    internal Task<int> MakeHandler(
-        string versionPath,
-        string makePath,
-        string dockerPath,
-        VersionInfo.LabelType label
-    )
+    internal Task<int> ExecuteMakeAsync()
     {
-        _cancellationToken.ThrowIfCancellationRequested();
         // Load version info from file
-        Log.Logger.Information("Reading version information from {Path}", versionPath);
-        VersionJsonSchema versionSchema = VersionJsonSchema.FromFile(versionPath);
+        Log.Logger.Information(
+            "Reading version information from {Path}",
+            commandLineOptions.VersionPath
+        );
+        VersionJsonSchema versionSchema = VersionJsonSchema.FromFile(
+            commandLineOptions.VersionPath
+        );
 
         // Create Compose files
-        ComposeFile.Create(makePath);
+        ComposeFile.Create(commandLineOptions.MakeDirectory);
 
         // Create Docker files
         List<ProductInfo> products = [.. versionSchema.Products];
-        DockerFile.Create(products, dockerPath, label);
+        DockerFile.Create(
+            products,
+            commandLineOptions.DockerDirectory,
+            commandLineOptions.VersionLabel
+        );
 
         return Task.FromResult(0);
     }

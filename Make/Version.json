@@ -6,21 +6,14 @@
       "Product": "NxGo",
       "Versions": [
         {
-          "Version": "5.1.5.39242",
-          "UriX64": "https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-5.1.5.39242-linux_x64.deb",
-          "UriArm64": "https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-5.1.5.39242-linux_arm64.deb",
+          "Version": "6.1.0.42176",
+          "UriX64": "https://updates.networkoptix.com/nxgo/42176/nxgo-server_update-6.1.0.42176-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/nxgo/42176/nxgo-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
-          ]
-        },
-        {
-          "Version": "6.0.0.39148",
-          "UriX64": "https://updates.networkoptix.com/nxgo/39148/linux/nxgo-server-6.0.0.39148-linux_x64-rc.deb",
-          "UriArm64": "https://updates.networkoptix.com/nxgo/39148/arm/nxgo-server-6.0.0.39148-linux_arm64-rc.deb",
-          "Labels": [
-            "RC"
-          ]
+          ],
+          "BuildNumber": 42176
         }
       ]
     },
@@ -28,21 +21,14 @@
       "Product": "NxMeta",
       "Versions": [
         {
-          "Version": "5.1.5.39242",
-          "UriX64": "https://updates.networkoptix.com/metavms/39242/metavms-server_update-5.1.5.39242-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/39242/metavms-server_update-5.1.5.39242-linux_arm64.zip",
+          "Version": "6.1.0.42176",
+          "UriX64": "https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
-          ]
-        },
-        {
-          "Version": "6.0.0.39148",
-          "UriX64": "https://updates.networkoptix.com/metavms/39148/metavms-server_update-6.0.0.39148-linux_x64-rc.zip",
-          "UriArm64": "https://updates.networkoptix.com/metavms/39148/metavms-server_update-6.0.0.39148-linux_arm64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
+          ],
+          "BuildNumber": 42176
         }
       ]
     },
@@ -50,21 +36,14 @@
       "Product": "NxWitness",
       "Versions": [
         {
-          "Version": "5.1.5.39242",
-          "UriX64": "https://updates.networkoptix.com/default/39242/nxwitness-server_update-5.1.5.39242-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/39242/nxwitness-server_update-5.1.5.39242-linux_arm64.zip",
+          "Version": "6.1.0.42176",
+          "UriX64": "https://updates.networkoptix.com/default/42176/nxwitness-server_update-6.1.0.42176-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/default/42176/nxwitness-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Stable",
             "Latest"
-          ]
-        },
-        {
-          "Version": "6.0.0.39148",
-          "UriX64": "https://updates.networkoptix.com/default/39148/nxwitness-server_update-6.0.0.39148-linux_x64-rc.zip",
-          "UriArm64": "https://updates.networkoptix.com/default/39148/nxwitness-server_update-6.0.0.39148-linux_arm64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
+          ],
+          "BuildNumber": 42176
         }
       ]
     },
@@ -72,28 +51,22 @@
       "Product": "DWSpectrum",
       "Versions": [
         {
-          "Version": "5.1.2.37996",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/37996/dwspectrum-server_update-5.1.2.37996-linux_arm64.zip",
+          "Version": "6.0.6.41837",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/41837/dwspectrum-server_update-6.0.6.41837-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/41837/dwspectrum-server_update-6.0.6.41837-linux_arm64.zip",
           "Labels": [
             "Stable"
-          ]
+          ],
+          "BuildNumber": 41837
         },
         {
-          "Version": "5.1.5.39242",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/39242/dwspectrum-server_update-5.1.5.39242-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/39242/dwspectrum-server_update-5.1.5.39242-linux_arm64.zip",
+          "Version": "6.1.0.42176",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/42176/dwspectrum-server_update-6.1.0.42176-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/42176/dwspectrum-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Latest"
-          ]
-        },
-        {
-          "Version": "6.0.0.39148",
-          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/39148/dwspectrum-server_update-6.0.0.39148-linux_x64-rc.zip",
-          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/39148/dwspectrum-server_update-6.0.0.39148-linux_arm64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
+          ],
+          "BuildNumber": 42176
         }
       ]
     },
@@ -101,28 +74,22 @@
       "Product": "WisenetWAVE",
       "Versions": [
         {
-          "Version": "5.1.1.37512",
-          "UriX64": "https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/37512/wave-server_update-5.1.1.37512-linux_arm64.zip",
+          "Version": "6.0.5.41290",
+          "UriX64": "https://updates.networkoptix.com/hanwha/41290/wave-server_update-6.0.5.41290-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/41290/wave-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Stable"
-          ]
+          ],
+          "BuildNumber": 41290
         },
         {
-          "Version": "5.1.5.39242",
-          "UriX64": "https://updates.networkoptix.com/hanwha/39242/wave-server_update-5.1.5.39242-linux_x64.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/39242/wave-server_update-5.1.5.39242-linux_arm64.zip",
+          "Version": "6.1.0.42176",
+          "UriX64": "https://updates.networkoptix.com/hanwha/42176/wave-server_update-6.1.0.42176-linux_x64.zip",
+          "UriArm64": "https://updates.networkoptix.com/hanwha/42176/wave-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Latest"
-          ]
-        },
-        {
-          "Version": "6.0.0.39148",
-          "UriX64": "https://updates.networkoptix.com/hanwha/39148/wave-server_update-6.0.0.39148-linux_x64-rc.zip",
-          "UriArm64": "https://updates.networkoptix.com/hanwha/39148/wave-server_update-6.0.0.39148-linux_arm64-rc.zip",
-          "Labels": [
-            "RC"
-          ]
+          ],
+          "BuildNumber": 42176
         }
       ]
     }

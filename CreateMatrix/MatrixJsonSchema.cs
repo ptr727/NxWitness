@@ -18,12 +18,10 @@ public class MatrixJsonSchemaBase
 
 public class MatrixJsonSchema : MatrixJsonSchemaBase
 {
-    private readonly List<ImageInfo> _images = [];
-
     public const int Version = 2;
 
     [JsonRequired]
-    public ICollection<ImageInfo> Images => _images;
+    public ICollection<ImageInfo> Images { get; init; } = [];
 
     public static MatrixJsonSchema FromFile(string path)
     {

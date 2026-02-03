@@ -47,7 +47,7 @@ jobs:
 
       # Execute the compiled version to make sure that the build breaks for a non-0 exit code
       - name: Run CreateMatrix Tool
-        run: ${{ runner.temp }}/publish/CreateMatrix matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update
+        run: ${{ runner.temp }}/publish/CreateMatrix matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
 
       # https://github.com/marketplace/actions/git-auto-commit
       - name: Commit Version.json and Matrix.json
