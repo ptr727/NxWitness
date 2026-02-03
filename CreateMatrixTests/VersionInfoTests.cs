@@ -2,7 +2,7 @@ using CreateMatrix;
 
 namespace CreateMatrixTests;
 
-public class VersionInfoTests
+public sealed class VersionInfoTests
 {
     [Fact]
     public void SetVersion_RemovesReleaseSuffix()

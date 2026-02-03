@@ -25,7 +25,7 @@ internal static class DockerFile
             );
 
             // If the specific label is not found, use the latest version
-            if (versionInfo == default(VersionInfo))
+            if (versionInfo == null)
             {
                 Log.Logger.Warning(
                     "Label {Label} not found for {Product}, using latest",
@@ -45,7 +45,7 @@ internal static class DockerFile
                 $"{ProductInfo.GetDocker(productType, false)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile, Encoding.UTF8);
+            File.WriteAllText(filePath, dockerFile);
 
             // Create the LSIO Docker file
             dockerFile = CreateDockerfile(productType, versionInfo, true);
@@ -54,7 +54,7 @@ internal static class DockerFile
                 $"{ProductInfo.GetDocker(productType, true)}.Dockerfile"
             );
             Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            File.WriteAllText(filePath, dockerFile, Encoding.UTF8);
+            File.WriteAllText(filePath, dockerFile);
         }
     }
 
@@ -67,23 +67,19 @@ internal static class DockerFile
         // From
         StringBuilder stringBuilder = new();
         _ = stringBuilder.Append(CreateFrom(productType, lsio));
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
         // Args
         _ = stringBuilder.Append(CreateArgs(productType, versionInfo, lsio));
-        _ = stringBuilder.AppendLine();
-
+        _ = stringBuilder.AppendLineCrlf();
         // Install
         _ = stringBuilder.Append(CreateInstall(lsio));
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
         // Entrypoint
         _ = stringBuilder.Append(CreateEntrypoint(productType, lsio));
 
-        return stringBuilder
-            .ToString()
-            .Replace("\r\n", "\n", StringComparison.InvariantCulture)
-            .Trim();
+        return stringBuilder.ToString();
     }
 
     private static string CreateFrom(ProductInfo.ProductType productType, bool lsio)

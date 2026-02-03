@@ -2,7 +2,7 @@ using CreateMatrix;
 
 namespace CreateMatrixTests;
 
-public class ReleasesTests
+public sealed class ReleasesTests
 {
     [Fact]
     public void MatchLabels()

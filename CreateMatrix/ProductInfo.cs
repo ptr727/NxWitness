@@ -1,9 +1,7 @@
 namespace CreateMatrix;
 
-public class ProductInfo
+internal sealed class ProductInfo
 {
-    private readonly List<VersionInfo> _versions = [];
-
     public enum ProductType
     {
         None,
@@ -16,7 +14,7 @@ public class ProductInfo
 
     public ProductType Product { get; set; }
 
-    public ICollection<VersionInfo> Versions => _versions;
+    public List<VersionInfo> Versions { get; set; } = [];
 
     public string GetCompany() => GetCompany(Product);
 
@@ -72,11 +70,7 @@ public class ProductInfo
 
     public static IEnumerable<ProductType> GetProductTypes() =>
         // Create list of product types
-        [
-            .. Enum.GetValues<ProductType>()
-                .Cast<ProductType>()
-                .Where(productType => productType != ProductType.None),
-        ];
+        [.. Enum.GetValues<ProductType>().Where(productType => productType != ProductType.None)];
 
     public static IReadOnlyList<ProductInfo> GetProducts()
     {
@@ -139,10 +133,10 @@ public class ProductInfo
 
                 // Get the x64 and arm64 server ubuntu server packages
                 Package? packageX64 = packageList.FirstOrDefault(item => item.IsX64Server());
-                Debug.Assert(packageX64 != default(Package));
+                Debug.Assert(packageX64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
                 Package? packageArm64 = packageList.FirstOrDefault(item => item.IsArm64Server());
-                Debug.Assert(packageArm64 != default(Package));
+                Debug.Assert(packageArm64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
 
                 // Create the download URLs
@@ -157,7 +151,7 @@ public class ProductInfo
                 // Verify and add to list
                 if (VerifyVersion(versionInfo))
                 {
-                    _versions.Add(versionInfo);
+                    Versions.Add(versionInfo);
                 }
             }
 
@@ -200,10 +194,8 @@ public class ProductInfo
         }
 
         // Does this label already exists in other versions
-        VersionInfo? existingVersion = _versions.FirstOrDefault(item =>
-            item.Labels.Contains(label)
-        );
-        if (existingVersion == default(VersionInfo))
+        VersionInfo? existingVersion = Versions.Find(item => item.Labels.Contains(label));
+        if (existingVersion == null)
         {
             // New label
             versionInfo.Labels.Add(label);
@@ -237,28 +229,30 @@ public class ProductInfo
         foreach (VersionInfo.LabelType label in sourceLabels)
         {
             // Find last matching item, must be sorted
-            VersionInfo? version = _versions.FindLast(item => item.Labels.Contains(label));
-            if (version != default(VersionInfo))
+            VersionInfo? version = Versions.FindLast(item => item.Labels.Contains(label));
+            if (version == null)
             {
-                Log.Logger.Warning(
-                    "{Product}: Using {SourceLabel} for {TargetLabel}",
-                    Product,
-                    label,
-                    targetLabel
-                );
-                return version;
+                continue;
             }
+
+            Log.Logger.Warning(
+                "{Product}: Using {SourceLabel} for {TargetLabel}",
+                Product,
+                label,
+                targetLabel
+            );
+            return version;
         }
-        return default;
+        return null;
     }
 
     public void VerifyLabels()
     {
         // Sort by version number
-        _versions.Sort(new VersionInfoComparer());
+        Versions.Sort(new VersionInfoComparer());
 
         // If no Latest label is set, use Stable or RC or Beta as Latest
-        if (!_versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
+        if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
             VersionInfo latest =
                 FindMissingLabel(
@@ -273,7 +267,7 @@ public class ProductInfo
         }
 
         // If no Stable label is set, use Latest as stable
-        if (!_versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
+        if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
             VersionInfo stable =
                 FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest])
@@ -282,38 +276,37 @@ public class ProductInfo
         }
 
         // Remove all versions without labels
-        _ = _versions.RemoveAll(item => item.Labels.Count == 0);
-
+        _ = Versions.RemoveAll(item => item.Labels.Count == 0);
         // Sort by label
-        foreach (VersionInfo version in _versions)
+        foreach (VersionInfo version in Versions)
         {
             version.SortLabels();
         }
 
         // Must have 1 Latest and 1 Stable label
         ArgumentOutOfRangeException.ThrowIfNotEqual(
-            _versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)),
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest)),
             1
         );
         ArgumentOutOfRangeException.ThrowIfNotEqual(
-            _versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)),
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable)),
             1
         );
 
         // Must have no more than 1 Beta or RC labels
         ArgumentOutOfRangeException.ThrowIfGreaterThan(
-            _versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)),
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta)),
             1
         );
         ArgumentOutOfRangeException.ThrowIfGreaterThan(
-            _versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)),
+            Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)),
             1
         );
     }
 
     public void LogInformation()
     {
-        foreach (VersionInfo version in _versions)
+        foreach (VersionInfo version in Versions)
         {
             Log.Logger.Information(
                 "{Product}: Version: {Version}, Label: {Labels}, UriX64: {UriX64}, UriArm64: {UriArm64}",
@@ -337,7 +330,7 @@ public class ProductInfo
         try
         {
             HttpClient httpClient = HttpClientFactory.GetHttpClient();
-            foreach (VersionInfo versionUri in _versions)
+            foreach (VersionInfo versionUri in Versions)
             {
                 // Will throw on error
                 await VerifyUrlAsync(httpClient, versionUri.UriX64, cancellationToken)
@@ -389,12 +382,12 @@ public class ProductInfo
 
         // Verify each version
         List<VersionInfo> removeVersions = [];
-        foreach (VersionInfo? version in _versions.Where(version => !VerifyVersion(version)))
+        foreach (VersionInfo version in Versions.Where(version => !VerifyVersion(version)))
         {
             Log.Logger.Warning("{Product} : Removing {Version}", Product, version.Version);
             removeVersions.Add(version);
         }
-        _ = _versions.RemoveAll(removeVersions.Contains);
+        _ = Versions.RemoveAll(removeVersions.Contains);
 
         // Verify labels
         VerifyLabels();

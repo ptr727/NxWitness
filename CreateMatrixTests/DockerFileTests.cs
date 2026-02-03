@@ -2,7 +2,7 @@ using CreateMatrix;
 
 namespace CreateMatrixTests;
 
-public class DockerFileTests
+public sealed class DockerFileTests
 {
     [Fact]
     public void Create_WritesDockerfilesForAllProducts()

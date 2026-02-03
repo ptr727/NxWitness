@@ -25,3 +25,21 @@ internal static class LogExtensions
         }
     }
 }
+
+internal static class StringBuilderExtensions
+{
+    private const string CrLf = "\r\n";
+
+    extension(StringBuilder sb)
+    {
+        internal StringBuilder AppendLineCrlf(string? value = null)
+        {
+            if (value is not null)
+            {
+                _ = sb.Append(value);
+            }
+
+            return sb.Append(CrLf);
+        }
+    }
+}

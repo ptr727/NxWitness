@@ -5,27 +5,25 @@ namespace CreateMatrix;
 // https://updates.networkoptix.com/default/35270/packages.json
 // https://updates.networkoptix.com/digitalwatchdog/35271/packages.json
 
-public class Variant
+internal sealed class Variant
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
 }
 
-public class Package
+internal sealed class Package
 {
-    private readonly List<Variant> _variants = [];
-
     [JsonPropertyName("component")]
-    public string Component { get; set; } = "";
+    public string Component { get; set; } = string.Empty;
 
     [JsonPropertyName("platform")]
-    public string PlatformName { get; set; } = "";
+    public string PlatformName { get; set; } = string.Empty;
 
     [JsonPropertyName("file")]
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 
     [JsonPropertyName("variants")]
-    public ICollection<Variant> Variants => _variants;
+    public List<Variant> Variants { get; init; } = [];
 
     public bool IsX64Server() =>
         // Test for Server and x64 and Ubuntu
@@ -44,18 +42,16 @@ public class Package
         );
 }
 
-public class PackagesJsonSchema
+internal sealed class PackagesJsonSchema
 {
-    private readonly List<Package> _packages = [];
-
     [JsonPropertyName("packages")]
-    public ICollection<Package> Packages => _packages;
+    public List<Package> Packages { get; init; } = [];
 
-    private static PackagesJsonSchema FromJson(string jsonString)
+    private static PackagesJsonSchema FromJson(string json)
     {
-        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(
-            jsonString,
-            MatrixJsonSchema.JsonReadOptions
+        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize(
+            json,
+            PackagesJsonContext.Default.PackagesJsonSchema
         );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
@@ -86,6 +82,20 @@ public class PackagesJsonSchema
         ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
 
         // Return packages
-        return packagesSchema._packages;
+        return [.. packagesSchema.Packages];
     }
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(PackagesJsonSchema))]
+internal partial class PackagesJsonContext : JsonSerializerContext;

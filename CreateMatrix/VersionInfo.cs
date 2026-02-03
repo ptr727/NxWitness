@@ -1,9 +1,7 @@
 namespace CreateMatrix;
 
-public class VersionInfo
+internal sealed class VersionInfo
 {
-    private readonly List<LabelType> _labels = [];
-
     public enum LabelType
     {
         None,
@@ -13,10 +11,10 @@ public class VersionInfo
         RC,
     }
 
-    public string Version { get; set; } = "";
+    public string Version { get; set; } = string.Empty;
     public Uri UriX64 { get; set; } = null!;
     public Uri UriArm64 { get; set; } = null!;
-    public ICollection<LabelType> Labels => _labels;
+    public List<LabelType> Labels { get; set; } = [];
 
     /// <summary>
     /// Gets the build number extracted from the version string.
@@ -61,10 +59,10 @@ public class VersionInfo
         // Create list of label types
         [.. Enum.GetValues<LabelType>().Where(labelType => labelType != LabelType.None)];
 
-    internal void SortLabels() => _labels.Sort();
+    internal void SortLabels() => Labels.Sort();
 }
 
-public class VersionInfoComparer : Comparer<VersionInfo>
+internal sealed class VersionInfoComparer : Comparer<VersionInfo>
 {
     // Compare using version numbers
     public override int Compare(VersionInfo? x, VersionInfo? y) =>

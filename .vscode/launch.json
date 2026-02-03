@@ -24,17 +24,6 @@
             "stopAtEntry": false
         },
         {
-            "name": "Create Schema",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": ".Net Build",
-            "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net10.0/CreateMatrix.dll",
-            "args": ["schema", "--versionschemapath=./Samples/Version.schema.json", "--matrixschemapath=./Samples/Matrix.schema.json"],
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
             "name": "Create Docker and Compose Files",
             "type": "coreclr",
             "request": "launch",

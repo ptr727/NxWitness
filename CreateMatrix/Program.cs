@@ -52,22 +52,6 @@ internal sealed class Program(
         }
     }
 
-    internal async Task<int> ExecuteSchemaAsync()
-    {
-        ArgumentNullException.ThrowIfNull(commandLineOptions.VersionSchemaPath);
-        ArgumentNullException.ThrowIfNull(commandLineOptions.MatrixSchemaPath);
-
-        Log.Logger.Information(
-            "Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}",
-            commandLineOptions.VersionSchemaPath.FullName,
-            commandLineOptions.MatrixSchemaPath.FullName
-        );
-        VersionJsonSchema.GenerateSchema(commandLineOptions.VersionSchemaPath.FullName);
-        MatrixJsonSchema.GenerateSchema(commandLineOptions.MatrixSchemaPath.FullName);
-
-        return 0;
-    }
-
     internal async Task<int> ExecuteVersionAsync()
     {
         ArgumentNullException.ThrowIfNull(commandLineOptions.VersionPath);

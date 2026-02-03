@@ -13,7 +13,7 @@ internal static class HttpClientFactory
 
     internal static HttpClient GetHttpClient() => s_httpClient.Value;
 
-    internal static ResilienceHandler GetResilienceHandler() => s_resilienceHandler.Value;
+    private static ResilienceHandler GetResilienceHandler() => s_resilienceHandler.Value;
 
     private static ResilienceHandler CreateResilienceHandler() =>
         new(

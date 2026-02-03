@@ -2,18 +2,13 @@ using System.Collections.Immutable;
 
 namespace CreateMatrix;
 
-public class ImageInfo
+internal class ImageInfo
 {
-    // JSON serialized must be public get and set
-
-    private readonly List<string> _tags = [];
-    private readonly List<string> _args = [];
-
-    public string Name { get; set; } = "";
-    public string Branch { get; set; } = "";
-    public string CacheScope { get; set; } = "";
-    public ICollection<string> Tags => _tags;
-    public ICollection<string> Args => _args;
+    public string Name { get; set; } = string.Empty;
+    public string Branch { get; set; } = string.Empty;
+    public string CacheScope { get; set; } = string.Empty;
+    public List<string> Tags { get; set; } = [];
+    public List<string> Args { get; set; } = [];
 
     private static readonly string[] s_baseNames = ["", "LSIO"];
     private static readonly string[] s_registryNames =
@@ -36,9 +31,9 @@ public class ImageInfo
 
     private void AddArgs(VersionInfo versionInfo)
     {
-        _args.Add($"{DownloadVersion}={versionInfo.Version}");
-        _args.Add($"{DownloadX64Url}={versionInfo.UriX64}");
-        _args.Add($"{DownloadArm64Url}={versionInfo.UriArm64}");
+        Args.Add($"{DownloadVersion}={versionInfo.Version}");
+        Args.Add($"{DownloadX64Url}={versionInfo.UriX64}");
+        Args.Add($"{DownloadArm64Url}={versionInfo.UriArm64}");
     }
 
     private void AddTag(string tag, string? tagPrefix = null)
@@ -49,7 +44,7 @@ public class ImageInfo
         // E.g. "docker.io/ptr727", "ghcr.io/ptr727"
         foreach (string registry in s_registryNames)
         {
-            _tags.Add(
+            Tags.Add(
                 $"{registry}/{Name.ToLower(CultureInfo.InvariantCulture)}:{prefixTag.ToLower(CultureInfo.InvariantCulture)}"
             );
         }
@@ -108,7 +103,7 @@ public class ImageInfo
 
         // Create images for each version
         List<ImageInfo> imageList = [];
-        foreach (VersionInfo? versionUri in versionSet)
+        foreach (VersionInfo versionUri in versionSet)
         {
             // Create image
             ImageInfo imageInfo = new();
@@ -152,23 +147,23 @@ public class ImageInfo
             Tags.Count,
             Args.Count
         );
-        foreach (string tag in _tags)
+        foreach (string tag in Tags)
         {
             Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, tag);
         }
-        foreach (string arg in _args)
+        foreach (string arg in Args)
         {
             Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, arg);
         }
     }
 
-    public const string DownloadVersion = "DOWNLOAD_VERSION";
-    public const string DownloadX64Url = "DOWNLOAD_X64_URL";
-    public const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
+    private const string DownloadVersion = "DOWNLOAD_VERSION";
+    private const string DownloadX64Url = "DOWNLOAD_X64_URL";
+    private const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
 
-    internal void SortMetadata()
+    private void SortMetadata()
     {
-        _args.Sort(StringComparer.Ordinal);
-        _tags.Sort(StringComparer.Ordinal);
+        Args.Sort(StringComparer.Ordinal);
+        Tags.Sort(StringComparer.Ordinal);
     }
 }

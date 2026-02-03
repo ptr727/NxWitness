@@ -2,7 +2,7 @@ using CreateMatrix;
 
 namespace CreateMatrixTests;
 
-public class CommandLineTests
+public sealed class CommandLineTests
 {
     [Fact]
     public void CreateOptions_UsesDefaultsForMakeCommand()

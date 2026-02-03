@@ -22,7 +22,7 @@ See [Release History](./HISTORY.md) for complete release notes and older version
 
 ## Getting Started
 
-**Getting started with a docker compose service**:
+**Getting started with a simple test compose file**:
 
 ```yaml
 # compose.yaml
@@ -59,6 +59,56 @@ echo "Nx Witness LSIO:" "https://$HOSTNAME:7203/"
 
 # Shut the service down
 docker compose down
+```
+
+**Example of a service in production**:
+
+```yaml
+networks:
+
+  public_network: # External macvlan network
+    name: ${PUBLIC_NETWORK_NAME}
+    external: true
+  local_network: # External bridge network
+    name: ${LOCAL_NETWORK_NAME}
+    external: true
+  stack_network: # Stack network
+
+
+services:
+
+  nxmeta:
+    image: docker.io/ptr727/nxmeta-lsio:latest
+    container_name: nxmeta
+    hostname: nxmeta
+    domainname: ${DOMAIN_NAME}
+    restart: unless-stopped
+    user: root
+    group_add:
+      - ${DOCKER_GROUP_ID}
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    environment:
+      - TZ=${TZ}
+      - PUID=${USER_NONROOT_ID}
+      - PGID=${USERS_GROUP_ID}
+    volumes:
+      - ${APPDATA_DIR}/nxmeta/config:/config
+      - ${NVR_DIR}/media:/media # ssdpool/nvr-media
+      - ${NVR_DIR}/backup:/backup # hddpool/nvr-backup
+      - ${NVR_DIR}/analytics:/analytics # ssdpool/nvr-analytics
+    networks:
+      public_network:
+        ipv4_address: ${NXMETA_IP} # Static IP
+        mac_address: ${NXMETA_MAC} # Static MAC
+      local_network:
+      stack_network:
+    labels:
+      - traefik.enable=true # Traefik SSL proxy
+      - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta${DOMAIN_REGEX}$$`)
+      - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
+      - traefik.http.services.nxmeta.loadbalancer.server.port=7001
 ```
 
 ## Table of Contents

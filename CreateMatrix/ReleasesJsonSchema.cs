@@ -6,16 +6,16 @@ namespace CreateMatrix;
 // https://updates.vmsproxy.com/digitalwatchdog/releases.json
 // https://updates.vmsproxy.com/hanwha/releases.json
 
-public class Release
+internal class Release
 {
     [JsonPropertyName("product")]
-    public string Product { get; set; } = "";
+    public string Product { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
+    public string Version { get; set; } = string.Empty;
 
     [JsonPropertyName("publication_type")]
-    public string PublicationType { get; set; } = "";
+    public string PublicationType { get; set; } = string.Empty;
 
     [JsonPropertyName("release_date")]
     public long? ReleaseDate { get; set; }
@@ -51,18 +51,16 @@ public class Release
         && ReleaseDeliveryDays >= 0;
 }
 
-public class ReleasesJsonSchema
+internal class ReleasesJsonSchema
 {
-    private readonly List<Release> _releases = [];
-
     [JsonPropertyName("releases")]
-    public ICollection<Release> Releases => _releases;
+    public List<Release> Releases { get; init; } = [];
 
-    private static ReleasesJsonSchema FromJson(string jsonString)
+    private static ReleasesJsonSchema FromJson(string json)
     {
-        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize<ReleasesJsonSchema>(
-            jsonString,
-            MatrixJsonSchema.JsonReadOptions
+        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize(
+            json,
+            ReleasesJsonContext.Default.ReleasesJsonSchema
         );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
@@ -90,6 +88,20 @@ public class ReleasesJsonSchema
         ArgumentOutOfRangeException.ThrowIfZero(releasesSchema.Releases.Count);
 
         // Return releases
-        return releasesSchema._releases;
+        return [.. releasesSchema.Releases];
     }
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(ReleasesJsonSchema))]
+internal partial class ReleasesJsonContext : JsonSerializerContext;

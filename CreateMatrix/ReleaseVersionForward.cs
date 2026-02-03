@@ -1,6 +1,6 @@
 namespace CreateMatrix;
 
-public static class ReleaseVersionForward
+internal static class ReleaseVersionForward
 {
     public static void Verify(
         IReadOnlyList<ProductInfo> oldProductList,
@@ -19,7 +19,7 @@ public static class ReleaseVersionForward
             ProductInfo? oldProduct = oldProductList.FirstOrDefault(item =>
                 item.Product == newProduct.Product
             );
-            if (oldProduct == default(ProductInfo))
+            if (oldProduct == null)
             {
                 Log.Logger.Warning(
                     "{Product}: Old product not found, skipping version forward checks",
@@ -48,7 +48,7 @@ public static class ReleaseVersionForward
         VersionInfo? oldVersion = oldProduct.Versions.FirstOrDefault(item =>
             item.Labels.Contains(label)
         );
-        if (oldVersion == default(VersionInfo))
+        if (oldVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", oldProduct.Product, label);
             return;
@@ -58,7 +58,7 @@ public static class ReleaseVersionForward
         VersionInfo? newVersion = newProduct.Versions.FirstOrDefault(item =>
             item.Labels.Contains(label)
         );
-        if (newVersion == default(VersionInfo))
+        if (newVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", newProduct.Product, label);
             return;

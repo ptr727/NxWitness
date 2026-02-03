@@ -2,7 +2,7 @@ using CreateMatrix;
 
 namespace CreateMatrixTests;
 
-public class ComposeFileTests
+public sealed class ComposeFileTests
 {
     [Fact]
     public void Create_WritesAllComposeFiles()

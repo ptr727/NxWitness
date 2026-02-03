@@ -20,20 +20,6 @@ internal sealed class CommandLine
         Description = "Matrix JSON file path.",
     }.AcceptLegalFilePathsOnly();
 
-    private static readonly Option<FileInfo> s_versionSchemaPathOption = new Option<FileInfo>(
-        "--versionschemapath"
-    )
-    {
-        Description = "Version JSON schema file path.",
-    }.AcceptLegalFilePathsOnly();
-
-    private static readonly Option<FileInfo> s_matrixSchemaPathOption = new Option<FileInfo>(
-        "--matrixschemapath"
-    )
-    {
-        Description = "Matrix JSON schema file path.",
-    }.AcceptLegalFilePathsOnly();
-
     private static readonly Option<bool> s_updateVersionOption = new("--updateversion")
     {
         Description = "Update version information from online sources.",
@@ -84,12 +70,11 @@ internal sealed class CommandLine
         );
         rootCommand.Subcommands.Add(CreateVersionCommand());
         rootCommand.Subcommands.Add(CreateMatrixCommand());
-        rootCommand.Subcommands.Add(CreateSchemaCommand());
         rootCommand.Subcommands.Add(CreateMakeCommand());
         return rootCommand;
     }
 
-    internal static Command CreateVersionCommand()
+    private static Command CreateVersionCommand()
     {
         Command versionCommand = new(
             "version",
@@ -105,7 +90,7 @@ internal sealed class CommandLine
         return versionCommand;
     }
 
-    internal static Command CreateMatrixCommand()
+    private static Command CreateMatrixCommand()
     {
         Command matrixCommand = new("matrix", "Create matrix information file from online sources")
         {
@@ -120,21 +105,7 @@ internal sealed class CommandLine
         return matrixCommand;
     }
 
-    internal static Command CreateSchemaCommand()
-    {
-        Command schemaCommand = new("schema", "Create Version and Matrix JSON schema files")
-        {
-            s_versionSchemaPathOption,
-            s_matrixSchemaPathOption,
-        };
-        schemaCommand.SetAction(
-            (parseResult, cancellationToken) =>
-                new Program(CreateOptions(parseResult), cancellationToken).ExecuteSchemaAsync()
-        );
-        return schemaCommand;
-    }
-
-    internal static Command CreateMakeCommand()
+    private static Command CreateMakeCommand()
     {
         Command makeCommand = new("make", "Create Docker and Compose files from version file")
         {
@@ -155,8 +126,6 @@ internal sealed class CommandLine
         {
             VersionPath = parseResult.GetValue(s_versionPathOption),
             MatrixPath = parseResult.GetValue(s_matrixPathOption),
-            VersionSchemaPath = parseResult.GetValue(s_versionSchemaPathOption),
-            MatrixSchemaPath = parseResult.GetValue(s_matrixSchemaPathOption),
             UpdateVersion = parseResult.GetValue(s_updateVersionOption),
             MakeDirectory = parseResult.GetValue(s_makeDirectoryOption),
             DockerDirectory = parseResult.GetValue(s_dockerDirectoryOption),
@@ -174,8 +143,6 @@ internal sealed class CommandLine
     {
         internal required FileInfo? VersionPath { get; init; }
         internal required FileInfo? MatrixPath { get; init; }
-        internal required FileInfo? VersionSchemaPath { get; init; }
-        internal required FileInfo? MatrixSchemaPath { get; init; }
         internal required bool UpdateVersion { get; init; }
         internal required DirectoryInfo? MakeDirectory { get; init; }
         internal required DirectoryInfo? DockerDirectory { get; init; }

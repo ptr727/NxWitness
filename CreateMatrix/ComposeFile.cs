@@ -10,19 +10,19 @@ internal static class ComposeFile
         string composeFile = CreateComposefile(null);
         string filePath = Path.Combine(makePath, "Test.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile, Encoding.UTF8);
+        File.WriteAllText(filePath, composeFile);
 
         // Create develop Compose file
         composeFile = CreateComposefile("develop");
         filePath = Path.Combine(makePath, "Test-develop.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile, Encoding.UTF8);
+        File.WriteAllText(filePath, composeFile);
 
         // Create latest Compose file
         composeFile = CreateComposefile("latest");
         filePath = Path.Combine(makePath, "Test-latest.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile, Encoding.UTF8);
+        File.WriteAllText(filePath, composeFile);
     }
 
     private static string CreateComposefile(string? label)
@@ -38,17 +38,16 @@ internal static class ComposeFile
 
             """
         );
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
         // Create volumes
         _ = stringBuilder.Append(CreateVolumes());
-        _ = stringBuilder.AppendLine();
-
+        _ = stringBuilder.AppendLineCrlf();
         // Create services
         _ = stringBuilder.Append(CreateServices(label));
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
-        return stringBuilder.ToString().Replace("\r\n", "\n", StringComparison.Ordinal).Trim();
+        return stringBuilder.ToString();
     }
 
     private static string CreateVolumes()
@@ -60,18 +59,18 @@ internal static class ComposeFile
 
             """
         );
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
         // Create a volume for every product
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
             _ = stringBuilder.Append(CreateVolume(productType, false));
-            _ = stringBuilder.AppendLine();
+            _ = stringBuilder.AppendLineCrlf();
 
             // LSIO
             _ = stringBuilder.Append(CreateVolume(productType, true));
-            _ = stringBuilder.AppendLine();
+            _ = stringBuilder.AppendLineCrlf();
         }
 
         return stringBuilder.ToString();
@@ -104,7 +103,7 @@ internal static class ComposeFile
 
             """
         );
-        _ = stringBuilder.AppendLine();
+        _ = stringBuilder.AppendLineCrlf();
 
         // Create a service for every product
         int standardPort = 7101,
@@ -113,11 +112,10 @@ internal static class ComposeFile
         {
             // Standard
             _ = stringBuilder.Append(CreateService(productType, false, standardPort++, label));
-            _ = stringBuilder.AppendLine();
-
+            _ = stringBuilder.AppendLineCrlf();
             // LSIO
             _ = stringBuilder.Append(CreateService(productType, true, lsioPort++, label));
-            _ = stringBuilder.AppendLine();
+            _ = stringBuilder.AppendLineCrlf();
         }
 
         return stringBuilder.ToString();
