@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: NxGo
 # Description: Nx Go VMS
 # Company: networkoptix
@@ -12,13 +12,13 @@ FROM lsiobase/ubuntu:jammy
 # Labels
 ARG LABEL_NAME="NxGo-LSIO"
 ARG LABEL_DESCRIPTION="Nx Go VMS"
-ARG LABEL_VERSION="6.0.0.38908"
+ARG LABEL_VERSION="6.1.0.42176"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/nxgo/39242/linux/nxgo-server-6.0.0.38908-linux_x64.deb"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/nxgo/39242/arm/nxgo-server-6.0.0.38908-linux_arm64.deb"
-ARG DOWNLOAD_VERSION="6.0.0.38908"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/nxgo/42176/nxgo-server_update-6.1.0.42176-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/nxgo/42176/nxgo-server_update-6.1.0.42176-linux_arm64.zip"
+ARG DOWNLOAD_VERSION="6.1.0.42176"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix"

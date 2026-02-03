@@ -1,4 +1,4 @@
-﻿using System.Collections.Frozen;
+using System.Collections.Frozen;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
@@ -6,32 +6,32 @@ namespace CreateMatrix;
 
 internal sealed class CommandLine
 {
-    private static readonly Option<string> s_versionPathOption = new Option<string>("--versionpath")
+    private static readonly Option<FileInfo> s_versionPathOption = new Option<FileInfo>(
+        "--versionpath"
+    )
     {
         Description = "Version JSON file path.",
-        DefaultValueFactory = _ => "./Make/Version.json",
     }.AcceptLegalFilePathsOnly();
 
-    private static readonly Option<string> s_matrixPathOption = new Option<string>("--matrixpath")
+    private static readonly Option<FileInfo> s_matrixPathOption = new Option<FileInfo>(
+        "--matrixpath"
+    )
     {
         Description = "Matrix JSON file path.",
-        DefaultValueFactory = _ => "./Make/Matrix.json",
     }.AcceptLegalFilePathsOnly();
 
-    private static readonly Option<string> s_versionSchemaPathOption = new Option<string>(
+    private static readonly Option<FileInfo> s_versionSchemaPathOption = new Option<FileInfo>(
         "--versionschemapath"
     )
     {
         Description = "Version JSON schema file path.",
-        DefaultValueFactory = _ => "./JSON/Version.schema.json",
     }.AcceptLegalFilePathsOnly();
 
-    private static readonly Option<string> s_matrixSchemaPathOption = new Option<string>(
+    private static readonly Option<FileInfo> s_matrixSchemaPathOption = new Option<FileInfo>(
         "--matrixschemapath"
     )
     {
         Description = "Matrix JSON schema file path.",
-        DefaultValueFactory = _ => "./JSON/Matrix.schema.json",
     }.AcceptLegalFilePathsOnly();
 
     private static readonly Option<bool> s_updateVersionOption = new("--updateversion")
@@ -45,14 +45,12 @@ internal sealed class CommandLine
     )
     {
         Description = "Make directory path.",
-        DefaultValueFactory = _ => new DirectoryInfo("./Make"),
     }.AcceptExistingOnly();
 
     private static readonly Option<DirectoryInfo> s_dockerDirectoryOption =
         new Option<DirectoryInfo>("--dockerdirectory")
         {
             Description = "Docker directory path.",
-            DefaultValueFactory = _ => new DirectoryInfo("./Docker"),
         }.AcceptExistingOnly();
 
     private static readonly Option<VersionInfo.LabelType> s_versionLabelOption = new(
@@ -109,18 +107,9 @@ internal sealed class CommandLine
 
     internal static Command CreateMatrixCommand()
     {
-        s_versionPathOption.Validators.Add(result =>
-        {
-            string? value = result.GetValueOrDefault<string>();
-            if (string.IsNullOrWhiteSpace(value) || !File.Exists(value))
-            {
-                result.AddError($"File does not exist: {value}");
-            }
-        });
-
         Command matrixCommand = new("matrix", "Create matrix information file from online sources")
         {
-            s_versionPathOption,
+            s_versionPathOption.AcceptExistingOnly(),
             s_matrixPathOption,
             s_updateVersionOption,
         };
@@ -149,7 +138,7 @@ internal sealed class CommandLine
     {
         Command makeCommand = new("make", "Create Docker and Compose files from version file")
         {
-            s_versionPathOption,
+            s_versionPathOption.AcceptExistingOnly(),
             s_makeDirectoryOption,
             s_dockerDirectoryOption,
             s_versionLabelOption,
@@ -164,13 +153,13 @@ internal sealed class CommandLine
     internal static Options CreateOptions(ParseResult parseResult) =>
         new()
         {
-            VersionPath = parseResult.GetValue(s_versionPathOption) ?? string.Empty,
-            MatrixPath = parseResult.GetValue(s_matrixPathOption) ?? string.Empty,
-            VersionSchemaPath = parseResult.GetValue(s_versionSchemaPathOption) ?? string.Empty,
-            MatrixSchemaPath = parseResult.GetValue(s_matrixSchemaPathOption) ?? string.Empty,
+            VersionPath = parseResult.GetValue(s_versionPathOption),
+            MatrixPath = parseResult.GetValue(s_matrixPathOption),
+            VersionSchemaPath = parseResult.GetValue(s_versionSchemaPathOption),
+            MatrixSchemaPath = parseResult.GetValue(s_matrixSchemaPathOption),
             UpdateVersion = parseResult.GetValue(s_updateVersionOption),
-            MakeDirectory = parseResult.GetValue(s_makeDirectoryOption)!,
-            DockerDirectory = parseResult.GetValue(s_dockerDirectoryOption)!,
+            MakeDirectory = parseResult.GetValue(s_makeDirectoryOption),
+            DockerDirectory = parseResult.GetValue(s_dockerDirectoryOption),
             VersionLabel = parseResult.GetValue(s_versionLabelOption),
         };
 
@@ -183,13 +172,13 @@ internal sealed class CommandLine
 
     internal sealed class Options
     {
-        internal required string VersionPath { get; init; }
-        internal required string MatrixPath { get; init; }
-        internal required string VersionSchemaPath { get; init; }
-        internal required string MatrixSchemaPath { get; init; }
+        internal required FileInfo? VersionPath { get; init; }
+        internal required FileInfo? MatrixPath { get; init; }
+        internal required FileInfo? VersionSchemaPath { get; init; }
+        internal required FileInfo? MatrixSchemaPath { get; init; }
         internal required bool UpdateVersion { get; init; }
-        internal required DirectoryInfo MakeDirectory { get; init; }
-        internal required DirectoryInfo DockerDirectory { get; init; }
+        internal required DirectoryInfo? MakeDirectory { get; init; }
+        internal required DirectoryInfo? DockerDirectory { get; init; }
         internal required VersionInfo.LabelType VersionLabel { get; init; }
     }
 }

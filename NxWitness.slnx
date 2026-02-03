@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
     <Folder Name="/GitHub Actions/">
         <File Path=".github/workflows/build-datebadge-task.yml" />
         <File Path=".github/workflows/build-docker-task.yml" />

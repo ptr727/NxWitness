@@ -1,4 +1,4 @@
-﻿namespace CreateMatrix;
+namespace CreateMatrix;
 
 // https://updates.networkoptix.com/{product}/{build}/packages.json
 // https://updates.networkoptix.com/metavms/35134/packages.json

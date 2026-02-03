@@ -1,4 +1,4 @@
-﻿# Dockerfile created by CreateMatrix, do not modify by hand
+# Dockerfile created by CreateMatrix, do not modify by hand
 # Product: NxWitness
 # Description: Nx Witness VMS
 # Company: networkoptix
@@ -12,13 +12,13 @@ FROM ubuntu:jammy
 # Labels
 ARG LABEL_NAME="NxWitness"
 ARG LABEL_DESCRIPTION="Nx Witness VMS"
-ARG LABEL_VERSION="6.0.0.38908"
+ARG LABEL_VERSION="6.1.0.42176"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_x64-beta.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/38908/nxwitness-server_update-6.0.0.38908-linux_arm64-beta.zip"
-ARG DOWNLOAD_VERSION="6.0.0.38908"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/default/42176/nxwitness-server_update-6.1.0.42176-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/default/42176/nxwitness-server_update-6.1.0.42176-linux_arm64.zip"
+ARG DOWNLOAD_VERSION="6.1.0.42176"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix"
@@ -71,7 +71,7 @@ RUN apt-get update \
         gdb \
         sudo \
         ./vms_server.deb \
-# Cleanup        
+# Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

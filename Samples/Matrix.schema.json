@@ -1,0 +1,72 @@
+{
+  "type": [
+    "object",
+    "null"
+  ],
+  "properties": {
+    "$schema": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SchemaVersion": {
+      "type": [
+        "string",
+        "integer"
+      ],
+      "pattern": "^-?(?:0|[1-9]\\d*)$"
+    },
+    "Images": {
+      "type": "array",
+      "items": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Branch": {
+            "type": "string"
+          },
+          "CacheScope": {
+            "type": "string"
+          },
+          "Tags": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "Args": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "SchemaVersion",
+    "Images"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ptr727/NxWitness/main/Samples/Matrix.schema.json",
+  "title": "CreateMatrix Matrix Schema"
+}

@@ -33,29 +33,29 @@ public class ReleasesTests
         ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 4 versions
-        Assert.Equal(4, productInfo.Versions.Count);
+        productInfo.Versions.Should().HaveCount(4);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
         // 1 RC
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            .Should()
+            .Be(1);
         // 1 Beta
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            .Should()
+            .Be(1);
         // 1 label per version
-        Assert.Equal(4, productInfo.Versions.Count(item => item.Labels.Count == 1));
+        productInfo.Versions.Count(item => item.Labels.Count == 1).Should().Be(4);
     }
 
     [Fact]
@@ -87,27 +87,27 @@ public class ReleasesTests
         ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 3 versions
-        Assert.Equal(3, productInfo.Versions.Count);
+        productInfo.Versions.Should().HaveCount(3);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
         // 1 RC
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            .Should()
+            .Be(1);
         // 1 Beta
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            .Should()
+            .Be(1);
 
         // Select all Latest or Stable labels
         IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item =>
@@ -115,10 +115,10 @@ public class ReleasesTests
             || item.Labels.Contains(VersionInfo.LabelType.Stable)
         );
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        latestVersions.Should().ContainSingle();
         // Should have Latest and Stable labels
         VersionInfo version = latestVersions.First();
-        Assert.Equal(2, version.Labels.Count);
+        version.Labels.Count.Should().Be(2);
     }
 
     [Fact]
@@ -144,27 +144,27 @@ public class ReleasesTests
         ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 3 versions
-        Assert.Equal(3, productInfo.Versions.Count);
+        productInfo.Versions.Should().HaveCount(3);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
         // 1 RC
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            .Should()
+            .Be(1);
         // 1 Beta
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            .Should()
+            .Be(1);
 
         // Select all Latest or Stable labels
         IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item =>
@@ -172,10 +172,10 @@ public class ReleasesTests
             || item.Labels.Contains(VersionInfo.LabelType.Stable)
         );
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        latestVersions.Should().ContainSingle();
         // Should have Latest and Stable labels
         VersionInfo version = latestVersions.First();
-        Assert.Equal(2, version.Labels.Count);
+        version.Labels.Count.Should().Be(2);
     }
 
     [Fact]
@@ -197,19 +197,19 @@ public class ReleasesTests
         ProductInfo productInfo = CreateProductInfo(releasesSchema);
 
         // 1 version
-        Assert.Single(productInfo.Versions);
+        productInfo.Versions.Should().ContainSingle();
         // 2 labels per version
-        Assert.Equal(1, productInfo.Versions.Count(item => item.Labels.Count == 2));
+        productInfo.Versions.Count(item => item.Labels.Count == 2).Should().Be(1);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
 
         // Select all Latest or Stable labels
         IEnumerable<VersionInfo> latestVersions = productInfo.Versions.Where(item =>
@@ -217,13 +217,13 @@ public class ReleasesTests
             || item.Labels.Contains(VersionInfo.LabelType.Stable)
         );
         // Should just be 1 entry
-        Assert.Single(latestVersions);
+        latestVersions.Should().ContainSingle();
         // Should have Latest and Stable labels
         VersionInfo version = latestVersions.First();
-        Assert.Equal(2, version.Labels.Count);
+        version.Labels.Count.Should().Be(2);
 
         // Should be the v4.0 version
-        Assert.Equal("4.0", version.Version);
+        version.Version.Should().Be("4.0");
     }
 
     private static ProductInfo CreateProductInfo(ReleasesJsonSchema releasesSchema)

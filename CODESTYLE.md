@@ -171,6 +171,8 @@ Note: Code snippets are illustrative examples only. Replace namespaces/types to 
 6. **`#region`**: Do not use regions. Prefer logical file/folder/namespace organization.
 7. **Member ordering (StyleCop SA1201)**: const → static readonly → static fields → instance readonly fields → instance fields → constructors → public (events → properties → indexers → methods → operators) → non-public in same order → nested types
 
+8. **File encoding**: UTF-8, no BOM's.
+
 ### Comments and Documentation
 
 1. **XML documentation**

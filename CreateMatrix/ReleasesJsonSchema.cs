@@ -1,4 +1,4 @@
-﻿namespace CreateMatrix;
+namespace CreateMatrix;
 
 // https://updates.vmsproxy.com/{release}/releases.json
 // https://updates.vmsproxy.com/default/releases.json

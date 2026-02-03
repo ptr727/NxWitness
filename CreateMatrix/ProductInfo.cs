@@ -1,4 +1,4 @@
-﻿namespace CreateMatrix;
+namespace CreateMatrix;
 
 public class ProductInfo
 {

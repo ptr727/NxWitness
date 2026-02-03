@@ -1,4 +1,4 @@
-﻿using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Sinks.SystemConsole.Themes;
 
 // dotnet publish --self-contained false --output ./publish
 // ./publish/CreateMatrix matrix --updateversion --matrixpath ./JSON/Matrix.json --versionpath ./JSON/Version.json
@@ -54,19 +54,24 @@ internal sealed class Program(
 
     internal async Task<int> ExecuteSchemaAsync()
     {
+        ArgumentNullException.ThrowIfNull(commandLineOptions.VersionSchemaPath);
+        ArgumentNullException.ThrowIfNull(commandLineOptions.MatrixSchemaPath);
+
         Log.Logger.Information(
             "Writing schema to file : Version Path: {VersionPath}, Matrix Path: {MatrixPath}",
-            commandLineOptions.VersionSchemaPath,
-            commandLineOptions.MatrixSchemaPath
+            commandLineOptions.VersionSchemaPath.FullName,
+            commandLineOptions.MatrixSchemaPath.FullName
         );
-        VersionJsonSchema.GenerateSchema(commandLineOptions.VersionSchemaPath);
-        MatrixJsonSchema.GenerateSchema(commandLineOptions.MatrixSchemaPath);
+        VersionJsonSchema.GenerateSchema(commandLineOptions.VersionSchemaPath.FullName);
+        MatrixJsonSchema.GenerateSchema(commandLineOptions.MatrixSchemaPath.FullName);
 
         return 0;
     }
 
     internal async Task<int> ExecuteVersionAsync()
     {
+        ArgumentNullException.ThrowIfNull(commandLineOptions.VersionPath);
+
         // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
         Log.Logger.Information("Getting version information online...");
@@ -84,21 +89,26 @@ internal sealed class Program(
         // Write to file
         Log.Logger.Information(
             "Writing version information to {Path}",
-            commandLineOptions.VersionPath
+            commandLineOptions.VersionPath.FullName
         );
-        VersionJsonSchema.ToFile(commandLineOptions.VersionPath, versionSchema);
+        VersionJsonSchema.ToFile(commandLineOptions.VersionPath.FullName, versionSchema);
 
         return 0;
     }
 
     internal async Task<int> ExecuteMatrixAsync()
     {
+        ArgumentNullException.ThrowIfNull(commandLineOptions.VersionPath);
+        ArgumentNullException.ThrowIfNull(commandLineOptions.MatrixPath);
+
         // Load version info from file
         Log.Logger.Information(
             "Reading version information from {Path}",
-            commandLineOptions.VersionPath
+            commandLineOptions.VersionPath.FullName
         );
-        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(commandLineOptions.VersionPath);
+        VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(
+            commandLineOptions.VersionPath.FullName
+        );
         // Re-verify as rules may have changed after file was written
         foreach (ProductInfo productInfo in fileSchema.Products)
         {
@@ -136,9 +146,9 @@ internal sealed class Program(
             // Update the file version with the online version
             Log.Logger.Information(
                 "Writing version information to {Path}",
-                commandLineOptions.VersionPath
+                commandLineOptions.VersionPath.FullName
             );
-            VersionJsonSchema.ToFile(commandLineOptions.VersionPath, onlineSchema);
+            VersionJsonSchema.ToFile(commandLineOptions.VersionPath.FullName, onlineSchema);
             fileSchema = onlineSchema;
         }
         else
@@ -170,22 +180,26 @@ internal sealed class Program(
         // Write matrix
         Log.Logger.Information(
             "Writing matrix information to {Path}",
-            commandLineOptions.MatrixPath
+            commandLineOptions.MatrixPath.FullName
         );
-        MatrixJsonSchema.ToFile(commandLineOptions.MatrixPath, matrixSchema);
+        MatrixJsonSchema.ToFile(commandLineOptions.MatrixPath.FullName, matrixSchema);
 
         return 0;
     }
 
     internal Task<int> ExecuteMakeAsync()
     {
+        ArgumentNullException.ThrowIfNull(commandLineOptions.VersionPath);
+        ArgumentNullException.ThrowIfNull(commandLineOptions.MakeDirectory);
+        ArgumentNullException.ThrowIfNull(commandLineOptions.DockerDirectory);
+
         // Load version info from file
         Log.Logger.Information(
             "Reading version information from {Path}",
-            commandLineOptions.VersionPath
+            commandLineOptions.VersionPath.FullName
         );
         VersionJsonSchema versionSchema = VersionJsonSchema.FromFile(
-            commandLineOptions.VersionPath
+            commandLineOptions.VersionPath.FullName
         );
 
         // Create Compose files

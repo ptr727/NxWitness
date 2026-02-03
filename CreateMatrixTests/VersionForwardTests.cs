@@ -1,4 +1,4 @@
-﻿using CreateMatrix;
+using CreateMatrix;
 
 namespace CreateMatrixTests;
 
@@ -44,58 +44,50 @@ public class VersionForwardTests
         ProductInfo productInfo = newProductList.First();
 
         // 4 versions
-        Assert.Equal(4, productInfo.Versions.Count);
+        productInfo.Versions.Should().HaveCount(4);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
         // 1 RC
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            .Should()
+            .Be(1);
         // 1 Beta
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            .Should()
+            .Be(1);
         // 1 label per version
-        Assert.Equal(4, productInfo.Versions.Count(item => item.Labels.Count == 1));
+        productInfo.Versions.Count(item => item.Labels.Count == 1).Should().Be(4);
 
         // Stable 1.1
-        Assert.Equal(
-            "1.1",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-                ?.Version
-        );
+        string? stableVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            ?.Version;
+        stableVersion.Should().Be("1.1");
         // Latest 2.1
-        Assert.Equal(
-            "2.1",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-                ?.Version
-        );
+        string? latestVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            ?.Version;
+        latestVersion.Should().Be("2.1");
         // RC 3.1
-        Assert.Equal(
-            "3.1",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-                ?.Version
-        );
+        string? rcVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            ?.Version;
+        rcVersion.Should().Be("3.1");
         // Beta 4.1
-        Assert.Equal(
-            "4.1",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-                ?.Version
-        );
+        string? betaVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            ?.Version;
+        betaVersion.Should().Be("4.1");
     }
 
     [Fact]
@@ -138,57 +130,49 @@ public class VersionForwardTests
         ProductInfo productInfo = newProductList.First();
 
         // 4 versions
-        Assert.Equal(4, productInfo.Versions.Count);
+        productInfo.Versions.Should().HaveCount(4);
         // 1 Latest
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            .Should()
+            .Be(1);
         // 1 Stable
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            .Should()
+            .Be(1);
         // 1 RC
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            .Should()
+            .Be(1);
         // 1 Beta
-        Assert.Equal(
-            1,
-            productInfo.Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-        );
+        productInfo
+            .Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            .Should()
+            .Be(1);
         // 1 label per version
-        Assert.Equal(4, productInfo.Versions.Count(item => item.Labels.Count == 1));
+        productInfo.Versions.Count(item => item.Labels.Count == 1).Should().Be(4);
 
         // Stable 1.0
-        Assert.Equal(
-            "1.0",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
-                ?.Version
-        );
+        string? stableVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Stable))
+            ?.Version;
+        stableVersion.Should().Be("1.0");
         // Latest 2.0
-        Assert.Equal(
-            "2.0",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
-                ?.Version
-        );
+        string? latestVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Latest))
+            ?.Version;
+        latestVersion.Should().Be("2.0");
         // RC 3.0
-        Assert.Equal(
-            "3.0",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.RC))
-                ?.Version
-        );
+        string? rcVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.RC))
+            ?.Version;
+        rcVersion.Should().Be("3.0");
         // Beta 4.0
-        Assert.Equal(
-            "4.0",
-            productInfo
-                .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
-                ?.Version
-        );
+        string? betaVersion = productInfo
+            .Versions.FirstOrDefault(item => item.Labels.Contains(VersionInfo.LabelType.Beta))
+            ?.Version;
+        betaVersion.Should().Be("4.0");
     }
 }

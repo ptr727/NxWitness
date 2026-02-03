@@ -1,4 +1,4 @@
-﻿namespace CreateMatrix;
+namespace CreateMatrix;
 
 public class VersionJsonSchemaBase
 {
@@ -11,7 +11,7 @@ public class VersionJsonSchemaBase
     public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
 
     protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/Samples/Version.schema.json";
 }
 
 public class VersionJsonSchema : VersionJsonSchemaBase

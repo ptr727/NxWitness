@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization.Metadata;
+using System.Text.Json.Serialization.Metadata;
 
 namespace CreateMatrix;
 
@@ -13,7 +13,7 @@ public class MatrixJsonSchemaBase
     public int SchemaVersion { get; set; } = MatrixJsonSchema.Version;
 
     protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
+        "https://raw.githubusercontent.com/ptr727/NxWitness/main/Samples/Matrix.schema.json";
 }
 
 public class MatrixJsonSchema : MatrixJsonSchemaBase

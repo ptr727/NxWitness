@@ -2,17 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Create Matrix",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": ".Net Build",
-            "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net10.0/CreateMatrix.dll",
-            "args": ["matrix", "--versionpath=./Make/Version.json", "--matrixpath=./Make/Matrix.json", "--updateversion"],
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
             "name": "Create Version",
             "type": "coreclr",
             "request": "launch",
@@ -24,13 +13,24 @@
             "stopAtEntry": false
         },
         {
+            "name": "Create Matrix",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": ".Net Build",
+            "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net10.0/CreateMatrix.dll",
+            "args": ["matrix", "--versionpath=./Make/Version.json", "--matrixpath=./Make/Matrix.json", "--updateversion"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": "Create Schema",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": ".Net Build",
             "program": "${workspaceFolder}/CreateMatrix/bin/Debug/net10.0/CreateMatrix.dll",
-            "args": ["schema", "--versionschemapath=./JSON/Version.schema.json", "--matrixschemapath=./JSON/Matrix.schema.json"],
-            "cwd": "${workspaceFolder}/CreateMatrix/JSON",
+            "args": ["schema", "--versionschemapath=./Samples/Version.schema.json", "--matrixschemapath=./Samples/Matrix.schema.json"],
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
         },
