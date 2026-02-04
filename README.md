@@ -12,7 +12,7 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 3.0**:
+**Version: 2.9**:
 
 **Summary**:
 
@@ -696,7 +696,7 @@ Licensed under the [MIT License][license-link]\
 [nxwitnessreleasenotes-link]: https://www.networkoptix.com/all-nx-witness-release-notes
 [nxwitnessreleases-link]: https://updates.vmsproxy.com/default/releases.json
 [packages-link]: https://updates.networkoptix.com/default/38363/packages.json
-[releasebuildstatus-shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/BuildPublishPipeline.yml?branch=main&logo=github&label=Build%20Status
+[releasebuildstatus-shield]: https://img.shields.io/github/actions/workflow/status/ptr727/NxWitness/publish-release.yml?branch=main&logo=github&label=Build%20Status
 [releaseinfo-link]: https://github.com/networkoptix/nx_open/blob/master/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp
 [s6overlay-link]: https://github.com/just-containers/s6-overlay
 [thehomegithub-link]: https://github.com/thehomerepot/nxwitness
