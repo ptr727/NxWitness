@@ -69,6 +69,21 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Create tags and args step
+        id: tagsargs
+        run: |
+          TAGS=$(jq -r '.[]' <<< '${{ toJson(matrix.images.Tags) }}')
+          ARGS=$(jq -r '.[]' <<< '${{ toJson(matrix.images.Args) }}')
+          {
+            echo "tags<<EOF"
+            echo "$TAGS"
+            echo "EOF"
+            echo "args<<EOF"
+            echo "$ARGS"
+            echo "LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          
       - name: Docker build and push step
         uses: docker/build-push-action@v6
         with:
@@ -78,10 +93,5 @@ jobs:
           context: Docker
           file: Docker/${{ matrix.images.Name }}.Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: |-
-            ${{ join(matrix.images.Tags, '
-            ') }}
-          build-args: |-
-            ${{ join(matrix.images.Args, '
-            ') }}
-            LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}
+          tags: ${{ steps.tagsargs.outputs.tags }}
+          build-args: ${{ steps.tagsargs.outputs.args }}
