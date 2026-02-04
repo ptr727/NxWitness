@@ -1,9 +1,6 @@
-using System.Text;
-using Serilog;
-
 namespace CreateMatrix;
 
-public class DockerFile
+internal static class DockerFile
 {
     public static void Create(
         List<ProductInfo> productList,
@@ -24,7 +21,7 @@ public class DockerFile
             );
 
             // If the specific label is not found, use the latest version
-            if (versionInfo == default(VersionInfo))
+            if (versionInfo == null)
             {
                 Log.Logger.Warning(
                     "Label {Label} not found for {Product}, using latest",
@@ -38,26 +35,26 @@ public class DockerFile
             ArgumentNullException.ThrowIfNull(versionInfo);
 
             // Create the standard Docker file
-            string dockerFile = CreateDockerFile(productType, versionInfo, false);
+            string dockerFile = CreateDockerfile(productType, versionInfo, false);
             string filePath = Path.Combine(
                 dockerPath,
                 $"{ProductInfo.GetDocker(productType, false)}.Dockerfile"
             );
-            Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            Program.WriteFile(filePath, dockerFile);
+            Log.Logger.Information("Writing Dockerfile to {Path}", filePath);
+            File.WriteAllText(filePath, dockerFile);
 
             // Create the LSIO Docker file
-            dockerFile = CreateDockerFile(productType, versionInfo, true);
+            dockerFile = CreateDockerfile(productType, versionInfo, true);
             filePath = Path.Combine(
                 dockerPath,
                 $"{ProductInfo.GetDocker(productType, true)}.Dockerfile"
             );
-            Log.Logger.Information("Writing Docker file to {Path}", filePath);
-            Program.WriteFile(filePath, dockerFile);
+            Log.Logger.Information("Writing Dockerfile to {Path}", filePath);
+            File.WriteAllText(filePath, dockerFile);
         }
     }
 
-    private static string CreateDockerFile(
+    private static string CreateDockerfile(
         ProductInfo.ProductType productType,
         VersionInfo versionInfo,
         bool lsio
@@ -65,16 +62,15 @@ public class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(CreateFrom(productType, lsio) + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(CreateFrom(productType, lsio));
 
         // Args
-        _ = stringBuilder.Append(CreateArgs(productType, versionInfo, lsio) + "\r\n");
-
+        _ = stringBuilder.AppendLineCrlf(CreateArgs(productType, versionInfo, lsio));
         // Install
-        _ = stringBuilder.Append(CreateInstall(lsio) + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(CreateInstall(lsio));
 
         // Entrypoint
-        _ = stringBuilder.Append(CreateEntryPoint(productType, lsio) + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(CreateEntrypoint(productType, lsio));
 
         return stringBuilder.ToString();
     }
@@ -192,9 +188,9 @@ public class DockerFile
                 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
                 # Change LSIO user "abc" to ${COMPANY_NAME}
                 RUN usermod -l ${COMPANY_NAME} abc \
-                # Change group "abc" to ${COMPANY_NAME}
+                    # Change group "abc" to ${COMPANY_NAME}
                     && groupmod -n ${COMPANY_NAME} abc \
-                # Replace "abc" with ${COMPANY_NAME}
+                    # Replace "abc" with ${COMPANY_NAME}
                     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 
@@ -205,6 +201,7 @@ public class DockerFile
         install += """
             # Install the mediaserver and dependencies
             RUN apt-get update \
+                # https://github.com/ptr727/NxWitness/issues/282
                 && apt-get install --no-install-recommends --yes \
                     gdb \
                     libdrm2 \
@@ -220,7 +217,7 @@ public class DockerFile
 
         install += """
                     ./vms_server.deb \
-            # Cleanup
+                # Cleanup
                 && apt-get clean \
                 && apt-get autoremove --purge \
                 && rm -rf /var/lib/apt/lists/* \
@@ -250,7 +247,7 @@ public class DockerFile
         return install;
     }
 
-    private static string CreateEntryPoint(ProductInfo.ProductType productType, bool lsio) =>
+    private static string CreateEntrypoint(ProductInfo.ProductType productType, bool lsio) =>
         // Entrypoint
         lsio
             ? """

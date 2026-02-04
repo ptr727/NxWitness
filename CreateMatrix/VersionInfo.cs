@@ -1,10 +1,7 @@
-using System.Text.Json.Serialization;
-
 namespace CreateMatrix;
 
-public class VersionInfo
+internal sealed class VersionInfo
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum LabelType
     {
         None,
@@ -14,25 +11,22 @@ public class VersionInfo
         RC,
     }
 
-    public string Version { get; set; } = "";
-    public string UriX64 { get; set; } = "";
-    public string UriArm64 { get; set; } = "";
+    public string Version { get; set; } = string.Empty;
+    public string UriX64 { get; set; } = string.Empty;
+    public string UriArm64 { get; set; } = string.Empty;
     public List<LabelType> Labels { get; set; } = [];
 
-    public int GetBuildNumber()
-    {
+    public int GetBuildNumber() =>
         // Extract the build number using the Version class (vs. regex)
         // 5.0.0.35271 -> 35271
         // 5.1.0.35151 R1 -> 35151
-        Version version = new(Version);
-        return version.Revision;
-    }
+        new Version(Version).Revision;
 
     public void SetVersion(string version)
     {
         // Remove Rxx from version string
         // "5.0.0.35134 R10" -> "5.0.0.35134"
-        int spaceIndex = version.IndexOf(' ');
+        int spaceIndex = version.IndexOf(' ', StringComparison.Ordinal);
         Version = spaceIndex == -1 ? version : version[..spaceIndex];
     }
 
@@ -53,14 +47,10 @@ public class VersionInfo
 
     public static IEnumerable<LabelType> GetLabelTypes() =>
         // Create list of label types
-        [
-            .. Enum.GetValues<LabelType>()
-                .Cast<LabelType>()
-                .Where(labelType => labelType != LabelType.None),
-        ];
+        [.. Enum.GetValues<LabelType>().Where(labelType => labelType != LabelType.None)];
 }
 
-public class VersionInfoComparer : Comparer<VersionInfo>
+internal sealed class VersionInfoComparer : Comparer<VersionInfo>
 {
     // Compare using version numbers
     public override int Compare(VersionInfo? x, VersionInfo? y) =>

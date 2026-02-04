@@ -1,17 +1,12 @@
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Globalization;
-using Serilog;
 
 namespace CreateMatrix;
 
-public class ImageInfo
+internal class ImageInfo
 {
-    // JSON serialized must be public get and set
-
-    public string Name { get; set; } = "";
-    public string Branch { get; set; } = "";
-    public string CacheScope { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
+    public string Branch { get; set; } = string.Empty;
+    public string CacheScope { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = [];
     public List<string> Args { get; set; } = [];
 
@@ -107,7 +102,7 @@ public class ImageInfo
 
         // Create images for each version
         List<ImageInfo> imageList = [];
-        foreach (VersionInfo? versionUri in versionSet)
+        foreach (VersionInfo versionUri in versionSet)
         {
             // Create image
             ImageInfo imageInfo = new();
@@ -152,7 +147,7 @@ public class ImageInfo
         Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
     }
 
-    public const string DownloadVersion = "DOWNLOAD_VERSION";
-    public const string DownloadX64Url = "DOWNLOAD_X64_URL";
-    public const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
+    private const string DownloadVersion = "DOWNLOAD_VERSION";
+    private const string DownloadX64Url = "DOWNLOAD_X64_URL";
+    private const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
 }

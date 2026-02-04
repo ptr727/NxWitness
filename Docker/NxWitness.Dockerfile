@@ -67,12 +67,13 @@ RUN chmod +x download.sh \
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
+    # https://github.com/ptr727/NxWitness/issues/282
     && apt-get install --no-install-recommends --yes \
         gdb \
         libdrm2 \
         sudo \
         ./vms_server.deb \
-# Cleanup
+    # Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

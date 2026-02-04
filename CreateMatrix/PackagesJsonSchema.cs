@@ -1,7 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Serilog;
-
 namespace CreateMatrix;
 
 // https://updates.networkoptix.com/{product}/{build}/packages.json
@@ -9,22 +5,22 @@ namespace CreateMatrix;
 // https://updates.networkoptix.com/default/35270/packages.json
 // https://updates.networkoptix.com/digitalwatchdog/35271/packages.json
 
-public class Variant
+internal sealed class Variant
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
 }
 
-public class Package
+internal sealed class Package
 {
     [JsonPropertyName("component")]
-    public string Component { get; set; } = "";
+    public string Component { get; set; } = string.Empty;
 
     [JsonPropertyName("platform")]
-    public string PlatformName { get; set; } = "";
+    public string PlatformName { get; set; } = string.Empty;
 
     [JsonPropertyName("file")]
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 
     [JsonPropertyName("variants")]
     public List<Variant> Variants { get; set; } = [];
@@ -46,42 +42,60 @@ public class Package
         );
 }
 
-public class PackagesJsonSchema
+internal sealed class PackagesJsonSchema
 {
     [JsonPropertyName("packages")]
     public List<Package> Packages { get; set; } = [];
 
-    private static PackagesJsonSchema FromJson(string jsonString)
+    private static PackagesJsonSchema FromJson(string json)
     {
-        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize<PackagesJsonSchema>(
-            jsonString,
-            MatrixJsonSchema.JsonReadOptions
+        PackagesJsonSchema? jsonSchema = JsonSerializer.Deserialize(
+            json,
+            PackagesJsonContext.Default.PackagesJsonSchema
         );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
 
-    public static List<Package> GetPackages(
-        HttpClient httpClient,
+    public static async Task<List<Package>> GetPackagesAsync(
         string releaseName,
-        int buildNumber
+        int buildNumber,
+        CancellationToken cancellationToken
     )
     {
         // Load packages JSON
         // https://updates.networkoptix.com/{product}/{build}/packages.json
+        ArgumentNullException.ThrowIfNull(releaseName);
+
+        HttpClient httpClient = HttpClientFactory.GetHttpClient();
         Uri packagesUri = new(
             $"https://updates.networkoptix.com/{releaseName}/{buildNumber}/packages.json"
         );
         Log.Logger.Information("Getting package information from {Uri}", packagesUri);
-        string jsonString = httpClient.GetStringAsync(packagesUri).Result;
+        string jsonString = await httpClient
+            .GetStringAsync(packagesUri, cancellationToken)
+            .ConfigureAwait(false);
 
         // Deserialize JSON
         PackagesJsonSchema packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
-        ArgumentNullException.ThrowIfNull(packagesSchema.Packages);
         ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
 
         // Return packages
         return packagesSchema.Packages;
     }
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(PackagesJsonSchema))]
+internal partial class PackagesJsonContext : JsonSerializerContext;

@@ -1,8 +1,6 @@
-using Serilog;
-
 namespace CreateMatrix;
 
-public static class ReleaseVersionForward
+internal static class ReleaseVersionForward
 {
     public static void Verify(List<ProductInfo> oldProductList, List<ProductInfo> newProductList)
     {
@@ -33,20 +31,16 @@ public static class ReleaseVersionForward
         // TODO: It is possible that a label is released, then pulled, then re-released with a lesser version
 
         // Find label in old and new product, skip if not present
-        VersionInfo? oldVersion = oldProduct.Versions.FirstOrDefault(item =>
-            item.Labels.Contains(label)
-        );
-        if (oldVersion == default(VersionInfo))
+        VersionInfo? oldVersion = oldProduct.Versions.Find(item => item.Labels.Contains(label));
+        if (oldVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", oldProduct.Product, label);
             return;
         }
 
         // Find label in new product, skip if not present
-        VersionInfo? newVersion = newProduct.Versions.FirstOrDefault(item =>
-            item.Labels.Contains(label)
-        );
-        if (newVersion == default(VersionInfo))
+        VersionInfo? newVersion = newProduct.Versions.Find(item => item.Labels.Contains(label));
+        if (newVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", newProduct.Product, label);
             return;

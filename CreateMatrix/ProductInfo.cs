@@ -1,14 +1,7 @@
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text.Json.Serialization;
-using Serilog;
-
 namespace CreateMatrix;
 
-public class ProductInfo
+internal sealed class ProductInfo
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ProductType
     {
         None,
@@ -77,11 +70,7 @@ public class ProductInfo
 
     public static IEnumerable<ProductType> GetProductTypes() =>
         // Create list of product types
-        [
-            .. Enum.GetValues<ProductType>()
-                .Cast<ProductType>()
-                .Where(productType => productType != ProductType.None),
-        ];
+        [.. Enum.GetValues<ProductType>().Where(productType => productType != ProductType.None)];
 
     public static List<ProductInfo> GetProducts() =>
         // Create list of all known products
@@ -90,7 +79,7 @@ public class ProductInfo
             select new ProductInfo { Product = productType },
         ];
 
-    public void GetVersions()
+    public async Task FetchVersionsAsync(CancellationToken cancellationToken)
     {
         // Match the logic with ReleasesTests.CreateProductInfo()
         // TODO: Refactor to reduce duplication and chance of divergence
@@ -99,11 +88,10 @@ public class ProductInfo
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
         {
-            // Reuse HttpClient
-            using HttpClient httpClient = new();
-
             // Get all releases
-            List<Release> releasesList = ReleasesJsonSchema.GetReleases(httpClient, GetRelease());
+            List<Release> releasesList = await ReleasesJsonSchema
+                .GetReleasesAsync(GetRelease(), cancellationToken)
+                .ConfigureAwait(false);
             foreach (Release release in releasesList)
             {
                 // Only process "vms" products
@@ -129,18 +117,16 @@ public class ProductInfo
                 int buildNumber = versionInfo.GetBuildNumber();
 
                 // Get available packages for this release
-                List<Package> packageList = PackagesJsonSchema.GetPackages(
-                    httpClient,
-                    GetRelease(),
-                    buildNumber
-                );
+                List<Package> packageList = await PackagesJsonSchema
+                    .GetPackagesAsync(GetRelease(), buildNumber, cancellationToken)
+                    .ConfigureAwait(false);
 
                 // Get the x64 and arm64 server ubuntu server packages
                 Package? packageX64 = packageList.Find(item => item.IsX64Server());
-                Debug.Assert(packageX64 != default(Package));
+                Debug.Assert(packageX64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
                 Package? packageArm64 = packageList.Find(item => item.IsArm64Server());
-                Debug.Assert(packageArm64 != default(Package));
+                Debug.Assert(packageArm64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
 
                 // Create the download URLs
@@ -160,7 +146,7 @@ public class ProductInfo
             // Make sure all labels are correct
             VerifyLabels();
         }
-        catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
+        catch (Exception e) when (Log.Logger.LogAndHandle(e))
         {
             // Log and rethrow
             throw;
@@ -195,7 +181,7 @@ public class ProductInfo
 
         // Does this label already exists in other versions
         VersionInfo? existingVersion = Versions.Find(item => item.Labels.Contains(label));
-        if (existingVersion == default(VersionInfo))
+        if (existingVersion == null)
         {
             // New label
             versionInfo.Labels.Add(label);
@@ -230,18 +216,20 @@ public class ProductInfo
         {
             // Find last matching item, must be sorted
             VersionInfo? version = Versions.FindLast(item => item.Labels.Contains(label));
-            if (version != default(VersionInfo))
+            if (version == null)
             {
-                Log.Logger.Warning(
-                    "{Product}: Using {SourceLabel} for {TargetLabel}",
-                    Product,
-                    label,
-                    targetLabel
-                );
-                return version;
+                continue;
             }
+
+            Log.Logger.Warning(
+                "{Product}: Using {SourceLabel} for {TargetLabel}",
+                Product,
+                label,
+                targetLabel
+            );
+            return version;
         }
-        return default;
+        return null;
     }
 
     public void VerifyLabels()
@@ -252,28 +240,29 @@ public class ProductInfo
         // If no Latest label is set, use Stable or RC or Beta as Latest
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
-            VersionInfo? latest = FindMissingLabel(
-                VersionInfo.LabelType.Latest,
-                [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]
-            );
-            ArgumentNullException.ThrowIfNull(latest);
+            VersionInfo latest =
+                FindMissingLabel(
+                    VersionInfo.LabelType.Latest,
+                    [
+                        VersionInfo.LabelType.Stable,
+                        VersionInfo.LabelType.RC,
+                        VersionInfo.LabelType.Beta,
+                    ]
+                ) ?? throw new InvalidOperationException("Latest label could not be resolved.");
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
 
         // If no Stable label is set, use Latest as stable
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
-            VersionInfo? stable = FindMissingLabel(
-                VersionInfo.LabelType.Stable,
-                [VersionInfo.LabelType.Latest]
-            );
-            ArgumentNullException.ThrowIfNull(stable);
+            VersionInfo stable =
+                FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest])
+                ?? throw new InvalidOperationException("Stable label could not be resolved.");
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
 
         // Remove all versions without labels
         _ = Versions.RemoveAll(item => item.Labels.Count == 0);
-
         // Sort by label
         Versions.ForEach(item => item.Labels.Sort());
 
@@ -313,39 +302,47 @@ public class ProductInfo
         }
     }
 
-    public void VerifyUrls()
+    public async Task VerifyUrlsAsync(CancellationToken cancellationToken)
     {
         try
         {
-            using HttpClient httpClient = new();
+            HttpClient httpClient = HttpClientFactory.GetHttpClient();
             foreach (VersionInfo versionUri in Versions)
             {
                 // Will throw on error
-                VerifyUrl(httpClient, versionUri.UriX64);
-                VerifyUrl(httpClient, versionUri.UriArm64);
+                await VerifyUrlAsync(httpClient, new Uri(versionUri.UriX64), cancellationToken)
+                    .ConfigureAwait(false);
+                await VerifyUrlAsync(httpClient, new Uri(versionUri.UriArm64), cancellationToken)
+                    .ConfigureAwait(false);
             }
         }
-        catch (Exception e) when (Log.Logger.LogAndHandle(e, MethodBase.GetCurrentMethod()?.Name))
+        catch (Exception e) when (Log.Logger.LogAndHandle(e))
         {
             // Log and rethrow
             throw;
         }
     }
 
-    private static void VerifyUrl(HttpClient httpClient, string url)
+    private static async Task VerifyUrlAsync(
+        HttpClient httpClient,
+        Uri url,
+        CancellationToken cancellationToken
+    )
     {
         // Will throw on failure
+        ArgumentNullException.ThrowIfNull(httpClient);
+        ArgumentNullException.ThrowIfNull(url);
 
         // Get URL
-        Uri uri = new(url);
         Log.Logger.Information("Verifying Url: {Url}", url);
-        HttpResponseMessage httpResponse = httpClient.GetAsync(uri).Result;
+        using HttpResponseMessage httpResponse = await httpClient
+            .GetAsync(url, cancellationToken)
+            .ConfigureAwait(false);
         _ = httpResponse.EnsureSuccessStatusCode();
 
         // Get filename from httpResponse or Uri path
-        string? fileName = null;
-        fileName ??= httpResponse.Content.Headers.ContentDisposition?.FileName;
-        fileName ??= Path.GetFileName(uri.LocalPath);
+        string? fileName = httpResponse.Content.Headers.ContentDisposition?.FileName;
+        fileName ??= Path.GetFileName(url.LocalPath);
 
         // Log details
         Log.Logger.Information(
@@ -362,7 +359,7 @@ public class ProductInfo
 
         // Verify each version
         List<VersionInfo> removeVersions = [];
-        foreach (VersionInfo? version in Versions.Where(version => !VerifyVersion(version)))
+        foreach (VersionInfo version in Versions.Where(version => !VerifyVersion(version)))
         {
             Log.Logger.Warning("{Product} : Removing {Version}", Product, version.Version);
             removeVersions.Add(version);
