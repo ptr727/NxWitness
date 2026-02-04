@@ -49,41 +49,6 @@ LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
     version=${LABEL_VERSION} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# CI hardening for flaky networks
-RUN set -eux; \
-    printf '%s\n' \
-    'Acquire::Retries "5";' \
-    'Acquire::http::Timeout "30";' \
-    'Acquire::https::Timeout "30";' \
-    'Acquire::ForceIPv4 "true";' \
-    > /etc/apt/apt.conf.d/80-ci-hardening; \
-    \
-    # Pick the correct Ubuntu archive per architecture:
-    # - amd64: use Azure mirror (often best on GitHub-hosted runners)
-    # - arm64: must use ports archive
-    case "${TARGETARCH}" in \
-    amd64)  MIRROR="https://azure.archive.ubuntu.com/ubuntu"; SECURITY="https://security.ubuntu.com/ubuntu" ;; \
-    arm64)  MIRROR="https://ports.ubuntu.com/ubuntu-ports";   SECURITY="https://ports.ubuntu.com/ubuntu-ports" ;; \
-    *) echo "Unsupported TARGETARCH=${TARGETARCH}" >&2; exit 1 ;; \
-    esac; \
-    \
-    # Rewrite sources.list to use HTTPS + chosen mirror
-    sed -i \
-    -e "s|http://archive.ubuntu.com/ubuntu|${MIRROR}|g" \
-    -e "s|http://security.ubuntu.com/ubuntu|${SECURITY}|g" \
-    -e "s|http://ports.ubuntu.com/ubuntu-ports|${MIRROR}|g" \
-    /etc/apt/sources.list; \
-    \
-    apt-get update
-
-# Install required tools and utilities
-RUN apt-get update \
-    && apt-get upgrade --yes \
-    && apt-get install --no-install-recommends --yes \
-        ca-certificates \
-        unzip \
-        wget
-
 # Download the installer file
 RUN mkdir -p /temp
 COPY download.sh /temp/download.sh
