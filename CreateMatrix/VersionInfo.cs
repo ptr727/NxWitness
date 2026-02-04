@@ -12,14 +12,11 @@ internal sealed class VersionInfo
     }
 
     public string Version { get; set; } = string.Empty;
-    public Uri UriX64 { get; set; } = null!;
-    public Uri UriArm64 { get; set; } = null!;
+    public string UriX64 { get; set; } = string.Empty;
+    public string UriArm64 { get; set; } = string.Empty;
     public List<LabelType> Labels { get; set; } = [];
 
-    /// <summary>
-    /// Gets the build number extracted from the version string.
-    /// </summary>
-    public int BuildNumber =>
+    public int GetBuildNumber() =>
         // Extract the build number using the Version class (vs. regex)
         // 5.0.0.35271 -> 35271
         // 5.1.0.35151 R1 -> 35151
@@ -27,8 +24,6 @@ internal sealed class VersionInfo
 
     public void SetVersion(string version)
     {
-        ArgumentNullException.ThrowIfNull(version);
-
         // Remove Rxx from version string
         // "5.0.0.35134 R10" -> "5.0.0.35134"
         int spaceIndex = version.IndexOf(' ', StringComparison.Ordinal);
@@ -47,19 +42,12 @@ internal sealed class VersionInfo
         return lhsVersion.CompareTo(rhsVersion);
     }
 
-    public static int Compare(VersionInfo lhs, VersionInfo rhs)
-    {
-        ArgumentNullException.ThrowIfNull(lhs);
-        ArgumentNullException.ThrowIfNull(rhs);
-
-        return Compare(lhs.Version, rhs.Version);
-    }
+    public static int Compare(VersionInfo lhs, VersionInfo rhs) =>
+        Compare(lhs.Version, rhs.Version);
 
     public static IEnumerable<LabelType> GetLabelTypes() =>
         // Create list of label types
         [.. Enum.GetValues<LabelType>().Where(labelType => labelType != LabelType.None)];
-
-    internal void SortLabels() => Labels.Sort();
 }
 
 internal sealed class VersionInfoComparer : Comparer<VersionInfo>

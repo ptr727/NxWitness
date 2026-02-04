@@ -193,7 +193,7 @@ internal sealed class Program(
         List<ProductInfo> products = [.. versionSchema.Products];
         DockerFile.Create(
             products,
-            commandLineOptions.DockerDirectory,
+            commandLineOptions.DockerDirectory.FullName,
             commandLineOptions.VersionLabel
         );
 

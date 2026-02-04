@@ -4,10 +4,19 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release History
 
-- Version 3.0:
+- Version 2.9:
   - Refactoring to match layout and style used in other projects.
-  - Updated to .NET 10, adding suport for Nullable, and AOT.
+  - Updated to .NET 10, adding support for Nullable, and AOT.
   - Restructured CLI handling logic.
+- Version 2.8:
+  - Add default `analytics` volume, along with `media` and `backup` volumes, media server complains when sharing analytics storage.
+- Version 2.7:
+  - Modified version update checking actions to create a PR vs. committing changes directly.
+- Version 2.6:
+  - Updated to Ubuntu Noble 24.04 LTS base images in [support][nxossupport-link] of v6 products.
+  - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
+- Version 2.5:
+  - Added [NxGo][nxgo-link] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][hanwhawave-link] builds, another US OEM whitelabel version Nx Witness.
   - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
@@ -33,4 +42,5 @@ This is a project to build and publish docker images for various [Network Optix]
 [hanwhavision-link]: https://hanwhavisionamerica.com/
 [hanwhawave-link]: https://wavevms.com/
 [networkoptix-link]: https://www.networkoptix.com/
+[nxgo-link]: https://www.networkoptix.com/nx-go
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support

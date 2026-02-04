@@ -3,24 +3,20 @@ namespace CreateMatrix;
 internal static class DockerFile
 {
     public static void Create(
-        IReadOnlyList<ProductInfo> productList,
-        DirectoryInfo dockerDirectory,
+        List<ProductInfo> productList,
+        string dockerPath,
         VersionInfo.LabelType label
     )
     {
-        string dockerPath = dockerDirectory.FullName;
-
         // Create a Docker file for each product type
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Find the matching product
-            ProductInfo? productInfo = productList.FirstOrDefault(item =>
-                item.Product == productType
-            );
+            ProductInfo? productInfo = productList.Find(item => item.Product == productType);
             ArgumentNullException.ThrowIfNull(productInfo);
 
             // Get the version for the label, not all releases include Beta and RC labels
-            VersionInfo? versionInfo = productInfo.Versions.FirstOrDefault(item =>
+            VersionInfo? versionInfo = productInfo.Versions.Find(item =>
                 item.Labels.Contains(label)
             );
 
@@ -32,7 +28,7 @@ internal static class DockerFile
                     label,
                     productType
                 );
-                versionInfo = productInfo.Versions.FirstOrDefault(item =>
+                versionInfo = productInfo.Versions.Find(item =>
                     item.Labels.Contains(VersionInfo.LabelType.Latest)
                 );
             }
@@ -44,7 +40,7 @@ internal static class DockerFile
                 dockerPath,
                 $"{ProductInfo.GetDocker(productType, false)}.Dockerfile"
             );
-            Log.Logger.Information("Writing Docker file to {Path}", filePath);
+            Log.Logger.Information("Writing Dockerfile to {Path}", filePath);
             File.WriteAllText(filePath, dockerFile);
 
             // Create the LSIO Docker file
@@ -53,7 +49,7 @@ internal static class DockerFile
                 dockerPath,
                 $"{ProductInfo.GetDocker(productType, true)}.Dockerfile"
             );
-            Log.Logger.Information("Writing Docker file to {Path}", filePath);
+            Log.Logger.Information("Writing Dockerfile to {Path}", filePath);
             File.WriteAllText(filePath, dockerFile);
         }
     }
@@ -66,18 +62,15 @@ internal static class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(CreateFrom(productType, lsio));
-        _ = stringBuilder.AppendLineCrlf();
+        _ = stringBuilder.AppendLineCrlf(CreateFrom(productType, lsio));
 
         // Args
-        _ = stringBuilder.Append(CreateArgs(productType, versionInfo, lsio));
-        _ = stringBuilder.AppendLineCrlf();
+        _ = stringBuilder.AppendLineCrlf(CreateArgs(productType, versionInfo, lsio));
         // Install
-        _ = stringBuilder.Append(CreateInstall(lsio));
-        _ = stringBuilder.AppendLineCrlf();
+        _ = stringBuilder.AppendLineCrlf(CreateInstall(lsio));
 
         // Entrypoint
-        _ = stringBuilder.Append(CreateEntrypoint(productType, lsio));
+        _ = stringBuilder.AppendLineCrlf(CreateEntrypoint(productType, lsio));
 
         return stringBuilder.ToString();
     }
@@ -93,20 +86,20 @@ internal static class DockerFile
             # LSIO: {{lsio}}
 
             # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-            # Latest Ubuntu supported for v5.1 is Jammy
+            # Latest Ubuntu supported for v6 is Noble
 
             """;
         if (lsio)
         {
             from += """
-                FROM lsiobase/ubuntu:jammy
+                FROM lsiobase/ubuntu:noble
 
                 """;
         }
         else
         {
             from += """
-                FROM ubuntu:jammy
+                FROM ubuntu:noble
 
                 """;
         }
@@ -188,27 +181,30 @@ internal static class DockerFile
         {
             install += """
                 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
-                # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
-                # We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
+                # https://docs.linuxserver.io/misc/non-root/
                 # LSIO does not officially support changing the "abc" username
                 # https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-                # https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
-                # Change user "abc" to ${COMPANY_NAME}
+                # https://github.com/linuxserver/docker-baseimage-ubuntu/blob/noble/root/etc/s6-overlay/s6-rc.d/init-adduser/run
+                # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
+                # Change LSIO user "abc" to ${COMPANY_NAME}
                 RUN usermod -l ${COMPANY_NAME} abc \
-                # Change group "abc" to ${COMPANY_NAME}
+                    # Change group "abc" to ${COMPANY_NAME}
                     && groupmod -n ${COMPANY_NAME} abc \
-                # Replace "abc" with ${COMPANY_NAME}
+                    # Replace "abc" with ${COMPANY_NAME}
                     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 
                 """;
         }
 
+        // https://github.com/ptr727/NxWitness/issues/282
         install += """
             # Install the mediaserver and dependencies
             RUN apt-get update \
+                # https://github.com/ptr727/NxWitness/issues/282
                 && apt-get install --no-install-recommends --yes \
                     gdb \
+                    libdrm2 \
 
             """;
         if (!lsio)
@@ -221,7 +217,7 @@ internal static class DockerFile
 
         install += """
                     ./vms_server.deb \
-            # Cleanup
+                # Cleanup
                 && apt-get clean \
                 && apt-get autoremove --purge \
                 && rm -rf /var/lib/apt/lists/* \
@@ -264,14 +260,15 @@ internal static class DockerFile
                 EXPOSE 7001
 
                 # Create mount points
-                # Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+                # Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
                 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
                 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
                 # /root/.config/nx_ini links -> /config/ini
                 # /config is for configuration
-                # /media is for media recording
-                VOLUME /config /media
-
+                # /media is for recordings
+                # /backup is for backups
+                # /analytics is for analytics
+                VOLUME /config /media /backup /analytics
                 """
             : $$"""
                 # Copy the entrypoint.sh launch script
@@ -289,7 +286,8 @@ internal static class DockerFile
                 # Expose port 7001
                 EXPOSE 7001
 
-                # Link volumes directly, e.g.
+                # Create mount points
+                # Link config directly to internal paths
                 # /mnt/config/etc:opt/{{ProductInfo.GetCompany(
                     productType
                 ).ToLowerInvariant()}}/mediaserver/etc
@@ -299,7 +297,9 @@ internal static class DockerFile
                 # /mnt/config/var:/opt/{{ProductInfo.GetCompany(
                     productType
                 ).ToLowerInvariant()}}/mediaserver/var
-                # /mnt/media:/media
-
+                # /media is for recordings
+                # /backup is for backups
+                # /analytics is for analytics
+                VOLUME /media /backup /analytics
                 """;
 }

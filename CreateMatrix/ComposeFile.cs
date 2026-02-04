@@ -32,20 +32,17 @@ internal static class ComposeFile
 
         // Compose file header
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(
+        _ = stringBuilder.AppendLineCrlf(
             """
             # Compose file created by CreateMatrix, do not modify by hand
 
             """
         );
-        _ = stringBuilder.AppendLineCrlf();
 
         // Create volumes
-        _ = stringBuilder.Append(CreateVolumes());
-        _ = stringBuilder.AppendLineCrlf();
+        _ = stringBuilder.AppendLineCrlf(CreateVolumes());
         // Create services
-        _ = stringBuilder.Append(CreateServices(label));
-        _ = stringBuilder.AppendLineCrlf();
+        _ = stringBuilder.AppendLineCrlf(CreateServices(label));
 
         return stringBuilder.ToString();
     }
@@ -53,24 +50,21 @@ internal static class ComposeFile
     private static string CreateVolumes()
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(
+        _ = stringBuilder.AppendLineCrlf(
             """
             volumes:
 
             """
         );
-        _ = stringBuilder.AppendLineCrlf();
 
         // Create a volume for every product
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.Append(CreateVolume(productType, false));
-            _ = stringBuilder.AppendLineCrlf();
+            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, false));
 
             // LSIO
-            _ = stringBuilder.Append(CreateVolume(productType, true));
-            _ = stringBuilder.AppendLineCrlf();
+            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, true));
         }
 
         return stringBuilder.ToString();
@@ -82,6 +76,8 @@ internal static class ComposeFile
                   # Dockerfile : {{ProductInfo.GetDocker(productType, lsio)}}
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_config:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_backup:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_analytics:
 
                 """
             : $$"""
@@ -90,20 +86,20 @@ internal static class ComposeFile
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_ini:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_var:
                   test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:
-
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_backup:
+                  test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_analytics:
 
                 """;
 
     private static string CreateServices(string? label)
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(
+        _ = stringBuilder.AppendLineCrlf(
             """
             services:
 
             """
         );
-        _ = stringBuilder.AppendLineCrlf();
 
         // Create a service for every product
         int standardPort = 7101,
@@ -111,11 +107,11 @@ internal static class ComposeFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.Append(CreateService(productType, false, standardPort++, label));
-            _ = stringBuilder.AppendLineCrlf();
+            _ = stringBuilder.AppendLineCrlf(
+                CreateService(productType, false, standardPort++, label)
+            );
             // LSIO
-            _ = stringBuilder.Append(CreateService(productType, true, lsioPort++, label));
-            _ = stringBuilder.AppendLineCrlf();
+            _ = stringBuilder.AppendLineCrlf(CreateService(productType, true, lsioPort++, label));
         }
 
         return stringBuilder.ToString();
@@ -161,6 +157,14 @@ internal static class ComposeFile
                     productType,
                     lsio
                 ).ToLowerInvariant()}}_media:/media
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_backup:/backup
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_analytics:/analytics
 
                 """;
         }
@@ -186,7 +190,18 @@ internal static class ComposeFile
                 ).ToLowerInvariant()}}_var:/opt/{{ProductInfo.GetCompany(
                     productType
                 ).ToLowerInvariant()}}/mediaserver/var
-                      - test_{{ProductInfo.GetDocker(productType, lsio).ToLowerInvariant()}}_media:/media
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_media:/media
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_backup:/backup
+                      - test_{{ProductInfo.GetDocker(
+                    productType,
+                    lsio
+                ).ToLowerInvariant()}}_analytics:/analytics
 
                 """;
         }

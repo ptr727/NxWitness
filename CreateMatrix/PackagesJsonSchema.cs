@@ -57,7 +57,7 @@ internal sealed class PackagesJsonSchema
         return jsonSchema;
     }
 
-    public static async Task<IReadOnlyList<Package>> GetPackagesAsync(
+    public static async Task<List<Package>> GetPackagesAsync(
         string releaseName,
         int buildNumber,
         CancellationToken cancellationToken
@@ -82,7 +82,7 @@ internal sealed class PackagesJsonSchema
         ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
 
         // Return packages
-        return [.. packagesSchema.Packages];
+        return packagesSchema.Packages;
     }
 }
 

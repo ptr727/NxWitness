@@ -72,23 +72,13 @@ internal sealed class ProductInfo
         // Create list of product types
         [.. Enum.GetValues<ProductType>().Where(productType => productType != ProductType.None)];
 
-    public static IReadOnlyList<ProductInfo> GetProducts()
-    {
+    public static List<ProductInfo> GetProducts() =>
         // Create list of all known products
-        List<ProductInfo> products =
         [
             .. from ProductType productType in GetProductTypes()
             select new ProductInfo { Product = productType },
         ];
-        return products;
-    }
 
-    /// <summary>
-    /// Fetches and validates version data from the release endpoints.
-    /// </summary>
-    /// <param name="cancellationToken">
-    /// A <see cref="CancellationToken"/> that can be used to cancel the request.
-    /// </param>
     public async Task FetchVersionsAsync(CancellationToken cancellationToken)
     {
         // Match the logic with ReleasesTests.CreateProductInfo()
@@ -99,16 +89,16 @@ internal sealed class ProductInfo
         try
         {
             // Get all releases
-            IReadOnlyList<Release> releasesList = await ReleasesJsonSchema
+            List<Release> releasesList = await ReleasesJsonSchema
                 .GetReleasesAsync(GetRelease(), cancellationToken)
                 .ConfigureAwait(false);
             foreach (Release release in releasesList)
             {
-                // We process only "vms" products
+                // Only process "vms" products
                 if (!release.Product.Equals(Release.VmsProduct, StringComparison.OrdinalIgnoreCase))
                 {
-                    Log.Information(
-                        "{Product}: Skipping non-vms product: {ReleaseProduct}",
+                    Log.Logger.Warning(
+                        "{Product}: Skipping {ReleaseProduct}",
                         Product,
                         release.Product
                     );
@@ -124,29 +114,27 @@ internal sealed class ProductInfo
                 AddLabel(versionInfo, release.GetLabel());
 
                 // Get the build number from the version
-                int buildNumber = versionInfo.BuildNumber;
+                int buildNumber = versionInfo.GetBuildNumber();
 
                 // Get available packages for this release
-                IReadOnlyList<Package> packageList = await PackagesJsonSchema
+                List<Package> packageList = await PackagesJsonSchema
                     .GetPackagesAsync(GetRelease(), buildNumber, cancellationToken)
                     .ConfigureAwait(false);
 
                 // Get the x64 and arm64 server ubuntu server packages
-                Package? packageX64 = packageList.FirstOrDefault(item => item.IsX64Server());
+                Package? packageX64 = packageList.Find(item => item.IsX64Server());
                 Debug.Assert(packageX64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
-                Package? packageArm64 = packageList.FirstOrDefault(item => item.IsArm64Server());
+                Package? packageArm64 = packageList.Find(item => item.IsArm64Server());
                 Debug.Assert(packageArm64 != null);
                 Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
 
                 // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
-                versionInfo.UriX64 = new Uri(
-                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageX64.File}"
-                );
-                versionInfo.UriArm64 = new Uri(
-                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}"
-                );
+                versionInfo.UriX64 =
+                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageX64.File}";
+                versionInfo.UriArm64 =
+                    $"https://updates.networkoptix.com/{GetRelease()}/{buildNumber}/{packageArm64.File}";
 
                 // Verify and add to list
                 if (VerifyVersion(versionInfo))
@@ -169,14 +157,14 @@ internal sealed class ProductInfo
     {
         // Static rules:
 
-        // Ubuntu Jammy requires version 5.1 or later
-        if (versionInfo.CompareTo("5.1") >= 0)
+        // Ubuntu Noble requires version 6.0 or later
+        if (versionInfo.CompareTo("6.0") >= 0)
         {
             return true;
         }
 
         Log.Logger.Warning(
-            "{Product}:{Version} : Ubuntu Jammy requires v5.1+",
+            "{Product}:{Version} : Ubuntu Noble requires v6.0+",
             Product,
             versionInfo.Version
         );
@@ -185,8 +173,6 @@ internal sealed class ProductInfo
 
     public void AddLabel(VersionInfo versionInfo, VersionInfo.LabelType label)
     {
-        ArgumentNullException.ThrowIfNull(versionInfo);
-
         // Ignore if label is None
         if (label == VersionInfo.LabelType.None)
         {
@@ -278,10 +264,7 @@ internal sealed class ProductInfo
         // Remove all versions without labels
         _ = Versions.RemoveAll(item => item.Labels.Count == 0);
         // Sort by label
-        foreach (VersionInfo version in Versions)
-        {
-            version.SortLabels();
-        }
+        Versions.ForEach(item => item.Labels.Sort());
 
         // Must have 1 Latest and 1 Stable label
         ArgumentOutOfRangeException.ThrowIfNotEqual(
@@ -319,12 +302,6 @@ internal sealed class ProductInfo
         }
     }
 
-    /// <summary>
-    /// Verifies all download URLs for the loaded versions.
-    /// </summary>
-    /// <param name="cancellationToken">
-    /// A <see cref="CancellationToken"/> that can be used to cancel the request.
-    /// </param>
     public async Task VerifyUrlsAsync(CancellationToken cancellationToken)
     {
         try
@@ -333,9 +310,9 @@ internal sealed class ProductInfo
             foreach (VersionInfo versionUri in Versions)
             {
                 // Will throw on error
-                await VerifyUrlAsync(httpClient, versionUri.UriX64, cancellationToken)
+                await VerifyUrlAsync(httpClient, new Uri(versionUri.UriX64), cancellationToken)
                     .ConfigureAwait(false);
-                await VerifyUrlAsync(httpClient, versionUri.UriArm64, cancellationToken)
+                await VerifyUrlAsync(httpClient, new Uri(versionUri.UriArm64), cancellationToken)
                     .ConfigureAwait(false);
             }
         }

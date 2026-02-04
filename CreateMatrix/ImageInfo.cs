@@ -11,10 +11,7 @@ internal class ImageInfo
     public List<string> Args { get; set; } = [];
 
     private static readonly string[] s_baseNames = ["", "LSIO"];
-    private static readonly string[] s_registryNames =
-    [
-        "docker.io/ptr727", /*, "ghcr.io/ptr727"*/
-    ];
+    private static readonly string[] s_registryNames = ["docker.io/ptr727"];
 
     private void SetName(ProductInfo.ProductType productType, string baseName)
     {
@@ -50,10 +47,8 @@ internal class ImageInfo
         }
     }
 
-    public static IReadOnlyList<ImageInfo> CreateImages(IReadOnlyList<ProductInfo> productList)
+    public static List<ImageInfo> CreateImages(List<ProductInfo> productList)
     {
-        ArgumentNullException.ThrowIfNull(productList);
-
         // Create images for all products
         List<ImageInfo> imageList = [];
         foreach (ProductInfo productInfo in productList)
@@ -84,7 +79,11 @@ internal class ImageInfo
         imageList.AddRange(developList);
 
         // Sort args and tags to make diffs easier
-        imageList.ForEach(item => item.SortMetadata());
+        imageList.ForEach(item =>
+        {
+            item.Args.Sort();
+            item.Tags.Sort();
+        });
 
         return imageList;
     }
@@ -113,10 +112,7 @@ internal class ImageInfo
             imageInfo.AddTag(versionUri.Version, tagPrefix);
 
             // Add tags for all labels
-            foreach (VersionInfo.LabelType label in versionUri.Labels)
-            {
-                imageInfo.AddTag(label.ToString(), tagPrefix);
-            }
+            versionUri.Labels.ForEach(item => imageInfo.AddTag(item.ToString(), tagPrefix));
 
             // Add prefix as a standalone tag for latest
             if (
@@ -147,23 +143,11 @@ internal class ImageInfo
             Tags.Count,
             Args.Count
         );
-        foreach (string tag in Tags)
-        {
-            Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, tag);
-        }
-        foreach (string arg in Args)
-        {
-            Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, arg);
-        }
+        Tags.ForEach(item => Log.Logger.Information("Name: {Name}, Tag: {Tag}", Name, item));
+        Args.ForEach(item => Log.Logger.Information("Name: {Name}, Arg: {Arg}", Name, item));
     }
 
     private const string DownloadVersion = "DOWNLOAD_VERSION";
     private const string DownloadX64Url = "DOWNLOAD_X64_URL";
     private const string DownloadArm64Url = "DOWNLOAD_ARM64_URL";
-
-    private void SortMetadata()
-    {
-        Args.Sort(StringComparer.Ordinal);
-        Tags.Sort(StringComparer.Ordinal);
-    }
 }

@@ -42,6 +42,7 @@ internal class Release
     public const string RcPublication = "rc";
     public const string BetaPublication = "beta";
     public const string VmsProduct = "vms";
+    public const string DesktopProduct = "desktop_client";
 
     private bool IsPublished() =>
         // Logic follows similar patterns as used in C++ Desktop Client
@@ -66,7 +67,7 @@ internal class ReleasesJsonSchema
         return jsonSchema;
     }
 
-    public static async Task<IReadOnlyList<Release>> GetReleasesAsync(
+    public static async Task<List<Release>> GetReleasesAsync(
         string productName,
         CancellationToken cancellationToken
     )
@@ -88,7 +89,7 @@ internal class ReleasesJsonSchema
         ArgumentOutOfRangeException.ThrowIfZero(releasesSchema.Releases.Count);
 
         // Return releases
-        return [.. releasesSchema.Releases];
+        return releasesSchema.Releases;
     }
 }
 

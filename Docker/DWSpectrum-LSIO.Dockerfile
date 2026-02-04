@@ -6,8 +6,8 @@
 # LSIO: True
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest Ubuntu supported for v5.1 is Jammy
-FROM lsiobase/ubuntu:jammy
+# Latest Ubuntu supported for v6 is Noble
+FROM lsiobase/ubuntu:noble
 
 # Labels
 ARG LABEL_NAME="DWSpectrum-LSIO"
@@ -66,24 +66,26 @@ RUN chmod +x download.sh \
     && ./download.sh
 
 # LSIO maps the host PUID and PGID environment variables to "abc" in the container.
-# The mediaserver calls "chown ${COMPANY_NAME}" at runtime
-# We have to match the ${COMPANY_NAME} username with the LSIO "abc" usernames
+# https://docs.linuxserver.io/misc/non-root/
 # LSIO does not officially support changing the "abc" username
 # https://discourse.linuxserver.io/t/changing-abc-container-user/3208
-# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/jammy/root/etc/s6-overlay/s6-rc.d/init-adduser/run
-# Change user "abc" to ${COMPANY_NAME}
+# https://github.com/linuxserver/docker-baseimage-ubuntu/blob/noble/root/etc/s6-overlay/s6-rc.d/init-adduser/run
+# The mediaserver calls "chown ${COMPANY_NAME}" at runtime
+# Change LSIO user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
-# Change group "abc" to ${COMPANY_NAME}
+    # Change group "abc" to ${COMPANY_NAME}
     && groupmod -n ${COMPANY_NAME} abc \
-# Replace "abc" with ${COMPANY_NAME}
+    # Replace "abc" with ${COMPANY_NAME}
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
+    # https://github.com/ptr727/NxWitness/issues/282
     && apt-get install --no-install-recommends --yes \
         gdb \
+        libdrm2 \
         ./vms_server.deb \
-# Cleanup
+    # Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
@@ -102,10 +104,12 @@ COPY s6-overlay /etc/s6-overlay
 EXPOSE 7001
 
 # Create mount points
-# Links will be created at runtime in LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+# Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
 # /root/.config/nx_ini links -> /config/ini
 # /config is for configuration
-# /media is for media recording
-VOLUME /config /media
+# /media is for recordings
+# /backup is for backups
+# /analytics is for analytics
+VOLUME /config /media /backup /analytics

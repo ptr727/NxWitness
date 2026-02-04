@@ -2,31 +2,17 @@ namespace CreateMatrix;
 
 internal static class ReleaseVersionForward
 {
-    public static void Verify(
-        IReadOnlyList<ProductInfo> oldProductList,
-        IList<ProductInfo> newProductList
-    )
+    public static void Verify(List<ProductInfo> oldProductList, List<ProductInfo> newProductList)
     {
-        ArgumentNullException.ThrowIfNull(oldProductList);
-        ArgumentNullException.ThrowIfNull(newProductList);
-
         // newProductList will be updated in-place
 
-        // Verify against all products in the new list
-        foreach (ProductInfo newProduct in newProductList)
+        // Verify against all products in the old list
+        foreach (ProductInfo oldProduct in oldProductList)
         {
-            // Find matching old product, skip if not present
-            ProductInfo? oldProduct = oldProductList.FirstOrDefault(item =>
-                item.Product == newProduct.Product
+            // Find matching new product, must be present
+            ProductInfo newProduct = newProductList.First(item =>
+                item.Product == oldProduct.Product
             );
-            if (oldProduct == null)
-            {
-                Log.Logger.Warning(
-                    "{Product}: Old product not found, skipping version forward checks",
-                    newProduct.Product
-                );
-                continue;
-            }
 
             // Verify all labels
             foreach (VersionInfo.LabelType label in VersionInfo.GetLabelTypes())
@@ -45,9 +31,7 @@ internal static class ReleaseVersionForward
         // TODO: It is possible that a label is released, then pulled, then re-released with a lesser version
 
         // Find label in old and new product, skip if not present
-        VersionInfo? oldVersion = oldProduct.Versions.FirstOrDefault(item =>
-            item.Labels.Contains(label)
-        );
+        VersionInfo? oldVersion = oldProduct.Versions.Find(item => item.Labels.Contains(label));
         if (oldVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", oldProduct.Product, label);
@@ -55,9 +39,7 @@ internal static class ReleaseVersionForward
         }
 
         // Find label in new product, skip if not present
-        VersionInfo? newVersion = newProduct.Versions.FirstOrDefault(item =>
-            item.Labels.Contains(label)
-        );
+        VersionInfo? newVersion = newProduct.Versions.Find(item => item.Labels.Contains(label));
         if (newVersion == null)
         {
             Log.Logger.Warning("{Product}:{Label} : Label not found", newProduct.Product, label);
@@ -103,10 +85,7 @@ internal static class ReleaseVersionForward
 
             // Replace all versions if the labels do not match
             newProduct.Versions.Clear();
-            foreach (VersionInfo version in oldProduct.Versions)
-            {
-                newProduct.Versions.Add(version);
-            }
+            newProduct.Versions.AddRange(oldProduct.Versions);
         }
     }
 }

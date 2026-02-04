@@ -11,8 +11,7 @@
           "Labels": [
             "Stable",
             "Latest"
-          ],
-          "BuildNumber": 42176
+          ]
         }
       ]
     },
@@ -26,8 +25,7 @@
           "Labels": [
             "Stable",
             "Latest"
-          ],
-          "BuildNumber": 42176
+          ]
         }
       ]
     },
@@ -41,8 +39,7 @@
           "Labels": [
             "Stable",
             "Latest"
-          ],
-          "BuildNumber": 42176
+          ]
         }
       ]
     },
@@ -55,8 +52,7 @@
           "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/41837/dwspectrum-server_update-6.0.6.41837-linux_arm64.zip",
           "Labels": [
             "Stable"
-          ],
-          "BuildNumber": 41837
+          ]
         },
         {
           "Version": "6.1.0.42176",
@@ -64,8 +60,7 @@
           "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/42176/dwspectrum-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Latest"
-          ],
-          "BuildNumber": 42176
+          ]
         }
       ]
     },
@@ -78,8 +73,7 @@
           "UriArm64": "https://updates.networkoptix.com/hanwha/41290/wave-server_update-6.0.5.41290-linux_arm64.zip",
           "Labels": [
             "Stable"
-          ],
-          "BuildNumber": 41290
+          ]
         },
         {
           "Version": "6.1.0.42176",
@@ -87,8 +81,7 @@
           "UriArm64": "https://updates.networkoptix.com/hanwha/42176/wave-server_update-6.1.0.42176-linux_arm64.zip",
           "Labels": [
             "Latest"
-          ],
-          "BuildNumber": 42176
+          ]
         }
       ]
     }

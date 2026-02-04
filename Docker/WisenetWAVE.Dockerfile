@@ -6,8 +6,8 @@
 # LSIO: False
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-# Latest Ubuntu supported for v5.1 is Jammy
-FROM ubuntu:jammy
+# Latest Ubuntu supported for v6 is Noble
+FROM ubuntu:noble
 
 # Labels
 ARG LABEL_NAME="WisenetWAVE"
@@ -67,11 +67,13 @@ RUN chmod +x download.sh \
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
+    # https://github.com/ptr727/NxWitness/issues/282
     && apt-get install --no-install-recommends --yes \
         gdb \
+        libdrm2 \
         sudo \
         ./vms_server.deb \
-# Cleanup
+    # Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \
@@ -96,8 +98,12 @@ ENTRYPOINT ["/opt/entrypoint.sh"]
 # Expose port 7001
 EXPOSE 7001
 
-# Link volumes directly, e.g.
+# Create mount points
+# Link config directly to internal paths
 # /mnt/config/etc:opt/hanwha/mediaserver/etc
 # /mnt/config/nx_ini:/home/hanwha/.config/nx_ini
 # /mnt/config/var:/opt/hanwha/mediaserver/var
-# /mnt/media:/media
+# /media is for recordings
+# /backup is for backups
+# /analytics is for analytics
+VOLUME /media /backup /analytics

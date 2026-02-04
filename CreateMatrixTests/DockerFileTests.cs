@@ -12,7 +12,7 @@ public sealed class DockerFileTests
         {
             List<ProductInfo> products = CreateProducts();
 
-            DockerFile.Create(products, tempDirectory, VersionInfo.LabelType.Latest);
+            DockerFile.Create(products, tempDirectory.FullName, VersionInfo.LabelType.Latest);
 
             foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
             {
@@ -45,7 +45,7 @@ public sealed class DockerFileTests
         {
             List<ProductInfo> products = CreateProducts();
 
-            DockerFile.Create(products, tempDirectory, VersionInfo.LabelType.Beta);
+            DockerFile.Create(products, tempDirectory.FullName, VersionInfo.LabelType.Beta);
 
             string nxGoFile = Path.Combine(
                 tempDirectory.FullName,
@@ -78,8 +78,8 @@ public sealed class DockerFileTests
             VersionInfo latest = new()
             {
                 Version = "5.1.0.12345",
-                UriX64 = new Uri("https://example.com/x64.deb"),
-                UriArm64 = new Uri("https://example.com/arm64.deb"),
+                UriX64 = "https://example.com/x64.deb",
+                UriArm64 = "https://example.com/arm64.deb",
             };
             latest.Labels.Add(VersionInfo.LabelType.Latest);
             latest.Labels.Add(VersionInfo.LabelType.Stable);
@@ -90,8 +90,8 @@ public sealed class DockerFileTests
                 VersionInfo beta = new()
                 {
                     Version = "5.2.0.23456",
-                    UriX64 = new Uri("https://example.com/x64-beta.deb"),
-                    UriArm64 = new Uri("https://example.com/arm64-beta.deb"),
+                    UriX64 = "https://example.com/x64-beta.deb",
+                    UriArm64 = "https://example.com/arm64-beta.deb",
                 };
                 beta.Labels.Add(VersionInfo.LabelType.Beta);
                 productInfo.Versions.Add(beta);

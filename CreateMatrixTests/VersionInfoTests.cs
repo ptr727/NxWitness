@@ -19,7 +19,7 @@ public sealed class VersionInfoTests
     {
         VersionInfo versionInfo = new() { Version = "5.0.0.35271" };
 
-        int buildNumber = versionInfo.BuildNumber;
+        int buildNumber = versionInfo.GetBuildNumber();
 
         buildNumber.Should().Be(35271);
     }
