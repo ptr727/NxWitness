@@ -23,7 +23,7 @@ internal sealed class Package
     public string File { get; set; } = string.Empty;
 
     [JsonPropertyName("variants")]
-    public List<Variant> Variants { get; init; } = [];
+    public List<Variant> Variants { get; set; } = [];
 
     public bool IsX64Server() =>
         // Test for Server and x64 and Ubuntu
@@ -45,7 +45,7 @@ internal sealed class Package
 internal sealed class PackagesJsonSchema
 {
     [JsonPropertyName("packages")]
-    public List<Package> Packages { get; init; } = [];
+    public List<Package> Packages { get; set; } = [];
 
     private static PackagesJsonSchema FromJson(string json)
     {

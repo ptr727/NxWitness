@@ -12,7 +12,7 @@ internal class VersionJsonSchema : VersionJsonSchemaBase
     public const int Version = 2;
 
     [JsonRequired]
-    public List<ProductInfo> Products { get; init; } = [];
+    public List<ProductInfo> Products { get; set; } = [];
 
     public static VersionJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
 

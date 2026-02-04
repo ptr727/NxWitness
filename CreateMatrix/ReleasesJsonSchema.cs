@@ -55,7 +55,7 @@ internal class Release
 internal class ReleasesJsonSchema
 {
     [JsonPropertyName("releases")]
-    public List<Release> Releases { get; init; } = [];
+    public List<Release> Releases { get; set; } = [];
 
     private static ReleasesJsonSchema FromJson(string json)
     {

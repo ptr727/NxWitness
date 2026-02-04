@@ -12,7 +12,7 @@ internal class MatrixJsonSchema : MatrixJsonSchemaBase
     public const int Version = 2;
 
     [JsonRequired]
-    public List<ImageInfo> Images { get; init; } = [];
+    public List<ImageInfo> Images { get; set; } = [];
 
     public static void ToFile(string path, MatrixJsonSchema json)
     {

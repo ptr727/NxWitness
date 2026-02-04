@@ -91,7 +91,7 @@ services:
     user: root
     group_add:
       - ${DOCKER_GROUP_ID}
-    security_opt:
+    security_opt: # Set with care
       - seccomp=unconfined
       - apparmor=unconfined
     environment:
