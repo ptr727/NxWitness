@@ -32,12 +32,10 @@ For comprehensive coding and formatting standards, follow:
 
 ## Build and Validation Workflow
 
-- Primary developer entry points are the VS Code launch configurations in `.vscode/launch.json`:
-  - `Create Version`: runs `CreateMatrix.dll` with `version --versionpath=./Make/Version.json`.
-  - `Create Matrix`: runs `CreateMatrix.dll` with `matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion`.
-  - `Create Schema`: runs `CreateMatrix.dll` with `schema --versionschemapath=./Samples/Version.schema.json --matrixschemapath=./Samples/Matrix.schema.json`.
-  - `Create Docker and Compose Files`: runs `CreateMatrix.dll` with `make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta`.
-  - `.NET Core Attach`: attach to a running process.
+- Primary developer entry points are the `CreateMatrix` CLI commands invoked directly or via the scripts in `Make/`:
+  - `version --versionpath=./Make/Version.json`.
+  - `matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion`.
+  - `make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta`.
 - Formatting and style checks are enforced by Husky.Net and VS Code tasks.
 - Required tasks are documented in `CODESTYLE.md` and `.husky/task-runner.json`.
 - C# code should be formatted with CSharpier, then verified with `dotnet format` (style).

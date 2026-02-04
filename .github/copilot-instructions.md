@@ -23,7 +23,7 @@ This repository builds and publishes Docker images for Network Optix VMS product
 - Templates: Unraid container templates in [Unraid/](../Unraid/).
 
 ### Build and Validation Workflow (High Level)
-- The primary entry points are VS Code launch configurations that run CreateMatrix commands to generate versions, matrix data, schemas, and Docker/compose files (see [`.vscode/launch.json`](../.vscode/launch.json)).
+- Primary entry points are the `CreateMatrix` CLI commands (version, matrix, make) run directly or via scripts in [Make/](../Make/).
 - Formatting and style verification are enforced by CSharpier and dotnet format, with Husky.Net hooks.
 - The `.Net Format` VS Code task in [`.vscode/tasks.json`](../.vscode/tasks.json) must be clean and warning-free at all times.
 
