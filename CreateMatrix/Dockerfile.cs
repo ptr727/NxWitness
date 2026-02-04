@@ -159,7 +159,7 @@ internal static class DockerFile
     {
         // Install
         string install = """
-            # Make apt more resilient in CI
+            # CI hardening for flaky networks
             RUN set -eux; \
                 printf '%s\n' \
                 'Acquire::Retries "5";' \
@@ -168,12 +168,20 @@ internal static class DockerFile
                 'Acquire::ForceIPv4 "true";' \
                 > /etc/apt/apt.conf.d/80-ci-hardening; \
                 \
-                # Noble base images typically use archive.ubuntu.com + security.ubuntu.com (HTTP).
-                # Move main + updates to the Azure mirror (usually closer to GitHub runners),
-                # and use HTTPS to avoid port 80 timeouts.
+                # Pick the correct Ubuntu archive per architecture:
+                # - amd64: use Azure mirror (often best on GitHub-hosted runners)
+                # - arm64: must use ports archive
+                case "${TARGETARCH}" in \
+                amd64)  MIRROR="https://azure.archive.ubuntu.com/ubuntu"; SECURITY="https://security.ubuntu.com/ubuntu" ;; \
+                arm64)  MIRROR="https://ports.ubuntu.com/ubuntu-ports";   SECURITY="https://ports.ubuntu.com/ubuntu-ports" ;; \
+                *) echo "Unsupported TARGETARCH=${TARGETARCH}" >&2; exit 1 ;; \
+                esac; \
+                \
+                # Rewrite sources.list to use HTTPS + chosen mirror
                 sed -i \
-                -e 's|http://archive.ubuntu.com/ubuntu|https://azure.archive.ubuntu.com/ubuntu|g' \
-                -e 's|http://security.ubuntu.com/ubuntu|https://security.ubuntu.com/ubuntu|g' \
+                -e "s|http://archive.ubuntu.com/ubuntu|${MIRROR}|g" \
+                -e "s|http://security.ubuntu.com/ubuntu|${SECURITY}|g" \
+                -e "s|http://ports.ubuntu.com/ubuntu-ports|${MIRROR}|g" \
                 /etc/apt/sources.list; \
                 \
                 apt-get update

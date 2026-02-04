@@ -8,7 +8,7 @@ This is a project to build and publish docker images for various [Network Optix]
   - Refactoring to match layout and style used in other projects.
   - Updated to .NET 10, adding support for Nullable, and AOT.
   - Restructured CLI handling logic.
-  - Installing packages from `azure.archive.ubuntu.com` to avoid timeouts when using `archive.ubuntu.com`.
+  - Hardening APT install to try and use Azure mirrors if available for Ubuntu packages.
 - Version 2.8:
   - Add default `analytics` volume, along with `media` and `backup` volumes, media server complains when sharing analytics storage.
 - Version 2.7:
