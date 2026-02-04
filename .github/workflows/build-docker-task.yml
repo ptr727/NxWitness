@@ -78,5 +78,10 @@ jobs:
           context: Docker
           file: Docker/${{ matrix.images.Name }}.Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: ${{ join(matrix.images.Tags, ',') }}
-          build-args: ${{ join(matrix.images.Args, ',') }},LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}
+          tags: |-
+            ${{ join(matrix.images.Tags, '
+            ') }}
+          build-args: |-
+            ${{ join(matrix.images.Args, '
+            ') }}
+            LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}
