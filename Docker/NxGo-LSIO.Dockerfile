@@ -73,18 +73,19 @@ RUN chmod +x download.sh \
 # The mediaserver calls "chown ${COMPANY_NAME}" at runtime
 # Change LSIO user "abc" to ${COMPANY_NAME}
 RUN usermod -l ${COMPANY_NAME} abc \
-# Change group "abc" to ${COMPANY_NAME}
+    # Change group "abc" to ${COMPANY_NAME}
     && groupmod -n ${COMPANY_NAME} abc \
-# Replace "abc" with ${COMPANY_NAME}
+    # Replace "abc" with ${COMPANY_NAME}
     && sed -i "s/abc/\${COMPANY_NAME}/g" /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 # Install the mediaserver and dependencies
 RUN apt-get update \
+    # https://github.com/ptr727/NxWitness/issues/282
     && apt-get install --no-install-recommends --yes \
         gdb \
         libdrm2 \
         ./vms_server.deb \
-# Cleanup
+    # Cleanup
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/* \

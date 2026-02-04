@@ -1,25 +1,13 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Json.Schema;
-using Json.Schema.Generation;
-
 namespace CreateMatrix;
 
-public class VersionJsonSchemaBase
+internal class VersionJsonSchemaBase
 {
-    [JsonPropertyName("$schema")]
-    [JsonPropertyOrder(-3)]
-    public string Schema { get; } = SchemaUri;
-
     [JsonRequired]
     [JsonPropertyOrder(-2)]
     public int SchemaVersion { get; set; } = VersionJsonSchema.Version;
-
-    protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Version.schema.json";
 }
 
-public class VersionJsonSchema : VersionJsonSchemaBase
+internal class VersionJsonSchema : VersionJsonSchemaBase
 {
     public const int Version = 2;
 
@@ -28,22 +16,21 @@ public class VersionJsonSchema : VersionJsonSchemaBase
 
     public static VersionJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
 
-    public static void ToFile(string path, VersionJsonSchema jsonSchema)
+    public static void ToFile(string path, VersionJsonSchema json)
     {
-        jsonSchema.SchemaVersion = Version;
-        Program.WriteFile(path, ToJson(jsonSchema));
+        json.SchemaVersion = Version;
+        File.WriteAllText(path, ToJson(json));
     }
 
-    private static string ToJson(VersionJsonSchema jsonSchema) =>
-        JsonSerializer.Serialize(jsonSchema, MatrixJsonSchema.JsonWriteOptions);
+    private static string ToJson(VersionJsonSchema json) =>
+        JsonSerializer.Serialize(json, VersionJsonContext.Default.VersionJsonSchema);
 
-    private static VersionJsonSchema FromJson(string jsonString)
+    private static VersionJsonSchema FromJson(string json)
     {
-        VersionJsonSchemaBase? versionJsonSchemaBase =
-            JsonSerializer.Deserialize<VersionJsonSchemaBase>(
-                jsonString,
-                MatrixJsonSchema.JsonReadOptions
-            );
+        VersionJsonSchemaBase? versionJsonSchemaBase = JsonSerializer.Deserialize(
+            json,
+            VersionJsonContext.Default.VersionJsonSchemaBase
+        );
         ArgumentNullException.ThrowIfNull(versionJsonSchemaBase);
 
         // Deserialize the correct version
@@ -51,9 +38,9 @@ public class VersionJsonSchema : VersionJsonSchemaBase
         switch (schemaVersion)
         {
             case Version:
-                VersionJsonSchema? schema = JsonSerializer.Deserialize<VersionJsonSchema>(
-                    jsonString,
-                    MatrixJsonSchema.JsonReadOptions
+                VersionJsonSchema? schema = JsonSerializer.Deserialize(
+                    json,
+                    VersionJsonContext.Default.VersionJsonSchema
                 );
                 ArgumentNullException.ThrowIfNull(schema);
                 return schema;
@@ -65,22 +52,19 @@ public class VersionJsonSchema : VersionJsonSchemaBase
                 throw new NotImplementedException();
         }
     }
-
-    public static void GenerateSchema(string path)
-    {
-        const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
-        JsonSchema schemaBuilder = new JsonSchemaBuilder()
-            .FromType<VersionJsonSchema>(
-                new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName }
-            )
-            .Title("CreateMatrix Version Schema")
-            .Id(new Uri(SchemaUri))
-            .Schema(new Uri(schemaVersion))
-            .Build();
-        string jsonSchema = JsonSerializer.Serialize(
-            schemaBuilder,
-            MatrixJsonSchema.JsonWriteOptions
-        );
-        Program.WriteFile(path, jsonSchema);
-    }
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(VersionJsonSchema))]
+[JsonSerializable(typeof(VersionJsonSchemaBase))]
+internal partial class VersionJsonContext : JsonSerializerContext;

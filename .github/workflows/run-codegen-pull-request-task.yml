@@ -1,0 +1,45 @@
+name: Run codegen and pull request task
+
+env:
+  PROJECT_FILE: ./CreateMatrix/CreateMatrix.csproj
+  CODEGEN_ARGS: matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
+
+on:
+  workflow_call:
+
+jobs:
+
+  codegen:
+    name: Run codegen and pull request job
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Setup .NET SDK step
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      - name: Checkout code step
+        uses: actions/checkout@v6
+
+      - name: Run codegen step
+        run: >-
+            dotnet run --project ${{ env.PROJECT_FILE }} --
+            ${{ env.CODEGEN_ARGS }}
+
+      - name: Format code step
+        run: |
+          dotnet tool restore
+          dotnet husky install
+          dotnet csharpier format --log-level=debug .
+          git status
+
+      - name: Create pull request step
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: codegen-update
+          title: 'Update codegen files'
+          body: 'This PR updates the codegen files.'
+          commit-message: 'Update codegen files'
+          delete-branch: true

@@ -1,8 +1,3 @@
-using System.ComponentModel;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Serilog;
-
 namespace CreateMatrix;
 
 // https://updates.vmsproxy.com/{release}/releases.json
@@ -11,16 +6,16 @@ namespace CreateMatrix;
 // https://updates.vmsproxy.com/digitalwatchdog/releases.json
 // https://updates.vmsproxy.com/hanwha/releases.json
 
-public class Release
+internal class Release
 {
     [JsonPropertyName("product")]
-    public string Product { get; set; } = "";
+    public string Product { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
+    public string Version { get; set; } = string.Empty;
 
     [JsonPropertyName("publication_type")]
-    public string PublicationType { get; set; } = "";
+    public string PublicationType { get; set; } = string.Empty;
 
     [JsonPropertyName("release_date")]
     public long? ReleaseDate { get; set; }
@@ -57,36 +52,57 @@ public class Release
         && ReleaseDeliveryDays >= 0;
 }
 
-public class ReleasesJsonSchema
+internal class ReleasesJsonSchema
 {
     [JsonPropertyName("releases")]
     public List<Release> Releases { get; set; } = [];
 
-    private static ReleasesJsonSchema FromJson(string jsonString)
+    private static ReleasesJsonSchema FromJson(string json)
     {
-        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize<ReleasesJsonSchema>(
-            jsonString,
-            MatrixJsonSchema.JsonReadOptions
+        ReleasesJsonSchema? jsonSchema = JsonSerializer.Deserialize(
+            json,
+            ReleasesJsonContext.Default.ReleasesJsonSchema
         );
         ArgumentNullException.ThrowIfNull(jsonSchema);
         return jsonSchema;
     }
 
-    public static List<Release> GetReleases(HttpClient httpClient, string productName)
+    public static async Task<List<Release>> GetReleasesAsync(
+        string productName,
+        CancellationToken cancellationToken
+    )
     {
         // Load releases JSON
         // https://updates.vmsproxy.com/{product}/releases.json
+        ArgumentNullException.ThrowIfNull(productName);
+
+        HttpClient httpClient = HttpClientFactory.GetHttpClient();
         Uri releasesUri = new($"https://updates.vmsproxy.com/{productName}/releases.json");
         Log.Logger.Information("Getting release information from {Uri}", releasesUri);
-        string jsonString = httpClient.GetStringAsync(releasesUri).Result;
+        string jsonString = await httpClient
+            .GetStringAsync(releasesUri, cancellationToken)
+            .ConfigureAwait(false);
 
         // Deserialize JSON
         ReleasesJsonSchema releasesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(releasesSchema);
-        ArgumentNullException.ThrowIfNull(releasesSchema.Releases);
         ArgumentOutOfRangeException.ThrowIfZero(releasesSchema.Releases.Count);
 
         // Return releases
         return releasesSchema.Releases;
     }
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(ReleasesJsonSchema))]
+internal partial class ReleasesJsonContext : JsonSerializerContext;

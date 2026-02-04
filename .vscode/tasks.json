@@ -1,99 +1,97 @@
-// dotnet new tool-manifest
-// dotnet tool install csharpier
-// dotnet tool install husky
-// dotnet tool install dotnet-outdated-tool
-// dotnet husky install
-// dotnet husky add pre-commit -c "dotnet husky run"
-// winget install nektos.act
-// dotnet tool update --all
-// dotnet outdated --upgrade:prompt
-// winget upgrade nektos.act
-// dotnet tool restore
-// dotnet husky install
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": ".Net Build",
-      "type": "dotnet",
-      "task": "build",
-      "group": "build",
-      "problemMatcher": [
-        "$msCompile"
-      ],
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-    {
-      "label": ".Net Format",
-      "type": "process",
-      "command": "dotnet",
-      "args": [
-        "format",
-        "--verify-no-changes",
-        "--severity=info",
-        "--verbosity=detailed"
-      ],
-      "problemMatcher": [
-        "$msCompile"
-      ],
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-    {
-      "label": "CSharpier Format",
-      "type": "process",
-      "command": "dotnet",
-      "args": [
-        "csharpier",
-        "format",
-        "--log-level=debug",
-        "."
-      ],
-      "problemMatcher": [
-        "$msCompile"
-      ],
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-    {
-      "label": ".Net Tool Update",
-      "type": "process",
-      "command": "dotnet",
-      "args": [
-        "tool",
-        "update",
-        "--all"
-      ],
-      "problemMatcher": [
-        "$msCompile"
-      ],
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-    {
-      "label": "Husky.Net Run",
-      "type": "process",
-      "command": "dotnet",
-      "args": [
-        "husky",
-        "run"
-      ],
-      "problemMatcher": [
-        "$msCompile"
-      ],
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-  ]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": ".Net Build",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}",
+                "--verbosity=diagnostic"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": ".Net Format",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "format",
+                "style",
+                "--verify-no-changes",
+                "--severity=info",
+                "--verbosity=detailed"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "dependsOn": [
+                "CSharpier Format",
+                ".Net Build"
+            ]
+        },
+        {
+            "label": "CSharpier Format",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "csharpier",
+                "format",
+                "--log-level=debug",
+                "."
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": ".Net Tool Update",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tool",
+                "update",
+                "--all"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Husky.Net Run",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "husky",
+                "run"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+   ]
 }

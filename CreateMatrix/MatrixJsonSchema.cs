@@ -1,118 +1,40 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using Json.Schema;
-using Json.Schema.Generation;
-
 namespace CreateMatrix;
 
-public class MatrixJsonSchemaBase
+internal class MatrixJsonSchemaBase
 {
-    [JsonPropertyName("$schema")]
-    [JsonPropertyOrder(-3)]
-    public string Schema { get; } = SchemaUri;
-
     [JsonRequired]
     [JsonPropertyOrder(-2)]
     public int SchemaVersion { get; set; } = MatrixJsonSchema.Version;
-
-    protected const string SchemaUri =
-        "https://raw.githubusercontent.com/ptr727/NxWitness/main/CreateMatrix/JSON/Matrix.schema.json";
 }
 
-public class MatrixJsonSchema : MatrixJsonSchemaBase
+internal class MatrixJsonSchema : MatrixJsonSchemaBase
 {
     public const int Version = 2;
 
     [JsonRequired]
     public List<ImageInfo> Images { get; set; } = [];
 
-    public static MatrixJsonSchema FromFile(string path) => FromJson(File.ReadAllText(path));
-
-    public static void ToFile(string path, MatrixJsonSchema jsonSchema) =>
-        Program.WriteFile(path, ToJson(jsonSchema));
-
-    private static string ToJson(MatrixJsonSchema jsonSchema) =>
-        JsonSerializer.Serialize(jsonSchema, JsonWriteOptions);
-
-    private static MatrixJsonSchema FromJson(string jsonString)
+    public static void ToFile(string path, MatrixJsonSchema json)
     {
-        MatrixJsonSchemaBase? matrixJsonSchemaBase =
-            JsonSerializer.Deserialize<MatrixJsonSchemaBase>(jsonString, JsonReadOptions);
-        ArgumentNullException.ThrowIfNull(matrixJsonSchemaBase);
-
-        // Deserialize the correct version
-        int schemaVersion = matrixJsonSchemaBase.SchemaVersion;
-        switch (schemaVersion)
-        {
-            // Current version
-            case Version:
-                MatrixJsonSchema? schema = JsonSerializer.Deserialize<MatrixJsonSchema>(
-                    jsonString,
-                    JsonReadOptions
-                );
-                ArgumentNullException.ThrowIfNull(schema);
-                return schema;
-            // case 1:
-            // VersionInfo::Uri was replaced with UriX64 and UriArm64 was added
-            // Breaking change, UriArm64 is required in ARM64 docker builds
-            // Unknown version
-            default:
-                throw new NotImplementedException();
-        }
+        json.SchemaVersion = Version;
+        File.WriteAllText(path, ToJson(json));
     }
 
-    public static void GenerateSchema(string path)
-    {
-        const string schemaVersion = "https://json-schema.org/draft/2020-12/schema";
-        JsonSchema schemaBuilder = new JsonSchemaBuilder()
-            .FromType<MatrixJsonSchema>(
-                new SchemaGeneratorConfiguration { PropertyOrder = PropertyOrder.ByName }
-            )
-            .Title("CreateMatrix Matrix Schema")
-            .Id(new Uri(SchemaUri))
-            .Schema(new Uri(schemaVersion))
-            .Build();
-        string jsonSchema = JsonSerializer.Serialize(schemaBuilder, JsonWriteOptions);
-        Program.WriteFile(path, jsonSchema);
-    }
-
-    public static readonly JsonSerializerOptions JsonReadOptions = new()
-    {
-        AllowTrailingCommas = true,
-        IncludeFields = true,
-        NumberHandling = JsonNumberHandling.AllowReadingFromString,
-        PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-    };
-
-    public static readonly JsonSerializerOptions JsonWriteOptions = new()
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        IncludeFields = true,
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver().WithAddedModifier(
-            ExcludeObsoletePropertiesModifier
-        ),
-        WriteIndented = true,
-        NewLine = "\r\n",
-    };
-
-    private static void ExcludeObsoletePropertiesModifier(JsonTypeInfo typeInfo)
-    {
-        // Only process objects
-        if (typeInfo.Kind != JsonTypeInfoKind.Object)
-        {
-            return;
-        }
-
-        // Iterate over all properties
-        foreach (JsonPropertyInfo property in typeInfo.Properties)
-        {
-            // Do not serialize [Obsolete] items
-            if (property.AttributeProvider?.IsDefined(typeof(ObsoleteAttribute), true) == true)
-            {
-                property.ShouldSerialize = (_, _) => false;
-            }
-        }
-    }
+    private static string ToJson(MatrixJsonSchema json) =>
+        JsonSerializer.Serialize(json, MatrixJsonContext.Default.MatrixJsonSchema);
 }
+
+[JsonSourceGenerationOptions(
+    AllowTrailingCommas = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    IncludeFields = true,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    UseStringEnumConverter = true,
+    WriteIndented = true,
+    NewLine = "\r\n"
+)]
+[JsonSerializable(typeof(MatrixJsonSchema))]
+[JsonSerializable(typeof(MatrixJsonSchemaBase))]
+internal partial class MatrixJsonContext : JsonSerializerContext;

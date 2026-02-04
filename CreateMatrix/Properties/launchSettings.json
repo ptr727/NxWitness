@@ -6,22 +6,22 @@
     },
     "Matrix": {
       "commandName": "Project",
-      "commandLineArgs": "matrix --version=./Make/Version.json --matrix=./Make/Matrix.json --update",
+      "commandLineArgs": "matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion",
       "workingDirectory": "$(SolutionDir)"
     },
     "Version": {
       "commandName": "Project",
-      "commandLineArgs": "version --version=./Make/Version.json",
+      "commandLineArgs": "version --versionpath=./Make/Version.json",
       "workingDirectory": "$(SolutionDir)"
     },
     "Schema": {
       "commandName": "Project",
-      "commandLineArgs": "schema --schemaversion=./JSON/Version.schema.json --schemamatrix=./JSON/Matrix.schema.json",
+      "commandLineArgs": "schema --versionschemapath=./JSON/Version.schema.json --matrixschemapath=./JSON/Matrix.schema.json",
       "workingDirectory": "$(ProjectDir)"
     },
     "Make": {
       "commandName": "Project",
-      "commandLineArgs": "make --version=./Make/Version.json --make=./Make --docker=./Docker --label=Beta",
+      "commandLineArgs": "make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta",
       "workingDirectory": "$(SolutionDir)"
     }
   }

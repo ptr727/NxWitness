@@ -1,29 +1,28 @@
-using System.Text;
-using Serilog;
-
 namespace CreateMatrix;
 
-public class ComposeFile
+internal static class ComposeFile
 {
-    public static void Create(string makePath)
+    public static void Create(DirectoryInfo makeDirectory)
     {
+        string makePath = makeDirectory.FullName;
+
         // Create local Compose file
         string composeFile = CreateComposefile(null);
         string filePath = Path.Combine(makePath, "Test.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        Program.WriteFile(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile);
 
         // Create develop Compose file
         composeFile = CreateComposefile("develop");
         filePath = Path.Combine(makePath, "Test-develop.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        Program.WriteFile(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile);
 
         // Create latest Compose file
         composeFile = CreateComposefile("latest");
         filePath = Path.Combine(makePath, "Test-latest.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        Program.WriteFile(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile);
     }
 
     private static string CreateComposefile(string? label)
@@ -33,15 +32,17 @@ public class ComposeFile
 
         // Compose file header
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append(
-            "# Compose file created by CreateMatrix, do not modify by hand" + "\r\n" + "\r\n"
+        _ = stringBuilder.AppendLineCrlf(
+            """
+            # Compose file created by CreateMatrix, do not modify by hand
+
+            """
         );
 
         // Create volumes
-        _ = stringBuilder.Append(CreateVolumes() + "\r\n");
-
+        _ = stringBuilder.AppendLineCrlf(CreateVolumes());
         // Create services
-        _ = stringBuilder.Append(CreateServices(label) + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(CreateServices(label));
 
         return stringBuilder.ToString();
     }
@@ -49,16 +50,21 @@ public class ComposeFile
     private static string CreateVolumes()
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append("volumes:" + "\r\n" + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(
+            """
+            volumes:
+
+            """
+        );
 
         // Create a volume for every product
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.Append(CreateVolume(productType, false) + "\r\n");
+            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, false));
 
             // LSIO
-            _ = stringBuilder.Append(CreateVolume(productType, true) + "\r\n");
+            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, true));
         }
 
         return stringBuilder.ToString();
@@ -88,7 +94,12 @@ public class ComposeFile
     private static string CreateServices(string? label)
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.Append("services:" + "\r\n" + "\r\n");
+        _ = stringBuilder.AppendLineCrlf(
+            """
+            services:
+
+            """
+        );
 
         // Create a service for every product
         int standardPort = 7101,
@@ -96,12 +107,11 @@ public class ComposeFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.Append(
-                CreateService(productType, false, standardPort++, label) + "\r\n"
+            _ = stringBuilder.AppendLineCrlf(
+                CreateService(productType, false, standardPort++, label)
             );
-
             // LSIO
-            _ = stringBuilder.Append(CreateService(productType, true, lsioPort++, label) + "\r\n");
+            _ = stringBuilder.AppendLineCrlf(CreateService(productType, true, lsioPort++, label));
         }
 
         return stringBuilder.ToString();

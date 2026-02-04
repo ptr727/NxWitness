@@ -1,0 +1,29 @@
+name: Publish weekly Docker image to Docker Hub action
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Mondays at 02:00 UTC
+    - cron: '0 2 * * MON'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  build-docker:
+    name: Build Docker image job
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      # Push to registry
+      push: true
+
+  date-badge:
+    name: Create BYOB date badge job
+    needs: [build-docker]
+    uses: ./.github/workflows/build-datebadge-task.yml
+    secrets: inherit
+    permissions:
+      contents: write
