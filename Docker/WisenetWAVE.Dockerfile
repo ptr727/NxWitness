@@ -49,6 +49,14 @@ LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
     version=${LABEL_VERSION} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
+# Install required tools and utilities
+RUN apt-get update \
+    && apt-get upgrade --yes \
+    && apt-get install --no-install-recommends --yes \
+        ca-certificates \
+        unzip \
+        wget
+
 # Download the installer file
 RUN mkdir -p /temp
 COPY download.sh /temp/download.sh

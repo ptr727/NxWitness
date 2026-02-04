@@ -159,6 +159,14 @@ internal static class DockerFile
     {
         // Install
         string install = """
+            # Install required tools and utilities
+            RUN apt-get update \
+                && apt-get upgrade --yes \
+                && apt-get install --no-install-recommends --yes \
+                    ca-certificates \
+                    unzip \
+                    wget
+
             # Download the installer file
             RUN mkdir -p /temp
             COPY download.sh /temp/download.sh
