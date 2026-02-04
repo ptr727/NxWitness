@@ -12,11 +12,12 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.5**:
+**Version: 3.0**:
 
 **Summary**:
 
-- Refactoring to match other projects.
+- Refactoring to match layout and style used in other projects.
+- Updated to .NET 10, adding suport for Nullable, and AOT.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 

@@ -4,6 +4,10 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release History
 
+- Version 3.0:
+  - Refactoring to match layout and style used in other projects.
+  - Updated to .NET 10, adding suport for Nullable, and AOT.
+  - Restructured CLI handling logic.
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][hanwhawave-link] builds, another US OEM whitelabel version Nx Witness.
   - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
