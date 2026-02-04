@@ -159,6 +159,25 @@ internal static class DockerFile
     {
         // Install
         string install = """
+            # Make apt more resilient in CI
+            RUN set -eux; \
+                printf '%s\n' \
+                'Acquire::Retries "5";' \
+                'Acquire::http::Timeout "30";' \
+                'Acquire::https::Timeout "30";' \
+                'Acquire::ForceIPv4 "true";' \
+                > /etc/apt/apt.conf.d/80-ci-hardening; \
+                \
+                # Noble base images typically use archive.ubuntu.com + security.ubuntu.com (HTTP).
+                # Move main + updates to the Azure mirror (usually closer to GitHub runners),
+                # and use HTTPS to avoid port 80 timeouts.
+                sed -i \
+                -e 's|http://archive.ubuntu.com/ubuntu|https://azure.archive.ubuntu.com/ubuntu|g' \
+                -e 's|http://security.ubuntu.com/ubuntu|https://security.ubuntu.com/ubuntu|g' \
+                /etc/apt/sources.list; \
+                \
+                apt-get update
+
             # Install required tools and utilities
             RUN apt-get update \
                 && apt-get upgrade --yes \
