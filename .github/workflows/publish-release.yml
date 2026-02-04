@@ -1,0 +1,37 @@
+name: Publish project release action
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  create-release:
+    name: Publish project release job
+    uses: ./.github/workflows/build-release-task.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      # Publish
+      github: true
+      dockerhub: true
+
+  docker-readme:
+    name: Publish docker hub readme job
+    needs: [create-release]
+    uses: ./.github/workflows/publish-docker-readme-task.yml
+    secrets: inherit
+
+  date-badge:
+    name: Create BYOB date badge job
+    needs: [create-release]
+    uses: ./.github/workflows/build-datebadge-task.yml
+    secrets: inherit
+    permissions:
+      contents: write

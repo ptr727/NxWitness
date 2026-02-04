@@ -91,13 +91,13 @@ services:
       - apparmor=unconfined
     environment:
       - TZ=${TZ}
-      - PUID=${USER_NONROOT_ID}
+      - PUID=${USER_NONROOT_ID} # Run as non-root user
       - PGID=${USERS_GROUP_ID}
-    volumes:
+    volumes: # ZFS volumes
       - ${APPDATA_DIR}/nxmeta/config:/config
-      - ${NVR_DIR}/media:/media # ssdpool/nvr-media
-      - ${NVR_DIR}/backup:/backup # hddpool/nvr-backup
-      - ${NVR_DIR}/analytics:/analytics # ssdpool/nvr-analytics
+      - ${NVR_DIR}/media:/media
+      - ${NVR_DIR}/backup:/backup
+      - ${NVR_DIR}/analytics:/analytics
     networks:
       public_network:
         ipv4_address: ${NXMETA_IP} # Static IP
