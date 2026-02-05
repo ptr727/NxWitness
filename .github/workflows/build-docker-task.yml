@@ -4,7 +4,6 @@ name: Build Docker image task
 on:
   workflow_call:
     inputs:
-      # Input to control whether to push the Docker image to Docker Hub
       push:
         required: false
         type: boolean
@@ -25,7 +24,6 @@ jobs:
 
       - name: Load matrix.json step
         id: getmatrix
-        # Create compact version of matrix.json
         run: |
           echo "matrix=$(jq --compact-output '.' ./Make/Matrix.json)" >> $GITHUB_OUTPUT
 
@@ -100,4 +98,7 @@ jobs:
           cache-from: |
             type=gha,scope=develop-${{ matrix.images.Name }}
             type=gha,scope=main-${{ matrix.images.Name }}
-          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || '' }}
+            ${{ github.event.pull_request && format('type=gha,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
+          cache-to: |
+            ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || '' }}
+            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}

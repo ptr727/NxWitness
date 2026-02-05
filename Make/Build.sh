@@ -4,9 +4,7 @@ set -euo pipefail
 
 ## Dependencies:
 # sudo apt update && sudo apt upgrade --yes
-# sudo add-apt-repository ppa:dotnet/backports --yes && sudo apt update
-# sudo apt install m4 dotnet-sdk-9.0 docker-compose docker-buildx --yes
-# sudo apt autoremove --yes
+# sudo apt install dotnet-sdk-10.0 docker-compose docker-buildx --yes
 
 
 ## Test installing in container:
@@ -35,7 +33,7 @@ set -euo pipefail
 
 ## Usage:
 # Create.sh : Update Version.json and Matrix.json and create Dockerfiles.
-# Build.sh : Build docker images from Dockerfiles.
+# PUSH_BASE_IMAGES=true ./Build.sh : Build docker images from Dockerfiles and push base images.
 # Test.sh : Create and build and launch compose Test.yml compose stack.
 # Clean.sh : Shutdown compose stack and delete images.
 
@@ -50,14 +48,32 @@ function BuildDockerfile {
 
 # Build base Dockerfile
 function BuildBaseDockerfile {
+    local PushBaseImages
+    local RegistryCacheFrom
+    PushBaseImages="${PUSH_BASE_IMAGES:-false}"
+    RegistryCacheFrom="--cache-from=type=registry,ref=$2"
     # Build x64 and ARM64 targets
-	docker buildx build --platform linux/amd64,linux/arm64 --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+    if [[ "${PushBaseImages}" == "true" ]]; then
+        docker buildx build --platform linux/amd64,linux/arm64 --push --cache-to=type=inline ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+    else
+        docker buildx build --platform linux/amd64,linux/arm64 ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+    fi
     # Build and load x64 target
-	docker buildx build --platform linux/amd64 --load --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+	docker buildx build --platform linux/amd64 --load ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
 }
 
 # Create and use multi platform build environment
-docker buildx create --name "nxwitness" --use || true
+if docker buildx inspect "nxwitness" >/dev/null 2>&1; then
+    docker buildx use "nxwitness"
+else
+    docker buildx create --name "nxwitness" --use
+fi
+
+# Login to docker Hub if pushing base images
+if [[ "${PUSH_BASE_IMAGES:-false}" == "true" ]]; then
+    echo "Pushing base images with inline cache metadata. Please login to Docker Hub if not already logged in."
+    docker login
+fi
 
 # Build base Dockerfiles
 BuildBaseDockerfile "NxBase" "docker.io/ptr727/nx-base:ubuntu-noble"

@@ -14,7 +14,7 @@ If any instruction conflicts, follow CODESTYLE.md first, then AGENTS.md.
 
 ## Solution Summary
 
-This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes a .NET tooling project that generates Dockerfiles, matrices, and version inputs used by CI and packaging scripts.
+This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes base images (nx-base, nx-base-lsio) and derived product images, plus a .NET tooling project that generates Dockerfiles, matrices, and version inputs used by CI and packaging scripts.
 
 ### Core Projects
 
@@ -24,7 +24,7 @@ This repository builds and publishes Docker images for Network Optix VMS product
 ### Key Inputs and Outputs
 
 - Inputs: version and matrix data in `version.json`, [Make/Version.json](../Make/Version.json), and [Make/Matrix.json](../Make/Matrix.json).
-- Outputs: Dockerfiles in [Docker/](../Docker/) and compose/test artifacts in [Make/](../Make/).
+- Outputs: Dockerfiles in [Docker/](../Docker/) (base images and derived product images) and compose/test artifacts in [Make/](../Make/).
 - Templates: Unraid container templates in [Unraid/](../Unraid/).
 
 ### Build and Validation Workflow (High Level)
@@ -33,9 +33,15 @@ This repository builds and publishes Docker images for Network Optix VMS product
 - Formatting and style verification are enforced by CSharpier and dotnet format, with Husky.Net hooks.
 - The `.Net Format` VS Code task in [`.vscode/tasks.json`](../.vscode/tasks.json) must be clean and warning-free at all times.
 
+### Image Architecture
+
+- Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then used as `FROM` images for derived product Dockerfiles.
+- Derived images should track base image tag changes (for example, the Ubuntu distro tag) to keep builds consistent.
+
 ## What to Keep in Sync
 
 - Generated Dockerfiles and scripts must reflect CreateMatrix behavior.
+- Base image Dockerfiles and derived image Dockerfiles should remain aligned since derived images build on the base images.
 - Documentation in [README.md](../README.md) and release notes should align with current outputs and supported product variants.
 
 ## Expectations for Changes

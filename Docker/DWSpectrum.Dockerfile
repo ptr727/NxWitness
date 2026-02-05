@@ -34,10 +34,6 @@ ARG \
     # Platform of the node performing the build
     BUILDPLATFORM
 
-# The RUN wget command will be cached unless we change the cache tag
-# Use the download version for the cache tag
-ARG CACHE_DATE=${DOWNLOAD_VERSION}
-
 # Prevent EULA and confirmation prompts in installers
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -54,7 +50,6 @@ LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
 # Download the installer file
 WORKDIR /temp
 RUN /bin/bash -euo pipefail -c '\
-    echo "Cache: ${CACHE_DATE}"; \
     DEB_FILE="./vms_server.deb"; \
     TARGET_PLATFORM="${TARGETPLATFORM:-}"; \
     DOWNLOAD_URL="${DOWNLOAD_X64_URL:?DOWNLOAD_X64_URL is required}"; \

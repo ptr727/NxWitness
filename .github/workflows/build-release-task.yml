@@ -3,12 +3,10 @@ name: Build project release task
 on:
   workflow_call:
     inputs:
-      # Input to control whether to create a GitHub release
       github:
         required: false
         type: boolean
         default: false
-      # Input to control whether to push the Docker image to Docker Hub
       dockerhub:
         required: false
         type: boolean
@@ -26,12 +24,10 @@ jobs:
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
     with:
-      # Conditional push to Docker Hub
       push: ${{ inputs.dockerhub }}
 
   github-release:
     name: Publish GitHub release job
-    # Conditional GitHub release
     if: ${{ inputs.github }}
     runs-on: ubuntu-latest
     needs: [get-version, build-docker]
