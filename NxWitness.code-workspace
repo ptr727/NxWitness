@@ -75,6 +75,7 @@
             "ssdpool",
             "subvol",
             "subvolid",
+            "tagsargs",
             "TARGETARCH",
             "TARGETPLATFORM",
             "tmpfs",
