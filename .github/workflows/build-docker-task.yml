@@ -87,11 +87,13 @@ jobs:
       - name: Docker build and push step
         uses: docker/build-push-action@v6
         with:
-          push: ${{ inputs.push && (github.ref_name == matrix.images.Branch)}}
-          cache-from: type=gha,scope=${{ matrix.images.CacheScope }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.images.CacheScope }}
+          push: ${{ inputs.push && (github.ref_name == matrix.images.Branch) }}
           context: Docker
           file: Docker/${{ matrix.images.Name }}.Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.tagsargs.outputs.tags }}
           build-args: ${{ steps.tagsargs.outputs.args }}
+          cache-from: |
+            type=gha,scope=develop-${{ matrix.images.Name }}
+            type=gha,scope=main-${{ matrix.images.Name }}
+          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || 'type=gha,mode=min,scope=ro' }}
