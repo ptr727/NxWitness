@@ -96,4 +96,4 @@ jobs:
           cache-from: |
             type=gha,scope=develop-${{ matrix.images.Name }}
             type=gha,scope=main-${{ matrix.images.Name }}
-          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || 'type=gha,mode=min,scope=ro' }}
+          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || format('type=gha,mode=min,scope=feature-{0}', matrix.images.Name) }}
