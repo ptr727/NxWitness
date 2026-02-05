@@ -1,11 +1,11 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-# Create Dockerfile from M4
+# Create Dockerfiles
 ./Create.sh
 
-# Build Dockerfile
+# Build Dockerfiles
 ./Build.sh
 
 # Launch compose stack

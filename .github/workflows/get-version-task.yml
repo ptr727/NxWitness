@@ -3,7 +3,6 @@ name: Get version information task
 on:
   workflow_call:
     outputs:
-      # Version information outputs
       SemVer2:
         value: ${{ jobs.get-version.outputs.SemVer2 }}
       AssemblyVersion:

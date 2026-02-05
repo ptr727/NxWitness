@@ -35,6 +35,5 @@ jobs:
     uses: ./.github/workflows/build-release-task.yml
     secrets: inherit
     with:
-      # Do not publish
       github: false
       dockerhub: false

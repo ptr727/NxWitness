@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 # Launch stack
 docker compose --file Test-latest.yml up --detach

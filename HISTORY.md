@@ -4,11 +4,13 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release History
 
+- Version 2.10:
+  - Split the docker images into a base image and product images, improves build times and reduces GH actions cache utilization.
 - Version 2.9:
   - Refactoring to match layout and style used in other projects.
   - Updated to .NET 10, adding support for Nullable, and AOT.
   - Restructured CLI handling logic.
-  - Update GHA cache usage to prevent the cache from running out of space.
+  - Update GHA cache usage to prevent the GH actions cache from running out of space.
 - Version 2.8:
   - Add default `analytics` volume, along with `media` and `backup` volumes, media server complains when sharing analytics storage.
 - Version 2.7:

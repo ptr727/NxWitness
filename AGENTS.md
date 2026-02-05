@@ -1,6 +1,6 @@
 # Instructions for AI Coding Agents
 
-This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes a .NET tooling project that generates Dockerfiles and build matrices, plus scripts and templates for packaging.
+This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes base images (nx-base, nx-base-lsio) and derived product images that use the base images, plus a .NET tooling project that generates Dockerfiles and build matrices and scripts/templates for packaging.
 
 For comprehensive coding and formatting standards, follow:
 
@@ -22,7 +22,7 @@ For comprehensive coding and formatting standards, follow:
 ### Key Directories
 
 - `Docker/`
-  - Generated and static Dockerfiles for product variants.
+  - Generated and static Dockerfiles for base images and product variants.
 - `Make/`
   - Build orchestration scripts and test compose files.
 - `Unraid/`
@@ -41,6 +41,11 @@ For comprehensive coding and formatting standards, follow:
 - C# code should be formatted with CSharpier, then verified with `dotnet format` (style).
 - The `.Net Format` VS Code task in `.vscode/tasks.json` must be clean and warning-free at all times.
 
+## Image Architecture
+
+- Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then reused as `FROM` images for derived product Dockerfiles.
+- Derived product images should stay aligned with the base image changes and tags (for example, the Ubuntu distro tag).
+
 ## Coding Conventions (Highlights)
 
 - Do not use `var`; use explicit types.
@@ -52,4 +57,5 @@ For comprehensive coding and formatting standards, follow:
 ## Notes for Changes
 
 - When modifying Dockerfiles or build scripts, ensure generated outputs stay in sync with `CreateMatrix` behavior.
+- Keep base image definitions and derived image Dockerfiles aligned, since derived images build on the base images.
 - Keep `README.md` and release documentation aligned with build outputs and product variants.

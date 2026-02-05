@@ -7,7 +7,8 @@
 
 # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
 # Latest Ubuntu supported for v6 is Noble
-FROM ubuntu:noble
+# Base images are built in this repo, see Docker/NxBase*.Dockerfile
+FROM docker.io/ptr727/nx-base:ubuntu-noble
 
 # Labels
 ARG LABEL_NAME="NxGo"
@@ -33,10 +34,6 @@ ARG \
     # Platform of the node performing the build
     BUILDPLATFORM
 
-# The RUN wget command will be cached unless we change the cache tag
-# Use the download version for the cache tag
-ARG CACHE_DATE=${DOWNLOAD_VERSION}
-
 # Prevent EULA and confirmation prompts in installers
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -49,29 +46,50 @@ LABEL name=${LABEL_NAME}-${DOWNLOAD_VERSION} \
     version=${LABEL_VERSION} \
     maintainer="Pieter Viljoen <ptr727@users.noreply.github.com>"
 
-# Install required tools and utilities
-RUN apt-get update \
-    && apt-get upgrade --yes \
-    && apt-get install --no-install-recommends --yes \
-        ca-certificates \
-        unzip \
-        wget
-
+# Base image includes required tools and utilities.
 # Download the installer file
-RUN mkdir -p /temp
-COPY download.sh /temp/download.sh
-# Set the working directory to /temp
 WORKDIR /temp
-RUN chmod +x download.sh \
-    && ./download.sh
+RUN /bin/bash -euo pipefail -c '\
+    DEB_FILE="./vms_server.deb"; \
+    TARGET_PLATFORM="${TARGETPLATFORM:-}"; \
+    DOWNLOAD_URL="${DOWNLOAD_X64_URL:?DOWNLOAD_X64_URL is required}"; \
+    if [ "${TARGET_PLATFORM}" = "linux/arm64" ]; then \
+        DOWNLOAD_URL="${DOWNLOAD_ARM64_URL:?DOWNLOAD_ARM64_URL is required}"; \
+    fi; \
+    echo "Download URL: ${DOWNLOAD_URL}"; \
+    DOWNLOAD_FILENAME="$(basename -- "${DOWNLOAD_URL}")"; \
+    echo "Download Filename: ${DOWNLOAD_FILENAME}"; \
+    wget --no-verbose --tries=5 --timeout=30 --retry-connrefused "${DOWNLOAD_URL}"; \
+    case "${DOWNLOAD_FILENAME}" in \
+        *.zip) \
+            echo "Downloaded ZIP: ${DOWNLOAD_FILENAME}"; \
+            DOWNLOAD_DIR="./download_zip"; \
+            rm -rf "${DOWNLOAD_DIR}"; \
+            mkdir -p "${DOWNLOAD_DIR}"; \
+            unzip -q -d "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"; \
+            DEB_ZIP_FILE="$(find "${DOWNLOAD_DIR}" -maxdepth 1 -type f -name "*.deb" -print -quit)"; \
+            if [ -z "${DEB_ZIP_FILE}" ]; then \
+                echo "No .deb found in ${DOWNLOAD_DIR}" >&2; \
+                exit 1; \
+            fi; \
+            echo "DEB in ZIP: ${DEB_ZIP_FILE}"; \
+            mv "${DEB_ZIP_FILE}" "${DEB_FILE}"; \
+            rm -rf "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"; \
+            ;; \
+        *.deb) \
+            echo "Downloaded DEB: ${DOWNLOAD_FILENAME}"; \
+            mv "${DOWNLOAD_FILENAME}" "${DEB_FILE}"; \
+            ;; \
+        *) \
+            echo "Unsupported download type: ${DOWNLOAD_FILENAME}" >&2; \
+            exit 1; \
+            ;; \
+    esac; \
+    echo "DEB File: ${DEB_FILE}"'
 
-# Install the mediaserver and dependencies
+# Install the mediaserver
 RUN apt-get update \
-    # https://github.com/ptr727/NxWitness/issues/282
     && apt-get install --no-install-recommends --yes \
-        gdb \
-        libdrm2 \
-        sudo \
         ./vms_server.deb \
     # Cleanup
     && apt-get clean \
