@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 ## Dependencies:
 # sudo apt update && sudo apt upgrade --yes
@@ -34,8 +34,8 @@ set -e
 # docker exec --interactive --tty [containername] /bin/bash
 
 ## Usage:
-# Create.sh : Update Version.json and Matrix.json and create Dockerfile's from M4 snippets.
-# Build.sh : Build docker images from Dockerfile's.
+# Create.sh : Update Version.json and Matrix.json and create Dockerfiles.
+# Build.sh : Build docker images from Dockerfiles.
 # Test.sh : Create and build and launch compose Test.yml compose stack.
 # Clean.sh : Shutdown compose stack and delete images.
 
@@ -48,8 +48,20 @@ function BuildDockerfile {
 	docker buildx build --platform linux/amd64 --load --tag test_${1,,} --file ../Docker/$1.Dockerfile ../Docker
 }
 
+# Build base Dockerfile
+function BuildBaseDockerfile {
+    # Build x64 and ARM64 targets
+	docker buildx build --platform linux/amd64,linux/arm64 --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+    # Build and load x64 target
+	docker buildx build --platform linux/amd64 --load --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+}
+
 # Create and use multi platform build environment
 docker buildx create --name "nxwitness" --use || true
+
+# Build base Dockerfiles
+BuildBaseDockerfile "NxBase" "docker.io/ptr727/nx-base:ubuntu-noble"
+BuildBaseDockerfile "NxBase-LSIO" "docker.io/ptr727/nx-base-lsio:ubuntu-noble"
 
 # Build Dockerfiles
 BuildDockerfile "NxGo"

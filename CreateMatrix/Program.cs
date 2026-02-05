@@ -59,10 +59,7 @@ internal sealed class Program(
         // Get versions for all products using releases API
         VersionJsonSchema versionSchema = new();
         Log.Logger.Information("Getting version information online...");
-        foreach (ProductInfo productInfo in ProductInfo.GetProducts())
-        {
-            versionSchema.Products.Add(productInfo);
-        }
+        versionSchema.Products.AddRange(ProductInfo.GetProducts());
         foreach (ProductInfo productInfo in versionSchema.Products)
         {
             await productInfo.FetchVersionsAsync(cancellationToken).ConfigureAwait(false);
@@ -93,6 +90,7 @@ internal sealed class Program(
         VersionJsonSchema fileSchema = VersionJsonSchema.FromFile(
             commandLineOptions.VersionPath.FullName
         );
+
         // Re-verify as rules may have changed after file was written
         foreach (ProductInfo productInfo in fileSchema.Products)
         {
@@ -106,10 +104,7 @@ internal sealed class Program(
             // Get versions for all products using releases API
             VersionJsonSchema onlineSchema = new();
             Log.Logger.Information("Getting version information online...");
-            foreach (ProductInfo productInfo in ProductInfo.GetProducts())
-            {
-                onlineSchema.Products.Add(productInfo);
-            }
+            onlineSchema.Products.AddRange(ProductInfo.GetProducts());
             foreach (ProductInfo productInfo in onlineSchema.Products)
             {
                 await productInfo.FetchVersionsAsync(cancellationToken).ConfigureAwait(false);
@@ -117,9 +112,7 @@ internal sealed class Program(
             }
 
             // Make sure the labelled version numbers do not regress
-            List<ProductInfo> fileProducts = [.. fileSchema.Products];
-            List<ProductInfo> onlineProducts = [.. onlineSchema.Products];
-            ReleaseVersionForward.Verify(fileProducts, onlineProducts);
+            ReleaseVersionForward.Verify(fileSchema.Products, onlineSchema.Products);
 
             // Verify URL's
             foreach (ProductInfo productInfo in onlineSchema.Products)
@@ -147,19 +140,9 @@ internal sealed class Program(
         // Create matrix
         Log.Logger.Information("Creating Matrix from versions");
         MatrixJsonSchema matrixSchema = new();
-        List<ProductInfo> products = [.. fileSchema.Products];
-        IReadOnlyList<ImageInfo> images = ImageInfo.CreateImages(products);
-        foreach (ImageInfo imageInfo in images)
-        {
-            matrixSchema.Images.Add(imageInfo);
-        }
+        matrixSchema.Images.AddRange(ImageInfo.CreateImages(fileSchema.Products));
         Log.Logger.Information("Created {Count} images in matrix", matrixSchema.Images.Count);
-
-        // Log info
-        foreach (ImageInfo imageInfo in matrixSchema.Images)
-        {
-            imageInfo.LogInformation();
-        }
+        matrixSchema.Images.ForEach(imageInfo => imageInfo.LogInformation());
 
         // Write matrix
         Log.Logger.Information(

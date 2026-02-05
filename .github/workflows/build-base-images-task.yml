@@ -1,0 +1,68 @@
+name: Build base images task
+
+on:
+  workflow_call:
+    inputs:
+      push:
+        required: false
+        type: boolean
+        default: true
+  workflow_dispatch:
+    inputs:
+      push:
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+
+  build-base:
+    name: Build base image job
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        base:
+          - name: nx-base
+            dockerfile: Docker/NxBase.Dockerfile
+            tags: |
+              docker.io/ptr727/nx-base:ubuntu-noble
+          - name: nx-base-lsio
+            dockerfile: Docker/NxBase-LSIO.Dockerfile
+            tags: |
+              docker.io/ptr727/nx-base-lsio:ubuntu-noble
+
+    steps:
+
+      - name: Checkout step
+        uses: actions/checkout@v6
+
+      - name: Setup QEMU step
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Setup Buildx step
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Login to Docker Hub step
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Docker build and push base step
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') }}
+          context: Docker
+          file: ${{ matrix.base.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ matrix.base.tags }}
+          cache-from: |
+            type=gha,scope=develop-base-${{ matrix.base.name }}
+            type=gha,scope=main-base-${{ matrix.base.name }}
+          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-base-{1}', github.ref_name, matrix.base.name) || '' }}

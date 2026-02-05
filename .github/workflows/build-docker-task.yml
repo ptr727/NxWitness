@@ -1,8 +1,5 @@
 name: Build Docker image task
 
-env:
-  IS_MAIN_BRANCH: ${{ endsWith(github.ref, 'refs/heads/main') }}
-  DOCKER_REGISTRY: docker.io
 
 on:
   workflow_call:
@@ -37,10 +34,17 @@ jobs:
     uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
 
+  build-base:
+    name: Build base image job
+    uses: ./.github/workflows/build-base-images-task.yml
+    with:
+      push: ${{ inputs.push }}
+    secrets: inherit
+
   build-docker:
     name: Build Docker image job
     runs-on: ubuntu-latest
-    needs: [get-version, get-matrix]
+    needs: [get-version, get-matrix, build-base]
 
     strategy:
       max-parallel: 4
@@ -65,7 +69,7 @@ jobs:
       - name: Login to Docker Hub step
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
+          registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
@@ -83,7 +87,7 @@ jobs:
             echo "LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-          
+
       - name: Docker build and push step
         uses: docker/build-push-action@v6
         with:
@@ -96,4 +100,4 @@ jobs:
           cache-from: |
             type=gha,scope=develop-${{ matrix.images.Name }}
             type=gha,scope=main-${{ matrix.images.Name }}
-          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || format('type=gha,mode=min,scope=feature-{0}', matrix.images.Name) }}
+          cache-to: ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || '' }}

@@ -1,8 +1,5 @@
 name: Build project release task
 
-env:
-  IS_MAIN_BRANCH: ${{ endsWith(github.ref, 'refs/heads/main') }}
-
 on:
   workflow_call:
     inputs:
@@ -49,7 +46,7 @@ jobs:
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
-          prerelease: ${{ env.IS_MAIN_BRANCH != 'true' }}
+          prerelease: ${{ github.ref_name != 'main' }}
           files: |
             LICENSE
             README.md

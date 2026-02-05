@@ -1,8 +1,5 @@
 name: Build BYOB date badge task
 
-env:
-  IS_MAIN_BRANCH: ${{ endsWith(github.ref, 'refs/heads/main') }}
-
 on:
   workflow_call:
 
@@ -20,7 +17,7 @@ jobs:
           echo "date=$(date)" >> $GITHUB_OUTPUT
 
       - name: Build BYOB date badge step
-        if: ${{ env.IS_MAIN_BRANCH == 'true' }}
+        if: ${{ github.ref_name == 'main' }}
         uses: RubbaBoy/BYOB@v1
         with:
           name: lastbuild

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Instructions
 echo "Ctrl-Click on links to launch web UI in browser"
 echo "Nx Go:" "https://$HOSTNAME:7101/"
