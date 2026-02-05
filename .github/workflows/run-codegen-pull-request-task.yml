@@ -1,9 +1,5 @@
 name: Run codegen and pull request task
 
-env:
-  PROJECT_FILE: ./CreateMatrix/CreateMatrix.csproj
-  CODEGEN_ARGS: matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
-
 on:
   workflow_call:
 
@@ -25,8 +21,8 @@ jobs:
 
       - name: Run codegen step
         run: >-
-            dotnet run --project ${{ env.PROJECT_FILE }} --
-            ${{ env.CODEGEN_ARGS }}
+            dotnet run --project ./CreateMatrix/CreateMatrix.csproj --
+            matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
 
       - name: Format code step
         run: |

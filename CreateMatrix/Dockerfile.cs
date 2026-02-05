@@ -2,12 +2,18 @@ namespace CreateMatrix;
 
 internal static class DockerFile
 {
+    private const string UbuntuBaseTag = "noble";
+    private const string BaseImage = "docker.io/ptr727/nx-base:ubuntu-" + UbuntuBaseTag;
+    private const string BaseImageLsio = "docker.io/ptr727/nx-base-lsio:ubuntu-" + UbuntuBaseTag;
+
     public static void Create(
         List<ProductInfo> productList,
         string dockerPath,
         VersionInfo.LabelType label
     )
     {
+        CreateBaseDockerfiles(dockerPath);
+
         // Create a Docker file for each product type
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
@@ -87,23 +93,82 @@ internal static class DockerFile
 
             # https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
             # Latest Ubuntu supported for v6 is Noble
+            # Base images are built in this repo, see Docker/NxBase*.Dockerfile
 
             """;
         if (lsio)
         {
-            from += """
-                FROM lsiobase/ubuntu:noble
+            from += $$"""
+                FROM {{BaseImageLsio}}
 
                 """;
         }
         else
         {
-            from += """
-                FROM ubuntu:noble
+            from += $$"""
+                FROM {{BaseImage}}
 
                 """;
         }
         return from;
+    }
+
+    private static void CreateBaseDockerfiles(string dockerPath)
+    {
+        string baseDockerfile = $$"""
+            # Base Dockerfile for Nx Witness images
+            # Built from ubuntu:{{UbuntuBaseTag}}
+            FROM ubuntu:{{UbuntuBaseTag}}
+
+            # Prevent EULA and confirmation prompts in installers
+            ARG DEBIAN_FRONTEND=noninteractive
+
+            # Common packages used by all product images
+            # https://github.com/ptr727/NxWitness/issues/282
+            RUN apt-get update \
+                && apt-get upgrade --yes \
+                && apt-get install --no-install-recommends --yes \
+                    ca-certificates \
+                    gdb \
+                    libdrm2 \
+                    sudo \
+                    unzip \
+                    wget \
+                && apt-get clean \
+                && apt-get autoremove --purge \
+                && rm -rf /var/lib/apt/lists/*
+            """;
+
+        string baseFilePath = Path.Combine(dockerPath, "NxBase.Dockerfile");
+        Log.Logger.Information("Writing Dockerfile to {Path}", baseFilePath);
+        File.WriteAllText(baseFilePath, baseDockerfile);
+
+        string baseLsioDockerfile = $$"""
+            # Base Dockerfile for Nx Witness LSIO images
+            # Built from lsiobase/ubuntu:{{UbuntuBaseTag}}
+            FROM lsiobase/ubuntu:{{UbuntuBaseTag}}
+
+            # Prevent EULA and confirmation prompts in installers
+            ARG DEBIAN_FRONTEND=noninteractive
+
+            # Common packages used by all product images
+            # https://github.com/ptr727/NxWitness/issues/282
+            RUN apt-get update \
+                && apt-get upgrade --yes \
+                && apt-get install --no-install-recommends --yes \
+                    ca-certificates \
+                    gdb \
+                    libdrm2 \
+                    unzip \
+                    wget \
+                && apt-get clean \
+                && apt-get autoremove --purge \
+                && rm -rf /var/lib/apt/lists/*
+            """;
+
+        string baseLsioFilePath = Path.Combine(dockerPath, "NxBase-LSIO.Dockerfile");
+        Log.Logger.Information("Writing Dockerfile to {Path}", baseLsioFilePath);
+        File.WriteAllText(baseLsioFilePath, baseLsioDockerfile);
     }
 
     private static string CreateArgs(
@@ -137,10 +202,6 @@ internal static class DockerFile
                 # Platform of the node performing the build
                 BUILDPLATFORM
 
-            # The RUN wget command will be cached unless we change the cache tag
-            # Use the download version for the cache tag
-            ARG CACHE_DATE=${DOWNLOAD_VERSION}
-
             # Prevent EULA and confirmation prompts in installers
             ARG DEBIAN_FRONTEND=noninteractive
 
@@ -159,21 +220,46 @@ internal static class DockerFile
     {
         // Install
         string install = """
-            # Install required tools and utilities
-            RUN apt-get update \
-                && apt-get upgrade --yes \
-                && apt-get install --no-install-recommends --yes \
-                    ca-certificates \
-                    unzip \
-                    wget
-
+            # Base image includes required tools and utilities.
             # Download the installer file
-            RUN mkdir -p /temp
-            COPY download.sh /temp/download.sh
-            # Set the working directory to /temp
             WORKDIR /temp
-            RUN chmod +x download.sh \
-                && ./download.sh
+            RUN /bin/bash -euo pipefail -c '\
+                DEB_FILE="./vms_server.deb"; \
+                TARGET_PLATFORM="${TARGETPLATFORM:-}"; \
+                DOWNLOAD_URL="${DOWNLOAD_X64_URL:?DOWNLOAD_X64_URL is required}"; \
+                if [ "${TARGET_PLATFORM}" = "linux/arm64" ]; then \
+                    DOWNLOAD_URL="${DOWNLOAD_ARM64_URL:?DOWNLOAD_ARM64_URL is required}"; \
+                fi; \
+                echo "Download URL: ${DOWNLOAD_URL}"; \
+                DOWNLOAD_FILENAME="$(basename -- "${DOWNLOAD_URL}")"; \
+                echo "Download Filename: ${DOWNLOAD_FILENAME}"; \
+                wget --no-verbose --tries=5 --timeout=30 --retry-connrefused "${DOWNLOAD_URL}"; \
+                case "${DOWNLOAD_FILENAME}" in \
+                    *.zip) \
+                        echo "Downloaded ZIP: ${DOWNLOAD_FILENAME}"; \
+                        DOWNLOAD_DIR="./download_zip"; \
+                        rm -rf "${DOWNLOAD_DIR}"; \
+                        mkdir -p "${DOWNLOAD_DIR}"; \
+                        unzip -q -d "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"; \
+                        DEB_ZIP_FILE="$(find "${DOWNLOAD_DIR}" -maxdepth 1 -type f -name "*.deb" -print -quit)"; \
+                        if [ -z "${DEB_ZIP_FILE}" ]; then \
+                            echo "No .deb found in ${DOWNLOAD_DIR}" >&2; \
+                            exit 1; \
+                        fi; \
+                        echo "DEB in ZIP: ${DEB_ZIP_FILE}"; \
+                        mv "${DEB_ZIP_FILE}" "${DEB_FILE}"; \
+                        rm -rf "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"; \
+                        ;; \
+                    *.deb) \
+                        echo "Downloaded DEB: ${DOWNLOAD_FILENAME}"; \
+                        mv "${DOWNLOAD_FILENAME}" "${DEB_FILE}"; \
+                        ;; \
+                    *) \
+                        echo "Unsupported download type: ${DOWNLOAD_FILENAME}" >&2; \
+                        exit 1; \
+                        ;; \
+                esac; \
+                echo "DEB File: ${DEB_FILE}"'
 
 
             """;
@@ -197,25 +283,10 @@ internal static class DockerFile
                 """;
         }
 
-        // https://github.com/ptr727/NxWitness/issues/282
         install += """
-            # Install the mediaserver and dependencies
+            # Install the mediaserver
             RUN apt-get update \
-                # https://github.com/ptr727/NxWitness/issues/282
                 && apt-get install --no-install-recommends --yes \
-                    gdb \
-                    libdrm2 \
-
-            """;
-        if (!lsio)
-        {
-            install += """
-                        sudo \
-
-                """;
-        }
-
-        install += """
                     ./vms_server.deb \
                 # Cleanup
                 && apt-get clean \

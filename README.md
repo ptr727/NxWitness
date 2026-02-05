@@ -12,12 +12,11 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.9**:
+**Version: 2.10**:
 
 **Summary**:
 
-- Refactoring to match layout and style used in other projects.
-- Updated to .NET 10, adding support for Nullable and AOT.
+- Split the docker images into a base image and product images, improves build times and reduces GH actions cache utilization.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 
@@ -265,8 +264,12 @@ Today Network Optix supports [Docker][nxdocker-link], and they publish [build sc
 
 The project creates two variants of each product using different base images:
 
-- [Ubuntu][ubuntu-link] using [ubuntu:jammy][ubuntudocker-link] base image.
-- [LinuxServer][lsio-link] using [lsiobase/ubuntu:jammy][ubuntulsiodocker-link] base image.
+- [Ubuntu][ubuntu-link] using [ubuntu:noble][ubuntudocker-link] base image.
+- [LinuxServer][lsio-link] using [lsiobase/ubuntu:noble][ubuntulsiodocker-link] base image.
+
+The build pipeline also publishes internal base images (`ptr727/nx-base:ubuntu-noble` and
+`ptr727/nx-base-lsio:ubuntu-noble`) built from `ubuntu:noble` and `lsiobase/ubuntu:noble`
+to reduce CI cache churn. These base images are not intended for end-user deployments.
 
 Note that smaller base images like [Alpine][alpine-link] are not [supported][nxossupport-link] by the mediaserver.
 
