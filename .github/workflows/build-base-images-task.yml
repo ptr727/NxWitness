@@ -19,10 +19,12 @@ jobs:
         base:
           - name: nx-base
             dockerfile: Docker/NxBase.Dockerfile
+            cache_tag: docker.io/ptr727/nx-base:ubuntu-noble
             tags: |
               docker.io/ptr727/nx-base:ubuntu-noble
           - name: nx-base-lsio
             dockerfile: Docker/NxBase-LSIO.Dockerfile
+            cache_tag: docker.io/ptr727/nx-base-lsio:ubuntu-noble
             tags: |
               docker.io/ptr727/nx-base-lsio:ubuntu-noble
 
@@ -57,7 +59,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ matrix.base.tags }}
           cache-from: |
-            type=registry,ref=${{ matrix.base.tags }}
+            type=registry,ref=${{ matrix.base.cache_tag }}
             type=gha,scope=develop-base-${{ matrix.base.name }}
             type=gha,scope=main-base-${{ matrix.base.name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-base-{0}-{1}', github.event.pull_request.number, matrix.base.name) || '' }}
