@@ -20,7 +20,7 @@ jobs:
         id: getrepos
         # Create array of docker hub repositories from matrix.json
         run: |
-          echo "repos=$(jq --compact-output '[.Images[].Name | ascii_downcase | \"ptr727/\\(.)\"] | sort | unique' ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "repos=$(jq --compact-output '[.Images[].Name | ascii_downcase | "ptr727/\(.)" ] | sort | unique' ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
   publish-readme:
     name: Publish docker hub readme job
