@@ -39,3 +39,4 @@ jobs:
           body: 'This PR updates the codegen files.'
           commit-message: 'Update codegen files'
           delete-branch: true
+          sign-commits: true
