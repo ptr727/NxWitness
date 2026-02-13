@@ -21,7 +21,7 @@ jobs:
 
       - name: Run codegen step
         run: >-
-            dotnet run --project ./CreateMatrix/CreateMatrix.csproj --
+          dotnet run --project ./CreateMatrix/CreateMatrix.csproj --
             matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
 
       - name: Format code step
