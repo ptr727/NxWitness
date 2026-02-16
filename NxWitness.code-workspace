@@ -17,6 +17,7 @@
             "buildtransitive",
             "buildx",
             "cloudhost",
+            "codegen",
             "Composefile",
             "connrefused",
             "contentfiles",
