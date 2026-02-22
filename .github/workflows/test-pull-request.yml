@@ -2,7 +2,7 @@ name: Test pull request action
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, codegen-update ]
   workflow_dispatch:
 
 concurrency:
