@@ -26,6 +26,14 @@
             "Stable",
             "Latest"
           ]
+        },
+        {
+          "Version": "6.1.1.42471",
+          "UriX64": "https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
         }
       ]
     },

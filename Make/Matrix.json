@@ -84,6 +84,21 @@
     {
       "Name": "NxMeta",
       "Product": "nxmeta",
+      "Branch": "main",
+      "Base": "ubuntu",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:6.1.1.42471",
+        "docker.io/ptr727/nxmeta:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.1.1.42471",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_x64-rc.zip"
+      ]
+    },
+    {
+      "Name": "NxMeta",
+      "Product": "nxmeta",
       "Branch": "develop",
       "Base": "ubuntu",
       "Tags": [
@@ -95,6 +110,21 @@
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_arm64.zip",
         "DOWNLOAD_VERSION=6.1.0.42176",
         "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "NxMeta",
+      "Product": "nxmeta",
+      "Branch": "develop",
+      "Base": "ubuntu",
+      "Tags": [
+        "docker.io/ptr727/nxmeta:develop-6.1.1.42471",
+        "docker.io/ptr727/nxmeta:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.1.1.42471",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_x64-rc.zip"
       ]
     },
     {
@@ -116,6 +146,21 @@
     {
       "Name": "NxMeta-LSIO",
       "Product": "nxmeta",
+      "Branch": "main",
+      "Base": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:6.1.1.42471",
+        "docker.io/ptr727/nxmeta-lsio:rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.1.1.42471",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_x64-rc.zip"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Product": "nxmeta",
       "Branch": "develop",
       "Base": "lsio",
       "Tags": [
@@ -127,6 +172,21 @@
         "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_arm64.zip",
         "DOWNLOAD_VERSION=6.1.0.42176",
         "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42176/metavms-server_update-6.1.0.42176-linux_x64.zip"
+      ]
+    },
+    {
+      "Name": "NxMeta-LSIO",
+      "Product": "nxmeta",
+      "Branch": "develop",
+      "Base": "lsio",
+      "Tags": [
+        "docker.io/ptr727/nxmeta-lsio:develop-6.1.1.42471",
+        "docker.io/ptr727/nxmeta-lsio:develop-rc"
+      ],
+      "Args": [
+        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_arm64-rc.zip",
+        "DOWNLOAD_VERSION=6.1.1.42471",
+        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/metavms/42471/metavms-server_update-6.1.1.42471-linux_x64-rc.zip"
       ]
     },
     {
