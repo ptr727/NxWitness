@@ -64,6 +64,6 @@ jobs:
             type=gha,scope=main-base-${{ matrix.base.name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-base-{0}-{1}', github.event.pull_request.number, matrix.base.name) || '' }}
           cache-to: |
-            ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-base-{1}', github.ref_name, matrix.base.name) || '' }}
+            ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-base-{1},ignore-error=true', github.ref_name, matrix.base.name) || '' }}
             ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') && 'type=inline' || '' }}
-            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-base-{0}-{1}', github.event.pull_request.number, matrix.base.name) || '' }}
+            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-base-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.base.name) || '' }}

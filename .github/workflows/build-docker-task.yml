@@ -100,5 +100,5 @@ jobs:
             type=gha,scope=main-${{ matrix.images.Name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
           cache-to: |
-            ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-{1}', github.ref_name, matrix.images.Name) || '' }}
-            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
+            ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', github.ref_name, matrix.images.Name) || '' }}
+            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=min,scope=pr-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.images.Name) || '' }}
