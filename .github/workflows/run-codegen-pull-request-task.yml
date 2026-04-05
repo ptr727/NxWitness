@@ -38,7 +38,7 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.WORKFLOW_PAT }}
-          branch: codegen-update
+          branch: codegen
           title: 'Update codegen files'
           body: 'This PR updates the codegen files.'
           commit-message: 'Update codegen files'
