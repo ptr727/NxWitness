@@ -2,6 +2,7 @@ name: Merge bot pull request action
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
