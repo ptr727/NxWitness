@@ -35,7 +35,7 @@ jobs:
   merge-codegen:
     name: Merge codegen pull request job
     runs-on: ubuntu-latest
-    if: github.actor == 'github-actions[bot]' && github.event.pull_request.head.ref == 'codegen' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.ref == 'codegen' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'automated-codegen')
     permissions:
       contents: write
       pull-requests: write
