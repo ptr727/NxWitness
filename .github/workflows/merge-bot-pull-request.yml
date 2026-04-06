@@ -2,6 +2,7 @@ name: Merge bot pull request action
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -35,7 +36,7 @@ jobs:
   merge-codegen:
     name: Merge codegen pull request job
     runs-on: ubuntu-latest
-    if: github.actor == 'github-actions[bot]' && github.event.pull_request.head.ref == 'codegen-update' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.actor == 'ptr727' && github.event.pull_request.user.login == 'ptr727' && github.event.pull_request.head.ref == 'codegen' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: write
       pull-requests: write

@@ -2,6 +2,9 @@ name: Run codegen and pull request task
 
 on:
   workflow_call:
+    secrets:
+      WORKFLOW_PAT:
+        required: true
 
 jobs:
 
@@ -18,6 +21,8 @@ jobs:
 
       - name: Checkout code step
         uses: actions/checkout@v6
+        with:
+          ref: main
 
       - name: Run codegen step
         run: |
@@ -34,7 +39,9 @@ jobs:
       - name: Create pull request step
         uses: peter-evans/create-pull-request@v8
         with:
-          branch: codegen-update
+          token: ${{ secrets.WORKFLOW_PAT }}
+          base: main
+          branch: codegen
           title: 'Update codegen files'
           body: 'This PR updates the codegen files.'
           commit-message: 'Update codegen files'
