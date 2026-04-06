@@ -93,5 +93,21 @@
                 "clear": false
             }
         },
-   ]
+        {
+            "label": ".Net Outdated Upgrade",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "outdated",
+                "--upgrade:Prompt"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        }
+    ]
 }
