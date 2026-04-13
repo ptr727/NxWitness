@@ -3,6 +3,9 @@ name: Run codegen and pull request task
 on:
   workflow_call:
     secrets:
+      # Least-privilege PAT used by `gh pr close/reopen` to re-trigger PR workflows.
+      # Grant only the minimum repository permissions needed to modify PR state
+      # (typically pull requests: write; contents: write only if your repo requires it).
       WORKFLOW_PAT:
         required: true
 
@@ -11,6 +14,9 @@ jobs:
   codegen:
     name: Run codegen and pull request job
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
 
@@ -38,8 +44,9 @@ jobs:
 
       - name: Create pull request step
         uses: peter-evans/create-pull-request@v8
+        id: cpr
         with:
-          token: ${{ secrets.WORKFLOW_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           base: main
           branch: codegen
           title: 'Update codegen files'
@@ -47,3 +54,12 @@ jobs:
           commit-message: 'Update codegen files'
           delete-branch: true
           sign-commits: true
+
+      - name: Trigger PR workflows step
+        if: steps.cpr.outputs.pull-request-number != ''
+        run: |
+          PR="${{ steps.cpr.outputs.pull-request-number }}"
+          gh pr close "$PR"
+          gh pr reopen "$PR"
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
