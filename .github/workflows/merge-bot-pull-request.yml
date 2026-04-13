@@ -36,7 +36,7 @@ jobs:
   merge-codegen:
     name: Merge codegen pull request job
     runs-on: ubuntu-latest
-    if: github.actor == 'ptr727' && github.event.pull_request.user.login == 'ptr727' && github.event.pull_request.head.ref == 'codegen' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.user.login == 'github-actions[bot]' && github.event.pull_request.head.ref == 'codegen' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository && ((github.event.action == 'reopened' && github.actor == 'ptr727') || (github.event.action != 'reopened' && github.actor == 'github-actions[bot]'))
     permissions:
       contents: write
       pull-requests: write
