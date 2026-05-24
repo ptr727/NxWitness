@@ -1,65 +1,89 @@
 name: Run codegen and pull request task
 
+# Runs codegen against `main` and `develop` in parallel via a matrix,
+# opens a PR against each base (`codegen-main` branch -> main,
+# `codegen-develop` branch -> develop). The merge-bot auto-merges
+# either PR independently. This keeps both branches current on
+# generated content (Nx product matrix, version data) without either
+# branch falling behind the other and without main -> develop
+# back-merges.
+
 on:
   workflow_call:
     secrets:
-      # Least-privilege PAT used by `gh pr close/reopen` to re-trigger PR workflows.
-      # Grant only the minimum repository permissions needed to modify PR state
-      # (typically pull requests: write; contents: write only if your repo requires it).
-      WORKFLOW_PAT:
+      # GitHub App credentials to generate an installation token.
+      # The App-token-driven PR open fires `pull_request` workflow
+      # events directly. `GITHUB_TOKEN`-driven PR opens do not (GitHub's
+      # recursion guard), which previously required a close/reopen dance
+      # under a PAT to nudge the auto-merge workflow.
+      CODEGEN_APP_CLIENT_ID:
+        required: true
+      CODEGEN_APP_PRIVATE_KEY:
         required: true
 
 jobs:
 
   codegen:
-    name: Run codegen and pull request job
+    name: Run ${{ matrix.target.ref }} codegen and pull request job
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+    strategy:
+      # Each branch gets its own parallel codegen run + PR. If one
+      # branch's PR fails (CI, conflicts, etc.) the other is unaffected.
+      fail-fast: false
+      matrix:
+        target:
+          - ref: main
+            branch: codegen-main
+          - ref: develop
+            branch: codegen-develop
 
     steps:
 
+      - name: Generate GitHub App token step
+        id: app-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.CODEGEN_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CODEGEN_APP_PRIVATE_KEY }}
+
       - name: Setup .NET SDK step
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           dotnet-version: 10.x
 
       - name: Checkout code step
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: main
+          ref: ${{ matrix.target.ref }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Run codegen step
         run: |
+          set -euo pipefail
           dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- \
             matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
 
       - name: Format code step
         run: |
+          set -euo pipefail
           dotnet tool restore
           dotnet husky install
           dotnet csharpier format --log-level=debug .
           git status
 
       - name: Create pull request step
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         id: cpr
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: codegen
+          # App token: triggers pull_request workflow events directly, creates verified commits as the app
+          token: ${{ steps.app-token.outputs.token }}
+          base: ${{ matrix.target.ref }}
+          branch: ${{ matrix.target.branch }}
           title: 'Update codegen files'
           body: 'This PR updates the codegen files.'
           commit-message: 'Update codegen files'
           delete-branch: true
           sign-commits: true
-
-      - name: Trigger PR workflows step
-        if: steps.cpr.outputs.pull-request-number != ''
-        run: |
-          PR="${{ steps.cpr.outputs.pull-request-number }}"
-          gh pr close "$PR"
-          gh pr reopen "$PR"
-        env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
