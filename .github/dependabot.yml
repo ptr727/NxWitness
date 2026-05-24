@@ -1,23 +1,97 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Every ecosystem appears **twice**: once with `target-branch: "main"`
+# and once with `target-branch: "develop"`. Dependabot will open
+# parallel PRs against each branch, so both stay current on
+# dependency versions independently of the develop -> main release
+# cadence.
+#
+# Why dual-target and not develop-only:
+# - `develop` is the integration branch and ships content forward to
+#   `main` through merge-commit releases, but the time between releases
+#   can be long (a feature branch may sit on develop for weeks).
+# - Push-distribution channels (e.g. Docker Hub, distros that pull from
+#   main) consume `main` directly. If `main` only got dependency bumps
+#   via the next develop -> main release, those channels would ship
+#   outdated code in the interim.
+# - Codegen workflows take the same dual-target shape for the same
+#   reason - see .github/workflows/run-codegen-pull-request-task.yml.
+#
+# The merge-bot's `case` statement in
+# .github/workflows/merge-bot-pull-request.yml dispatches the merge
+# method per base ref (squash on develop, merge on main) so both bases
+# auto-merge cleanly. `develop` remains strictly forward-only: there
+# are no main -> develop back-merges; each branch absorbs its own
+# Dependabot PRs and codegen PRs independently.
+#
+# Security update PRs (CVE-driven) are opened by Dependabot against
+# the repo default branch (`main`) regardless of any `target-branch`
+# config - the `case` statement handles them in the same code path.
 version: 2
 updates:
 
-  # main
-- package-ecosystem: "nuget"
-  target-branch: "main"
-  directory: "/"
-  schedule:
-    interval: "daily"
-  groups:
-    nuget-deps:
-      patterns:
-        - "*"
-- package-ecosystem: "github-actions"
-  target-branch: "main"
-  directory: "/"
-  schedule:
-    interval: "daily"
-  groups:
-    actions-deps:
-      patterns:
-        - "*"
+  # ----- nuget -----
+
+  - package-ecosystem: "nuget"
+    target-branch: "main"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      nuget-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "nuget"
+    target-branch: "develop"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      nuget-deps:
+        patterns:
+          - "*"
+
+  # ----- github-actions -----
+
+  - package-ecosystem: "github-actions"
+    target-branch: "main"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    target-branch: "develop"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
+
+  # ----- docker (Docker/*.Dockerfile) -----
+
+  - package-ecosystem: "docker"
+    target-branch: "main"
+    directory: "/Docker"
+    schedule:
+      interval: "daily"
+    groups:
+      docker-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    target-branch: "develop"
+    directory: "/Docker"
+    schedule:
+      interval: "daily"
+    groups:
+      docker-deps:
+        patterns:
+          - "*"
