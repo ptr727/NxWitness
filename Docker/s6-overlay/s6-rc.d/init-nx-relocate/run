@@ -84,7 +84,14 @@ then
     if echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
     then
         echo "Added currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
-        chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+        # Best-effort chown: /config may be on a filesystem that doesn't
+        # support ownership changes (e.g., some SMB/NFS/Windows-backed
+        # mounts), and a non-zero exit from chown would fail this oneshot
+        # service even though the write succeeded.
+        if ! chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+        then
+            echo "Warning: failed to chown ${MEDIASERVER_CONF} — continuing (filesystem may not support ownership changes)" >&2
+        fi
     else
         echo "Warning: failed to write ${MEDIASERVER_CONF} — check that the /config mount is writable" >&2
     fi
