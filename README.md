@@ -117,6 +117,10 @@ services:
       stack_network:
     labels:
       - traefik.enable=true # Traefik SSL proxy
+      # The container is multi-homed: bare `nxmeta` resolves to the
+      # dedicated macvlan IP above (direct), while `nxmeta-web` is a
+      # CNAME pointing at Traefik for SSL termination. Traefik only
+      # handles the `-web` hostname; the bare hostname bypasses it.
       - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta-web${DOMAIN_REGEX}$$`)
       - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
       - traefik.http.services.nxmeta.loadbalancer.server.port=7001
