@@ -16,7 +16,7 @@ sudo /opt/${COMPANY_NAME}/mediaserver/bin/root-tool &
 MEDIASERVER_CONF="/opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf"
 if ! grep -q "^currentOsVariantOverride=" "${MEDIASERVER_CONF}" 2>/dev/null
 then
-    if echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}" 2>/dev/null
+    if echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
     then
         echo "Added currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
     else
