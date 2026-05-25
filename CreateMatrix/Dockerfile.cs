@@ -304,6 +304,10 @@ internal static class DockerFile
                     && chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
 
                 """;
+            // Note: for LSIO, currentOsVariantOverride=docker is injected at runtime by
+            // s6-overlay/s6-rc.d/init-nx-relocate/run, because LSIO replaces
+            // /opt/${COMPANY_NAME}/mediaserver/etc with a symlink to /config/etc on first
+            // start, which would erase any build-time edit to the directory.
         }
         else
         {
@@ -313,6 +317,10 @@ internal static class DockerFile
                 RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
                 """;
+            // Note: for non-LSIO, currentOsVariantOverride=docker is injected at runtime by
+            // Docker/entrypoint.sh, because the recommended non-LSIO setup bind-mounts
+            // /opt/${COMPANY_NAME}/mediaserver/etc from the host, which would hide any
+            // build-time edit. Both variants now use runtime injection for the same reason.
         }
 
         return install;

@@ -68,3 +68,31 @@ then
     echo "../mediaserver/var/data exists, deleting"
     rm /opt/${COMPANY_NAME}/mediaserver/var/data
 fi
+
+# Tell mediaserver it is running under Docker so it reports its OS variant correctly
+# https://github.com/networkoptix/nxvms-docker/commit/54bbd16
+# Inject at runtime rather than build time because the etc directory above is replaced
+# by a symlink to /config/etc on first start, which would erase any build-time edit.
+# Check for any `currentOsVariantOverride=` key (regardless of value) so we never
+# duplicate the line on subsequent starts and never override a value the user
+# explicitly set themselves. Same defensive write pattern as Docker/entrypoint.sh:
+# this script runs as root, but the underlying /config mount may still be on a
+# read-only filesystem, so guard the append and log a clear warning if it fails.
+MEDIASERVER_CONF="/config/etc/mediaserver.conf"
+if ! grep -q "^currentOsVariantOverride=" "${MEDIASERVER_CONF}" 2>/dev/null
+then
+    if echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
+    then
+        echo "Added currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
+        # Best-effort chown: /config may be on a filesystem that doesn't
+        # support ownership changes (e.g., some SMB/NFS/Windows-backed
+        # mounts), and a non-zero exit from chown would fail this oneshot
+        # service even though the write succeeded.
+        if ! chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+        then
+            echo "Warning: failed to chown ${MEDIASERVER_CONF} — continuing (filesystem may not support ownership changes)" >&2
+        fi
+    else
+        echo "Warning: failed to write ${MEDIASERVER_CONF} — check that the /config mount is writable" >&2
+    fi
+fi
