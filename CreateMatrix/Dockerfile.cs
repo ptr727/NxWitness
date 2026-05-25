@@ -295,11 +295,6 @@ internal static class DockerFile
                 && rm -rf /temp
 
 
-            # Tell mediaserver it is running under Docker so it reports its OS variant correctly
-            # https://github.com/networkoptix/nxvms-docker/commit/54bbd16
-            RUN echo "currentOsVariantOverride=docker" >> /opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf
-
-
             """;
         if (lsio)
         {
@@ -309,6 +304,10 @@ internal static class DockerFile
                     && chown --verbose ${COMPANY_NAME}:${COMPANY_NAME} /opt/${COMPANY_NAME}/mediaserver/bin/external.dat
 
                 """;
+            // Note: for LSIO, currentOsVariantOverride=docker is injected at runtime by
+            // s6-overlay/s6-rc.d/init-nx-relocate/run, because LSIO replaces
+            // /opt/${COMPANY_NAME}/mediaserver/etc with a symlink to /config/etc on first
+            // start, which would erase any build-time edit to the directory.
         }
         else
         {
@@ -316,6 +315,10 @@ internal static class DockerFile
                 # Add the mediaserver ${COMPANY_NAME} user to the sudoers group
                 # Only allow sudo no password access to the root-tool
                 RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
+
+                # Tell mediaserver it is running under Docker so it reports its OS variant correctly
+                # https://github.com/networkoptix/nxvms-docker/commit/54bbd16
+                RUN echo "currentOsVariantOverride=docker" >> /opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf
 
                 """;
         }

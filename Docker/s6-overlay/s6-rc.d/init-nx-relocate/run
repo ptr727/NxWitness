@@ -68,3 +68,15 @@ then
     echo "../mediaserver/var/data exists, deleting"
     rm /opt/${COMPANY_NAME}/mediaserver/var/data
 fi
+
+# Tell mediaserver it is running under Docker so it reports its OS variant correctly
+# https://github.com/networkoptix/nxvms-docker/commit/54bbd16
+# Inject at runtime rather than build time because the etc directory above is replaced
+# by a symlink to /config/etc on first start, which would erase any build-time edit.
+MEDIASERVER_CONF="/config/etc/mediaserver.conf"
+if ! grep -q "^currentOsVariantOverride=docker" "${MEDIASERVER_CONF}" 2>/dev/null
+then
+    echo "Adding currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
+    echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
+    chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+fi
