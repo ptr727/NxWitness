@@ -316,11 +316,11 @@ internal static class DockerFile
                 # Only allow sudo no password access to the root-tool
                 RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
-                # Tell mediaserver it is running under Docker so it reports its OS variant correctly
-                # https://github.com/networkoptix/nxvms-docker/commit/54bbd16
-                RUN echo "currentOsVariantOverride=docker" >> /opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf
-
                 """;
+            // Note: for non-LSIO, currentOsVariantOverride=docker is injected at runtime by
+            // Docker/entrypoint.sh, because the recommended non-LSIO setup bind-mounts
+            // /opt/${COMPANY_NAME}/mediaserver/etc from the host, which would hide any
+            // build-time edit. Both variants now use runtime injection for the same reason.
         }
 
         return install;
