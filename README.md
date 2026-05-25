@@ -117,6 +117,12 @@ services:
       stack_network:
     labels:
       - traefik.enable=true # Traefik SSL proxy
+      # Two-hostname pattern (DNS records configured externally, e.g.
+      # in your LAN DNS or hosts file): an A/AAAA `nxmeta -> ${NXMETA_IP}`
+      # points at the dedicated macvlan IP above for direct access,
+      # and a CNAME `nxmeta-web -> <traefik-host>` fronts the service
+      # with SSL termination. Traefik routes only the `-web` hostname;
+      # the bare hostname bypasses Traefik entirely.
       - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta-web${DOMAIN_REGEX}$$`)
       - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
       - traefik.http.services.nxmeta.loadbalancer.server.port=7001
