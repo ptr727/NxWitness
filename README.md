@@ -52,6 +52,9 @@ services:
       - test_nxwitness-lsio_media:/media
       - test_nxwitness-lsio_backup:/backup
       - test_nxwitness-lsio_analytics:/analytics
+    tmpfs:
+      # Keep mediaserver's unix socket and tmp files in RAM
+      - /tmp:size=1g,mode=1777
 ```
 
 ```shell
@@ -93,15 +96,19 @@ services:
     security_opt: # Set with care
       - seccomp=unconfined
       - apparmor=unconfined
+    devices: # Pass through Intel/AMD iGPU for hardware accelerated video
+      - /dev/dri
     environment:
       - TZ=${TZ}
       - PUID=${USER_NONROOT_ID} # Run as non-root user
       - PGID=${USERS_GROUP_ID}
     volumes: # ZFS volumes
       - ${APPDATA_DIR}/nxmeta/config:/config
-      - ${NVR_DIR}/media:/media
-      - ${NVR_DIR}/backup:/backup
-      - ${NVR_DIR}/analytics:/analytics
+      - ${NVR_DIR}/media:/media # ssdpool/nvr-media
+      - ${NVR_DIR}/backup:/backup # hddpool/nvr-backup
+      - ${NVR_DIR}/analytics:/analytics # ssdpool/nvr-analytics
+    tmpfs: # Keep mediaserver's unix socket and tmp files in RAM
+      - /tmp:size=1g,mode=1777
     networks:
       public_network:
         ipv4_address: ${NXMETA_IP} # Static IP
@@ -110,7 +117,7 @@ services:
       stack_network:
     labels:
       - traefik.enable=true # Traefik SSL proxy
-      - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta${DOMAIN_REGEX}$$`)
+      - traefik.http.routers.nxmeta.rule=HostRegexp(`^nxmeta-web${DOMAIN_REGEX}$$`)
       - traefik.http.services.nxmeta.loadbalancer.server.scheme=https
       - traefik.http.services.nxmeta.loadbalancer.server.port=7001
 ```
@@ -361,6 +368,9 @@ services:
     volumes:
       - /mnt/nxwitness/config:/config
       - /mnt/nxwitness/media:/media
+    tmpfs:
+      # Keep mediaserver's unix socket and tmp files in RAM
+      - /tmp:size=1g,mode=1777
 ```
 
 ### Non-LSIO Docker Compose
@@ -377,6 +387,9 @@ services:
       - /mnt/nxwitness/config/nx_ini:/home/networkoptix/.config/nx_ini
       - /mnt/nxwitness/config/var:/opt/networkoptix/mediaserver/var
       - /mnt/nxwitness/media:/media
+    tmpfs:
+      # Keep mediaserver's unix socket and tmp files in RAM
+      - /tmp:size=1g,mode=1777
 ```
 
 ### Unraid Template
@@ -450,6 +463,7 @@ services:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
+  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [recently disabled `root-tool`](https://github.com/networkoptix/nxvms-docker/commit/4285f93) by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change — licensed deployments would lose activation — and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
   - Nx to fix: Associate licenses with the [Cloud Account][nxcloud-link] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.

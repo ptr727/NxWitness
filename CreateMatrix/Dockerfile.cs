@@ -295,6 +295,11 @@ internal static class DockerFile
                 && rm -rf /temp
 
 
+            # Tell mediaserver it is running under Docker so it reports its OS variant correctly
+            # https://github.com/networkoptix/nxvms-docker/commit/54bbd16
+            RUN echo "currentOsVariantOverride=docker" >> /opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf
+
+
             """;
         if (lsio)
         {
