@@ -53,7 +53,7 @@ services:
       - test_nxwitness-lsio_backup:/backup
       - test_nxwitness-lsio_analytics:/analytics
     tmpfs:
-      # Keep mediaserver's unix socket and tmp files in RAM
+      # Keep mediaserver's Unix socket and tmp files in RAM
       - /tmp:size=1g,mode=1777
 ```
 
@@ -107,7 +107,7 @@ services:
       - ${NVR_DIR}/media:/media # ssdpool/nvr-media
       - ${NVR_DIR}/backup:/backup # hddpool/nvr-backup
       - ${NVR_DIR}/analytics:/analytics # ssdpool/nvr-analytics
-    tmpfs: # Keep mediaserver's unix socket and tmp files in RAM
+    tmpfs: # Keep mediaserver's Unix socket and tmp files in RAM
       - /tmp:size=1g,mode=1777
     networks:
       public_network:
@@ -369,7 +369,7 @@ services:
       - /mnt/nxwitness/config:/config
       - /mnt/nxwitness/media:/media
     tmpfs:
-      # Keep mediaserver's unix socket and tmp files in RAM
+      # Keep mediaserver's Unix socket and tmp files in RAM
       - /tmp:size=1g,mode=1777
 ```
 
@@ -388,7 +388,7 @@ services:
       - /mnt/nxwitness/config/var:/opt/networkoptix/mediaserver/var
       - /mnt/nxwitness/media:/media
     tmpfs:
-      # Keep mediaserver's unix socket and tmp files in RAM
+      # Keep mediaserver's Unix socket and tmp files in RAM
       - /tmp:size=1g,mode=1777
 ```
 
@@ -463,7 +463,7 @@ services:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [recently disabled `root-tool`](https://github.com/networkoptix/nxvms-docker/commit/4285f93) by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change — licensed deployments would lose activation — and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
+  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [disabled `root-tool` in late 2025](https://github.com/networkoptix/nxvms-docker/commit/4285f93) by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change — licensed deployments would lose activation — and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
   - Nx to fix: Associate licenses with the [Cloud Account][nxcloud-link] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
