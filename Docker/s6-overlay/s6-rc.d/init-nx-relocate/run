@@ -75,11 +75,17 @@ fi
 # by a symlink to /config/etc on first start, which would erase any build-time edit.
 # Check for any `currentOsVariantOverride=` key (regardless of value) so we never
 # duplicate the line on subsequent starts and never override a value the user
-# explicitly set themselves.
+# explicitly set themselves. Same defensive write pattern as Docker/entrypoint.sh:
+# this script runs as root, but the underlying /config mount may still be on a
+# read-only filesystem, so guard the append and log a clear warning if it fails.
 MEDIASERVER_CONF="/config/etc/mediaserver.conf"
 if ! grep -q "^currentOsVariantOverride=" "${MEDIASERVER_CONF}" 2>/dev/null
 then
-    echo "Adding currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
-    echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
-    chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+    if echo "currentOsVariantOverride=docker" >> "${MEDIASERVER_CONF}"
+    then
+        echo "Added currentOsVariantOverride=docker to ${MEDIASERVER_CONF}"
+        chown ${COMPANY_NAME}:${COMPANY_NAME} "${MEDIASERVER_CONF}"
+    else
+        echo "Warning: failed to write ${MEDIASERVER_CONF} — check that the /config mount is writable" >&2
+    fi
 fi
