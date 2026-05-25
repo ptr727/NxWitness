@@ -101,10 +101,6 @@ RUN apt-get update \
 # Only allow sudo no password access to the root-tool
 RUN echo "${COMPANY_NAME} ALL = NOPASSWD: /opt/${COMPANY_NAME}/mediaserver/bin/root-tool" > /etc/sudoers.d/${COMPANY_NAME}
 
-# Tell mediaserver it is running under Docker so it reports its OS variant correctly
-# https://github.com/networkoptix/nxvms-docker/commit/54bbd16
-RUN echo "currentOsVariantOverride=docker" >> /opt/${COMPANY_NAME}/mediaserver/etc/mediaserver.conf
-
 # Copy the entrypoint.sh launch script
 # entrypoint.sh will run the mediaserver and root-tool
 COPY entrypoint.sh /opt/entrypoint.sh
