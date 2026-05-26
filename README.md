@@ -12,11 +12,11 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.10**:
+**Version: 2.11**:
 
 **Summary**:
 
-- Split the docker images into a base image and product images, improves build times and reduces GH actions cache utilization.
+- Add `currentOsVariantOverride=docker` to `mediaserver.conf` following the pattern used in the current Nx [Dockerfile][nxvmsdockerfile-link], and documented in this [support][nxpackage-link] article.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 
@@ -130,36 +130,37 @@ services:
 
 ## Table of Contents
 
-- [Build and Distribution](#build-and-distribution)
-  - [Build Status](#build-status)
-  - [Release Notes](#release-notes)
-- [Getting Started](#getting-started)
-- [Table of Contents](#table-of-contents)
-- [Products](#products)
-- [Releases](#releases)
-- [Overview](#overview)
-  - [Introduction](#introduction)
-  - [Base Images](#base-images)
-  - [LinuxServer](#linuxserver)
-- [Configuration](#configuration)
-  - [LSIO Volumes](#lsio-volumes)
-  - [Non-LSIO Volumes](#non-lsio-volumes)
-  - [Ports](#ports)
-  - [Environment Variables](#environment-variables)
-  - [Network Mode](#network-mode)
-- [Examples](#examples)
-  - [LSIO Docker Create](#lsio-docker-create)
-  - [LSIO Docker Compose](#lsio-docker-compose)
-  - [Non-LSIO Docker Compose](#non-lsio-docker-compose)
-  - [Unraid Template](#unraid-template)
-- [Product Information](#product-information)
-  - [Release Information](#release-information)
-  - [Advanced Configuration](#advanced-configuration)
-- [Build Process](#build-process)
-- [Known Issues](#known-issues)
-- [Troubleshooting](#troubleshooting)
-  - [Missing Storage](#missing-storage)
-- [License](#license)
+- [Docker Projects for Network Optix VMS Products](#docker-projects-for-network-optix-vms-products)
+  - [Build and Distribution](#build-and-distribution)
+    - [Build Status](#build-status)
+    - [Release Notes](#release-notes)
+  - [Getting Started](#getting-started)
+  - [Table of Contents](#table-of-contents)
+  - [Products](#products)
+  - [Releases](#releases)
+  - [Overview](#overview)
+    - [Introduction](#introduction)
+    - [Base Images](#base-images)
+    - [LinuxServer](#linuxserver)
+  - [Configuration](#configuration)
+    - [LSIO Volumes](#lsio-volumes)
+    - [Non-LSIO Volumes](#non-lsio-volumes)
+    - [Ports](#ports)
+    - [Environment Variables](#environment-variables)
+    - [Network Mode](#network-mode)
+  - [Examples](#examples)
+    - [LSIO Docker Create](#lsio-docker-create)
+    - [LSIO Docker Compose](#lsio-docker-compose)
+    - [Non-LSIO Docker Compose](#non-lsio-docker-compose)
+    - [Unraid Template](#unraid-template)
+  - [Product Information](#product-information)
+    - [Release Information](#release-information)
+    - [Advanced Configuration](#advanced-configuration)
+  - [Build Process](#build-process)
+  - [Known Issues](#known-issues)
+  - [Troubleshooting](#troubleshooting)
+    - [Missing Storage](#missing-storage)
+  - [License](#license)
 
 ## Products
 
@@ -710,8 +711,10 @@ Licensed under the [MIT License][license-link]\
 [nxmetadownload-link]: https://meta.nxvms.com/download/linux
 [nxmetareleases-link]: https://updates.vmsproxy.com/metavms/releases.json
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+[nxpackage-link]: https://support.networkoptix.com/hc/en-us/articles/32917149024535-Creating-Update-Packages-for-Custom-Linux-and-or-ARM-Servers
 [nxreleasenotes-link]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
 [nxsupport-link]: https://support.networkoptix.com/hc/en-us/community/topics
+[nxvmsdockerfile-link]: https://github.com/networkoptix/nxvms-docker/blob/master/Dockerfile
 [nxwebadmin-link]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
 [nxwitness-link]: https://www.networkoptix.com/nx-witness/
 [nxwitnessbetadownload-link]: https://beta.networkoptix.com/beta-builds/default

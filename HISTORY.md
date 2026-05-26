@@ -4,6 +4,8 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release History
 
+- Version 2.11:
+  - Add `currentOsVariantOverride=docker` to `mediaserver.conf` following the pattern used in the current Nx [Dockerfile][nxvmsdockerfile-link], and documented in this [support][nxpackage-link] article.
 - Version 2.10:
   - Split the docker images into a base image and product images, improves build times and reduces GH actions cache utilization.
 - Version 2.9:
@@ -19,31 +21,37 @@ This is a project to build and publish docker images for various [Network Optix]
   - Updated to Ubuntu Noble 24.04 LTS base images in [support][nxossupport-link] of v6 products.
   - Update `CreateMatrix` tool to use .NET 9 and stricter `dotnet format` using `.editorconfig`.
 - Version 2.5:
-  - Added [NxGo][nxgo-link] builds, a version of Nx Witness targeted at the transportation sector, [PR](https://github.com/ptr727/NxWitness/pull/172) by @kinnairdclan, thank you.
+  - Added [NxGo][nxgo-link] builds, a version of Nx Witness targeted at the transportation sector, [PR][nxgopr-link] by @kinnairdclan, thank you.
 - Version 2.4:
   - Added [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][hanwhawave-link] builds, another US OEM whitelabel version Nx Witness.
   - Using the `CreateMatrix` utility instead of M4 to create Docker and Compose files for all product variants.
 - Version 2.3:
   - Added unit test project to verify the release and upgrade control logic.
   - Switched from `Newtonsoft.Json` to .NET native `Text.Json`.
-  - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142](https://github.com/ptr727/NxWitness/issues/142).
+  - Modified builds to account for v6 Beta installers requiring the `file` package but not listing it in DEB `Depends`, see [#142][filedepends-link].
 - Version 2.2:
   - Simplified `Dockerfile` creation by using shell scripts instead of a `Makefile`.
 - Version 2.1:
-  - Added ARM64 images per user [request](https://github.com/ptr727/NxWitness/issues/131).
+  - Added ARM64 images per user [request][arm64request-link].
     - Note that testing was limited to verifying that the containers run on a Raspberry Pi 5.
   - Updated build scripts to use `docker compose` (vs. `docker-compose`) and `docker buildx` (vs. `docker build`) per current Docker/Moby v25+ [release][dockerinstall-link].
   - Updated `CreateMatrix` tooling to use the newest version for the `latest` tag when multiple versions are available.
 - Version 2.0:
-  - Added a build release [version](./version.json), this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
+  - Added a build release [version][version-link], this version is independent of Nx release versions, and only identifies the version of the build environment, and is used in the image label.
   - Nx released v5.1 across all product brands, v5.1 [supports][nxossupport-link] Ubuntu Jammy 22.04 LTS, and all base images have been updated to Jammy.
   - Due to the Jammy dependency versions older than v5.1 are no longer being built.
   - Build scripts removed support for old v4 variants.
   - Added a link from `/root/.config/nx_ini` to `/config/ini` for additional INI configuration files.
 
+[arm64request-link]: https://github.com/ptr727/NxWitness/issues/131
 [dockerinstall-link]: https://docs.docker.com/engine/install/
+[filedepends-link]: https://github.com/ptr727/NxWitness/issues/142
 [hanwhavision-link]: https://hanwhavisionamerica.com/
 [hanwhawave-link]: https://wavevms.com/
 [networkoptix-link]: https://www.networkoptix.com/
 [nxgo-link]: https://www.networkoptix.com/nx-go
+[nxgopr-link]: https://github.com/ptr727/NxWitness/pull/172
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
+[nxpackage-link]: https://support.networkoptix.com/hc/en-us/articles/32917149024535-Creating-Update-Packages-for-Custom-Linux-and-or-ARM-Servers
+[nxvmsdockerfile-link]: https://github.com/networkoptix/nxvms-docker/blob/master/Dockerfile
+[version-link]: ./version.json
