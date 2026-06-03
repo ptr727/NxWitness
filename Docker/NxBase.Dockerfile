@@ -19,3 +19,4 @@ RUN apt-get update \
     && apt-get clean \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/*
+# CI smoke-test marker (throwaway, do not merge)
