@@ -86,6 +86,9 @@ jobs:
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
+          # Pin the tag to main's HEAD so a dispatch from another ref still
+          # tags the release on main, matching the main-pinned version/assets.
+          target_commitish: main
           # This run's release represents the main publish.
           prerelease: false
           files: |
