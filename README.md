@@ -12,11 +12,11 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.11**:
+**Version: 2.12**:
 
 **Summary**:
 
-- Add `currentOsVariantOverride=docker` to `mediaserver.conf` following the pattern used in the current Nx [Dockerfile][nxvmsdockerfile-link], and documented in this [support][nxpackage-link] article.
+- Reworked the CI pipeline: pull requests run a fast representative amd64 smoke build (`NxMeta` and `NxMeta-LSIO`) instead of the full matrix, publishing moved to a weekly schedule (and manual trigger) that builds both the `main` and `develop` branches in one run, and merges no longer republish images.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 
@@ -713,10 +713,8 @@ Licensed under the [MIT License][license-link]\
 [nxmetadownload-link]: https://meta.nxvms.com/download/linux
 [nxmetareleases-link]: https://updates.vmsproxy.com/metavms/releases.json
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support
-[nxpackage-link]: https://support.networkoptix.com/hc/en-us/articles/32917149024535-Creating-Update-Packages-for-Custom-Linux-and-or-ARM-Servers
 [nxreleasenotes-link]: https://support.networkoptix.com/hc/en-us/articles/360042751193-Current-and-Past-Releases-Downloads-Release-Notes
 [nxsupport-link]: https://support.networkoptix.com/hc/en-us/community/topics
-[nxvmsdockerfile-link]: https://github.com/networkoptix/nxvms-docker/blob/master/Dockerfile
 [nxwebadmin-link]: https://support.networkoptix.com/hc/en-us/articles/115012831028-Nx-Server-Web-Admin
 [nxwitness-link]: https://www.networkoptix.com/nx-witness/
 [nxwitnessbetadownload-link]: https://beta.networkoptix.com/beta-builds/default

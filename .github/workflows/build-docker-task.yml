@@ -55,9 +55,11 @@ jobs:
           # variable, so it must stay single-quoted / unexpanded.
           # shellcheck disable=SC2016
           if [[ "$SMOKE" == "true" ]]; then
-            # One Ubuntu + one LSIO variant exercises the shared Dockerfile
-            # build logic; tags/args are irrelevant since smoke never pushes.
-            FILTER='.Images |= (map(select(.Name == "NxMeta" or .Name == "NxMeta-LSIO")) | unique_by(.Name))'
+            # One Ubuntu + one LSIO variant per branch exercises the shared
+            # Dockerfile build logic and each branch's build args; tags are
+            # irrelevant since smoke never pushes. De-dup by name+branch so a
+            # PR targeting develop still validates the develop rows.
+            FILTER='.Images |= (map(select(.Name == "NxMeta" or .Name == "NxMeta-LSIO")) | unique_by([.Name, .Branch]))'
           elif [[ -n "$REF" ]]; then
             # Publish: build only the rows targeting the branch being built
             # (avoids building the other branch's rows just to discard them).
