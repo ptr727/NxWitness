@@ -1,0 +1,1 @@
+ci smoke test B (throwaway, do not merge) - expect 2 MAIN rows
