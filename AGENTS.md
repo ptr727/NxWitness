@@ -53,6 +53,12 @@ For comprehensive coding and formatting standards, follow:
 - Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
 - Validate workflow edits with `actionlint` before pushing.
 
+## Pull Request Review Process
+
+- Open PRs against `develop` (the integration branch); `develop` is forward-only and ships to `main` via release merges.
+- The repo is configured to automatically request a GitHub Copilot review when a PR is opened. Respond to every Copilot comment: either address it with a change, or justify why it does not apply. Either way, reply on the comment stating what you did, then resolve (close) the comment.
+- After you push a new commit, the automatic Copilot re-review is flaky and often does not fire. If you cannot trigger a re-review, ask the maintainer to start one in the GitHub UI. Repeat until both Copilot and the author are satisfied.
+
 ## Coding Conventions (Highlights)
 
 - Do not use `var`; use explicit types.
