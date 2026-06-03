@@ -1,9 +1,16 @@
 name: Publish project release action
 
+# Sole publisher. Images are built and pushed ONLY here: on the weekly
+# schedule or via manual dispatch. Merges to main/develop no longer build
+# or publish (PRs get a fast smoke build instead, see test-pull-request.yml).
+# One run publishes both the main (:latest/:stable) and develop (:develop)
+# tags, picking up everything merged since the last run (codegen version
+# bumps, Dependabot base-image bumps, code changes).
+
 on:
-  push:
-    branches: [ main, develop ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * MON'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,25 +18,74 @@ concurrency:
 
 jobs:
 
-  create-release:
-    name: Publish project release job
-    uses: ./.github/workflows/build-release-task.yml
+  get-version:
+    name: Get version information job
+    uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
+
+  # Base images share a single tag (nx-base:ubuntu-noble) across branches,
+  # so build them once (from the release branch) and let both branch legs
+  # reuse them via build_base: false.
+  build-base:
+    name: Build base image job
+    uses: ./.github/workflows/build-base-images-task.yml
+    secrets: inherit
+    with:
+      push: true
+
+  build-main:
+    name: Build main images job
+    needs: [build-base]
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      push: true
+      ref: main
+      build_base: false
+
+  build-develop:
+    name: Build develop images job
+    needs: [build-base]
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      push: true
+      ref: develop
+      build_base: false
+
+  github-release:
+    name: Publish GitHub release job
+    needs: [get-version, build-main]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    with:
-      github: true
-      dockerhub: true
+
+    steps:
+
+      - name: Checkout code step
+        uses: actions/checkout@v6
+
+      - name: Create GitHub release step
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          tag_name: ${{ needs.get-version.outputs.SemVer2 }}
+          prerelease: ${{ github.ref_name != 'main' }}
+          files: |
+            LICENSE
+            README.md
+            ./Make/Version.json
+            ./Make/Matrix.json
 
   docker-readme:
     name: Publish docker hub readme job
-    needs: [create-release]
+    needs: [build-main, build-develop]
     uses: ./.github/workflows/publish-docker-readme-task.yml
     secrets: inherit
 
   date-badge:
     name: Create BYOB date badge job
-    needs: [create-release]
+    needs: [build-main, build-develop]
     uses: ./.github/workflows/build-datebadge-task.yml
     secrets: inherit
     permissions:

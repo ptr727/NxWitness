@@ -46,6 +46,13 @@ For comprehensive coding and formatting standards, follow:
 - Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then reused as `FROM` images for derived product Dockerfiles.
 - Derived product images should stay aligned with the base image changes and tags (for example, the Ubuntu distro tag).
 
+## CI Pipeline (GitHub Actions)
+
+- Pull requests (`test-pull-request.yml`) run unit tests and code style, plus a fast smoke build only when image files (`Docker/**`, `Make/Matrix.json`, `Make/Version.json`) change. The smoke build (`build-docker-task.yml` with `smoke: true`) builds a representative subset (NxMeta and NxMeta-LSIO, amd64 only, no push), not the full matrix.
+- Publishing happens only on a schedule or manual dispatch (`publish-release.yml`): it builds the base images once, then builds and pushes the full matrix for both the `main` and `develop` branches (`build-docker-task.yml` with `ref:` and `build_base: false`), and updates the GitHub release, Docker Hub readme, and date badge.
+- Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
+- Validate workflow edits with `actionlint` before pushing.
+
 ## Coding Conventions (Highlights)
 
 - Do not use `var`; use explicit types.

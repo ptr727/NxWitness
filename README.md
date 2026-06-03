@@ -200,7 +200,7 @@ Notes:
 
 - `latest` and `stable` may be the same version if all builds are released builds.
 - `rc` and `beta` tags are only built when RC and Beta builds are published by Nx, and may be older than current `latest` or `stable` builds.
-- Images are updated weekly, picking up the latest upstream Ubuntu updates and newly released Nx product versions.
+- Images are published once a week on a schedule (and on-demand via manual trigger), picking up the latest upstream Ubuntu updates and newly released Nx product versions. A single scheduled run publishes both the `main` tags (`latest`, `stable`, version numbers) and the `develop` tags. Merging code or dependency updates does not republish images, so the published images only change when there is an actual content change.
 - See [Build Process](#build-process) for more details.
 
 **Docker releases**:
@@ -452,7 +452,9 @@ services:
 - The logic follows the same pattern as used by the [Nx Open][releaseinfo-link] desktop client logic.
 - The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished-link] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`
 - [`Matrix.json`](./Make/Matrix.json) is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
-- Automated builds are done using [GitHub Actions](https://docs.github.com/en/actions) and the [`BuildPublishPipeline.yml`](./.github/workflows/BuildPublishPipeline.yml) pipeline.
+- Automated builds use [GitHub Actions](https://docs.github.com/en/actions):
+  - Pull requests run unit tests, and when image files change, a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`](./.github/workflows/test-pull-request.yml)) -- the full matrix is not built on every PR.
+  - Publishing happens only on a weekly schedule or manual trigger ([`publish-release.yml`](./.github/workflows/publish-release.yml)), which builds and pushes the full matrix for both the `main` and `develop` branches. Merges to `main`/`develop` (including auto-merged Dependabot and codegen updates) do not publish; the next scheduled run picks them up.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62](https://github.com/ptr727/NxWitness/issues/62) for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
 **Local testing**:

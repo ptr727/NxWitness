@@ -14,7 +14,7 @@ jobs:
       - name: Get current date step
         id: date
         run: |
-          echo "date=$(date)" >> $GITHUB_OUTPUT
+          echo "date=$(date)" >> "$GITHUB_OUTPUT"
 
       - name: Build BYOB date badge step
         if: ${{ github.ref_name == 'main' }}
