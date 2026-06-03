@@ -21,10 +21,14 @@ concurrency:
 
 jobs:
 
+  # Pin the release version to main: this run's GitHub release tracks the
+  # main publish, so compute it from main even when dispatched from another ref.
   get-version:
     name: Get version information job
     uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
+    with:
+      ref: main
 
   # Base images share a single tag (nx-base:ubuntu-noble) across branches,
   # so build them once (from the release branch) and let both branch legs
@@ -59,9 +63,11 @@ jobs:
       ref: develop
       build_base: false
 
+  # Gate on both build legs so a release is never published when develop
+  # is still building or failed. Release metadata/assets track main.
   github-release:
     name: Publish GitHub release job
-    needs: [get-version, build-main]
+    needs: [get-version, build-main, build-develop]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -70,13 +76,16 @@ jobs:
 
       - name: Checkout code step
         uses: actions/checkout@v6
+        with:
+          ref: main
 
       - name: Create GitHub release step
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
-          prerelease: ${{ github.ref_name != 'main' }}
+          # This run's release represents the main publish.
+          prerelease: false
           files: |
             LICENSE
             README.md

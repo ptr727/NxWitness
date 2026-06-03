@@ -61,7 +61,7 @@ jobs:
     name: Check pull request workflow status
     runs-on: ubuntu-latest
     needs:
-      [ test-release, smoke-build ]
+      [ changes, test-release, smoke-build ]
     if: always()
     steps:
       - name: Check workflow results
@@ -74,5 +74,9 @@ jobs:
               exit 1
             fi
           }
+          # changes must succeed: if it fails, smoke-build is skipped (not
+          # run), and treating that skip as a pass would let an
+          # image-changing PR merge without the smoke build.
+          exit_on_result "changes" "${{ needs.changes.result }}"
           exit_on_result "test-release" "${{ needs.test-release.result }}"
           exit_on_result "smoke-build" "${{ needs.smoke-build.result }}"
