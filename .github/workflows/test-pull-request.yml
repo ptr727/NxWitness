@@ -19,6 +19,7 @@ jobs:
       pull-requests: read
     outputs:
       image: ${{ steps.filter.outputs.image }}
+      base: ${{ steps.filter.outputs.base }}
     steps:
       # Checkout so paths-filter can diff via git for non-PR triggers
       # (e.g. workflow_dispatch); on pull_request it uses the API.
@@ -34,6 +35,9 @@ jobs:
               - 'Docker/**'
               - 'Make/Matrix.json'
               - 'Make/Version.json'
+            base:
+              - 'Docker/NxBase.Dockerfile'
+              - 'Docker/NxBase-LSIO.Dockerfile'
 
   test-release:
     name: Test release job
@@ -45,6 +49,11 @@ jobs:
   # See build-docker-task.yml `smoke`. Publishing happens only on the
   # scheduled publish-release.yml, so a smoke pass is fast PR feedback,
   # not a publish gate.
+  #
+  # build_base is only enabled when a base Dockerfile changed: the product
+  # smoke build pulls the published base from Docker Hub, so building the
+  # base otherwise is wasted work. When a base Dockerfile does change, build
+  # it to validate it still compiles (e.g. a Dependabot ubuntu:noble bump).
   smoke-build:
     name: Smoke build job
     needs: [changes]
@@ -54,6 +63,7 @@ jobs:
     with:
       push: false
       smoke: true
+      build_base: ${{ needs.changes.outputs.base == 'true' }}
 
   # TODO: Workaround for GitHub Actions not supporting status checks on conditional jobs
   # https://github.com/orgs/community/discussions/12395#discussioncomment-12970019
