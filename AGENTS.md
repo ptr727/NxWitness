@@ -41,10 +41,35 @@ For comprehensive coding and formatting standards, follow:
 - C# code should be formatted with CSharpier, then verified with `dotnet format` (style).
 - The `.Net Format` VS Code task in `.vscode/tasks.json` must be clean and warning-free at all times.
 
+### Linting structured files
+
+- Every structured file type has a linter configured in the workspace via the recommended VS Code extensions in `.vscode/extensions.json`; there is no separate CI lint job. Lint changed files and clear reported problems before pushing. Coverage:
+  - C# — Roslyn analyzers + CSharpier (also enforced by Husky/`dotnet format`).
+  - Markdown — markdownlint (`README.md`, `HISTORY.md`, docs).
+  - YAML — Red Hat YAML schema validation (compose and workflow files).
+  - Dockerfiles / Docker Compose — the Docker extension.
+  - GitHub Actions workflows — the GitHub Actions extension (schema + expression checks); for deeper checks (including shellcheck on `run:` steps) run the `actionlint` CLI.
+
 ## Image Architecture
 
 - Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then reused as `FROM` images for derived product Dockerfiles.
 - Derived product images should stay aligned with the base image changes and tags (for example, the Ubuntu distro tag).
+
+## CI Pipeline (GitHub Actions)
+
+- Pull requests (`test-pull-request.yml`) run unit tests and code style, plus a fast smoke build only when image files (`Docker/**`, `Make/Matrix.json`, `Make/Version.json`) change. The smoke build (`build-docker-task.yml` with `smoke: true`) builds a representative subset (NxMeta and NxMeta-LSIO, amd64 only, no push), not the full matrix.
+- Publishing happens only on a schedule or manual dispatch (`publish-release.yml`): it builds the base images once, then builds and pushes the full matrix for both the `main` and `develop` branches (`build-docker-task.yml` with `ref:` and `build_base: false`), and updates the GitHub release, Docker Hub readme, and date badge.
+- Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
+- Lint workflow edits before pushing (see [Linting structured files](#linting-structured-files)); there is no CI lint job.
+
+## Pull Request Review Process
+
+- Open PRs against `develop` (the integration branch); `develop` is forward-only and ships to `main` via release merges.
+- The repo is configured to automatically request a GitHub Copilot review when a PR is opened. Respond to every Copilot comment: either address it with a change, or justify why it does not apply. Either way, reply on the comment stating what you did, then resolve (close) the comment.
+- After you push a new commit, a Copilot re-review does not reliably fire on its own. In practice the re-review can be requested via the GraphQL `requestReviews` mutation, passing the Copilot bot's node id in `botIds`:
+  - Get the bot id once from the existing review author: `pullRequest { reviews(first:1){ nodes { author { ... on Bot { id } } } } }` (the Copilot reviewer login is `copilot-pull-request-reviewer`).
+  - Trigger: `mutation { requestReviews(input: {pullRequestId: "<PR node id>", botIds: ["<bot id>"], union: true}) { pullRequest { id } } }`.
+  - This is observed-but-not-guaranteed; if a re-review still does not appear, ask the maintainer to start one in the GitHub UI. Repeat until both Copilot and the author are satisfied.
 
 ## Coding Conventions (Highlights)
 

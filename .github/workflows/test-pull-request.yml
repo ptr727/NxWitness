@@ -11,10 +11,62 @@ concurrency:
 
 jobs:
 
+  changes:
+    name: Detect image changes job
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      image: ${{ steps.filter.outputs.image }}
+      base: ${{ steps.filter.outputs.base }}
+    steps:
+      # Checkout so paths-filter can diff via git for non-PR triggers
+      # (e.g. workflow_dispatch); on pull_request it uses the API.
+      # fetch-depth: 0 gives the full history those git diffs need.
+      - name: Checkout step
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Filter changed paths step
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            image:
+              - 'Docker/**'
+              - 'Make/Matrix.json'
+              - 'Make/Version.json'
+            base:
+              - 'Docker/NxBase.Dockerfile'
+              - 'Docker/NxBase-LSIO.Dockerfile'
+
   test-release:
     name: Test release job
     uses: ./.github/workflows/test-release-task.yml
     secrets: inherit
+
+  # Fast smoke build in place of the full matrix: only runs when image
+  # files changed, and builds just NxMeta + NxMeta-LSIO on amd64 (no push).
+  # See build-docker-task.yml `smoke`. Publishing happens only on the
+  # scheduled publish-release.yml, so a smoke pass is fast PR feedback,
+  # not a publish gate.
+  #
+  # build_base is only enabled when a base Dockerfile changed: the product
+  # smoke build pulls the published base from Docker Hub, so building the
+  # base otherwise is wasted work. When a base Dockerfile does change, build
+  # it to validate it still compiles (e.g. a Dependabot ubuntu:noble bump).
+  smoke-build:
+    name: Smoke build job
+    needs: [changes]
+    if: ${{ needs.changes.outputs.image == 'true' }}
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      push: false
+      smoke: true
+      build_base: ${{ needs.changes.outputs.base == 'true' }}
 
   # TODO: Workaround for GitHub Actions not supporting status checks on conditional jobs
   # https://github.com/orgs/community/discussions/12395#discussioncomment-12970019
@@ -22,15 +74,22 @@ jobs:
     name: Check pull request workflow status
     runs-on: ubuntu-latest
     needs:
-      [ test-release ]
+      [ changes, test-release, smoke-build ]
     if: always()
     steps:
       - name: Check workflow results
         run: |
           exit_on_result() {
+            # Pass on success or skipped (smoke-build is skipped when no
+            # image files changed); fail only on failure/cancelled.
             if [[ "$2" == "failure" || "$2" == "cancelled" ]]; then
               echo "Job '$1' failed or was cancelled."
               exit 1
             fi
           }
+          # changes must succeed: if it fails, smoke-build is skipped (not
+          # run), and treating that skip as a pass would let an
+          # image-changing PR merge without the smoke build.
+          exit_on_result "changes" "${{ needs.changes.result }}"
           exit_on_result "test-release" "${{ needs.test-release.result }}"
+          exit_on_result "smoke-build" "${{ needs.smoke-build.result }}"

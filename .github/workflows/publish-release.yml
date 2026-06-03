@@ -1,35 +1,114 @@
 name: Publish project release action
 
-on:
-  push:
-    branches: [ main, develop ]
-  workflow_dispatch:
+# Sole publisher. Images are built and pushed ONLY here: on the weekly
+# schedule or via manual dispatch. Merges to main/develop no longer build
+# or publish (PRs get a fast smoke build instead, see test-pull-request.yml).
+# One run publishes both the main (:latest/:stable) and develop (:develop)
+# tags, picking up everything merged since the last run (codegen version
+# bumps, Dependabot base-image bumps, code changes).
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * MON'
+
+# Single global group (not ref-scoped): this workflow pushes shared tags
+# (base images, both branches, readme, badge), so two dispatches on
+# different refs must not run concurrently and race on those shared tags.
+# cancel-in-progress: false queues the next run instead of cancelling an
+# in-flight publish, which could otherwise leave a partially pushed tag set.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
 
-  create-release:
-    name: Publish project release job
-    uses: ./.github/workflows/build-release-task.yml
+  # Pin the release version to main: this run's GitHub release tracks the
+  # main publish, so compute it from main even when dispatched from another ref.
+  get-version:
+    name: Get version information job
+    uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
+    with:
+      ref: main
+
+  # Base images share a single tag (nx-base:ubuntu-noble) across branches,
+  # so build them once (from the release branch) and let both branch legs
+  # reuse them via build_base: false.
+  build-base:
+    name: Build base image job
+    uses: ./.github/workflows/build-base-images-task.yml
+    secrets: inherit
+    with:
+      push: true
+      # Always build the shared nx-base tag from main, even when dispatched
+      # from another ref, so a develop dispatch can't overwrite main's base.
+      ref: main
+
+  build-main:
+    name: Build main images job
+    needs: [build-base]
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      push: true
+      ref: main
+      build_base: false
+
+  build-develop:
+    name: Build develop images job
+    needs: [build-base]
+    uses: ./.github/workflows/build-docker-task.yml
+    secrets: inherit
+    with:
+      push: true
+      ref: develop
+      build_base: false
+
+  # Gate on both build legs so a release is never published when develop
+  # is still building or failed. Release metadata/assets track main.
+  github-release:
+    name: Publish GitHub release job
+    needs: [get-version, build-main, build-develop]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    with:
-      github: true
-      dockerhub: true
+
+    steps:
+
+      - name: Checkout code step
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Create GitHub release step
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          tag_name: ${{ needs.get-version.outputs.SemVer2 }}
+          # Pin the tag to main's HEAD so a dispatch from another ref still
+          # tags the release on main, matching the main-pinned version/assets.
+          target_commitish: main
+          # This run's release represents the main publish.
+          prerelease: false
+          files: |
+            LICENSE
+            README.md
+            ./Make/Version.json
+            ./Make/Matrix.json
 
   docker-readme:
     name: Publish docker hub readme job
-    needs: [create-release]
+    needs: [build-main, build-develop]
     uses: ./.github/workflows/publish-docker-readme-task.yml
     secrets: inherit
+    with:
+      # Readme content tracks main, consistent with the version/release.
+      ref: main
 
   date-badge:
     name: Create BYOB date badge job
-    needs: [create-release]
+    needs: [build-main, build-develop]
     uses: ./.github/workflows/build-datebadge-task.yml
     secrets: inherit
     permissions:

@@ -2,6 +2,14 @@ name: Publish docker hub readme task
 
 on:
   workflow_call:
+    inputs:
+      # Branch whose Matrix.json / Docker/README.md drive the published
+      # readmes. The publisher passes main so readme content matches the
+      # main release artifacts even when dispatched from another ref.
+      ref:
+        required: false
+        type: string
+        default: ''
 
 jobs:
 
@@ -15,6 +23,8 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Load matrix.json step
         id: getrepos
@@ -33,6 +43,8 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Update docker hub description step
         uses: peter-evans/dockerhub-description@v5

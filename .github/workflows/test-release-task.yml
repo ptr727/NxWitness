@@ -28,12 +28,3 @@ jobs:
 
       - name: Run unit tests step
         run: dotnet test
-
-  build-release:
-    name: Build release without publishing job
-    needs: [unit-test]
-    uses: ./.github/workflows/build-release-task.yml
-    secrets: inherit
-    with:
-      github: false
-      dockerhub: false
