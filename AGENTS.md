@@ -41,14 +41,11 @@ For comprehensive coding and formatting standards, follow:
 - C# code should be formatted with CSharpier, then verified with `dotnet format` (style).
 - The `.Net Format` VS Code task in `.vscode/tasks.json` must be clean and warning-free at all times.
 
-### Linting structured files
+### Workspace and linting
 
-- Every structured file type has a linter configured in the workspace via the recommended VS Code extensions in `.vscode/extensions.json`; there is no separate CI lint job. Lint changed files and clear reported problems before pushing. Coverage:
-  - C# — Roslyn analyzers + CSharpier (also enforced by Husky/`dotnet format`).
-  - Markdown — markdownlint (`README.md`, `HISTORY.md`, docs).
-  - YAML — Red Hat YAML schema validation (compose and workflow files).
-  - Dockerfiles / Docker Compose — the Docker extension.
-  - GitHub Actions workflows — the GitHub Actions extension (schema + expression checks); for deeper checks (including shellcheck on `run:` steps) run the `actionlint` CLI.
+- VS Code customizations (settings, extension recommendations, spell-check words) live in the workspace file `NxWitness.code-workspace`, not under `.vscode/`. Add new editor settings or recommended extensions there. Open the workspace file in VS Code (not the folder) so those settings and recommendations apply.
+- Every structured file type is linted in-editor via the extensions recommended in `NxWitness.code-workspace` (C#, Markdown, Dockerfiles/Compose, GitHub Actions, spelling, etc.); there is no separate CI lint job. Lint changed files and clear reported problems before pushing.
+- For workflow files, the GitHub Actions extension covers schema/expression checks in-editor; run the `actionlint` CLI for deeper checks (including shellcheck on `run:` steps).
 
 ## Image Architecture
 
@@ -60,7 +57,7 @@ For comprehensive coding and formatting standards, follow:
 - Pull requests (`test-pull-request.yml`) run unit tests and code style, plus a fast smoke build only when image files (`Docker/**`, `Make/Matrix.json`, `Make/Version.json`) change. The smoke build (`build-docker-task.yml` with `smoke: true`) builds a representative subset (NxMeta and NxMeta-LSIO, amd64 only, no push), not the full matrix.
 - Publishing happens only on a schedule or manual dispatch (`publish-release.yml`): it builds the base images once, then builds and pushes the full matrix for both the `main` and `develop` branches (`build-docker-task.yml` with `ref:` and `build_base: false`), and updates the GitHub release, Docker Hub readme, and date badge.
 - Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
-- Lint workflow edits before pushing (see [Linting structured files](#linting-structured-files)); there is no CI lint job.
+- Lint workflow edits before pushing (see [Workspace and linting](#workspace-and-linting)); there is no CI lint job.
 
 ## Pull Request Review Process
 
