@@ -15,9 +15,11 @@ on:
 # Single global group (not ref-scoped): this workflow pushes shared tags
 # (base images, both branches, readme, badge), so two dispatches on
 # different refs must not run concurrently and race on those shared tags.
+# cancel-in-progress: false queues the next run instead of cancelling an
+# in-flight publish, which could otherwise leave a partially pushed tag set.
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
 
