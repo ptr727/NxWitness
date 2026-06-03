@@ -57,7 +57,10 @@ For comprehensive coding and formatting standards, follow:
 
 - Open PRs against `develop` (the integration branch); `develop` is forward-only and ships to `main` via release merges.
 - The repo is configured to automatically request a GitHub Copilot review when a PR is opened. Respond to every Copilot comment: either address it with a change, or justify why it does not apply. Either way, reply on the comment stating what you did, then resolve (close) the comment.
-- After you push a new commit, the automatic Copilot re-review is flaky and often does not fire. If you cannot trigger a re-review, ask the maintainer to start one in the GitHub UI. Repeat until both Copilot and the author are satisfied.
+- After you push a new commit, a Copilot re-review does not reliably fire on its own. In practice the re-review can be requested via the GraphQL `requestReviews` mutation, passing the Copilot bot's node id in `botIds`:
+  - Get the bot id once from the existing review author: `pullRequest { reviews(first:1){ nodes { author { ... on Bot { id } } } } }` (the Copilot reviewer login is `copilot-pull-request-reviewer`).
+  - Trigger: `mutation { requestReviews(input: {pullRequestId: "<PR node id>", botIds: ["<bot id>"], union: true}) { pullRequest { id } } }`.
+  - This is observed-but-not-guaranteed; if a re-review still does not appear, ask the maintainer to start one in the GitHub UI. Repeat until both Copilot and the author are satisfied.
 
 ## Coding Conventions (Highlights)
 
