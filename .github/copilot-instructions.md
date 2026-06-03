@@ -43,7 +43,7 @@ This repository builds and publishes Docker images for Network Optix VMS product
 - Pull requests run unit tests and style checks, plus a fast smoke build (NxMeta and NxMeta-LSIO, amd64 only, no push) that runs only when image files change -- not the full matrix.
 - Publishing is schedule/manual only via `publish-release.yml`, which builds the base images once and then publishes the full matrix for both the `main` and `develop` branches in a single run.
 - Merges to `main`/`develop` do not publish; auto-merged Dependabot and codegen PRs are picked up by the next scheduled publish. Do not reintroduce push-triggered publishing or full-matrix PR builds.
-- Structured files are linted in-editor via the extensions recommended in the workspace file `NxWitness.code-workspace` (C#, Markdown, Docker, GitHub Actions, spelling) rather than a CI lint job; lint changed files before pushing, and run `actionlint` for deeper workflow checks. VS Code customizations belong in the workspace file, not under `.vscode/`. See AGENTS.md.
+- Structured files are linted in-editor via the extensions recommended in the workspace file `NxWitness.code-workspace` (C#, Markdown, Docker, GitHub Actions, spelling) rather than a CI lint job; lint changed files before pushing, and run `actionlint` for deeper workflow checks. Editor settings, extension recommendations, and spell-check words belong in the workspace file (not `.vscode/`). See AGENTS.md.
 
 ## What to Keep in Sync
 
