@@ -15,6 +15,14 @@ on:
         required: false
         type: boolean
         default: false
+      # In smoke mode, restrict the build to this branch's rows (the PR
+      # base branch). Empty builds both branches' rows. Lets a PR onto
+      # develop smoke-test the develop images and a PR onto main the main
+      # images, without building the other branch.
+      smoke_branch:
+        required: false
+        type: string
+        default: ''
       # Branch to check out and whose images to build/push. Empty uses the
       # triggering ref (PR context). The publisher passes main and develop
       # so both branches' tags are produced from one scheduled run.
@@ -49,27 +57,27 @@ jobs:
         id: getmatrix
         env:
           SMOKE: ${{ inputs.smoke }}
+          SMOKE_BRANCH: ${{ inputs.smoke_branch }}
           REF: ${{ inputs.ref }}
         run: |
-          # $ref below is a jq variable (passed via --arg), not a shell
-          # variable, so it must stay single-quoted / unexpanded.
+          # $ref and $sb below are jq variables (passed via --arg), not shell
+          # variables, so they must stay single-quoted / unexpanded.
           # shellcheck disable=SC2016
           if [[ "$SMOKE" == "true" ]]; then
-            # One Ubuntu + one LSIO variant per branch exercises the shared
-            # Dockerfile build logic and each branch's build args; tags are
-            # irrelevant since smoke never pushes. De-dup by name+branch so a
-            # PR targeting develop still validates the develop rows.
-            FILTER='.Images |= (map(select(.Name == "NxMeta" or .Name == "NxMeta-LSIO")) | unique_by([.Name, .Branch]))'
+            # One Ubuntu + one LSIO variant exercises the shared Dockerfile
+            # build logic and the branch's build args; tags are irrelevant
+            # since smoke never pushes. Restrict to the PR base branch ($sb)
+            # so a PR onto develop validates the develop rows and a PR onto
+            # main validates the main rows; empty $sb builds both branches.
+            FILTER='.Images |= (map(select((.Name == "NxMeta" or .Name == "NxMeta-LSIO") and ($sb == "" or .Branch == $sb))) | unique_by([.Name, .Branch]))'
           elif [[ -n "$REF" ]]; then
             # Publish: build only the rows targeting the branch being built
             # (avoids building the other branch's rows just to discard them).
-            # $ref is passed via --arg so the value is never interpolated
-            # into the jq program.
             FILTER='.Images |= map(select(.Branch == $ref))'
           else
             FILTER='.'
           fi
-          echo "matrix=$(jq --arg ref "$REF" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(jq --arg ref "$REF" --arg sb "$SMOKE_BRANCH" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
   get-version:
     name: Get version information job
