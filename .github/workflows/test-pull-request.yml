@@ -23,8 +23,11 @@ jobs:
     steps:
       # Checkout so paths-filter can diff via git for non-PR triggers
       # (e.g. workflow_dispatch); on pull_request it uses the API.
+      # fetch-depth: 0 gives the full history those git diffs need.
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Filter changed paths step
         id: filter
