@@ -11,6 +11,13 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64
+      # Branch to check out. The publisher passes main so the shared
+      # nx-base tag is always built from the release branch regardless of
+      # the dispatch ref. Empty falls back to the triggering ref.
+      ref:
+        required: false
+        type: string
+        default: ''
 
 jobs:
 
@@ -36,6 +43,8 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Setup QEMU step
         uses: docker/setup-qemu-action@v4
@@ -47,7 +56,11 @@ jobs:
         with:
           platforms: ${{ inputs.platforms }}
 
+      # Only needed when pushing; skipped for non-publishing builds (e.g.
+      # PR smoke) so they don't depend on Docker Hub secrets (unavailable
+      # on forked PRs). Public base images still pull anonymously.
       - name: Login to Docker Hub step
+        if: ${{ inputs.push }}
         uses: docker/login-action@v4
         with:
           registry: docker.io

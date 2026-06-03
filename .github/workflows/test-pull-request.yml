@@ -15,10 +15,16 @@ jobs:
     name: Detect image changes job
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     outputs:
       image: ${{ steps.filter.outputs.image }}
     steps:
+      # Checkout so paths-filter can diff via git for non-PR triggers
+      # (e.g. workflow_dispatch); on pull_request it uses the API.
+      - name: Checkout step
+        uses: actions/checkout@v6
+
       - name: Filter changed paths step
         id: filter
         uses: dorny/paths-filter@v3

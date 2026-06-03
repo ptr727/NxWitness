@@ -12,8 +12,11 @@ on:
   schedule:
     - cron: '0 2 * * MON'
 
+# Single global group (not ref-scoped): this workflow pushes shared tags
+# (base images, both branches, readme, badge), so two dispatches on
+# different refs must not run concurrently and race on those shared tags.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
@@ -32,6 +35,9 @@ jobs:
     secrets: inherit
     with:
       push: true
+      # Always build the shared nx-base tag from main, even when dispatched
+      # from another ref, so a develop dispatch can't overwrite main's base.
+      ref: main
 
   build-main:
     name: Build main images job

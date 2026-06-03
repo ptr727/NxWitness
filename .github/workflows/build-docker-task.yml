@@ -43,7 +43,7 @@ jobs:
       - name: Checkout step
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Load matrix.json step
         id: getmatrix
@@ -51,6 +51,9 @@ jobs:
           SMOKE: ${{ inputs.smoke }}
           REF: ${{ inputs.ref }}
         run: |
+          # $ref below is a jq variable (passed via --arg), not a shell
+          # variable, so it must stay single-quoted / unexpanded.
+          # shellcheck disable=SC2016
           if [[ "$SMOKE" == "true" ]]; then
             # One Ubuntu + one LSIO variant exercises the shared Dockerfile
             # build logic; tags/args are irrelevant since smoke never pushes.
@@ -58,11 +61,13 @@ jobs:
           elif [[ -n "$REF" ]]; then
             # Publish: build only the rows targeting the branch being built
             # (avoids building the other branch's rows just to discard them).
-            FILTER=".Images |= map(select(.Branch == \"$REF\"))"
+            # $ref is passed via --arg so the value is never interpolated
+            # into the jq program.
+            FILTER='.Images |= map(select(.Branch == $ref))'
           else
             FILTER='.'
           fi
-          echo "matrix=$(jq --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(jq --arg ref "$REF" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
   get-version:
     name: Get version information job
@@ -78,6 +83,7 @@ jobs:
     with:
       push: ${{ inputs.push }}
       platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+      ref: ${{ inputs.ref }}
     secrets: inherit
 
   build-docker:
@@ -102,7 +108,7 @@ jobs:
       - name: Checkout step
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Setup QEMU step
         uses: docker/setup-qemu-action@v4
@@ -114,7 +120,11 @@ jobs:
         with:
           platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
 
+      # Only needed when pushing; skipped for non-publishing builds (e.g.
+      # PR smoke) so they don't depend on Docker Hub secrets (unavailable
+      # on forked PRs). The public base image still pulls anonymously.
       - name: Login to Docker Hub step
+        if: ${{ inputs.push }}
         uses: docker/login-action@v4
         with:
           registry: docker.io
