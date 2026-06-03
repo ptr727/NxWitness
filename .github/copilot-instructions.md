@@ -38,6 +38,13 @@ This repository builds and publishes Docker images for Network Optix VMS product
 - Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then used as `FROM` images for derived product Dockerfiles.
 - Derived images should track base image tag changes (for example, the Ubuntu distro tag) to keep builds consistent.
 
+### CI Pipeline (GitHub Actions)
+
+- Pull requests run unit tests and style checks, plus a fast smoke build (NxMeta and NxMeta-LSIO, amd64 only, no push) that runs only when image files change -- not the full matrix.
+- Publishing is schedule/manual only via `publish-release.yml`, which builds the base images once and then publishes the full matrix for both the `main` and `develop` branches in a single run.
+- Merges to `main`/`develop` do not publish; auto-merged Dependabot and codegen PRs are picked up by the next scheduled publish. Do not reintroduce push-triggered publishing or full-matrix PR builds.
+- Structured files are linted in-editor via the workspace-recommended extensions in [.vscode/extensions.json](../.vscode/extensions.json) (C#, Markdown, YAML, Docker, GitHub Actions) rather than a CI lint job; lint changed files before pushing, and run `actionlint` for deeper workflow checks. See AGENTS.md.
+
 ## What to Keep in Sync
 
 - Generated Dockerfiles and scripts must reflect CreateMatrix behavior.

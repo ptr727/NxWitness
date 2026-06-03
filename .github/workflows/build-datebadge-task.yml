@@ -14,10 +14,12 @@ jobs:
       - name: Get current date step
         id: date
         run: |
-          echo "date=$(date)" >> $GITHUB_OUTPUT
+          echo "date=$(date)" >> "$GITHUB_OUTPUT"
 
+      # No ref gate: the sole caller (publish-release) only runs this after
+      # a successful publish and can be dispatched from any ref, so the
+      # "Last Build" badge should update on every publish.
       - name: Build BYOB date badge step
-        if: ${{ github.ref_name == 'main' }}
         uses: RubbaBoy/BYOB@v1
         with:
           name: lastbuild

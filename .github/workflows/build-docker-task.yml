@@ -8,6 +8,27 @@ on:
         required: false
         type: boolean
         default: false
+      # Smoke mode: build a single Ubuntu + single LSIO variant on amd64
+      # only, never push. Used for fast PR feedback in place of the full
+      # matrix. See test-pull-request.yml.
+      smoke:
+        required: false
+        type: boolean
+        default: false
+      # Branch to check out and whose images to build/push. Empty uses the
+      # triggering ref (PR context). The publisher passes main and develop
+      # so both branches' tags are produced from one scheduled run.
+      ref:
+        required: false
+        type: string
+        default: ''
+      # When false the caller is expected to have built the base images
+      # already (the publisher builds them once, see publish-release.yml),
+      # so the internal base build is skipped.
+      build_base:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
 
@@ -21,28 +42,63 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Load matrix.json step
         id: getmatrix
+        env:
+          SMOKE: ${{ inputs.smoke }}
+          REF: ${{ inputs.ref }}
         run: |
-          echo "matrix=$(jq --compact-output '.' ./Make/Matrix.json)" >> $GITHUB_OUTPUT
+          # $ref below is a jq variable (passed via --arg), not a shell
+          # variable, so it must stay single-quoted / unexpanded.
+          # shellcheck disable=SC2016
+          if [[ "$SMOKE" == "true" ]]; then
+            # One Ubuntu + one LSIO variant per branch exercises the shared
+            # Dockerfile build logic and each branch's build args; tags are
+            # irrelevant since smoke never pushes. De-dup by name+branch so a
+            # PR targeting develop still validates the develop rows.
+            FILTER='.Images |= (map(select(.Name == "NxMeta" or .Name == "NxMeta-LSIO")) | unique_by([.Name, .Branch]))'
+          elif [[ -n "$REF" ]]; then
+            # Publish: build only the rows targeting the branch being built
+            # (avoids building the other branch's rows just to discard them).
+            # $ref is passed via --arg so the value is never interpolated
+            # into the jq program.
+            FILTER='.Images |= map(select(.Branch == $ref))'
+          else
+            FILTER='.'
+          fi
+          echo "matrix=$(jq --arg ref "$REF" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
   get-version:
     name: Get version information job
     uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
+    with:
+      ref: ${{ inputs.ref }}
 
   build-base:
     name: Build base image job
+    if: ${{ inputs.build_base }}
     uses: ./.github/workflows/build-base-images-task.yml
     with:
       push: ${{ inputs.push }}
+      platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+      ref: ${{ inputs.ref }}
     secrets: inherit
 
   build-docker:
     name: Build Docker image job
     runs-on: ubuntu-latest
     needs: [get-version, get-matrix, build-base]
+    # always() so the job still runs when build-base is intentionally
+    # skipped (build_base == false); fail only if a prerequisite failed.
+    if: >-
+      ${{ always()
+      && needs.get-version.result == 'success'
+      && needs.get-matrix.result == 'success'
+      && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
 
     strategy:
       max-parallel: 4
@@ -53,18 +109,24 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Setup QEMU step
         uses: docker/setup-qemu-action@v4
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
 
       - name: Setup Buildx step
         uses: docker/setup-buildx-action@v4
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
 
+      # Only needed when pushing; skipped for non-publishing builds (e.g.
+      # PR smoke) so they don't depend on Docker Hub secrets (unavailable
+      # on forked PRs). The public base image still pulls anonymously.
       - name: Login to Docker Hub step
+        if: ${{ inputs.push }}
         uses: docker/login-action@v4
         with:
           registry: docker.io
@@ -89,10 +151,12 @@ jobs:
       - name: Docker build and push step
         uses: docker/build-push-action@v7
         with:
-          push: ${{ inputs.push && (github.ref_name == matrix.images.Branch) }}
+          # Matrix is already filtered to the target branch, so push when asked.
+          # Smoke callers pass push:false.
+          push: ${{ inputs.push }}
           context: Docker
           file: Docker/${{ matrix.images.Name }}.Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           tags: ${{ steps.tagsargs.outputs.tags }}
           build-args: ${{ steps.tagsargs.outputs.args }}
           cache-from: |
@@ -100,5 +164,5 @@ jobs:
             type=gha,scope=main-${{ matrix.images.Name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
           cache-to: |
-            ${{ (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', github.ref_name, matrix.images.Name) || '' }}
+            ${{ inputs.push && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', inputs.ref != '' && inputs.ref || github.ref_name, matrix.images.Name) || '' }}
             ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=min,scope=pr-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.images.Name) || '' }}

@@ -22,13 +22,15 @@ name: Merge bot pull request action
 #
 # Token strategy:
 #   Every job uses an App token (`actions/create-github-app-token`).
-#   The resulting push is committed by the App, which fires downstream
-#   workflows on develop and main. `GITHUB_TOKEN`-authored pushes are
-#   blocked from triggering further workflow runs by GitHub's recursion
-#   guard, which would silently skip `publish-release.yml` on the merge
-#   commit. The App-token path also removes the close/reopen dance
-#   previously used by codegen PRs created under `GITHUB_TOKEN` to nudge
-#   the auto-merge workflow. The disable job needs an App token too:
+#   Bot PRs are opened under the App token so the `pull_request` event
+#   fires the auto-merge and PR-test workflows directly; `GITHUB_TOKEN`-
+#   authored PR opens are blocked from triggering further workflow runs
+#   by GitHub's recursion guard. The App-token path also removes the
+#   close/reopen dance previously used by codegen PRs created under
+#   `GITHUB_TOKEN` to nudge the auto-merge workflow. (Merges no longer
+#   trigger publishing at all -- the scheduled `publish-release.yml` is
+#   the sole publisher -- so no merge-commit workflow needs to fire.)
+#   The disable job needs an App token too:
 #   even though the event actor is a maintainer, the workflow context
 #   on a Dependabot PR runs with Dependabot's restricted secrets
 #   regardless of actor, so plain `GITHUB_TOKEN` would be read-only.

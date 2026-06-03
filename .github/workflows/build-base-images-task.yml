@@ -7,6 +7,17 @@ on:
         required: false
         type: boolean
         default: true
+      platforms:
+        required: false
+        type: string
+        default: linux/amd64,linux/arm64
+      # Branch to check out. The publisher passes main so the shared
+      # nx-base tag is always built from the release branch regardless of
+      # the dispatch ref. Empty falls back to the triggering ref.
+      ref:
+        required: false
+        type: string
+        default: ''
 
 jobs:
 
@@ -32,18 +43,24 @@ jobs:
 
       - name: Checkout step
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Setup QEMU step
         uses: docker/setup-qemu-action@v4
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms }}
 
       - name: Setup Buildx step
         uses: docker/setup-buildx-action@v4
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms }}
 
+      # Only needed when pushing; skipped for non-publishing builds (e.g.
+      # PR smoke) so they don't depend on Docker Hub secrets (unavailable
+      # on forked PRs). Public base images still pull anonymously.
       - name: Login to Docker Hub step
+        if: ${{ inputs.push }}
         uses: docker/login-action@v4
         with:
           registry: docker.io
@@ -53,10 +70,14 @@ jobs:
       - name: Docker build and push base step
         uses: docker/build-push-action@v7
         with:
-          push: ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') }}
+          # Push is controlled by the caller, not the trigger ref: the
+          # publisher passes push: true with ref: main, so it must publish
+          # the shared base tag even when dispatched from another branch.
+          # Cache scopes key on the built ref, not github.ref_name.
+          push: ${{ inputs.push }}
           context: Docker
           file: ${{ matrix.base.dockerfile }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: ${{ matrix.base.tags }}
           cache-from: |
             type=registry,ref=${{ matrix.base.cache_tag }}
@@ -64,6 +85,6 @@ jobs:
             type=gha,scope=main-base-${{ matrix.base.name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-base-{0}-{1}', github.event.pull_request.number, matrix.base.name) || '' }}
           cache-to: |
-            ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') && format('type=gha,mode=max,scope={0}-base-{1},ignore-error=true', github.ref_name, matrix.base.name) || '' }}
-            ${{ inputs.push && (github.ref_name == 'main' || github.ref_name == 'develop') && 'type=inline' || '' }}
+            ${{ inputs.push && format('type=gha,mode=max,scope={0}-base-{1},ignore-error=true', inputs.ref != '' && inputs.ref || github.ref_name, matrix.base.name) || '' }}
+            ${{ inputs.push && 'type=inline' || '' }}
             ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-base-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.base.name) || '' }}
