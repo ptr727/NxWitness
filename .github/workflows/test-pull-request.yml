@@ -53,6 +53,9 @@ jobs:
   # scheduled publish-release.yml, so a smoke pass is fast PR feedback,
   # not a publish gate.
   #
+  # smoke_branch targets the PR base branch so a PR onto develop validates
+  # the develop image rows and a PR onto main validates the main rows.
+  #
   # build_base is only enabled when a base Dockerfile changed: the product
   # smoke build pulls the published base from Docker Hub, so building the
   # base otherwise is wasted work. When a base Dockerfile does change, build
@@ -66,6 +69,7 @@ jobs:
     with:
       push: false
       smoke: true
+      smoke_branch: ${{ github.base_ref }}
       build_base: ${{ needs.changes.outputs.base == 'true' }}
 
   # TODO: Workaround for GitHub Actions not supporting status checks on conditional jobs
