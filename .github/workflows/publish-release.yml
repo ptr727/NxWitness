@@ -97,6 +97,9 @@ jobs:
     needs: [build-main, build-develop]
     uses: ./.github/workflows/publish-docker-readme-task.yml
     secrets: inherit
+    with:
+      # Readme content tracks main, consistent with the version/release.
+      ref: main
 
   date-badge:
     name: Create BYOB date badge job
