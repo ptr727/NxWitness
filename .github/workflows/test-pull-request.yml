@@ -63,7 +63,11 @@ jobs:
   # it to validate it still compiles (e.g. a Dependabot ubuntu:noble bump).
   smoke-build:
     name: Smoke build job
-    needs: [changes]
+    # Also gate on test-release: the smoke build builds Docker images, so don't
+    # spend it when the test job is already failing. A failed test-release
+    # leaves this job skipped (needs unsatisfied) and the aggregator blocks on
+    # the test-release failure directly.
+    needs: [changes, test-release]
     if: ${{ needs.changes.outputs.image == 'true' }}
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
