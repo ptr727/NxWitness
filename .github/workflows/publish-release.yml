@@ -76,16 +76,21 @@ jobs:
 
     steps:
 
+      # Check out the exact commit NBGV versioned (not the moving `main` ref),
+      # so the uploaded release files come from the same commit the tag points
+      # at even if `main` advances mid-run.
       - name: Checkout code step
         uses: actions/checkout@v6
         with:
-          ref: main
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
 
       # The weekly schedule re-runs even when main has no new commits, so NBGV
       # can produce a SemVer2 that was already released. GitHub release creation
       # has no built-in skip-duplicate, and re-publishing an unchanged version
       # churns the release (and can fail re-uploading existing assets), so skip
-      # the release step when a release for this tag already exists.
+      # the release step when a release for this tag already exists — but only
+      # on the schedule. A `workflow_dispatch` is always allowed through so a
+      # maintainer can re-run to repair a partially-created release.
       - name: Check for existing release step
         id: release-exists
         env:
@@ -101,7 +106,10 @@ jobs:
           fi
 
       - name: Create GitHub release step
-        if: ${{ steps.release-exists.outputs.exists == 'false' }}
+        # Skip only when the release already exists AND this is a scheduled
+        # run (the no-op weekly case). A manual `workflow_dispatch` always runs
+        # so it can repair/refresh an existing release for the same tag.
+        if: ${{ steps.release-exists.outputs.exists == 'false' || github.event_name == 'workflow_dispatch' }}
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
