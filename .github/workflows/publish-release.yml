@@ -47,12 +47,17 @@ jobs:
 
   build-main:
     name: Build main images job
-    needs: [build-base]
+    needs: [get-version, build-base]
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
     with:
       push: true
-      ref: main
+      branch: main
+      # Pin to the exact commit get-version computed the release version from,
+      # not the moving `main` ref: this closes the race where a commit landing
+      # on main mid-run could make the pushed image's embedded version come
+      # from a newer commit than the GitHub release of the same SemVer2 tag.
+      ref: ${{ needs.get-version.outputs.GitCommitId }}
       build_base: false
 
   build-develop:
@@ -62,6 +67,10 @@ jobs:
     secrets: inherit
     with:
       push: true
+      # Develop only publishes the mutable :develop tag (no versioned GitHub
+      # release), so the moving ref can't cause a tag/release mismatch; no
+      # commit pin needed.
+      branch: develop
       ref: develop
       build_base: false
 
