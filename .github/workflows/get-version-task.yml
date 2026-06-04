@@ -16,6 +16,11 @@ on:
         value: ${{ jobs.get-version.outputs.AssemblyFileVersion }}
       AssemblyInformationalVersion:
         value: ${{ jobs.get-version.outputs.AssemblyInformationalVersion }}
+      # Full SHA of the commit NBGV computed the version from. Used to pin the
+      # GitHub release tag to the exact built commit (immutable) rather than a
+      # moving branch ref.
+      GitCommitId:
+        value: ${{ jobs.get-version.outputs.GitCommitId }}
 
 jobs:
 
@@ -27,6 +32,7 @@ jobs:
       AssemblyVersion: ${{ steps.nbgv.outputs.AssemblyVersion }}
       AssemblyFileVersion: ${{ steps.nbgv.outputs.AssemblyFileVersion }}
       AssemblyInformationalVersion: ${{ steps.nbgv.outputs.AssemblyInformationalVersion }}
+      GitCommitId: ${{ steps.nbgv.outputs.GitCommitId }}
 
     steps:
 

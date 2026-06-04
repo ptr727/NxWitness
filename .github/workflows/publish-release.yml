@@ -76,19 +76,49 @@ jobs:
 
     steps:
 
+      # Check out the exact commit NBGV versioned (not the moving `main` ref),
+      # so the uploaded release files come from the same commit the tag points
+      # at even if `main` advances mid-run.
       - name: Checkout code step
         uses: actions/checkout@v6
         with:
-          ref: main
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
+
+      # The weekly schedule re-runs even when main has no new commits, so NBGV
+      # can produce a SemVer2 that was already released. GitHub release creation
+      # has no built-in skip-duplicate, and re-publishing an unchanged version
+      # churns the release (and can fail re-uploading existing assets), so skip
+      # the release step when a release for this tag already exists — but only
+      # on the schedule. A `workflow_dispatch` is always allowed through so a
+      # maintainer can re-run to repair a partially-created release.
+      - name: Check for existing release step
+        id: release-exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.get-version.outputs.SemVer2 }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists; skipping release creation (no-op republish)."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create GitHub release step
+        # Skip only when the release already exists AND this is a scheduled
+        # run (the no-op weekly case). A manual `workflow_dispatch` always runs
+        # so it can repair/refresh an existing release for the same tag.
+        if: ${{ steps.release-exists.outputs.exists == 'false' || github.event_name == 'workflow_dispatch' }}
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
-          # Pin the tag to main's HEAD so a dispatch from another ref still
-          # tags the release on main, matching the main-pinned version/assets.
-          target_commitish: main
+          # Pin the tag to the exact commit NBGV versioned (main's HEAD at
+          # version-compute time, since get-version runs with ref: main) rather
+          # than the moving `main` ref — immutable, and consistent with the
+          # version/assets even if a commit lands on main mid-run.
+          target_commitish: ${{ needs.get-version.outputs.GitCommitId }}
           # This run's release represents the main publish.
           prerelease: false
           files: |
