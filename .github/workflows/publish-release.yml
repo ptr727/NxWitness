@@ -81,14 +81,36 @@ jobs:
         with:
           ref: main
 
+      # The weekly schedule re-runs even when main has no new commits, so NBGV
+      # can produce a SemVer2 that was already released. GitHub release creation
+      # has no built-in skip-duplicate, and re-publishing an unchanged version
+      # churns the release (and can fail re-uploading existing assets), so skip
+      # the release step when a release for this tag already exists.
+      - name: Check for existing release step
+        id: release-exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.get-version.outputs.SemVer2 }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists; skipping release creation (no-op republish)."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create GitHub release step
+        if: ${{ steps.release-exists.outputs.exists == 'false' }}
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
-          # Pin the tag to main's HEAD so a dispatch from another ref still
-          # tags the release on main, matching the main-pinned version/assets.
-          target_commitish: main
+          # Pin the tag to the exact commit NBGV versioned (main's HEAD at
+          # version-compute time, since get-version runs with ref: main) rather
+          # than the moving `main` ref — immutable, and consistent with the
+          # version/assets even if a commit lands on main mid-run.
+          target_commitish: ${{ needs.get-version.outputs.GitCommitId }}
           # This run's release represents the main publish.
           prerelease: false
           files: |
