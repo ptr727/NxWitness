@@ -96,11 +96,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.get-version.outputs.SemVer2 }}
+          EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "Release $TAG already exists; skipping release creation (no-op republish)."
+            if [[ "$EVENT" == "workflow_dispatch" ]]; then
+              echo "Release $TAG already exists; workflow_dispatch will refresh it."
+            else
+              echo "Release $TAG already exists; skipping release creation (no-op republish)."
+            fi
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
