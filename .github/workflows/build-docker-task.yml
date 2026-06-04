@@ -15,17 +15,22 @@ on:
         required: false
         type: boolean
         default: false
-      # In smoke mode, restrict the build to this branch's rows (the PR
-      # base branch). Empty builds both branches' rows. Lets a PR onto
-      # develop smoke-test the develop images and a PR onto main the main
-      # images, without building the other branch.
-      smoke_branch:
+      # Logical branch whose Matrix.json rows to build/push and whose GHA
+      # cache scope to use. Decoupled from `ref` so `ref` can be pinned to an
+      # immutable commit (e.g. the publisher pins main to the versioned SHA)
+      # while this still selects the right branch's rows. Empty in smoke mode
+      # builds both branches' rows; the publisher passes main and develop so
+      # both branches' tags are produced from one scheduled run. Empty in a
+      # non-smoke build falls back to github.ref_name for the cache scope.
+      branch:
         required: false
         type: string
         default: ''
-      # Branch to check out and whose images to build/push. Empty uses the
-      # triggering ref (PR context). The publisher passes main and develop
-      # so both branches' tags are produced from one scheduled run.
+      # Immutable git ref to check out / version, decoupled from branch/tag
+      # selection (see `branch`). Empty uses the triggering ref (PR context).
+      # The publisher pins this to the exact versioned commit so the image's
+      # embedded version matches the GitHub release tag even if the branch
+      # advances mid-run.
       ref:
         required: false
         type: string
@@ -57,27 +62,26 @@ jobs:
         id: getmatrix
         env:
           SMOKE: ${{ inputs.smoke }}
-          SMOKE_BRANCH: ${{ inputs.smoke_branch }}
-          REF: ${{ inputs.ref }}
+          BRANCH: ${{ inputs.branch }}
         run: |
-          # $ref and $sb below are jq variables (passed via --arg), not shell
-          # variables, so they must stay single-quoted / unexpanded.
+          # $b below is a jq variable (passed via --arg), not a shell
+          # variable, so it must stay single-quoted / unexpanded.
           # shellcheck disable=SC2016
           if [[ "$SMOKE" == "true" ]]; then
             # One Ubuntu + one LSIO variant exercises the shared Dockerfile
             # build logic and the branch's build args; tags are irrelevant
-            # since smoke never pushes. Restrict to the PR base branch ($sb)
+            # since smoke never pushes. Restrict to the PR base branch ($b)
             # so a PR onto develop validates the develop rows and a PR onto
-            # main validates the main rows; empty $sb builds both branches.
-            FILTER='.Images |= (map(select((.Name == "NxMeta" or .Name == "NxMeta-LSIO") and ($sb == "" or .Branch == $sb))) | unique_by([.Name, .Branch]))'
-          elif [[ -n "$REF" ]]; then
+            # main validates the main rows; empty $b builds both branches.
+            FILTER='.Images |= (map(select((.Name == "NxMeta" or .Name == "NxMeta-LSIO") and ($b == "" or .Branch == $b))) | unique_by([.Name, .Branch]))'
+          elif [[ -n "$BRANCH" ]]; then
             # Publish: build only the rows targeting the branch being built
             # (avoids building the other branch's rows just to discard them).
-            FILTER='.Images |= map(select(.Branch == $ref))'
+            FILTER='.Images |= map(select(.Branch == $b))'
           else
             FILTER='.'
           fi
-          echo "matrix=$(jq --arg ref "$REF" --arg sb "$SMOKE_BRANCH" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(jq --arg b "$BRANCH" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
   get-version:
     name: Get version information job
@@ -172,5 +176,5 @@ jobs:
             type=gha,scope=main-${{ matrix.images.Name }}
             ${{ github.event.pull_request && format('type=gha,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
           cache-to: |
-            ${{ inputs.push && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', inputs.ref != '' && inputs.ref || github.ref_name, matrix.images.Name) || '' }}
+            ${{ inputs.push && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', inputs.branch != '' && inputs.branch || github.ref_name, matrix.images.Name) || '' }}
             ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=min,scope=pr-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.images.Name) || '' }}
