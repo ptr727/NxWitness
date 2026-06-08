@@ -57,6 +57,10 @@ This repository builds and publishes Docker images for Network Optix VMS product
 - Use explicit types (no `var`), Allman braces, file-scoped namespaces, and other conventions as defined in the master style guide.
 - Respect line endings and encoding rules from the repository configuration, including UTF-8 without BOM.
 
+## Versioning
+
+`develop` leads `main` by a minor. After a `develop -> main` release lands and main's publish completes, bump the minor in [version.json](../version.json) on `develop` via an isolated `bump-version-X.Y` PR, so develop's NBGV prerelease tags sort above main's last stable. A `develop -> main` promotion that carries only maintenance (dependency bumps, CI/doc fixes, template re-syncs) holds main's version instead - `git checkout main -- version.json` on the promotion branch. See [AGENTS.md "Versioning"](../AGENTS.md#versioning).
+
 ## GitHub Copilot Review Runbook
 
 Use this section for provider-specific mechanics. The expected review loop *contract* (request review on every push, verify head-SHA coverage, triage findings, reply + resolve, escalate when stuck) is defined in [AGENTS.md -> PR Review Etiquette](../AGENTS.md#pr-review-etiquette). This section only describes how to make GitHub Copilot reliably execute it.
