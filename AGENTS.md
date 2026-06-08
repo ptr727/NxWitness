@@ -59,6 +59,10 @@ For comprehensive coding and formatting standards, follow:
 - Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
 - Lint workflow edits before pushing (see [Workspace and linting](#workspace-and-linting)); there is no CI lint job.
 
+## Versioning
+
+The `version` (major.minor) in [version.json](./version.json) is the NBGV version floor; NBGV appends the git height. **`develop` leads `main` by a minor:** after a `develop -> main` release lands and main's publish completes, bump the minor in `version.json` on `develop` in an isolated `bump-version-X.Y` PR (X.Y = the new minor), so develop's NBGV prerelease version stays numerically above main's last stable. A **maintenance** `develop -> main` promotion (dependency bumps, CI/doc fixes, template re-syncs) holds main's version - `git checkout main -- version.json` on the promotion branch - so `main` advances only its NBGV height, not its minor. (NBGV's version is the GitHub release tag on `main` and the `LABEL_VERSION` build arg baked into the images; the Docker image *tags* carry the Nx product version from `Make/Matrix.json` - see [CI Pipeline](#ci-pipeline-github-actions).)
+
 ## PR Review Etiquette
 
 The repo runs a review loop on every PR: local agent iteration plus remote automated review (GitHub Copilot is the configured reviewer). Treat this as a contract regardless of which local agent authored the changes.
