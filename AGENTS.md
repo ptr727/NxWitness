@@ -59,14 +59,49 @@ For comprehensive coding and formatting standards, follow:
 - Merges to `main`/`develop` do not build or publish images. Auto-merged Dependabot and codegen PRs simply land commits that the next scheduled publish picks up. Do not reintroduce push-triggered publishing or full-matrix PR builds.
 - Lint workflow edits before pushing (see [Workspace and linting](#workspace-and-linting)); there is no CI lint job.
 
-## Pull Request Review Process
+## PR Review Etiquette
 
-- Open PRs against `develop` (the integration branch); `develop` is forward-only and ships to `main` via release merges.
-- The repo is configured to automatically request a GitHub Copilot review when a PR is opened. Respond to every Copilot comment: either address it with a change, or justify why it does not apply. Either way, reply on the comment stating what you did, then resolve (close) the comment.
-- After you push a new commit, a Copilot re-review does not reliably fire on its own. In practice the re-review can be requested via the GraphQL `requestReviews` mutation, passing the Copilot bot's node id in `botIds`:
-  - Get the bot id once from the existing review author: `pullRequest { reviews(first:1){ nodes { author { ... on Bot { id } } } } }` (the Copilot reviewer login is `copilot-pull-request-reviewer`).
-  - Trigger: `mutation { requestReviews(input: {pullRequestId: "<PR node id>", botIds: ["<bot id>"], union: true}) { pullRequest { id } } }`.
-  - This is observed-but-not-guaranteed; if a re-review still does not appear, ask the maintainer to start one in the GitHub UI. Repeat until both Copilot and the author are satisfied.
+The repo runs a review loop on every PR: local agent iteration plus remote automated review (GitHub Copilot is the configured reviewer). Treat this as a contract regardless of which local agent authored the changes.
+
+### Expected Review Loop
+
+1. Push changes to the PR branch.
+2. Re-request a review for the **current head SHA**. Auto-trigger is unreliable, so request it explicitly via the `requestReviews` GraphQL mutation (now reliable end-to-end - see the runbook); the UI is only a fallback.
+3. Wait for review activity on that head.
+4. Triage findings.
+5. Apply fixes or write a rationale for declines.
+6. Reply to each thread and resolve what was addressed.
+7. Re-run the loop after every fix push until no actionable findings remain.
+
+`mergeStateStatus: CLEAN` only checks required statuses; it does not block on bot review comments. Drive the loop to green - review confirmed on the latest head SHA and every actionable finding closed - and then **wait for the maintainer's explicit permission to merge**. The agent does not merge on its own (consistent with "default to staging"; merging is maintainer-authorized).
+
+For provider-specific mechanics (how to request review, query review state, post replies, resolve threads), see the **GitHub Copilot Review Runbook** in [.github/copilot-instructions.md](./.github/copilot-instructions.md). This file owns the contract; that file owns the mechanics.
+
+### Triaging Review Comments
+
+For each comment, classify before responding:
+
+- **Bug** - wrong behavior, missing test coverage, or a real divergence between code and docs. Fix it. Reply with the fixing commit SHA when done.
+- **Style/convention** - the comment cites a rule from this file or a language-specific style guide. Two cases:
+  - The cited rule matches what the existing codebase already does -> fix the offending code.
+  - The cited rule contradicts what's in the tree, or industry norm -> **update the rule instead of the code**. The rule is wrong, not the code. Bouncing the same code across rounds is the symptom of a wrong rule. Heuristic: three rounds on the same style category means the rule needs adjusting and the user should authorize the rule change.
+- **Architectural opinion** - the comment proposes a different design ("constrain this to disabled-by-default", "move it elsewhere", "add a runtime guardrail"). This is judgment, not a bug. Surface it to the user with a recommendation; don't apply unilaterally.
+
+### Responding and Resolution Expectations
+
+Reply inline with either the fixing commit SHA (for accepted issues) or a concise rationale (for declines). Resolve review threads when addressed or intentionally declined with rationale. Issue-level comments (those at `repos/.../issues/<N>/comments` rather than tied to a specific line) have no resolution action - acknowledge with a reply if needed and move on.
+
+After the final push on a PR, sweep older threads from earlier rounds whose code paths no longer exist; otherwise stale unresolved markers remain in the review UI.
+
+### Escalating to the User
+
+Bring the user in when:
+
+- **Genuine design trade-off** surfaces (fail-open vs fail-closed, narrow vs broad refactor scope, "should we add a guardrail or trust the docstring"). Triage, recommend, ask.
+- **Repeated friction** across rounds without convergence - that's the rule-needs-updating signal. Stop, summarize the pattern, and let the user authorize the rule change.
+- **Architectural redesign** is requested rather than a bug fix. Surface with a recommendation; never apply unilaterally.
+
+Anti-pattern: don't keep flipping the code on the same style point. Flip the rule once and stick to the rule.
 
 ## Coding Conventions (Highlights)
 
