@@ -48,8 +48,7 @@
     Display="always"
     Required="false"
     Mask="false"
-    >99</Config
-  >
+    >99</Config>
   <Config
     Name="Group Id"
     Target="PGID"
@@ -60,8 +59,7 @@
     Display="always"
     Required="false"
     Mask="false"
-    >100</Config
-  >
+    >100</Config>
   <Config
     Name="Configuration Path"
     Target="/config"
@@ -72,8 +70,7 @@
     Display="always"
     Required="false"
     Mask="false"
-    >/mnt/user/appdata/nxmeta-lsio</Config
-  >
+    >/mnt/user/appdata/nxmeta-lsio</Config>
   <Config
     Name="Media Recording Path"
     Target="/media"
