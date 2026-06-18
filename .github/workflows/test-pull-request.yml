@@ -25,7 +25,7 @@ jobs:
       # (e.g. workflow_dispatch); on pull_request it uses the API.
       # fetch-depth: 0 gives the full history those git diffs need.
       - name: Checkout step
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
