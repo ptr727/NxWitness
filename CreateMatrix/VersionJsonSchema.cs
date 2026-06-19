@@ -49,7 +49,9 @@ internal class VersionJsonSchema : VersionJsonSchemaBase
             // Breaking change, UriArm64 is required in ARM64 docker builds
             // Unknown version
             default:
-                throw new NotImplementedException();
+                throw new NotSupportedException(
+                    $"Unsupported schema version: {schemaVersion} (expected {Version})"
+                );
         }
     }
 }

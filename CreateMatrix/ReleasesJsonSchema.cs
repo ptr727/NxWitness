@@ -33,8 +33,8 @@ internal class Release
                 : VersionInfo.LabelType.Latest,
             RcPublication => VersionInfo.LabelType.RC,
             BetaPublication => VersionInfo.LabelType.Beta,
-            _ => throw new InvalidEnumArgumentException(
-                $"Unknown PublicationType: {PublicationType}"
+            _ => throw new InvalidOperationException(
+                $"Unknown publication type '{PublicationType}' for version {Version}"
             ),
         };
 
@@ -86,10 +86,46 @@ internal class ReleasesJsonSchema
         // Deserialize JSON
         ReleasesJsonSchema releasesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(releasesSchema);
-        ArgumentOutOfRangeException.ThrowIfZero(releasesSchema.Releases.Count);
+        if (releasesSchema.Releases.Count == 0)
+        {
+            throw new InvalidOperationException($"No releases found in {releasesUri}");
+        }
 
-        // Return releases
-        return releasesSchema.Releases;
+        // Verify the vendor data and return the folded releases
+        return VerifyReleases(releasesSchema.Releases);
+    }
+
+    public static List<Release> VerifyReleases(List<Release> releases)
+    {
+        // A version number must carry a single, unambiguous publication type.
+        // Fold benign duplicates (same version and publication type), reject conflicts.
+        ArgumentNullException.ThrowIfNull(releases);
+
+        List<Release> verifiedReleases = [];
+        foreach (
+            IGrouping<(string Product, Version Version), Release> group in releases.GroupBy(
+                release => (release.Product, VersionInfo.ParseVersion(release.Version))
+            )
+        )
+        {
+            // A version must not be tagged with more than one publication type
+            List<string> publicationTypes =
+            [
+                .. group
+                    .Select(release => release.PublicationType)
+                    .Distinct(StringComparer.OrdinalIgnoreCase),
+            ];
+            if (publicationTypes.Count > 1)
+            {
+                throw new InvalidOperationException(
+                    $"{group.Key.Product}: Version {group.First().Version} has conflicting publication types: {string.Join(", ", publicationTypes)}"
+                );
+            }
+
+            // Keep the first entry, folding any same-version same-type duplicates
+            verifiedReleases.Add(group.First());
+        }
+        return verifiedReleases;
     }
 }
 

@@ -79,7 +79,10 @@ internal sealed class PackagesJsonSchema
         // Deserialize JSON
         PackagesJsonSchema packagesSchema = FromJson(jsonString);
         ArgumentNullException.ThrowIfNull(packagesSchema);
-        ArgumentOutOfRangeException.ThrowIfZero(packagesSchema.Packages.Count);
+        if (packagesSchema.Packages.Count == 0)
+        {
+            throw new InvalidOperationException($"No packages found in {packagesUri}");
+        }
 
         // Return packages
         return packagesSchema.Packages;
