@@ -175,4 +175,95 @@ public class VersionForwardTests
             ?.Version;
         betaVersion.Should().Be("4.0");
     }
+
+    [Fact]
+    public void VersionRegress_FoldsOntoExistingVersion()
+    {
+        // Reproduces the WisenetWAVE codegen failure: the online "Latest" regressed below a
+        // version that is already present as "Stable", so restoring the old "Latest" must fold
+        // onto the existing entry instead of adding a duplicate version row.
+        List<ProductInfo> oldProductList =
+        [
+            new ProductInfo
+            {
+                Product = ProductInfo.ProductType.WisenetWAVE,
+                Versions =
+                {
+                    new VersionInfo
+                    {
+                        Version = "6.0.5.41290",
+                        Labels = { VersionInfo.LabelType.Stable },
+                    },
+                    new VersionInfo
+                    {
+                        Version = "6.1.2.42921",
+                        Labels = { VersionInfo.LabelType.Latest },
+                    },
+                },
+            },
+        ];
+        List<ProductInfo> newProductList =
+        [
+            new ProductInfo
+            {
+                Product = ProductInfo.ProductType.WisenetWAVE,
+                Versions =
+                {
+                    new VersionInfo
+                    {
+                        Version = "6.1.1.42624",
+                        Labels = { VersionInfo.LabelType.Latest },
+                    },
+                    new VersionInfo
+                    {
+                        Version = "6.1.2.42921",
+                        Labels = { VersionInfo.LabelType.Stable },
+                    },
+                },
+            },
+        ];
+
+        ReleaseVersionForward.Verify(oldProductList, newProductList);
+        ProductInfo productInfo = newProductList.First();
+
+        // Folded to a single 6.1.2.42921 entry carrying both Stable and Latest
+        productInfo.Versions.Should().ContainSingle();
+        VersionInfo version = productInfo.Versions.First();
+        version.Version.Should().Be("6.1.2.42921");
+        version
+            .Labels.Should()
+            .BeEquivalentTo([VersionInfo.LabelType.Stable, VersionInfo.LabelType.Latest]);
+
+        // No duplicate version numbers
+        productInfo.Versions.Select(item => item.Version).Should().OnlyHaveUniqueItems();
+        productInfo.Invoking(item => item.VerifyNoDuplicateVersions()).Should().NotThrow();
+    }
+
+    [Fact]
+    public void VerifyNoDuplicateVersions_Throws()
+    {
+        // Two entries sharing a version number must be rejected
+        ProductInfo productInfo = new()
+        {
+            Product = ProductInfo.ProductType.NxMeta,
+            Versions =
+            {
+                new VersionInfo
+                {
+                    Version = "6.1.2.42921",
+                    Labels = { VersionInfo.LabelType.Stable },
+                },
+                new VersionInfo
+                {
+                    Version = "6.1.2.42921",
+                    Labels = { VersionInfo.LabelType.Latest },
+                },
+            },
+        };
+
+        productInfo
+            .Invoking(item => item.VerifyNoDuplicateVersions())
+            .Should()
+            .Throw<InvalidOperationException>();
+    }
 }

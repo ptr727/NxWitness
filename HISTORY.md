@@ -4,6 +4,8 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ## Release History
 
+- Version 2.13:
+  - Fixed a regression bug that surfaced when Nx released an older version under the same tag, triggering the version-forward-release only logic.
 - Version 2.12:
   - Reworked the CI pipeline: pull requests run a fast representative amd64 smoke build (NxMeta and NxMeta-LSIO) instead of the full matrix, publishing moved to a weekly schedule (and manual trigger) that builds both the `main` and `develop` branches in one run, and merges no longer republish images. This speeds up PR feedback, reduces GH Actions usage, and stops no-op image updates for consumers.
 - Version 2.11:
