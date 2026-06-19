@@ -39,7 +39,8 @@ internal class ImageInfo
         Product = productType;
         Branch = branchType;
         Base = baseType;
-        Name = baseType == BaseType.Ubuntu ? productType.ToString() : $"{productType}-LSIO";
+        // The image name matches the Dockerfile name
+        Name = ProductInfo.GetDocker(productType, baseType == BaseType.LSIO);
     }
 
     private void AddArgs(VersionInfo versionInfo)

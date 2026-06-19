@@ -33,8 +33,14 @@ internal sealed class ProductInfo
             ProductType.NxWitness => "default",
             ProductType.DWSpectrum => "digitalwatchdog",
             ProductType.WisenetWAVE => "hanwha",
-            ProductType.None => throw new NotImplementedException(),
-            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+            ProductType.None => throw new InvalidOperationException(
+                $"{nameof(ProductType)} is None"
+            ),
+            _ => throw new InvalidEnumArgumentException(
+                nameof(productType),
+                (int)productType,
+                typeof(ProductType)
+            ),
         };
 
     // Used for ${COMPANY_NAME} mediaserver install path and user account
@@ -46,8 +52,14 @@ internal sealed class ProductInfo
             ProductType.NxWitness => "networkoptix",
             ProductType.DWSpectrum => "digitalwatchdog",
             ProductType.WisenetWAVE => "hanwha",
-            ProductType.None => throw new NotImplementedException(),
-            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+            ProductType.None => throw new InvalidOperationException(
+                $"{nameof(ProductType)} is None"
+            ),
+            _ => throw new InvalidEnumArgumentException(
+                nameof(productType),
+                (int)productType,
+                typeof(ProductType)
+            ),
         };
 
     // Used for ${LABEL_DESCRIPTION} in Dockerfile
@@ -59,12 +71,20 @@ internal sealed class ProductInfo
             ProductType.NxWitness => "Nx Witness VMS",
             ProductType.DWSpectrum => "DW Spectrum IPVMS",
             ProductType.WisenetWAVE => "Wisenet WAVE VMS",
-            ProductType.None => throw new NotImplementedException(),
-            _ => throw new InvalidEnumArgumentException(nameof(Product)),
+            ProductType.None => throw new InvalidOperationException(
+                $"{nameof(ProductType)} is None"
+            ),
+            _ => throw new InvalidEnumArgumentException(
+                nameof(productType),
+                (int)productType,
+                typeof(ProductType)
+            ),
         };
 
-    // Dockerfile name, excluding the .Dockerfile extension
-    // TODO: Consolidate with ImageInfo.SetName(), e.g. add enum for Ubuntu, LSIO, etc.
+    // Dockerfile name, excluding the .Dockerfile extension.
+    // This is the single source of the image/Dockerfile naming convention; ImageInfo derives its
+    // name from here. The base variant is a bool (Ubuntu vs LSIO); promote it to an enum only if a
+    // third base type is ever added (which would also ripple through ComposeFile/DockerFile).
     public static string GetDocker(ProductType productType, bool lsio) =>
         $"{productType}{(lsio ? "-LSIO" : "")}";
 
@@ -81,9 +101,6 @@ internal sealed class ProductInfo
 
     public async Task FetchVersionsAsync(CancellationToken cancellationToken)
     {
-        // Match the logic with ReleasesTests.CreateProductInfo()
-        // TODO: Refactor to reduce duplication and chance of divergence
-
         // Get version information using releases.json and package.json
         Log.Logger.Information("{Product}: Getting online release information...", Product);
         try
@@ -105,13 +122,8 @@ internal sealed class ProductInfo
                     continue;
                 }
 
-                // Set version
-                VersionInfo versionInfo = new();
-                Debug.Assert(!string.IsNullOrEmpty(release.Version));
-                versionInfo.SetVersion(release.Version);
-
-                // Add the label
-                AddLabel(versionInfo, release.GetLabel());
+                // Set the version and label
+                VersionInfo versionInfo = CreateVersionInfo(release);
 
                 // Get the build number from the version
                 int buildNumber = versionInfo.GetBuildNumber();
@@ -122,12 +134,28 @@ internal sealed class ProductInfo
                     .ConfigureAwait(false);
 
                 // Get the x64 and arm64 server ubuntu server packages
-                Package? packageX64 = packageList.Find(item => item.IsX64Server());
-                Debug.Assert(packageX64 != null);
-                Debug.Assert(!string.IsNullOrEmpty(packageX64.File));
-                Package? packageArm64 = packageList.Find(item => item.IsArm64Server());
-                Debug.Assert(packageArm64 != null);
-                Debug.Assert(!string.IsNullOrEmpty(packageArm64.File));
+                Package packageX64 =
+                    packageList.Find(item => item.IsX64Server())
+                    ?? throw new InvalidOperationException(
+                        $"{Product}: No x64 Ubuntu server package found for build {buildNumber} (version {versionInfo.Version})"
+                    );
+                if (string.IsNullOrEmpty(packageX64.File))
+                {
+                    throw new InvalidOperationException(
+                        $"{Product}: x64 Ubuntu server package for build {buildNumber} (version {versionInfo.Version}) has no file name"
+                    );
+                }
+                Package packageArm64 =
+                    packageList.Find(item => item.IsArm64Server())
+                    ?? throw new InvalidOperationException(
+                        $"{Product}: No arm64 Ubuntu server package found for build {buildNumber} (version {versionInfo.Version})"
+                    );
+                if (string.IsNullOrEmpty(packageArm64.File))
+                {
+                    throw new InvalidOperationException(
+                        $"{Product}: arm64 Ubuntu server package for build {buildNumber} (version {versionInfo.Version}) has no file name"
+                    );
+                }
 
                 // Create the download URLs
                 // https://updates.networkoptix.com/{product}/{build}/{file}
@@ -151,6 +179,22 @@ internal sealed class ProductInfo
             // Log and rethrow
             throw;
         }
+    }
+
+    public VersionInfo CreateVersionInfo(Release release)
+    {
+        // Create a version with its label from the release.
+        // Note: AddLabel() may move the label off other versions already in the list.
+        if (string.IsNullOrEmpty(release.Version))
+        {
+            throw new InvalidOperationException(
+                $"{Product}: Release has no version (publication type '{release.PublicationType}')"
+            );
+        }
+        VersionInfo versionInfo = new();
+        versionInfo.SetVersion(release.Version);
+        AddLabel(versionInfo, release.GetLabel());
+        return versionInfo;
     }
 
     private bool VerifyVersion(VersionInfo versionInfo)
@@ -285,6 +329,30 @@ internal sealed class ProductInfo
             Versions.Count(item => item.Labels.Contains(VersionInfo.LabelType.RC)),
             1
         );
+
+        // Must have no duplicate version numbers
+        VerifyNoDuplicateVersions();
+    }
+
+    public void VerifyNoDuplicateVersions()
+    {
+        // Each version number must appear at most once.
+        // Duplicates collapse when the matrix builds a set keyed by version number
+        // (see ImageInfo.CreateImages() and VersionInfoComparer) and must be rejected
+        // rather than written to the version file.
+        List<string> duplicateVersions =
+        [
+            .. Versions
+                .GroupBy(item => VersionInfo.ParseVersion(item.Version))
+                .Where(group => group.Count() > 1)
+                .Select(group => group.First().Version),
+        ];
+        if (duplicateVersions.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"{Product}: Duplicate version numbers found: {string.Join(", ", duplicateVersions)}"
+            );
+        }
     }
 
     public void LogInformation()

@@ -12,11 +12,11 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.12**:
+**Version: 2.13**:
 
 **Summary**:
 
-- Reworked the CI pipeline: pull requests run a fast representative amd64 smoke build (`NxMeta` and `NxMeta-LSIO`) instead of the full matrix, publishing moved to a weekly schedule (and manual trigger) that builds both the `main` and `develop` branches in one run, and merges no longer republish images.
+- Fixed a regression bug that surfaced when Nx released an older version under the same tag, triggering the version-forward-release only logic.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 
@@ -130,37 +130,36 @@ services:
 
 ## Table of Contents
 
-- [Docker Projects for Network Optix VMS Products](#docker-projects-for-network-optix-vms-products)
-  - [Build and Distribution](#build-and-distribution)
-    - [Build Status](#build-status)
-    - [Release Notes](#release-notes)
-  - [Getting Started](#getting-started)
-  - [Table of Contents](#table-of-contents)
-  - [Products](#products)
-  - [Releases](#releases)
-  - [Overview](#overview)
-    - [Introduction](#introduction)
-    - [Base Images](#base-images)
-    - [LinuxServer](#linuxserver)
-  - [Configuration](#configuration)
-    - [LSIO Volumes](#lsio-volumes)
-    - [Non-LSIO Volumes](#non-lsio-volumes)
-    - [Ports](#ports)
-    - [Environment Variables](#environment-variables)
-    - [Network Mode](#network-mode)
-  - [Examples](#examples)
-    - [LSIO Docker Create](#lsio-docker-create)
-    - [LSIO Docker Compose](#lsio-docker-compose)
-    - [Non-LSIO Docker Compose](#non-lsio-docker-compose)
-    - [Unraid Template](#unraid-template)
-  - [Product Information](#product-information)
-    - [Release Information](#release-information)
-    - [Advanced Configuration](#advanced-configuration)
-  - [Build Process](#build-process)
-  - [Known Issues](#known-issues)
-  - [Troubleshooting](#troubleshooting)
-    - [Missing Storage](#missing-storage)
-  - [License](#license)
+- [Build and Distribution](#build-and-distribution)
+  - [Build Status](#build-status)
+  - [Release Notes](#release-notes)
+- [Getting Started](#getting-started)
+- [Table of Contents](#table-of-contents)
+- [Products](#products)
+- [Releases](#releases)
+- [Overview](#overview)
+  - [Introduction](#introduction)
+  - [Base Images](#base-images)
+  - [LinuxServer](#linuxserver)
+- [Configuration](#configuration)
+  - [LSIO Volumes](#lsio-volumes)
+  - [Non-LSIO Volumes](#non-lsio-volumes)
+  - [Ports](#ports)
+  - [Environment Variables](#environment-variables)
+  - [Network Mode](#network-mode)
+- [Examples](#examples)
+  - [LSIO Docker Create](#lsio-docker-create)
+  - [LSIO Docker Compose](#lsio-docker-compose)
+  - [Non-LSIO Docker Compose](#non-lsio-docker-compose)
+  - [Unraid Template](#unraid-template)
+- [Product Information](#product-information)
+  - [Release Information](#release-information)
+  - [Advanced Configuration](#advanced-configuration)
+- [Build Process](#build-process)
+- [Known Issues](#known-issues)
+- [Troubleshooting](#troubleshooting)
+  - [Missing Storage](#missing-storage)
+- [License](#license)
 
 ## Products
 

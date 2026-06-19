@@ -114,6 +114,9 @@ internal sealed class Program(
             // Make sure the labelled version numbers do not regress
             ReleaseVersionForward.Verify(fileSchema.Products, onlineSchema.Products);
 
+            // Make sure the forward merge did not introduce duplicate version numbers
+            onlineSchema.Products.ForEach(productInfo => productInfo.VerifyNoDuplicateVersions());
+
             // Verify URL's
             foreach (ProductInfo productInfo in onlineSchema.Products)
             {

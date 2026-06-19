@@ -13,13 +13,13 @@ FROM docker.io/ptr727/nx-base:ubuntu-noble
 # Labels
 ARG LABEL_NAME="NxMeta"
 ARG LABEL_DESCRIPTION="Nx Meta VMS"
-ARG LABEL_VERSION="6.1.1.42624"
+ARG LABEL_VERSION="6.1.1.42649"
 
 # Download URL and version
 # Current values are defined by the build pipeline
-ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/42624/metavms-server_update-6.1.1.42624-linux_x64.zip"
-ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/42624/metavms-server_update-6.1.1.42624-linux_arm64.zip"
-ARG DOWNLOAD_VERSION="6.1.1.42624"
+ARG DOWNLOAD_X64_URL="https://updates.networkoptix.com/metavms/42649/metavms-server_update-6.1.1.42649-linux_x64.zip"
+ARG DOWNLOAD_ARM64_URL="https://updates.networkoptix.com/metavms/42649/metavms-server_update-6.1.1.42649-linux_arm64.zip"
+ARG DOWNLOAD_VERSION="6.1.1.42649"
 
 # Used for ${COMPANY_NAME} setting the server user and install directory
 ARG RUNTIME_NAME="networkoptix-metavms"

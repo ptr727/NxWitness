@@ -20,27 +20,31 @@ internal sealed class VersionInfo
         // Extract the build number using the Version class (vs. regex)
         // 5.0.0.35271 -> 35271
         // 5.1.0.35151 R1 -> 35151
-        new Version(Version).Revision;
+        ParseVersion(Version).Revision;
 
-    public void SetVersion(string version)
+    public void SetVersion(string version) =>
+        // Store the normalized version number
+        Version = NormalizeVersion(version);
+
+    public static string NormalizeVersion(string version)
     {
-        // Remove Rxx from version string
+        // Remove the " Rxx" suffix from the version string
         // "5.0.0.35134 R10" -> "5.0.0.35134"
         int spaceIndex = version.IndexOf(' ', StringComparison.Ordinal);
-        Version = spaceIndex == -1 ? version : version[..spaceIndex];
+        return spaceIndex == -1 ? version : version[..spaceIndex];
     }
+
+    public static Version ParseVersion(string version) =>
+        // Parse the version number using the Version class, ignoring any " Rxx" suffix
+        new(NormalizeVersion(version));
 
     public int CompareTo(VersionInfo rhs) => Compare(this, rhs);
 
     public int CompareTo(string rhs) => Compare(Version, rhs);
 
-    public static int Compare(string lhs, string rhs)
-    {
+    public static int Compare(string lhs, string rhs) =>
         // Compare version numbers using Version class
-        Version lhsVersion = new(lhs);
-        Version rhsVersion = new(rhs);
-        return lhsVersion.CompareTo(rhsVersion);
-    }
+        ParseVersion(lhs).CompareTo(ParseVersion(rhs));
 
     public static int Compare(VersionInfo lhs, VersionInfo rhs) =>
         Compare(lhs.Version, rhs.Version);

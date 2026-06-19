@@ -226,17 +226,94 @@ public sealed class ReleasesTests
         version.Version.Should().Be("4.0");
     }
 
+    [Fact]
+    public void ConflictingPublicationTypes_Throws()
+    {
+        // The same version number tagged with two different publication types is contradictory
+        // vendor data and must be rejected rather than folded into our data.
+        ReleasesJsonSchema releasesSchema = new()
+        {
+            Releases =
+            {
+                new Release
+                {
+                    PublicationType = Release.ReleasePublication,
+                    ReleaseDate = 1,
+                    ReleaseDeliveryDays = 1,
+                    Version = "6.1.2.42921",
+                },
+                new Release { PublicationType = Release.BetaPublication, Version = "6.1.2.42921" },
+            },
+        };
+
+        Action act = () => CreateProductInfo(releasesSchema);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void DuplicatePublicationType_Folds()
+    {
+        // The same version number listed twice with the same publication type is a benign
+        // duplicate and is folded to a single entry.
+        ReleasesJsonSchema releasesSchema = new()
+        {
+            Releases =
+            {
+                new Release
+                {
+                    PublicationType = Release.ReleasePublication,
+                    ReleaseDate = 1,
+                    ReleaseDeliveryDays = 1,
+                    Version = "6.1.2.42921",
+                },
+                new Release
+                {
+                    PublicationType = Release.ReleasePublication,
+                    ReleaseDate = 1,
+                    ReleaseDeliveryDays = 1,
+                    Version = "6.1.2.42921",
+                },
+            },
+        };
+
+        ProductInfo productInfo = CreateProductInfo(releasesSchema);
+
+        // Folded to a single version
+        productInfo.Versions.Should().ContainSingle();
+        productInfo.Versions.First().Version.Should().Be("6.1.2.42921");
+    }
+
+    [Fact]
+    public void MissingVersion_Throws()
+    {
+        // A release with a missing or unparseable version must be rejected with a clear
+        // error rather than a context-free version-parsing failure.
+        ReleasesJsonSchema releasesSchema = new()
+        {
+            Releases =
+            {
+                new Release
+                {
+                    PublicationType = Release.ReleasePublication,
+                    ReleaseDate = 1,
+                    ReleaseDeliveryDays = 1,
+                    Version = "",
+                },
+            },
+        };
+
+        Action act = () => CreateProductInfo(releasesSchema);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
     private static ProductInfo CreateProductInfo(ReleasesJsonSchema releasesSchema)
     {
-        // Match the logic with ProductInfo.GetVersions()
-        // TODO: Refactor to reduce duplication and chance of divergence
+        // Mirror of the non-network portion of ProductInfo.FetchVersionsAsync(),
+        // sharing the version and label logic via ProductInfo.CreateVersionInfo().
         ProductInfo productInfo = new();
-        foreach (Release release in releasesSchema.Releases)
+        foreach (Release release in ReleasesJsonSchema.VerifyReleases(releasesSchema.Releases))
         {
-            VersionInfo versionInfo = new();
-            versionInfo.SetVersion(release.Version);
-            productInfo.AddLabel(versionInfo, release.GetLabel());
-            productInfo.Versions.Add(versionInfo);
+            productInfo.Versions.Add(productInfo.CreateVersionInfo(release));
         }
         productInfo.VerifyLabels();
 

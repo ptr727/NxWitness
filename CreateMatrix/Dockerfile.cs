@@ -18,8 +18,9 @@ internal static class DockerFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Find the matching product
-            ProductInfo? productInfo = productList.Find(item => item.Product == productType);
-            ArgumentNullException.ThrowIfNull(productInfo);
+            ProductInfo productInfo =
+                productList.Find(item => item.Product == productType)
+                ?? throw new InvalidOperationException($"Product not found: {productType}");
 
             // Get the version for the label, not all releases include Beta and RC labels
             VersionInfo? versionInfo = productInfo.Versions.Find(item =>
@@ -38,7 +39,12 @@ internal static class DockerFile
                     item.Labels.Contains(VersionInfo.LabelType.Latest)
                 );
             }
-            ArgumentNullException.ThrowIfNull(versionInfo);
+            if (versionInfo == null)
+            {
+                throw new InvalidOperationException(
+                    $"{productType}: No version found for label {label} or Latest"
+                );
+            }
 
             // Create the standard Docker file
             string dockerFile = CreateDockerfile(productType, versionInfo, false);
