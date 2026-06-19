@@ -283,6 +283,29 @@ public sealed class ReleasesTests
         productInfo.Versions.First().Version.Should().Be("6.1.2.42921");
     }
 
+    [Fact]
+    public void MissingVersion_Throws()
+    {
+        // A release with a missing or unparseable version must be rejected with a clear
+        // error rather than a context-free version-parsing failure.
+        ReleasesJsonSchema releasesSchema = new()
+        {
+            Releases =
+            {
+                new Release
+                {
+                    PublicationType = Release.ReleasePublication,
+                    ReleaseDate = 1,
+                    ReleaseDeliveryDays = 1,
+                    Version = "",
+                },
+            },
+        };
+
+        Action act = () => CreateProductInfo(releasesSchema);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
     private static ProductInfo CreateProductInfo(ReleasesJsonSchema releasesSchema)
     {
         // Mirror of the non-network portion of ProductInfo.FetchVersionsAsync(),

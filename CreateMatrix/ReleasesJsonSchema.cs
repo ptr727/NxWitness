@@ -101,6 +101,21 @@ internal class ReleasesJsonSchema
         // Fold benign duplicates (same version and publication type), reject conflicts.
         ArgumentNullException.ThrowIfNull(releases);
 
+        // A version number must be present and parseable, otherwise grouping below would
+        // throw a context-free FormatException from Version parsing.
+        foreach (Release release in releases)
+        {
+            if (
+                string.IsNullOrEmpty(release.Version)
+                || !Version.TryParse(VersionInfo.NormalizeVersion(release.Version), out _)
+            )
+            {
+                throw new InvalidOperationException(
+                    $"{release.Product}: Invalid or missing version '{release.Version}' (publication type '{release.PublicationType}')"
+                );
+            }
+        }
+
         List<Release> verifiedReleases = [];
         foreach (
             IGrouping<(string Product, Version Version), Release> group in releases.GroupBy(
