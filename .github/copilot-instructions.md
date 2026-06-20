@@ -2,7 +2,7 @@
 
 Repository conventions for GitHub Copilot (and any other AI agent reading this file).
 
-The **canonical guide is [AGENTS.md](../AGENTS.md)** at the repo root - read it first. It covers project layout, branch flow, PR review etiquette, the release pipeline, workflow YAML conventions, and what NOT to touch.
+The **canonical guide is [AGENTS.md](../AGENTS.md)** at the repo root - read it first. It covers project layout, branch flow, PR review etiquette, the release pipeline, workflow conventions, coding conventions, and notes for changes.
 
 This file is intentionally narrow: commit/PR-title conventions (so VS Code's AI commit-message and PR-title generators get them without an extra fetch), plus a GitHub Copilot Review Runbook that documents the provider-specific mechanics behind the review-loop contract defined in AGENTS.md.
 
