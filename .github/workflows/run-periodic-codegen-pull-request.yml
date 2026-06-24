@@ -3,10 +3,13 @@ name: Run daily CodeGen and Pull Request action
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'
+    # Daily at 04:00 UTC, staggered after the weekly publish so the two don't start together on Mondays.
+    - cron: '0 4 * * *'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Workflow-only group (no `-${{ github.ref }}`): the task writes the fixed `codegen-main`/`codegen-develop`
+  # branches regardless of triggering ref, so a dispatch and the scheduled run must not race on them.
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:

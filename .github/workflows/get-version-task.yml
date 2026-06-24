@@ -3,6 +3,8 @@ name: Get version information task
 on:
   workflow_call:
     inputs:
+      # Git ref to check out and version. Empty falls back to the caller's default checkout ref (`github.ref`); the
+      # publisher passes an explicit branch so a scheduled run can still compute versions for `develop`.
       ref:
         required: false
         type: string
@@ -16,9 +18,7 @@ on:
         value: ${{ jobs.get-version.outputs.AssemblyFileVersion }}
       AssemblyInformationalVersion:
         value: ${{ jobs.get-version.outputs.AssemblyInformationalVersion }}
-      # Full SHA of the commit NBGV computed the version from. Used to pin the
-      # GitHub release tag to the exact built commit (immutable) rather than a
-      # moving branch ref.
+      # Full SHA of the commit the version was computed from, used to pin the release tag to the exact built commit.
       GitCommitId:
         value: ${{ jobs.get-version.outputs.GitCommitId }}
 
@@ -37,16 +37,18 @@ jobs:
     steps:
 
       - name: Setup .NET SDK step
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: 10.x
 
       - name: Checkout code step
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
-          ref: ${{ inputs.ref || github.ref }}
 
+      # nbgv is floated on @master: its tag stream lags master, so Dependabot tag-tracking would propose a downgrade.
+      # Revisit if dotnet/nbgv resumes regular tagged releases.
       - name: Run Nerdbank.GitVersioning tool step
         id: nbgv
         uses: dotnet/nbgv@master

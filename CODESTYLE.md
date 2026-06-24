@@ -10,7 +10,7 @@ These rules apply to every language in the repo.
 
 ### Tooling Names and Casing
 
-Use each tool's official casing in task labels, docs, and prose - `.NET` (not `.Net`), `CSharpier`. Don't invent personal variants.
+Use each tool's official casing in task labels, docs, and prose - `.NET` (not `.Net`), `CSharpier`, `ruff`, `pyright`, `uv`. Don't invent personal variants.
 
 ### Clean-Compile Verification
 
@@ -25,7 +25,7 @@ Each language defines a **clean-compile** verification - the combination of buil
 - **A new port is not a license to silence diagnostics.** Brownfield / just-ported status never justifies relaxing analyzer or linter severities or muting newly surfaced warnings - fix them. (The only brownfield allowance in this template is the one-time git-signing / line-ending migration described in [AGENTS.md](./AGENTS.md) and [README.md](./README.md), which has nothing to do with code analysis.)
 - **Suppress only genuine false-positives or deliberate, documented exceptions**, always at the **narrowest scope that fits**, in this order of preference:
   1. An **in-code annotation on the specific symbol**, with a justification - the language's attribute/comment form, never a blanket pragma spanning a region.
-  2. The **owning project's local config** when the exception is project-wide for one project (e.g. a test project's own `.editorconfig`).
+  2. The **owning project's local config** when the exception is project-wide for one project (e.g. a test project's own `.editorconfig` / `pyproject.toml`).
   3. The **root / shared config** only when the suppression is genuinely applicable to **every** project in the repo.
 - **Never blanket-relax a batch of rules project-wide** to get a port to build. The per-language mechanics (which attribute, which config key) are in each language section.
 

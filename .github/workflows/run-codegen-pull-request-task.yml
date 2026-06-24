@@ -1,21 +1,11 @@
 name: Run codegen and pull request task
 
-# Runs codegen against `main` and `develop` in parallel via a matrix,
-# opens a PR against each base (`codegen-main` branch -> main,
-# `codegen-develop` branch -> develop). The merge-bot auto-merges
-# either PR independently. This keeps both branches current on
-# generated content (Nx product matrix, version data) without either
-# branch falling behind the other and without main -> develop
-# back-merges.
+# Runs codegen against `main` and `develop` in parallel via a matrix and opens a PR against each base
+# (codegen-main -> main, codegen-develop -> develop), which the merge-bot auto-merges independently.
 
 on:
   workflow_call:
     secrets:
-      # GitHub App credentials to generate an installation token.
-      # The App-token-driven PR open fires `pull_request` workflow
-      # events directly. `GITHUB_TOKEN`-driven PR opens do not (GitHub's
-      # recursion guard), which previously required a close/reopen dance
-      # under a PAT to nudge the auto-merge workflow.
       CODEGEN_APP_CLIENT_ID:
         required: true
       CODEGEN_APP_PRIVATE_KEY:
@@ -30,8 +20,7 @@ jobs:
       contents: write
       pull-requests: write
     strategy:
-      # Each branch gets its own parallel codegen run + PR. If one
-      # branch's PR fails (CI, conflicts, etc.) the other is unaffected.
+      # Each branch gets its own parallel codegen run + PR; one branch's failure doesn't affect the other.
       fail-fast: false
       matrix:
         target:
@@ -43,6 +32,7 @@ jobs:
     steps:
 
       - name: Generate GitHub App token step
+        # App token so the PR open fires `pull_request` workflow events (GITHUB_TOKEN opens don't).
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -50,7 +40,7 @@ jobs:
           private-key: ${{ secrets.CODEGEN_APP_PRIVATE_KEY }}
 
       - name: Setup .NET SDK step
-        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: 10.x
 
@@ -78,7 +68,7 @@ jobs:
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         id: cpr
         with:
-          # App token: triggers pull_request workflow events directly, creates verified commits as the app
+          # App token: triggers pull_request workflow events and creates verified commits as the app.
           token: ${{ steps.app-token.outputs.token }}
           base: ${{ matrix.target.ref }}
           branch: ${{ matrix.target.branch }}
