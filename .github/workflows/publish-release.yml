@@ -157,3 +157,33 @@ jobs:
     secrets: inherit
     permissions:
       contents: write
+
+  # Workflow artifacts are an intra-run handoff (durable copies live on the
+  # GitHub release and Docker Hub), so leaving them accumulates against the small
+  # account-wide storage quota; delete them once every consumer has read them.
+  # This publisher always publishes when it runs (schedule/dispatch only), so no
+  # publish gate is needed beyond always().
+  cleanup-artifacts:
+    name: Delete workflow artifacts job
+    needs: [build-base, build-main, build-develop, github-release, docker-readme, date-badge]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete workflow artifacts step
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Best-effort housekeeping: a failed list or delete logs a warning and continues so it never reds the run,
+          # while `set -e` still catches unexpected failures.
+          set -euo pipefail
+          if ! ids=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts --paginate \
+            --jq '.artifacts[].id'); then
+            echo "::warning::Could not list run artifacts; skipping cleanup (storage may not be freed)."
+            ids=""
+          fi
+          for artifact_id in $ids; do
+            gh api --method DELETE "repos/${{ github.repository }}/actions/artifacts/$artifact_id" \
+              || echo "::warning::Failed to delete artifact $artifact_id; continuing."
+          done
