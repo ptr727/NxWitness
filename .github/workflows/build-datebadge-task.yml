@@ -1,5 +1,8 @@
 name: Build BYOB date badge task
 
+# Caller-gated: the publisher invokes this only when main is published - the badge has no per-branch context, it tracks
+# the last main build.
+
 on:
   workflow_call:
 
@@ -13,14 +16,10 @@ jobs:
 
       - name: Get current date step
         id: date
-        run: |
-          echo "date=$(date)" >> "$GITHUB_OUTPUT"
+        run: echo "date=$(date)" >> "$GITHUB_OUTPUT"
 
-      # No ref gate: the sole caller (publish-release) only runs this after
-      # a successful publish and can be dispatched from any ref, so the
-      # "Last Build" badge should update on every publish.
       - name: Build BYOB date badge step
-        uses: RubbaBoy/BYOB@v1
+        uses: RubbaBoy/BYOB@a4919104bc0ec7cfd7f113e42c405cc45246f2a4 # v1
         with:
           name: lastbuild
           label: "Last Build"
