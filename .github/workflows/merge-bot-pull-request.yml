@@ -11,10 +11,11 @@ on:
   pull_request_target:
     types: [opened, reopened, synchronize]
 
-# `cancel-in-progress: false` is required so events process to completion in arrival order: a follow-up
-# synchronize must not cancel an in-flight `opened` run before it enables auto-merge.
+# Per-PR group: under `pull_request_target` `github.ref` is the base branch, which would serialize every bot PR
+# against that base; key on the PR number so each PR's events queue independently. `cancel-in-progress: false` so a
+# follow-up synchronize doesn't cancel an in-flight `opened` run before it enables auto-merge.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
