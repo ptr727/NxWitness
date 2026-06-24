@@ -145,35 +145,18 @@ jobs:
             LICENSE
             README.md
 
-  # Derive the Docker Hub repository list from main's Matrix.json (lowercased ptr727/<image> plus the shared base
-  # repos) so the generic readme task can matrix over it. Computed in the caller because the list is repo-specific.
-  get-repos:
-    name: Get docker repositories job
-    needs: [build-main, build-develop]
-    runs-on: ubuntu-latest
-    outputs:
-      repositories: ${{ steps.repos.outputs.repositories }}
-    steps:
-      - name: Checkout code step
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          ref: main
-      - name: Load repositories from Matrix.json step
-        id: repos
-        run: |
-          set -euo pipefail
-          repos=$(jq --compact-output '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique' ./Make/Matrix.json)
-          echo "repositories=$repos" >> "$GITHUB_OUTPUT"
-
+  # The image set is repo-specific, so derive the Docker Hub repository list inside the generic readme task from main's
+  # Matrix.json (lowercased ptr727/<image> plus the shared base repos) via manifest + manifest-jq.
   docker-readme:
     name: Publish docker hub readme job
-    needs: [build-main, build-develop, get-repos]
+    needs: [build-main, build-develop]
     uses: ./.github/workflows/publish-docker-readme-task.yml
     secrets: inherit
     with:
       # Readme content tracks main, consistent with the version/release.
       ref: main
-      repositories: ${{ needs.get-repos.outputs.repositories }}
+      manifest: ./Make/Matrix.json
+      manifest-jq: '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique'
 
   date-badge:
     name: Create BYOB date badge job
@@ -190,7 +173,7 @@ jobs:
   # publish gate is needed beyond always().
   cleanup-artifacts:
     name: Delete workflow artifacts job
-    needs: [build-base, build-main, build-develop, github-release, get-repos, docker-readme, date-badge]
+    needs: [build-base, build-main, build-develop, github-release, docker-readme, date-badge]
     if: always()
     runs-on: ubuntu-latest
     permissions:

@@ -1,6 +1,6 @@
 # Code Style and Formatting Rules
 
-This is the single code-style guide for the repo. The **General** section applies to every language and is always carried. This repo ships only a .NET side, so it carries the **General** and **.NET** sections; the template's Python section is dropped - the same per-language model as [`.editorconfig`](./.editorconfig), whose `[*.cs]` block a non-.NET repo drops.
+This is the single code-style guide for the repo. The **General** section applies to every language and is always carried. Each **language section** (.NET, Python) is self-contained and **droppable**: a repo with no .NET side drops the .NET section, a repo with no Python side drops the Python section - the same per-language model as [`.editorconfig`](./.editorconfig), whose `[*.cs]` block a non-.NET repo drops.
 
 Cross-cutting *process* rules (PR titles, branching, US English, markdown style, comments philosophy, workflow YAML, PR review etiquette) live in [AGENTS.md](./AGENTS.md) and are not repeated here.
 
@@ -33,12 +33,14 @@ Each language defines a **clean-compile** verification - the combination of buil
 
 These apply repo-wide, in every directory:
 
-1. **Markdown linting**: All `.md` files must be lint-clean (error and warning free) via the VS Code `markdownlint` extension. [`.markdownlint-cli2.jsonc`](./.markdownlint-cli2.jsonc) at the repo root is the single source of truth - the davidanson `markdownlint` extension and a command-line `markdownlint-cli2` run both read it, so the IDE and CLI stay in lock-step. Rules it deliberately disables (e.g. `MD013` line-length, `MD033` inline HTML) are **intentional** - do not "fix" them. This file is carried verbatim by every derived repo (see the template's [Files and Sections Derived Repos Must Carry Verbatim](https://github.com/ptr727/ProjectTemplate/blob/main/AGENTS.md#files-and-sections-derived-repos-must-carry-verbatim) list). Fix violations at the source rather than disabling rules.
+1. **Markdown linting**: All `.md` files must be lint-clean (error and warning free) via the VS Code `markdownlint` extension. [`.markdownlint-cli2.jsonc`](./.markdownlint-cli2.jsonc) at the repo root is the single source of truth - the davidanson `markdownlint` extension and a command-line `markdownlint-cli2` run both read it, so the IDE and CLI stay in lock-step. Rules it deliberately disables (e.g. `MD013` line-length, `MD033` inline HTML) are **intentional** - do not "fix" them. Fix violations at the source rather than disabling rules.
 2. **Spelling**: All spelling must be clean via the CSpell VS Code integration; words must be correctly spelled in **US English** (the repo-wide convention - see [AGENTS.md](./AGENTS.md)). Project-specific terms go in the workspace CSpell config.
 
 ## .NET
 
-This is the style guide for the **.NET projects** in this repo: [`CreateMatrix/`](./CreateMatrix/) (the console app) and [`CreateMatrixTests/`](./CreateMatrixTests/) (the xUnit test project).
+*This section applies only to the .NET side. A repo with no .NET projects drops the whole section.*
+
+This is the style guide for the **.NET projects** in this repo.
 
 ### Build Requirements
 
@@ -55,20 +57,20 @@ This is the style guide for the **.NET projects** in this repo: [`CreateMatrix/`
    - `<EnableNETAnalyzers>true</EnableNETAnalyzers>`
    - Analyzer severity is `suggestion`, but all warnings must be addressed - see [Analyzer Diagnostics and Suppressions](#analyzer-diagnostics-and-suppressions); do not relax rules to dodge them.
 
-3. **Husky.Net pre-commit hooks and CI backstop**
-   - `dotnet husky run` runs the [`.husky/task-runner.json`](./.husky/task-runner.json) tasks (`CSharpier Format`, then `.NET Format`) before each commit
-   - CI runs the same `dotnet husky run` on every PR as a backstop
+3. **CI lint backstop**
+   - `dotnet csharpier check` and `dotnet format style --verify-no-changes` run on every PR
+   - No git hooks ship by default - see README "Optional: enable git hooks locally" to opt in
 
 #### Build Tasks
 
-Available VS Code tasks (run them from VS Code's task runner - **Terminal -> Run Task** - or an agent's task-running tool). The first three are the clean-compile set, carried verbatim; the rest are convenience/project-specific tasks a derived repo adapts or drops:
+Available VS Code tasks (run them from VS Code's task runner - **Terminal -> Run Task** - or an agent's task-running tool). The first three are the clean-compile set, carried verbatim; the rest are convenience tasks a derived repo adapts or drops:
 
 - `.NET Build`: Build with diagnostic verbosity *(clean-compile)*
 - `CSharpier Format`: Auto-format code with CSharpier *(clean-compile)*
 - `.NET Format`: Run CSharpier and build, then verify formatting and style with `--verify-no-changes` *(clean-compile; the task to run after edits)*
 - `.NET Tool Update`: Update dotnet tools *(convenience)*
 - `.NET Outdated Upgrade`: Upgrade outdated NuGet dependencies, interactive prompt *(convenience)*
-- `Husky.Net Run`: Run the pre-commit hooks manually *(project-specific)*
+- `.NET Benchmark`: Run BenchmarkDotNet *(project-specific; present only if a Benchmarks project exists)*
 
 ### Tooling and Editor
 
@@ -78,13 +80,11 @@ Available VS Code tasks (run them from VS Code's task runner - **Terminal -> Run
    - Invoked by the `CSharpier Format` task / `dotnet csharpier format --log-level=debug .`
 2. **dotnet format**: Style verification
    - Verify no changes: `dotnet format style --verify-no-changes --severity=info --verbosity=detailed`
-3. **Husky.Net**: Git hooks for automated checks
-   - Installed as a local dotnet tool (via `dotnet tool restore`)
-   - Install Git hooks locally with `dotnet husky install`
-   - Pre-commit hooks ([`.husky/task-runner.json`](./.husky/task-runner.json)) run CSharpier and `dotnet format style`
-4. **Other tools**
+3. **Other tools**
    - `dotnet-outdated-tool`: Dependency update checks
    - Nerdbank.GitVersioning: Version management
+
+Pre-commit git hooks are not installed by default - CI is the lint backstop. See README "Optional: enable git hooks locally" if you want Husky.Net (or another runner) wired up locally.
 
 #### Editor Baseline
 
@@ -332,11 +332,12 @@ Follow the scope hierarchy in [Analyzer Diagnostics and Suppressions](#analyzer-
    - Include SourceLink: `<PublishRepositoryUrl>true</PublishRepositoryUrl>`
    - Embed untracked sources: `<EmbedUntrackedSources>true</EmbedUntrackedSources>`
 
-4. **Internal visibility**: Use `InternalsVisibleTo` for test access (adapt the project name to your repo's test project)
+4. **Internal visibility**: Use `InternalsVisibleTo` for test and benchmark access (adapt the project names to your repo's test/benchmark projects)
 
    ```xml
    <ItemGroup>
-     <InternalsVisibleTo Include="CreateMatrixTests" />
+     <InternalsVisibleTo Include="YourBenchmarkProject" />
+     <InternalsVisibleTo Include="YourTestProject" />
    </ItemGroup>
    ```
 

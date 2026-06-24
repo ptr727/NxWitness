@@ -10,6 +10,9 @@
 # e.g. for s6-overlay init: `Docker/s6-overlay/** text eol=lf`.
 *.sh text eol=lf
 
+# Husky.Net ships an extensionless pre-commit hook with a /bin/sh shebang; pin it to LF so a CRLF can't break execution.
+.husky/pre-commit text eol=lf
+
 # s6-overlay ships extensionless service/init scripts; pin the tree to LF so a CRLF shebang can't break execution.
 Docker/s6-overlay/** text eol=lf
 
