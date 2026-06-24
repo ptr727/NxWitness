@@ -1,75 +1,36 @@
-# GitHub Copilot Guidance
+# Copilot Instructions
 
-## Purpose
+Repository conventions for GitHub Copilot (and any other AI agent reading this file).
 
-This file summarizes the solution and defines the hierarchy of guidance for AI-assisted contributions.
+The **canonical guide is [AGENTS.md](../AGENTS.md)** at the repo root - read it first, including the [PR Review Etiquette](../AGENTS.md#pr-review-etiquette) review-loop contract this file's runbook implements. This file is intentionally narrow: commit/PR-title conventions (summarized inline so VS Code's commit-message and PR-title generators have them) plus the GitHub Copilot Review Runbook.
 
-## Guidance Hierarchy (Must Follow)
+For code-style rules, see [`CODESTYLE.md`](../CODESTYLE.md) at the repo root - one guide with a General section plus per-language sections (.NET).
 
-1. [CODESTYLE.md](../CODESTYLE.md) is the master code style and formatting authority.
-2. [AGENTS.md](../AGENTS.md) is secondary guidance describing the solution, workflows, and conventions.
-3. Repository configuration files such as [`.editorconfig`](../.editorconfig) and [`.vscode/tasks.json`](../.vscode/tasks.json) define enforced formatting, line endings, and task expectations.
+Do not duplicate language-specific rules here. **Project-specific conventions and API/behavioral contracts also belong in [AGENTS.md](../AGENTS.md), not here** - this file is intentionally limited to the inline commit/PR-title summary and the GitHub Copilot Review Runbook. Non-Copilot agents (Claude Code, Codex, Cursor, ...) are not directed to this file and don't read it by default, so any rule a reviewer must honor has to live in `AGENTS.md` to be provider-independent.
 
-If any instruction conflicts, follow CODESTYLE.md first, then AGENTS.md.
+## Commit Messages and Pull Request Titles
 
-## Solution Summary
+Summarized for VS Code's generators; the full rules, rationale, and examples are in [AGENTS.md "Pull Request Title and Commit Message Conventions"](../AGENTS.md#pull-request-title-and-commit-message-conventions).
 
-This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes base images (nx-base, nx-base-lsio) and derived product images, plus a .NET tooling project that generates Dockerfiles, matrices, and version inputs used by CI and packaging scripts.
-
-### Core Projects
-
-- `CreateMatrix` (.NET 10 console app): Generates Dockerfiles and build matrix data using version and release metadata.
-- `CreateMatrixTests` (xUnit v3 + AwesomeAssertions): Validates release handling and version forwarding.
-
-### Key Inputs and Outputs
-
-- Inputs: version and matrix data in `version.json`, [Make/Version.json](../Make/Version.json), and [Make/Matrix.json](../Make/Matrix.json).
-- Outputs: Dockerfiles in [Docker/](../Docker/) (base images and derived product images) and compose/test artifacts in [Make/](../Make/).
-- Templates: Unraid container templates in [Unraid/](../Unraid/).
-
-### Build and Validation Workflow (High Level)
-
-- Primary entry points are the `CreateMatrix` CLI commands (version, matrix, make) run directly or via scripts in [Make/](../Make/).
-- Formatting and style verification are enforced by CSharpier and dotnet format, with Husky.Net hooks.
-- The `.Net Format` VS Code task in [`.vscode/tasks.json`](../.vscode/tasks.json) must be clean and warning-free at all times.
-
-### Image Architecture
-
-- Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then used as `FROM` images for derived product Dockerfiles.
-- Derived images should track base image tag changes (for example, the Ubuntu distro tag) to keep builds consistent.
-
-### CI Pipeline (GitHub Actions)
-
-- Pull requests run unit tests and style checks, plus a fast smoke build (NxMeta and NxMeta-LSIO, amd64 only, no push) that runs only when image files change -- not the full matrix.
-- Publishing is schedule/manual only via `publish-release.yml`, which builds the base images once and then publishes the full matrix for both the `main` and `develop` branches in a single run.
-- Merges to `main`/`develop` do not publish; auto-merged Dependabot and codegen PRs are picked up by the next scheduled publish. Do not reintroduce push-triggered publishing or full-matrix PR builds.
-- Structured files are linted in-editor via the extensions recommended in the workspace file `NxWitness.code-workspace` (C#, Markdown, Docker, GitHub Actions, spelling) rather than a CI lint job; lint changed files before pushing, and run `actionlint` for deeper workflow checks. Editor settings, extension recommendations, and spell-check words belong in the workspace file (not `.vscode/`). See AGENTS.md.
-
-## What to Keep in Sync
-
-- Generated Dockerfiles and scripts must reflect CreateMatrix behavior.
-- Base image Dockerfiles and derived image Dockerfiles should remain aligned since derived images build on the base images.
-- Documentation in [README.md](../README.md) and release notes should align with current outputs and supported product variants.
-
-## Expectations for Changes
-
-- Follow the zero-warnings policy and formatting requirements in [CODESTYLE.md](../CODESTYLE.md).
-- Use explicit types (no `var`), Allman braces, file-scoped namespaces, and other conventions as defined in the master style guide.
-- Respect line endings and encoding rules from the repository configuration, including UTF-8 without BOM.
-
-## Versioning
-
-`develop` leads `main` by a minor. After a `develop -> main` release lands and main's publish completes, bump the minor in [version.json](../version.json) on `develop` via an isolated `bump-version-X.Y` PR, so develop's NBGV prerelease version (baked into its images as `LABEL_VERSION`) stays above main's last stable release. A `develop -> main` promotion that carries only maintenance (dependency bumps, CI/doc fixes, template re-syncs) holds main's version instead - `git checkout main -- version.json` on the promotion branch. See [AGENTS.md "Versioning"](../AGENTS.md#versioning).
+- Imperative subject, <= 72 characters, no trailing period; optional blank-line-separated body for the non-obvious *why*.
+- US English, title case with lowercase short bind words; no vague titles, no `Co-Authored-By:` unless asked, no release-bump magnitude (NBGV handles versioning). Dependabot's `Bump X from Y to Z` titles are fine.
+- develop PRs squash-merge (`gh pr merge --squash`), main PRs merge-commit (`--merge`); a mismatched flag is rejected by branch protection.
 
 ## GitHub Copilot Review Runbook
+
+> This runbook implements the [AGENTS.md "PR Review Etiquette"](../AGENTS.md#pr-review-etiquette) review-loop contract for GitHub Copilot. Without it in-repo, an agent has no pointer to the reliable Copilot mechanics and falls back to known-broken paths (the no-op `POST /requested_reviewers`, the wrong bot-login filter). In the API snippets below, fill the `<N>` placeholder with the PR number.
 
 Use this section for provider-specific mechanics. The expected review loop *contract* (request review on every push, verify head-SHA coverage, triage findings, reply + resolve, escalate when stuck) is defined in [AGENTS.md -> PR Review Etiquette](../AGENTS.md#pr-review-etiquette). This section only describes how to make GitHub Copilot reliably execute it.
 
 ### Triggering and Polling
 
-Auto-review on push is configured (via the branch ruleset's `copilot_code_review` rule with `review_on_push: true`) but fires inconsistently in practice - treat it as best-effort, not guaranteed. After every push, **re-request a review programmatically** via the GraphQL `requestReviews` mutation, passing the Copilot reviewer's bot node id in `botIds`. This now works reliably (it previously did not - a maintainer had to click "re-request review" in the UI; the agent can now drive the loop end-to-end without that hand-off).
+Auto-review on push is configured (via the branch ruleset's `copilot_code_review` rule with `review_on_push: true`) but fires inconsistently in practice - treat it as best-effort, not guaranteed. After every push, **re-request a review programmatically** via the GraphQL `requestReviews` mutation, passing the Copilot reviewer's bot node id in `botIds`. This drives the loop end-to-end without a UI hand-off.
 
-> **The reviewer login differs by API - this is intentional, not a typo.** In **GraphQL** (`gh api graphql` and `gh pr view --json reviews`, which is GraphQL-backed) the `Bot.login` is `copilot-pull-request-reviewer` - **no `[bot]` suffix**. In the **REST** API (`gh api repos/.../issues|pulls/...`) the same account's `user.login` is `copilot-pull-request-reviewer[bot]` - **with** the suffix. Each query below uses the correct form for its API; match the API, not a single spelling, when adapting them.
+**A review with no inline comments is still a completed review - not a failure, and not a reason to ask the maintainer to re-trigger.** Copilot very often posts a single formal review (GraphQL `state: COMMENTED`) whose body ends with "...reviewed N of N changed files ... and generated no comments" and adds **zero** inline threads. That review carries the head `commit.oid` and fully satisfies the loop - it is the clean-pass success case. Never read "no inline comments" as "the review didn't run," and never re-request or escalate to the maintainer because comments are absent.
+
+**Round 1 is normally auto-seeded - poll for it before trying to self-trigger.** Auto-review-on-open supplies the first review with no `botIds` call needed, but it can lag one to three minutes. After opening a PR (or the first push), **poll** for a Copilot review on the head SHA (see [Verify Review Covered Current Head](#verify-review-covered-current-head)) before concluding none ran. The `requestReviews` mutation below is for **re-requesting on later pushes** (a new head SHA); by then a prior review exists, so its bot node id is readable. A missing bot node id on round 1 therefore means "the auto-review has not landed yet - wait and poll," **not** "ask the maintainer to kick it off."
+
+> **The reviewer login differs by API.** In **GraphQL** (`gh api graphql` and `gh pr view --json reviews`, which is GraphQL-backed) the `Bot.login` is `copilot-pull-request-reviewer` - **no `[bot]` suffix**. In the **REST** API (`gh api repos/.../issues|pulls/...`) the same account's `user.login` is `copilot-pull-request-reviewer[bot]` - **with** the suffix. Each query below uses the correct form for its API; match the API, not a single spelling, when adapting them.
 
 ```sh
 # 1. PR node id + the Copilot reviewer's bot node id (read from any existing
@@ -95,7 +56,7 @@ mutation($pr: ID!, $bot: ID!) {
 }' -F pr="$PR_NODE" -F bot="$BOT_ID"
 ```
 
-The bot node id is read from an existing Copilot review, so step 1 needs at least one prior review on the PR - the auto-review-on-open normally supplies the first one. If no Copilot review exists yet and auto-review didn't fire, request `Copilot` once through the GitHub PR UI to seed it, then use the mutation for every subsequent re-request.
+The bot node id is read from an existing Copilot **formal** review (`pullRequest.reviews`), so step 1 needs at least one prior formal review on the PR - the auto-review-on-open normally supplies the first one (it may have **no inline comments**; that still counts, and its bot node id is still readable). Poll for it (give auto-review-on-open a few minutes) before deciding it is missing. If Copilot posted **only an issue comment** and no formal review, the head is covered but `reviews` yields no bot node id - read the id from the Copilot issue comment's author by querying the PR's issue comments in GraphQL (`pullRequest.comments` -> author `... on Bot { id }`), or request `Copilot` once through the GitHub PR UI to produce a formal review. Manual UI seeding is the fallback specifically when no formal review exists to read the id from; then use the mutation for every subsequent re-request.
 
 **Do NOT post `@Copilot review` as a PR comment.** That comment triggers the Copilot *coding agent* (`copilot-swe-agent[bot]`), which makes code changes rather than posting a review.
 
@@ -122,9 +83,11 @@ gh api repos/ptr727/NxWitness/issues/<N>/comments --jq \
   '[.[] | select(.user.login=="copilot-pull-request-reviewer[bot]")] | last | {created_at, body: .body[:200]}'
 ```
 
-Coverage is confirmed when (1) exits 0. For issue comments (path 2), body content is the only reliable signal - `created_at` is not: `git log -1 --format=%cI` is the **commit** timestamp, not the push timestamp, so amended or rebased commits can have an earlier timestamp and an older Copilot comment could satisfy a time check even though Copilot never saw the current head. Treat path (2) as confirmed only when the comment body explicitly refers to the current changes.
+Coverage is confirmed when (1) exits 0 - **a formal review with no inline comments still satisfies path (1)**, because coverage is about the head SHA, not the comment count. For issue comments (path 2), body content is the only reliable signal - `created_at` is not: `git log -1 --format=%cI` is the **commit** timestamp, not the push timestamp, so amended or rebased commits can have an earlier timestamp and an older Copilot comment could satisfy a time check even though Copilot never saw the current head. Treat path (2) as confirmed only when the comment body explicitly refers to the current changes.
 
 ### Bounded Retry Workflow
+
+This path is only for a **genuinely missing** review - no Copilot review (formal *or* issue comment) covers the current head SHA after polling. A review that covered the head but produced no comments is a clean pass, not a missing review; do not enter this retry path for it.
 
 If a review did not run on the current head, retry:
 
@@ -179,7 +142,13 @@ Issue-level Copilot comments (those in `issues/<N>/comments`) have no resolution
 Reply-body conventions:
 
 - Accepted bug/style fix: include fixing commit SHA and a one-line summary.
-- Declined style comment: cite the rule (AGENTS.md or language CODESTYLE) and the existing-tree precedent.
+- Declined style comment: cite the rule (AGENTS.md or the CODESTYLE.md language section) and the existing-tree precedent.
 - Declined architecture proposal: one-sentence rationale.
 
 After the final push, sweep-resolve stale older threads for removed code paths.
+
+## When in Doubt
+
+Read [AGENTS.md](../AGENTS.md) for this repo's conventions. For code-style rules, [`CODESTYLE.md`](../CODESTYLE.md) (its General section plus the relevant language section) is authoritative. Don't restate any of these files' rules in commit bodies or PR descriptions - keep those focused on the change itself.
+
+**In a derived repo:** if you find a discrepancy that should be fixed in the template itself (this file or AGENTS.md is out of date, a rule is missing, something bit this repo and would bite the next), open an issue upstream in [`ptr727/ProjectTemplate`](https://github.com/ptr727/ProjectTemplate) rather than only fixing it locally - see the template's [AGENTS.md "Staying in Sync and Reporting Drift Upstream"](https://github.com/ptr727/ProjectTemplate/blob/main/AGENTS.md#staying-in-sync-and-reporting-drift-upstream).

@@ -1,8 +1,11 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // .NET language group. A non-.NET repo drops this group and adds its own
+        // language's tasks. The first three tasks are the .NET clean-compile set
+        // (CODESTYLE.md) carried verbatim; the rest are convenience/project-specific.
         {
-            "label": ".Net Build",
+            "label": ".NET Build",
             "type": "process",
             "command": "dotnet",
             "args": [
@@ -20,7 +23,7 @@
             }
         },
         {
-            "label": ".Net Format",
+            "label": ".NET Format",
             "type": "process",
             "command": "dotnet",
             "args": [
@@ -37,9 +40,10 @@
                 "showReuseMessage": false,
                 "clear": false
             },
+            "dependsOrder": "sequence",
             "dependsOn": [
                 "CSharpier Format",
-                ".Net Build"
+                ".NET Build"
             ]
         },
         {
@@ -60,8 +64,9 @@
                 "clear": false
             }
         },
+        // Convenience / project-specific tasks (adapt or drop per repo).
         {
-            "label": ".Net Tool Update",
+            "label": ".NET Tool Update",
             "type": "process",
             "command": "dotnet",
             "args": [
@@ -94,12 +99,12 @@
             }
         },
         {
-            "label": ".Net Outdated Upgrade",
+            "label": ".NET Outdated Upgrade",
             "type": "process",
             "command": "dotnet",
             "args": [
                 "outdated",
-                "--upgrade:Prompt"
+                "--upgrade:prompt"
             ],
             "problemMatcher": [
                 "$msCompile"
