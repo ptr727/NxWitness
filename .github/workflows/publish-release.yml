@@ -85,32 +85,38 @@ jobs:
 
     steps:
 
-      # Check out the exact commit NBGV versioned (not the moving `main` ref),
-      # so the uploaded release files come from the same commit the tag points
-      # at even if `main` advances mid-run.
+      # Check out the exact built commit so the uploaded release files match the tag even if the branch advances mid-run.
       - name: Checkout code step
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ needs.get-version.outputs.GitCommitId }}
 
-      # The weekly schedule re-runs even when main has no new commits, so NBGV
-      # can produce a SemVer2 that was already released. GitHub release creation
-      # has no built-in skip-duplicate, and re-publishing an unchanged version
-      # churns the release (and can fail re-uploading existing assets), so skip
-      # the release step when a release for this tag already exists — but only
-      # on the schedule. A `workflow_dispatch` is always allowed through so a
-      # maintainer can re-run to repair a partially-created release.
+      # Backstop (main only): a public release must not carry a prerelease '-', guarding against NBGV mis-versioning the
+      # public ref (e.g. a dispatch on a non-default ref) into a malformed "Latest" release. Strip '+buildmetadata'
+      # first - a '-' there is legitimate; only a '-' in the core/prerelease segment marks a prerelease.
+      - name: Verify public release version step
+        env:
+          SEMVER2: ${{ needs.get-version.outputs.SemVer2 }}
+        run: |
+          set -euo pipefail
+          CORE_AND_PRE="${SEMVER2%%+*}"   # drop +buildmetadata; a '-' here is the genuine prerelease separator
+          if [[ "$CORE_AND_PRE" == *-* ]]; then
+            echo "::error::Public (main) release version '$SEMVER2' carries a prerelease suffix; refusing to publish."
+            exit 1
+          fi
+
+      # The weekly publisher re-runs even with no new commits, so the version may already be released. Skip the release
+      # step when a release for this tag already exists to avoid a no-op republish.
       - name: Check for existing release step
         id: release-exists
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.get-version.outputs.SemVer2 }}
-          EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-            if [[ "$EVENT" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
               echo "Release $TAG already exists; workflow_dispatch will refresh it."
             else
               echo "Release $TAG already exists; skipping release creation (no-op republish)."
@@ -119,28 +125,28 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # `target_commitish` must be set explicitly: otherwise GitHub's REST API tags the release on the default branch.
+      # Pin it to `GitCommitId` so the tag is on the exact built commit, consistent with the SemVer2 tag and artifacts.
+      # Skip when the release already exists, but always let a manual `workflow_dispatch` through to refresh it.
+      # Every release is a tag on the built commit plus the auto-attached source zip, README, and LICENSE. This is a
+      # Docker-only repo: it ships no `release-asset-*` binaries/packages, so the release carries no extra files and
+      # `fail_on_unmatched_files` is omitted (see Template adaptations in AGENTS.md). The image is the published artifact
+      # on Docker Hub.
       - name: Create GitHub release step
-        # Skip only when the release already exists AND this is a scheduled
-        # run (the no-op weekly case). A manual `workflow_dispatch` always runs
-        # so it can repair/refresh an existing release for the same tag.
         if: ${{ steps.release-exists.outputs.exists == 'false' || github.event_name == 'workflow_dispatch' }}
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           generate_release_notes: true
           tag_name: ${{ needs.get-version.outputs.SemVer2 }}
-          # Pin the tag to the exact commit NBGV versioned (main's HEAD at
-          # version-compute time, since get-version runs with ref: main) rather
-          # than the moving `main` ref — immutable, and consistent with the
-          # version/assets even if a commit lands on main mid-run.
           target_commitish: ${{ needs.get-version.outputs.GitCommitId }}
           # This run's release represents the main publish.
           prerelease: false
           files: |
             LICENSE
             README.md
-            ./Make/Version.json
-            ./Make/Matrix.json
 
+  # The image set is repo-specific, so derive the Docker Hub repository list inside the generic readme task from main's
+  # Matrix.json (lowercased ptr727/<image> plus the shared base repos) via manifest + manifest-jq.
   docker-readme:
     name: Publish docker hub readme job
     needs: [build-main, build-develop]
@@ -149,6 +155,8 @@ jobs:
     with:
       # Readme content tracks main, consistent with the version/release.
       ref: main
+      manifest: ./Make/Matrix.json
+      manifest-jq: '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique'
 
   date-badge:
     name: Create BYOB date badge job

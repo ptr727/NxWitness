@@ -16,5 +16,5 @@ RUN apt-get update \
         unzip \
         wget \
     && apt-get clean \
-    && apt-get autoremove --purge \
+    && apt-get autoremove --purge --yes \
     && rm -rf /var/lib/apt/lists/*

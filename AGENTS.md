@@ -74,7 +74,7 @@ The `version` (major.minor) in [version.json](./version.json) is the NBGV versio
 
 ### Format
 
-- Imperative subject summarizing the change, <=72 characters, no trailing period. ("Add NxMeta LSIO image variant", not "Added X" or "Adds X".)
+- Imperative subject summarizing the change, <=72 characters, no trailing period. ("Add 24-hour PM2.5 average sensor", not "Added X" or "Adds X".)
 - Optional body, blank-line separated, explaining *why* the change is being made when that's non-obvious. The diff shows *what*.
 
 ### Rules
@@ -87,11 +87,11 @@ The `version` (major.minor) in [version.json](./version.json) is the NBGV versio
 ### Examples
 
 ```text
-Add Wisenet WAVE product variant
+Add structured logging extensions to library
 Pin softprops/action-gh-release to commit SHA
-Drop legacy Ubuntu base image tag
+Drop net8.0 multi-targeting from console project
 Bump xunit.v3 from 3.2.2 to 3.3.0
-Clarify LSIO volume configuration in README
+Clarify devcontainer setup steps in README
 ```
 
 ## PR Review Etiquette
@@ -111,7 +111,7 @@ The repo runs a review loop on every PR: local agent iteration plus remote autom
 
 `mergeStateStatus: CLEAN` reflects **only** required statuses - it never reflects open bot review comments, so `CLEAN` alone is **never** sufficient to merge. A green/`CLEAN` PR with an unresolved Copilot finding fails this gate; treat it as "not mergeable" no matter what the merge-state field says. The agent never merges on its own (consistent with "default to staging"; merging is maintainer-authorized).
 
-**Merging is not releasing.** A merge to a release branch does **not** by itself publish; publishing is a separate step in the repo's release pipeline (a scheduled run or a manual dispatch), not an automatic consequence of merging. Never describe a merge as cutting a release, and never trigger a publish without explicit maintainer instruction.
+**Merging is not releasing.** A merge to a release branch does **not** by itself publish; publishing is a separate, explicitly configured step in the repo's release pipeline (e.g. a scheduled run, a manual dispatch, or an opted-in publish-on-merge trigger), not an automatic consequence of merging. Never describe a merge as cutting a release, and never trigger a publish without explicit maintainer instruction.
 
 ### Expected Review Loop
 
@@ -166,3 +166,15 @@ Anti-pattern: don't keep flipping the code on the same style point. Flip the rul
 - When modifying Dockerfiles or build scripts, ensure generated outputs stay in sync with `CreateMatrix` behavior.
 - Keep base image definitions and derived image Dockerfiles aligned, since derived images build on the base images.
 - Keep `README.md` and release documentation aligned with build outputs and product variants.
+
+## Template adaptations
+
+This repo derives its CI and conventions from [ptr727/ProjectTemplate](https://github.com/ptr727/ProjectTemplate). Carried artifacts are taken by full-file replacement; the deliberate deviations below are documented so they are not mistaken for drift.
+
+- **Base + per-branch Docker build structure.** `publish-release.yml` keeps a `build-base` job plus separate `build-main` / `build-develop` legs (calling repo-owned `build-base-images-task.yml` and `build-docker-task.yml`) instead of the template's single per-target branch matrix. This is a multi-image Docker product: the shared `nx-base` / `nx-base-lsio` images are built once from `main` and reused by both branch legs (`build_base: false`), and each leg builds every product image (NxMeta, DWSpectrum, NxGo, WisenetWAVE, ...) from `Matrix.json`. The template branch matrix cannot express the shared-base fan-out, so the build layer stays repo-owned.
+- **Docker-only GitHub release (no `release-asset-*` files).** The `github-release` job follows the template's generic release semantics (tag on the built commit, auto source zip + README + LICENSE, `target_commitish` pinned, skip-existing guard, main-only `Verify public release version` backstop), but this repo ships no binary/package release assets - the published artifacts are the Docker Hub images. So there is no `release-asset-*` download step and `fail_on_unmatched_files` is omitted (it has no files to guard).
+- **Docker Hub readme repositories derived from `Matrix.json`.** `publish-docker-readme-task.yml` is carried verbatim (generic: `repositories` or `manifest` + `manifest-jq` input, `ref` gate, optional transform). Because the image set is repo-specific, the `publish-release.yml` caller passes `manifest: ./Make/Matrix.json` plus the `manifest-jq` program (lowercased `ptr727/<image>` plus the shared base repos) and lets the task's own `get-repos` job resolve the list.
+- **Husky.Net pre-commit hooks.** This repo installs Husky.Net Git hooks (pre-commit formatting/codegen), inverting the template's no-hooks default. The hooks run the same checks CI enforces, surfaced earlier.
+- **.vscode Benchmark -> Husky.Net Run task.** The carried `.vscode/tasks.json` swaps the template's Benchmark task for a Husky.Net Run task, matching this repo's hook tooling.
+- **Build-layer leaves own build specifics but follow the shared action-pin + cache rules.** The build-layer leaves (`build-docker-task.yml`, `build-base-images-task.yml`, `test-release-task.yml`) own their per-image Dockerfiles, build args, and target matrix, but their actions are **SHA-pinned** like the orchestration layer (Dependabot still bumps SHA pins, updating the SHA + version comment), and their Docker layer cache uses **registry-tag caches** (`docker.io/ptr727/<repo>:buildcache-<branch>`, plus the base image's own tag and inline cache) rather than `type=gha`, per the template's cache policy.
+- **No `merge-upstream-version` merge-bot job.** This repo tracks the upstream NX version through codegen (`run-codegen-pull-request-task.yml` updating `Matrix.json`), so the merge-bot keeps `merge-codegen` and omits the template's `merge-upstream-version` job (it uses the separate `check-upstream-version-task.yml` mechanism this repo does not ship).

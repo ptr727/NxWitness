@@ -12,11 +12,11 @@ This is a project to build and publish docker images for various [Network Optix]
 
 ### Release Notes
 
-**Version: 2.13**:
+**Version: 2.14**:
 
 **Summary**:
 
-- Fixed a regression bug that surfaced when Nx released an older version under the same tag, triggering the version-forward-release only logic.
+- Fixed an LSIO permissions race where the startup `chown` could run before the `PUID`/`PGID` remap, leaving `/config` and `/media` owned by the wrong user and breaking media writes.
 
 See [Release History](./HISTORY.md) for complete release notes and older versions.
 
