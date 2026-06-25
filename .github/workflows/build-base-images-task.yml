@@ -81,10 +81,8 @@ jobs:
           tags: ${{ matrix.base.tags }}
           cache-from: |
             type=registry,ref=${{ matrix.base.cache_tag }}
-            type=gha,scope=develop-base-${{ matrix.base.name }}
-            type=gha,scope=main-base-${{ matrix.base.name }}
-            ${{ github.event.pull_request && format('type=gha,scope=pr-base-{0}-{1}', github.event.pull_request.number, matrix.base.name) || '' }}
+            type=registry,ref=docker.io/ptr727/${{ matrix.base.name }}:buildcache-develop
+            type=registry,ref=docker.io/ptr727/${{ matrix.base.name }}:buildcache-main
           cache-to: |
-            ${{ inputs.push && format('type=gha,mode=max,scope={0}-base-{1},ignore-error=true', inputs.ref != '' && inputs.ref || github.ref_name, matrix.base.name) || '' }}
+            ${{ inputs.push && format('type=registry,ref=docker.io/ptr727/{0}:buildcache-{1},mode=max,ignore-error=true', matrix.base.name, inputs.ref != '' && inputs.ref || github.ref_name) || '' }}
             ${{ inputs.push && 'type=inline' || '' }}
-            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=max,scope=pr-base-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.base.name) || '' }}

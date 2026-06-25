@@ -172,9 +172,7 @@ jobs:
           tags: ${{ steps.tagsargs.outputs.tags }}
           build-args: ${{ steps.tagsargs.outputs.args }}
           cache-from: |
-            type=gha,scope=develop-${{ matrix.images.Name }}
-            type=gha,scope=main-${{ matrix.images.Name }}
-            ${{ github.event.pull_request && format('type=gha,scope=pr-{0}-{1}', github.event.pull_request.number, matrix.images.Name) || '' }}
+            type=registry,ref=docker.io/ptr727/${{ matrix.images.Product }}:buildcache-develop
+            type=registry,ref=docker.io/ptr727/${{ matrix.images.Product }}:buildcache-main
           cache-to: |
-            ${{ inputs.push && format('type=gha,mode=min,scope={0}-{1},ignore-error=true', inputs.branch != '' && inputs.branch || github.ref_name, matrix.images.Name) || '' }}
-            ${{ github.event.pull_request && !github.event.pull_request.head.repo.fork && format('type=gha,mode=min,scope=pr-{0}-{1},ignore-error=true', github.event.pull_request.number, matrix.images.Name) || '' }}
+            ${{ inputs.push && format('type=registry,ref=docker.io/ptr727/{0}:buildcache-{1},mode=min,ignore-error=true', matrix.images.Product, inputs.branch != '' && inputs.branch || github.ref_name) || '' }}
