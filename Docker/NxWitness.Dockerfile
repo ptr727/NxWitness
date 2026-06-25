@@ -93,7 +93,7 @@ RUN apt-get update \
         ./vms_server.deb \
     # Cleanup
     && apt-get clean \
-    && apt-get autoremove --purge \
+    && apt-get autoremove --purge --yes \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /temp
 
