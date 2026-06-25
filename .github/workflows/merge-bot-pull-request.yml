@@ -109,48 +109,6 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
-  merge-upstream-version:
-    name: Merge upstream version pull request job
-    runs-on: ubuntu-latest
-    # Upstream-version bump PRs from the App. Head/base pairing is enforced (upstream-version-main->main,
-    # upstream-version-develop->develop). Only on opened/reopened so the disable job stays sticky.
-    if: >-
-      (github.event.action == 'opened' || github.event.action == 'reopened') &&
-      github.event.pull_request.user.login == 'ptr727-codegen[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      (
-        (github.event.pull_request.head.ref == 'upstream-version-main' && github.event.pull_request.base.ref == 'main') ||
-        (github.event.pull_request.head.ref == 'upstream-version-develop' && github.event.pull_request.base.ref == 'develop')
-      )
-    permissions:
-      contents: write
-      pull-requests: write
-
-    steps:
-
-      - name: Generate GitHub App token step
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ secrets.CODEGEN_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CODEGEN_APP_PRIVATE_KEY }}
-
-      - name: Merge pull request step
-        run: |
-          set -euo pipefail
-          case "${{ github.event.pull_request.base.ref }}" in
-            develop) method=--squash ;;
-            main) method=--merge ;;
-            *)
-              echo "::error::Unsupported base branch: ${{ github.event.pull_request.base.ref }}"
-              exit 1
-              ;;
-          esac
-          gh pr merge --auto "$method" "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-
   disable-auto-merge-on-maintainer-push:
     name: Disable auto-merge on maintainer push job
     runs-on: ubuntu-latest
