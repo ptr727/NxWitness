@@ -15,13 +15,13 @@ on:
         required: false
         type: boolean
         default: false
-      # Logical branch whose Matrix.json rows to build/push and whose GHA
-      # cache scope to use. Decoupled from `ref` so `ref` can be pinned to an
+      # Logical branch whose Matrix.json rows to build/push and whose
+      # registry buildcache tag to use. Decoupled from `ref` so `ref` can be pinned to an
       # immutable commit (e.g. the publisher pins main to the versioned SHA)
       # while this still selects the right branch's rows. Empty in smoke mode
       # builds both branches' rows; the publisher passes main and develop so
       # both branches' tags are produced from one scheduled run. Empty in a
-      # non-smoke build falls back to github.ref_name for the cache scope.
+      # non-smoke build falls back to github.ref_name for the buildcache tag.
       branch:
         required: false
         type: string

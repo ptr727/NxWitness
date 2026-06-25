@@ -73,7 +73,7 @@ jobs:
           # Push is controlled by the caller, not the trigger ref: the
           # publisher passes push: true with ref: main, so it must publish
           # the shared base tag even when dispatched from another branch.
-          # Cache scopes key on the built ref, not github.ref_name.
+          # The registry buildcache tag keys on the built ref, not github.ref_name.
           push: ${{ inputs.push }}
           context: Docker
           file: ${{ matrix.base.dockerfile }}
