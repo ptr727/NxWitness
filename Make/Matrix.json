@@ -375,22 +375,8 @@
       "Branch": "main",
       "Base": "ubuntu",
       "Tags": [
-        "docker.io/ptr727/wisenetwave:6.1.1.42624",
-        "docker.io/ptr727/wisenetwave:latest"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.1.1.42624",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Product": "wisenetwave",
-      "Branch": "main",
-      "Base": "ubuntu",
-      "Tags": [
         "docker.io/ptr727/wisenetwave:6.1.2.42921",
+        "docker.io/ptr727/wisenetwave:latest",
         "docker.io/ptr727/wisenetwave:stable"
       ],
       "Args": [
@@ -406,20 +392,6 @@
       "Base": "ubuntu",
       "Tags": [
         "docker.io/ptr727/wisenetwave:develop",
-        "docker.io/ptr727/wisenetwave:develop-6.1.1.42624"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.1.1.42624",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE",
-      "Product": "wisenetwave",
-      "Branch": "develop",
-      "Base": "ubuntu",
-      "Tags": [
         "docker.io/ptr727/wisenetwave:develop-6.1.2.42921",
         "docker.io/ptr727/wisenetwave:develop-stable"
       ],
@@ -435,22 +407,8 @@
       "Branch": "main",
       "Base": "lsio",
       "Tags": [
-        "docker.io/ptr727/wisenetwave-lsio:6.1.1.42624",
-        "docker.io/ptr727/wisenetwave-lsio:latest"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.1.1.42624",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Product": "wisenetwave",
-      "Branch": "main",
-      "Base": "lsio",
-      "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:6.1.2.42921",
+        "docker.io/ptr727/wisenetwave-lsio:latest",
         "docker.io/ptr727/wisenetwave-lsio:stable"
       ],
       "Args": [
@@ -466,20 +424,6 @@
       "Base": "lsio",
       "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:develop",
-        "docker.io/ptr727/wisenetwave-lsio:develop-6.1.1.42624"
-      ],
-      "Args": [
-        "DOWNLOAD_ARM64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_arm64.zip",
-        "DOWNLOAD_VERSION=6.1.1.42624",
-        "DOWNLOAD_X64_URL=https://updates.networkoptix.com/hanwha/42624/wave-server_update-6.1.1.42624-linux_x64.zip"
-      ]
-    },
-    {
-      "Name": "WisenetWAVE-LSIO",
-      "Product": "wisenetwave",
-      "Branch": "develop",
-      "Base": "lsio",
-      "Tags": [
         "docker.io/ptr727/wisenetwave-lsio:develop-6.1.2.42921",
         "docker.io/ptr727/wisenetwave-lsio:develop-stable"
       ],
