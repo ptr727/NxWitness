@@ -62,6 +62,14 @@
           ]
         },
         {
+          "Version": "6.1.2.42793",
+          "UriX64": "https://updates.networkoptix.com/digitalwatchdog/42793/dwspectrum-server_update-6.1.2.42793-linux_x64-rc.zip",
+          "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/42793/dwspectrum-server_update-6.1.2.42793-linux_arm64-rc.zip",
+          "Labels": [
+            "RC"
+          ]
+        },
+        {
           "Version": "6.1.2.42997",
           "UriX64": "https://updates.networkoptix.com/digitalwatchdog/42997/dwspectrum-server_update-6.1.2.42997-linux_x64.zip",
           "UriArm64": "https://updates.networkoptix.com/digitalwatchdog/42997/dwspectrum-server_update-6.1.2.42997-linux_arm64.zip",
