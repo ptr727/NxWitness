@@ -75,7 +75,6 @@ jobs:
     name: Validate job
     if: ${{ !github.event.deleted }}
     uses: ./.github/workflows/validate-task.yml
-    secrets: inherit
 
   # Fast smoke build in place of the full matrix: only runs when image files changed, and builds just NxMeta +
   # NxMeta-LSIO on amd64 (no push). branch targets the pushed branch so a push to develop validates the develop
