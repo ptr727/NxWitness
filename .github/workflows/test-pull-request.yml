@@ -80,7 +80,9 @@ jobs:
   # NxMeta-LSIO on amd64 (no push). branch targets the pushed branch so a push to develop validates the develop
   # image rows and a push to main validates the main rows. ref is left unset so checkout uses the pushed head.
   # build_base is enabled only when a base Dockerfile changed (otherwise the product smoke pulls the published
-  # base from Docker Hub). Also gate on validate so the smoke build isn't spent when validation already failed.
+  # base from Docker Hub). It also `needs: validate`, and the `if` carries no `always()`, so an unsuccessful
+  # validate skips this job via GitHub's implicit needs-success rule - the smoke build is not spent when
+  # validation already failed.
   smoke-build:
     name: Smoke build job
     needs: [changes, validate]
