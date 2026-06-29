@@ -54,6 +54,7 @@ jobs:
     secrets: inherit
     with:
       push: true
+      branch: ${{ github.ref_name }}
       # Pin to the versioned commit (build-base is main-only) so the base is built from the same commit as the
       # product images and the release, even if main advances mid-run.
       ref: ${{ needs.get-version.outputs.GitCommitId }}

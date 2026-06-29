@@ -11,9 +11,17 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64
-      # Branch to check out. The publisher passes main so the shared
-      # nx-base tag is always built from the release branch regardless of
-      # the dispatch ref. Empty falls back to the triggering ref.
+      # Logical branch whose registry buildcache tag to use, decoupled from `ref` so
+      # `ref` can be pinned to an immutable commit (the publisher pins it to the versioned
+      # SHA) while the buildcache still keys on the branch (buildcache-main / buildcache-develop).
+      # Empty falls back to github.ref_name for the buildcache tag.
+      branch:
+        required: false
+        type: string
+        default: ''
+      # Immutable git ref to check out, decoupled from the buildcache tag (see `branch`).
+      # The publisher pins this to the exact built commit so the shared base is built from
+      # the same commit as the product images. Empty uses the triggering ref.
       ref:
         required: false
         type: string
@@ -71,9 +79,9 @@ jobs:
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           # Push is controlled by the caller, not the trigger ref: the
-          # publisher passes push: true with ref: main, so it must publish
-          # the shared base tag even when dispatched from another branch.
-          # The registry buildcache tag keys on the built ref, not github.ref_name.
+          # publisher passes push: true so it must publish the shared base
+          # tag even when dispatched from another branch. The registry
+          # buildcache tag keys on `branch` (or github.ref_name), not `ref`.
           push: ${{ inputs.push }}
           context: Docker
           file: ${{ matrix.base.dockerfile }}
@@ -84,5 +92,5 @@ jobs:
             type=registry,ref=docker.io/ptr727/${{ matrix.base.name }}:buildcache-develop
             type=registry,ref=docker.io/ptr727/${{ matrix.base.name }}:buildcache-main
           cache-to: |
-            ${{ inputs.push && format('type=registry,ref=docker.io/ptr727/{0}:buildcache-{1},mode=max,ignore-error=true', matrix.base.name, inputs.ref != '' && inputs.ref || github.ref_name) || '' }}
+            ${{ inputs.push && format('type=registry,ref=docker.io/ptr727/{0}:buildcache-{1},mode=max,ignore-error=true', matrix.base.name, inputs.branch != '' && inputs.branch || github.ref_name) || '' }}
             ${{ inputs.push && 'type=inline' || '' }}
