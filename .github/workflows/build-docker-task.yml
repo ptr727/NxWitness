@@ -42,6 +42,13 @@ on:
         required: false
         type: boolean
         default: true
+      # SemVer2 threaded from the orchestrator's single NBGV run (get-version-task), baked into the image as
+      # LABEL_VERSION. NBGV is never re-run here, so one classification feeds every product leg (avoids a
+      # second NBGV run reclassifying and producing a wrong/colliding tag). Smoke callers pass a placeholder.
+      semver2:
+        required: false
+        type: string
+        default: ''
 
 jobs:
 
@@ -83,13 +90,6 @@ jobs:
           fi
           echo "matrix=$(jq --arg b "$BRANCH" --compact-output "$FILTER" ./Make/Matrix.json)" >> "$GITHUB_OUTPUT"
 
-  get-version:
-    name: Get version information job
-    uses: ./.github/workflows/get-version-task.yml
-    secrets: inherit
-    with:
-      ref: ${{ inputs.ref }}
-
   build-base:
     name: Build base image job
     if: ${{ inputs.build_base }}
@@ -103,12 +103,11 @@ jobs:
   build-docker:
     name: Build Docker image job
     runs-on: ubuntu-latest
-    needs: [get-version, get-matrix, build-base]
+    needs: [get-matrix, build-base]
     # always() so the job still runs when build-base is intentionally
     # skipped (build_base == false); fail only if a prerequisite failed.
     if: >-
       ${{ always()
-      && needs.get-version.result == 'success'
       && needs.get-matrix.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
 
@@ -157,7 +156,7 @@ jobs:
             echo "EOF"
             echo "args<<EOF"
             echo "$ARGS"
-            echo "LABEL_VERSION=${{ needs.get-version.outputs.SemVer2 }}"
+            echo "LABEL_VERSION=${{ inputs.semver2 }}"
             echo "EOF"
             echo "cache_repo=$CACHE_REPO"
           } >> "$GITHUB_OUTPUT"
