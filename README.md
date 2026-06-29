@@ -7,8 +7,7 @@ This is a project to build and publish docker images for various [Network Optix]
 ### Build Status
 
 [![Release Status][releasebuildstatus-shield]][actions-link]\
-[![Last Commit][lastcommit-shield]][github-link]\
-[![Last Build][lastbuild-shield]][actions-link]
+[![Last Commit][lastcommit-shield]][github-link]
 
 ### Release Notes
 
@@ -471,7 +470,7 @@ services:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [disabled `root-tool` in late 2025](https://github.com/networkoptix/nxvms-docker/commit/4285f93) by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change — licensed deployments would lose activation — and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
+  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [disabled `root-tool` in late 2025](https://github.com/networkoptix/nxvms-docker/commit/4285f93) by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change - licensed deployments would lose activation - and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
   - Nx to fix: Associate licenses with the [Cloud Account][nxcloud-link] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
@@ -682,7 +681,6 @@ Licensed under the [MIT License][license-link]\
 [iniconfig-link]: https://meta.nxvms.com/docs/developers/knowledgebase/241-configuring-via-ini-files--iniconfig
 [isbuildpublished-link]: https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L31
 [issues-link]: https://github.com/ptr727/NxWitness/issues
-[lastbuild-shield]: https://byob.yarr.is/ptr727/NxWitness/lastbuild
 [lastcommit-shield]: https://img.shields.io/github/last-commit/ptr727/NxWitness?logo=github&label=Last%20Commit
 [license-link]: ./LICENSE
 [license-shield]: https://img.shields.io/github/license/ptr727/NxWitness
