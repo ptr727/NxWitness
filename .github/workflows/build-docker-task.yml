@@ -44,11 +44,12 @@ on:
         default: true
       # SemVer2 threaded from the orchestrator's single NBGV run (get-version-task), baked into the image as
       # LABEL_VERSION. NBGV is never re-run here, so one classification feeds every product leg (avoids a
-      # second NBGV run reclassifying and producing a wrong/colliding tag). Smoke callers pass a placeholder.
+      # second NBGV run reclassifying and producing a wrong/colliding tag). Smoke callers omit it and bake
+      # the placeholder default below (smoke images are never pushed, so the label is informational only).
       semver2:
         required: false
         type: string
-        default: ''
+        default: '0.0.0-smoke'
 
 jobs:
 
