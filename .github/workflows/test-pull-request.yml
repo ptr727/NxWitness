@@ -1,8 +1,19 @@
 name: Test pull request action
 
+# CI for every branch. Runs on push so the reusable tasks resolve from the pushed head: a PR that edits a
+# workflow tests its own copy, and the aggregator (the ruleset required check) is produced on the head SHA by
+# the sole producing run. validate (unit tests + lint) runs on every push; the image smoke build runs only
+# when image files changed (inline git diff change-gate), since a full product smoke is heavier than a
+# doc-only push warrants. CI never publishes (the publisher runs on schedule/push-on-Matrix.json/dispatch).
+#
+# There is deliberately no pull_request trigger: a fork PR cannot push to this repo, so it produces no run and
+# cannot satisfy the required check. A maintainer lands such a contribution on an in-repo branch (which
+# pushes, and so validates) before merging. This is the documented exception (see WORKFLOW.md).
+
 on:
-  pull_request:
-    branches: [ main, develop ]
+  # All branches, but not tags: release tags must not re-run CI.
+  push:
+    branches: ['**']
   workflow_dispatch:
 
 concurrency:
@@ -11,19 +22,19 @@ concurrency:
 
 jobs:
 
+  # Inline change-gate (no third-party action): diff the push against its before-commit to decide whether the
+  # image smoke build is needed. image => any Docker/Matrix/Version file changed; base => a base Dockerfile
+  # changed. On a non-push event (workflow_dispatch) or a new branch (no before-commit), build everything.
+  # !github.event.deleted skips a branch-deletion push (github.sha is all-zeros, so checkout would fail).
   changes:
     name: Detect image changes job
+    if: ${{ !github.event.deleted }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     outputs:
       image: ${{ steps.filter.outputs.image }}
       base: ${{ steps.filter.outputs.base }}
     steps:
-      # Checkout so paths-filter can diff via git for non-PR triggers
-      # (e.g. workflow_dispatch); on pull_request it uses the API.
-      # fetch-depth: 0 gives the full history those git diffs need.
+
       - name: Checkout step
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -31,86 +42,95 @@ jobs:
 
       - name: Filter changed paths step
         id: filter
-        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
-        with:
-          filters: |
-            image:
-              - 'Docker/**'
-              - 'Make/Matrix.json'
-              - 'Make/Version.json'
-            base:
-              - 'Docker/NxBase.Dockerfile'
-              - 'Docker/NxBase-LSIO.Dockerfile'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          # A new branch or non-push event has no usable before-commit (all-zeros or empty); build everything.
+          if [[ "$BEFORE" =~ ^0+$ || -z "$BEFORE" || "${{ github.event_name }}" != "push" ]]; then
+            echo "image=true" >> "$GITHUB_OUTPUT"
+            echo "base=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! DIFF=$(git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null); then
+            # BEFORE is not in the fetched history (e.g. a force-push that rewrote it); build everything.
+            echo "image=true" >> "$GITHUB_OUTPUT"
+            echo "base=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if grep -qE '^(Docker/|Make/Matrix\.json$|Make/Version\.json$)' <<<"$DIFF"; then
+            echo "image=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "image=false" >> "$GITHUB_OUTPUT"
+          fi
+          if grep -qE '^Docker/(NxBase\.Dockerfile|NxBase-LSIO\.Dockerfile)$' <<<"$DIFF"; then
+            echo "base=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=false" >> "$GITHUB_OUTPUT"
+          fi
 
-  test-release:
-    name: Test release job
-    uses: ./.github/workflows/test-release-task.yml
-    secrets: inherit
+  # The same unit-test + lint gate the publisher runs, so the PR gate and the publish gate are identical.
+  validate:
+    name: Validate job
+    if: ${{ !github.event.deleted }}
+    uses: ./.github/workflows/validate-task.yml
 
-  # Fast smoke build in place of the full matrix: only runs when image
-  # files changed, and builds just NxMeta + NxMeta-LSIO on amd64 (no push).
-  # See build-docker-task.yml `smoke`. Publishing happens only on the
-  # scheduled publish-release.yml, so a smoke pass is fast PR feedback,
-  # not a publish gate.
-  #
-  # branch targets the PR base branch so a PR onto develop validates the
-  # develop image rows and a PR onto main validates the main rows. ref is
-  # left unset so checkout uses the PR ref being tested.
-  #
-  # build_base is only enabled when a base Dockerfile changed: the product
-  # smoke build pulls the published base from Docker Hub, so building the
-  # base otherwise is wasted work. When a base Dockerfile does change, build
-  # it to validate it still compiles (e.g. a Dependabot ubuntu:noble bump).
+  # Fast smoke build in place of the full matrix: only runs when image files changed, and builds just NxMeta +
+  # NxMeta-LSIO on amd64 (no push). branch targets the pushed branch so a push to develop validates the develop
+  # image rows and a push to main validates the main rows. ref is left unset so checkout uses the pushed head.
+  # build_base is enabled only when a base Dockerfile changed (otherwise the product smoke pulls the published
+  # base from Docker Hub). It also `needs: validate`, and the `if` carries no `always()`, so an unsuccessful
+  # validate skips this job via GitHub's implicit needs-success rule - the smoke build is not spent when
+  # validation already failed.
   smoke-build:
     name: Smoke build job
-    # Also gate on test-release: the smoke build builds Docker images, so don't
-    # spend it when the test job is already failing. A failed test-release
-    # leaves this job skipped (needs unsatisfied) and the aggregator blocks on
-    # the test-release failure directly.
-    needs: [changes, test-release]
-    if: ${{ needs.changes.outputs.image == 'true' }}
+    needs: [changes, validate]
+    if: ${{ !github.event.deleted && needs.changes.outputs.image == 'true' }}
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
     with:
       push: false
       smoke: true
-      branch: ${{ github.base_ref }}
+      # Map the push ref to a Matrix.json .Branch value: a main push checks main's rows; every other branch
+      # (develop, and feature branches that merge via develop) FALLS BACK to develop's rows. Passing
+      # github.ref_name directly would be a feature-branch name matching no .Branch row -> empty smoke matrix.
+      branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
       build_base: ${{ needs.changes.outputs.base == 'true' }}
 
-  # TODO: Workaround for GitHub Actions not supporting status checks on conditional jobs
-  # https://github.com/orgs/community/discussions/12395#discussioncomment-12970019
+  # Single required status check. Its name is the ruleset-bound context in repo-config/ruleset-*.json. Do not
+  # rename it without updating those in lockstep. Skips on a branch deletion (when the other jobs also skip), so
+  # the deletion push does not fail this required check.
   check-workflow-status:
-    name: Check pull request workflow status
+    name: Check pull request workflow status job
     runs-on: ubuntu-latest
-    needs:
-      [ changes, test-release, smoke-build ]
-    if: always()
+    needs: [changes, validate, smoke-build]
+    if: ${{ always() && !github.event.deleted }}
     steps:
-      - name: Check workflow results
+      - name: Check workflow results step
         run: |
+          set -euo pipefail
           exit_on_result() {
-            # Pass on success or skipped (smoke-build is skipped when no
-            # image files changed); fail only on failure/cancelled.
+            # Pass on success or skipped (smoke-build is skipped when no image files changed); fail only on
+            # failure/cancelled.
             if [[ "$2" == "failure" || "$2" == "cancelled" ]]; then
-              echo "Job '$1' failed or was cancelled."
+              echo "::error::Job '$1' failed or was cancelled."
               exit 1
             fi
           }
-          # changes must succeed: if it fails, smoke-build is skipped (not
-          # run), and treating that skip as a pass would let an
-          # image-changing PR merge without the smoke build.
+          # changes must succeed: if it fails, smoke-build is skipped (not run), and treating that skip as a
+          # pass would let an image-changing PR merge without the smoke build.
           exit_on_result "changes" "${{ needs.changes.result }}"
-          exit_on_result "test-release" "${{ needs.test-release.result }}"
+          exit_on_result "validate" "${{ needs.validate.result }}"
           exit_on_result "smoke-build" "${{ needs.smoke-build.result }}"
 
-  # The smoke build runs docker/build-push-action, which can emit a build-record
-  # artifact, so this terminal cleanup deletes the run's artifacts to keep them
-  # off the small account-wide storage quota. Independent of
+  # The smoke build runs docker/build-push-action, which can emit a build-record artifact, so this terminal
+  # cleanup deletes the run's artifacts to keep them off the small account-wide storage quota. Independent of
   # check-workflow-status so housekeeping never gates the required merge check.
   cleanup-artifacts:
     name: Delete workflow artifacts job
     needs: [smoke-build]
-    if: always()
+    if: ${{ always() && !github.event.deleted }}
     runs-on: ubuntu-latest
     permissions:
       actions: write

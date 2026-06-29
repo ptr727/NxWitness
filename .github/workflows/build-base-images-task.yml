@@ -56,11 +56,10 @@ jobs:
         with:
           platforms: ${{ inputs.platforms }}
 
-      # Only needed when pushing; skipped for non-publishing builds (e.g.
-      # PR smoke) so they don't depend on Docker Hub secrets (unavailable
-      # on forked PRs). Public base images still pull anonymously.
+      # Log in on every build (including smoke), for higher pull/cache rate limits against the branch-scoped
+      # registry buildcache. DOCKER_HUB_USERNAME / DOCKER_HUB_ACCESS_TOKEN must be in both the Actions and
+      # Dependabot secret stores so a Dependabot-triggered push CI run can log in too. Forks cannot push here.
       - name: Login to Docker Hub step
-        if: ${{ inputs.push }}
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: docker.io

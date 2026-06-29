@@ -1,0 +1,44 @@
+name: Validate task
+
+# The single validation gate: Husky lint (CSharpier + dotnet format style) + dotnet test. Reused by
+# test-pull-request (produces the required check) and could be reused by the publisher, so the CI and publish
+# gates are the identical definition. Does not build images.
+
+on:
+  workflow_call:
+    inputs:
+      # Git ref to validate (empty = default checkout ref). A publisher caller passes its trigger branch so the
+      # publish run validates the branch it publishes.
+      ref:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+
+  validate:
+    name: Validate job
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Setup .NET SDK step
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: 10.x
+
+      - name: Checkout code step
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.ref }}
+
+      # Husky runs the same CSharpier + dotnet format style checks the editor and the pre-commit hook run.
+      - name: Check code style step
+        run: |
+          set -euo pipefail
+          dotnet tool restore
+          dotnet husky install
+          dotnet husky run
+
+      - name: Run unit tests step
+        run: dotnet test
