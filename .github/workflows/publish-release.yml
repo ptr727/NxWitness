@@ -1,99 +1,120 @@
 name: Publish project release action
 
-# Sole publisher. Images are built and pushed ONLY here: on the weekly
-# schedule or via manual dispatch. Merges to main/develop no longer build
-# or publish (PRs get a fast smoke build instead, see test-pull-request.yml).
-# One run publishes both the main (:latest/:stable) and develop (:develop)
-# tags, picking up everything merged since the last run (codegen version
-# bumps, Dependabot base-image bumps, code changes).
+# Triggered-Docker publisher, one run = one branch (the trigger ref). The weekly schedule rebuilds `main`
+# only (full product matrix + shared base refresh for CVEs + a versioned GitHub release). A path-scoped push
+# publishes `main` immediately when codegen commits a new `Make/Matrix.json` pin, so new upstream Nx product
+# versions ship at once. A manual dispatch publishes the branch it is started from (main => latest/stable,
+# develop => :develop). Building only the trigger branch keeps github.ref aligned with the branch being
+# versioned, so NBGV classifies it natively with no cross-branch ref leak.
+#
+# Ordinary code merges do NOT publish: only a matrix pin change (push, branch-filtered to main) or a
+# schedule/dispatch does. develop's daily codegen pin update is sync-only (the push trigger is main-only);
+# refresh :develop by dispatching from develop. CI/validation runs separately on push (test-pull-request).
 
 on:
   workflow_dispatch:
   schedule:
+    # Weekly rebuild/publish of main (Mon 02:00 UTC) to pick up shared base-image updates.
     - cron: '0 2 * * MON'
+  # Publish main immediately when the codegen matrix changes; the daily codegen commits the new pin here.
+  push:
+    branches: [main]
+    paths: [Make/Matrix.json]
 
-# Single global group (not ref-scoped): this workflow pushes shared tags
-# (base images, both branches, readme, badge), so two dispatches on
-# different refs must not run concurrently and race on those shared tags.
-# cancel-in-progress: false queues the next run instead of cancelling an
-# in-flight publish, which could otherwise leave a partially pushed tag set.
+# Single global group (not ref-scoped): this workflow pushes shared tags (base images, product images,
+# readme), so a schedule + a dispatch + a pin push (or back-to-back dispatches) must not race on those
+# shared tags. cancel-in-progress: false queues the next run instead of cancelling an in-flight publish,
+# which could otherwise leave a partially pushed tag set.
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
 
-  # Pin the release version to main: this run's GitHub release tracks the
-  # main publish, so compute it from main even when dispatched from another ref.
+  # Compute the version once from the trigger branch and thread it to every consumer. github.ref already
+  # equals the built branch (one branch per run), so NBGV classifies natively - main publishes clean, a
+  # develop dispatch publishes a prerelease.
   get-version:
     name: Get version information job
+    # Only the long-lived branches publish; a stray dispatch from a feature branch is a no-op.
+    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
     uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
     with:
-      ref: main
+      ref: ${{ github.ref_name }}
 
-  # Base images share a single tag (nx-base:ubuntu-noble) across branches,
-  # so build them once (from the release branch) and let both branch legs
-  # reuse them via build_base: false.
+  # Base images share a single tag (nx-base:ubuntu-noble) across branches. The main schedule/push/dispatch
+  # builds and refreshes it; a develop dispatch sets build_base: false (see build-docker below) and reuses
+  # main's published base so it can't overwrite the shared tag.
   build-base:
     name: Build base image job
+    needs: [get-version]
+    if: ${{ github.ref_name == 'main' }}
     uses: ./.github/workflows/build-base-images-task.yml
     secrets: inherit
     with:
       push: true
-      # Always build the shared nx-base tag from main, even when dispatched
-      # from another ref, so a develop dispatch can't overwrite main's base.
-      ref: main
-
-  build-main:
-    name: Build main images job
-    needs: [get-version, build-base]
-    uses: ./.github/workflows/build-docker-task.yml
-    secrets: inherit
-    with:
-      push: true
-      branch: main
-      # Pin to the exact commit get-version computed the release version from,
-      # not the moving `main` ref: this closes the race where a commit landing
-      # on main mid-run could make the pushed image's embedded version come
-      # from a newer commit than the GitHub release of the same SemVer2 tag.
+      # Pin to the versioned commit (build-base is main-only) so the base is built from the same commit as the
+      # product images and the release, even if main advances mid-run.
       ref: ${{ needs.get-version.outputs.GitCommitId }}
-      build_base: false
 
-  build-develop:
-    name: Build develop images job
-    needs: [build-base]
+  # Validate the published tree (lint + dotnet test) before building, so a publish can never ship a tree that
+  # would fail the same gate CI enforces on push. Pinned to the versioned commit on main so it validates the
+  # exact commit the images and release are built from.
+  validate:
+    name: Validate job
+    needs: [get-version]
+    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
+    uses: ./.github/workflows/validate-task.yml
+    with:
+      ref: ${{ github.ref_name == 'main' && needs.get-version.outputs.GitCommitId || github.ref_name }}
+
+  build-docker:
+    name: Build Docker image job
+    needs: [get-version, build-base, validate]
+    # always() so the job still runs when build-base is intentionally skipped on a develop dispatch; fail only
+    # if a prerequisite actually failed.
+    if: >-
+      ${{ always()
+      && needs.get-version.result == 'success'
+      && needs.validate.result == 'success'
+      && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
     with:
       push: true
-      # Develop only publishes the mutable :develop tag (no versioned GitHub
-      # release), so the moving ref can't cause a tag/release mismatch; no
-      # commit pin needed.
-      branch: develop
-      ref: develop
+      branch: ${{ github.ref_name }}
+      # Pin main to the exact commit get-version versioned, not the moving `main` ref, so the image's embedded
+      # version matches the GitHub release tag even if main advances mid-run. develop has no versioned release,
+      # so the moving ref is fine.
+      ref: ${{ github.ref_name == 'main' && needs.get-version.outputs.GitCommitId || github.ref_name }}
+      # The publisher's own build-base job already built the shared base on the main run (and a develop
+      # dispatch reuses main's published base), so the build task never rebuilds it - this avoids a double
+      # base build and keeps the branch-agnostic nx-base tag owned by the main run.
       build_base: false
+      # Single NBGV classification threaded down (no nested re-run in the build task).
+      semver2: ${{ needs.get-version.outputs.SemVer2 }}
 
-  # Gate on both build legs so a release is never published when develop
-  # is still building or failed. Release metadata/assets track main.
+  # main-only: a develop dispatch publishes images + the :develop tag but cuts no versioned GitHub release.
   github-release:
     name: Publish GitHub release job
-    needs: [get-version, build-main, build-develop]
+    needs: [get-version, build-docker]
+    if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
 
-      # Check out the exact built commit so the uploaded release files match the tag even if the branch advances mid-run.
+      # Check out the exact built commit so the uploaded release files match the tag even if main advances mid-run.
       - name: Checkout code step
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ needs.get-version.outputs.GitCommitId }}
 
       # Backstop (main only): a public release must not carry a prerelease '-', guarding against NBGV mis-versioning the
-      # public ref (e.g. a dispatch on a non-default ref) into a malformed "Latest" release. Strip '+buildmetadata'
-      # first - a '-' there is legitimate; only a '-' in the core/prerelease segment marks a prerelease.
+      # public ref into a malformed "Latest" release. Strip '+buildmetadata' first - a '-' there is legitimate; only a
+      # '-' in the core/prerelease segment marks a prerelease.
       - name: Verify public release version step
         env:
           SEMVER2: ${{ needs.get-version.outputs.SemVer2 }}
@@ -145,35 +166,66 @@ jobs:
             LICENSE
             README.md
 
-  # The image set is repo-specific, so derive the Docker Hub repository list inside the generic readme task from main's
-  # Matrix.json (lowercased ptr727/<image> plus the shared base repos) via manifest + manifest-jq.
+  # main-only: resolve the Docker Hub repository list (Docker Hub does not read the GitHub README). The image
+  # set is repo-specific, so derive it from main's Matrix.json (lowercased ptr727/<image> plus the shared base
+  # repos) for the readme matrix below.
+  docker-readme-repos:
+    name: Get docker hub readme repositories job
+    needs: [get-version, build-docker]
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-latest
+    outputs:
+      repositories: ${{ steps.list.outputs.repositories }}
+
+    steps:
+
+      - name: Checkout code step
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
+
+      - name: Resolve repository list step
+        id: list
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2016  # the jq program is a literal, not a shell expansion
+          REPOS=$(jq --compact-output \
+            '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique' \
+            ./Make/Matrix.json)
+          echo "repositories=$REPOS" >> "$GITHUB_OUTPUT"
+
+  # main-only: push the repository overview (README.md) to each Docker Hub repo derived above.
   docker-readme:
     name: Publish docker hub readme job
-    needs: [build-main, build-develop]
-    uses: ./.github/workflows/publish-docker-readme-task.yml
-    secrets: inherit
-    with:
-      # Readme content tracks main, consistent with the version/release.
-      ref: main
-      manifest: ./Make/Matrix.json
-      manifest-jq: '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique'
+    needs: [get-version, docker-readme-repos]
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ${{ fromJSON(needs.docker-readme-repos.outputs.repositories) }}
 
-  date-badge:
-    name: Create BYOB date badge job
-    needs: [build-main, build-develop]
-    uses: ./.github/workflows/build-datebadge-task.yml
-    secrets: inherit
-    permissions:
-      contents: write
+    steps:
 
-  # Workflow artifacts are an intra-run handoff (durable copies live on the
-  # GitHub release and Docker Hub), so leaving them accumulates against the small
-  # account-wide storage quota; delete them once every consumer has read them.
-  # This publisher always publishes when it runs (schedule/dispatch only), so no
-  # publish gate is needed beyond always().
+      - name: Checkout code step
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
+
+      - name: Publish Docker Hub readme step
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          repository: ${{ matrix.repository }}
+          short-description: ${{ github.event.repository.description }}
+          readme-filepath: ./README.md
+
+  # Workflow artifacts are an intra-run handoff (durable copies live on the GitHub release and Docker Hub), so
+  # leaving them accumulates against the small account-wide storage quota; delete them once every consumer has
+  # read them. This publisher always publishes when it runs (schedule/push/dispatch only), so always() suffices.
   cleanup-artifacts:
     name: Delete workflow artifacts job
-    needs: [build-base, build-main, build-develop, github-release, docker-readme, date-badge]
+    needs: [build-base, build-docker, github-release, docker-readme]
     if: always()
     runs-on: ubuntu-latest
     permissions:
