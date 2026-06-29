@@ -55,14 +55,26 @@ jobs:
       push: true
       ref: ${{ github.ref_name }}
 
+  # Validate the published tree (lint + dotnet test) before building, so a publish can never ship a tree
+  # that would fail the same gate CI enforces on push. Runs on the trigger branch, in parallel with
+  # get-version/build-base.
+  validate:
+    name: Validate job
+    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
+    uses: ./.github/workflows/validate-task.yml
+    secrets: inherit
+    with:
+      ref: ${{ github.ref_name }}
+
   build-docker:
     name: Build Docker image job
-    needs: [get-version, build-base]
+    needs: [get-version, build-base, validate]
     # always() so the job still runs when build-base is intentionally skipped on a develop dispatch; fail only
     # if a prerequisite actually failed.
     if: >-
       ${{ always()
       && needs.get-version.result == 'success'
+      && needs.validate.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit

@@ -249,9 +249,9 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 - **D2.1 Validate the cross-input invariant before publishing.** Output: the `github-release` job asserts each
   cross-input invariant with `::error::` (the main-version backstop, D2.2) before the release is created;
-  downstream steps `needs:` the version job. The publish builds the trigger branch that CI already validated
-  on push (the required check gates the merge), so the code-level validation is the same `validate-task` CI
-  ran on that tree rather than re-run in the publisher.
+  downstream steps `needs:` the version job. The publish run also re-runs `validate-task` (the `validate` job
+  gates `build-docker`), so a publish can never ship a tree that would fail the same lint + `dotnet test` gate
+  CI enforces on push - on the trigger branch CI already validated, re-checked at publish time.
 - **D2.2 Main matches version classification.** Input: a real publish run for `main`. Output: the release
   fails loudly if `main` carries a prerelease suffix. It strips `+buildmetadata` before testing for the
   prerelease `-`. *Prevents a develop build published as the stable `latest`.*
@@ -293,8 +293,8 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   refreshing the images.*
 - **D4.6 Publish is built from the tree CI validated.** Output: the run's ref **is** the published branch, so
   the reusable-task definitions and the built tree resolve from that branch - the same tree CI validated on
-  push (the required check gates every merge to it) with the identical `validate-task` definition. The
-  main-version backstop (D2.2) is the in-publisher gate.
+  push (the required check gates every merge to it) with the identical `validate-task` definition - and the publish run re-runs that `validate-task` (the
+  `validate` job gates `build-docker`). The main-version backstop (D2.2) is the additional in-publisher gate.
 - **D4.7 Docker publishing authenticates with Docker Hub credentials.** Output: the base and product builds
   log in via `docker/login-action` with `DOCKER_HUB_USERNAME` + `DOCKER_HUB_ACCESS_TOKEN` and push with
   `docker/build-push-action`; the Docker Hub overview is pushed with the same token. There is **no NuGet/OIDC
