@@ -48,23 +48,27 @@ jobs:
   # main's published base so it can't overwrite the shared tag.
   build-base:
     name: Build base image job
+    needs: [get-version]
     if: ${{ github.ref_name == 'main' }}
     uses: ./.github/workflows/build-base-images-task.yml
     secrets: inherit
     with:
       push: true
-      ref: ${{ github.ref_name }}
+      # Pin to the versioned commit (build-base is main-only) so the base is built from the same commit as the
+      # product images and the release, even if main advances mid-run.
+      ref: ${{ needs.get-version.outputs.GitCommitId }}
 
-  # Validate the published tree (lint + dotnet test) before building, so a publish can never ship a tree
-  # that would fail the same gate CI enforces on push. Runs on the trigger branch, in parallel with
-  # get-version/build-base.
+  # Validate the published tree (lint + dotnet test) before building, so a publish can never ship a tree that
+  # would fail the same gate CI enforces on push. Pinned to the versioned commit on main so it validates the
+  # exact commit the images and release are built from.
   validate:
     name: Validate job
+    needs: [get-version]
     if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
     uses: ./.github/workflows/validate-task.yml
     secrets: inherit
     with:
-      ref: ${{ github.ref_name }}
+      ref: ${{ github.ref_name == 'main' && needs.get-version.outputs.GitCommitId || github.ref_name }}
 
   build-docker:
     name: Build Docker image job
@@ -168,7 +172,7 @@ jobs:
   # repos) for the readme matrix below.
   docker-readme-repos:
     name: Get docker hub readme repositories job
-    needs: [build-docker]
+    needs: [get-version, build-docker]
     if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     outputs:
@@ -179,7 +183,7 @@ jobs:
       - name: Checkout code step
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
 
       - name: Resolve repository list step
         id: list
@@ -194,7 +198,7 @@ jobs:
   # main-only: push the repository overview (README.md) to each Docker Hub repo derived above.
   docker-readme:
     name: Publish docker hub readme job
-    needs: [docker-readme-repos]
+    needs: [get-version, docker-readme-repos]
     if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     strategy:
@@ -206,7 +210,7 @@ jobs:
       - name: Checkout code step
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-version.outputs.GitCommitId }}
 
       - name: Publish Docker Hub readme step
         uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
