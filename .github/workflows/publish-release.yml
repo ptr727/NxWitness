@@ -48,16 +48,15 @@ jobs:
   # main's published base so it can't overwrite the shared tag.
   build-base:
     name: Build base image job
-    needs: [get-version]
     if: ${{ github.ref_name == 'main' }}
     uses: ./.github/workflows/build-base-images-task.yml
     secrets: inherit
     with:
       push: true
-      branch: ${{ github.ref_name }}
-      # Pin to the versioned commit (build-base is main-only) so the base is built from the same commit as the
-      # product images and the release, even if main advances mid-run.
-      ref: ${{ needs.get-version.outputs.GitCommitId }}
+      # The shared base is branch-agnostic and its branch-scoped buildcache tag (`buildcache-<ref>`) keys on this
+      # ref, so it uses the branch ref, not the versioned commit: the base is not part of the per-commit versioned
+      # product set, and a commit SHA here would split the cache into per-commit tags.
+      ref: ${{ github.ref_name }}
 
   # Validate the published tree (lint + dotnet test) before building, so a publish can never ship a tree that
   # would fail the same gate CI enforces on push. Pinned to the versioned commit on main so it validates the

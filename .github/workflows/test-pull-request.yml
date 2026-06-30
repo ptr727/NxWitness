@@ -92,9 +92,9 @@ jobs:
     with:
       push: false
       smoke: true
-      # Validate the rows for the branch this push targets: main pushes check main's rows; develop and any
-      # feature branch (which targets develop) check develop's rows. github.ref_name alone would be a feature
-      # branch name that matches no Matrix.json .Branch row, yielding an empty smoke matrix.
+      # Map the push ref to a Matrix.json .Branch value: a main push checks main's rows; every other branch
+      # (develop, and feature branches that merge via develop) FALLS BACK to develop's rows. Passing
+      # github.ref_name directly would be a feature-branch name matching no .Branch row -> empty smoke matrix.
       branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
       build_base: ${{ needs.changes.outputs.base == 'true' }}
 
