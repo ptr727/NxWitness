@@ -370,10 +370,10 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   CSharpier + `dotnet format style --verify-no-changes`) - the same checks the editor and the pre-commit
   hook run. Workflow YAML is lint-checked by `actionlint` (run from the editor / locally).
 - **D1.4 Smoke never publishes and never uploads a release asset.** Output: a smoke build compiles the image
-  subset but makes no GitHub release and no Docker push (`push: false`, `smoke: true`). The product Docker
-  login step is ungated and runs on smoke too, for higher pull/cache rate limits, so it requires the Docker
-  Hub secrets (present in both the Actions and Dependabot stores); fork-safety rests on forks being unable to
-  push here (no run, no required check), not on a push-gated login.
+  subset but makes no GitHub release and no Docker push (`push: false`, `smoke: true`). The Docker login runs
+  on every build including smoke (for higher pull/cache rate limits against the registry buildcache), so a
+  Dependabot-triggered push-CI smoke build needs the Docker Hub credentials in both secret stores; fork PRs do
+  not run this push-CI.
 - **D1.5 One required aggregator gates merge.** Output: a single aggregator job must **succeed** (success or,
   for the conditionally-skipped `smoke-build`, skipped; never failure/cancelled), `needs:` `changes`,
   `validate`, and `smoke-build`, and treats a `changes` failure as blocking (so an image-changing PR cannot
