@@ -213,8 +213,7 @@ A person steps in only for a breaking change (a red check) or to dispatch a rele
 ### Flow diagrams
 
 Four diagrams trace the architecture above: the pull-request gate, the self-publisher, the bot
-automation, and the trigger chain that turns a daily codegen run into a published release. They are the
-same outcomes section 4 contracts, drawn from the workflow YAML; if a diagram and a guarantee disagree,
+automation, and the trigger chain that turns a daily codegen run into a published release. They depict the same outcomes that the section 4 contract specifies, drawn from the workflow YAML; if a diagram and a guarantee disagree,
 one of them is a defect. Triggers are blue, gates yellow, durable/published outputs green, and stop/skip
 outcomes red.
 
