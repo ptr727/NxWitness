@@ -233,7 +233,7 @@ flowchart TD
         VU["Husky lint (CSharpier,<br/>dotnet format style)<br/>+ dotnet test"]
     end
     V --> VT
-    CH --> SG{"image files changed?<br/>(Docker/**, Matrix.json, Version.json)"}:::gate
+    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json)"}:::gate
     SG -- "no" --> SS(["smoke-build skipped<br/>(aggregator allows skip)"]):::stop
     SG -- "yes" --> S["smoke-build job<br/>build-docker-task.yml<br/>smoke: true, push: false<br/>NxMeta + NxMeta-LSIO, amd64"]
     CH --> A
@@ -264,7 +264,7 @@ flowchart TD
     GV -- "yes" --> GVR["get-version job<br/>(get-version-task.yml)<br/>NBGV @master, runs once<br/>SemVer2 + GitCommitId"]
     GVR --> BB{"ref_name == main?"}:::gate
     BB -- "develop dispatch" --> BBS(["build-base skipped<br/>reuse main's nx-base"]):::stop
-    BB -- "main" --> BBJ["build-base job<br/>(build-base-images-task.yml)<br/>nx-base + nx-base-lsio<br/>amd64 + arm64, pinned to GitCommitId"]
+    BB -- "main" --> BBJ["build-base job<br/>(build-base-images-task.yml)<br/>nx-base + nx-base-lsio<br/>amd64 + arm64, branch ref (github.ref_name)"]
     GVR --> VAL["validate job<br/>(validate-task.yml)<br/>main: pinned to GitCommitId"]
     VAL --> BD
     BBJ --> BD
