@@ -210,6 +210,138 @@ a **semver-major NuGet** bump, which waits for human review. Codegen opens a `co
 A merged dependency bump does not itself publish; a merged matrix pin on `main` does (the pin-push trigger).
 A person steps in only for a breaking change (a red check) or to dispatch a release.
 
+### Flow diagrams
+
+Four diagrams trace the architecture above: the pull-request gate, the self-publisher, the bot
+automation, and the trigger chain that turns a daily codegen run into a published release. They are the
+same outcomes section 4 contracts, drawn from the workflow YAML; if a diagram and a guarantee disagree,
+one of them is a defect. Triggers are blue, gates yellow, durable/published outputs green, and stop/skip
+outcomes red.
+
+**Pull request (CI) - `test-pull-request.yml`.** Every push head-resolves the reusable tasks, runs the
+validate gate, smoke-builds a representative image subset only when image files changed, and a single
+aggregator produces the ruleset-bound required check (D1, D6).
+
+```mermaid
+flowchart TD
+    T(["push: every branch<br/>(or workflow_dispatch)"]):::trig
+    T --> D{"github.event.deleted?"}:::gate
+    D -- "yes: branch deletion" --> X(["all jobs + aggregator skip<br/>no failed run, no pending check"]):::stop
+    D -- "no" --> CH["changes job<br/>inline git diff change-gate<br/>image? base?"]
+    D -- "no" --> V["validate job<br/>(validate-task.yml)"]
+    subgraph VT ["validate-task.yml"]
+        VU["Husky lint (CSharpier,<br/>dotnet format style)<br/>+ dotnet test"]
+    end
+    V --> VT
+    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json)"}:::gate
+    SG -- "no" --> SS(["smoke-build skipped<br/>(aggregator allows skip)"]):::stop
+    SG -- "yes" --> S["smoke-build job<br/>build-docker-task.yml<br/>smoke: true, push: false<br/>NxMeta + NxMeta-LSIO, amd64"]
+    CH --> A
+    VT --> A
+    S --> A
+    SS --> A
+    A{"Check pull request workflow status job<br/>changes AND validate AND smoke-build<br/>succeeded or skipped?"}:::gate
+    A -- "yes" --> G(["required check passes<br/>merge unblocked"]):::pub
+    A -- "no" --> R(["required check fails<br/>merge blocked"]):::stop
+    classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef stop fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+```
+
+**Publish - `publish-release.yml`.** A weekly schedule (main), a `Make/Matrix.json` pin push (main), or a
+dispatch versions once with NBGV, builds the shared base (main only), validates, builds the 12-image
+product matrix with the threaded SemVer2, then cuts the main-only GitHub release and refreshes the Docker
+Hub overviews (D0, D2, D3, D4).
+
+```mermaid
+flowchart TD
+    P1(["schedule: weekly Mon 02:00 UTC<br/>(main only)"]):::trig --> GV
+    P2(["push: main<br/>paths = Make/Matrix.json (codegen pin)"]):::trig --> GV
+    P3(["workflow_dispatch<br/>(main or develop)"]):::trig --> GV
+    GV{"get-version job<br/>ref_name in (main, develop)?"}:::gate
+    GV -- "feature branch" --> GVS(["all jobs skip<br/>no publish"]):::stop
+    GV -- "yes" --> GVR["get-version job<br/>(get-version-task.yml)<br/>NBGV @master, runs once<br/>SemVer2 + GitCommitId"]
+    GVR --> BB{"ref_name == main?"}:::gate
+    BB -- "develop dispatch" --> BBS(["build-base skipped<br/>reuse main's nx-base"]):::stop
+    BB -- "main" --> BBJ["build-base job<br/>(build-base-images-task.yml)<br/>nx-base + nx-base-lsio<br/>amd64 + arm64, branch ref (github.ref_name)"]
+    GVR --> VAL["validate job<br/>(validate-task.yml)<br/>main: pinned to GitCommitId"]
+    VAL --> BD
+    BBJ --> BD
+    BBS --> BD
+    BD["build-docker job<br/>(build-docker-task.yml, build_base: false)<br/>12-image matrix from Make/Matrix.json<br/>amd64 + arm64, max-parallel 4<br/>LABEL_VERSION = threaded SemVer2"]
+    BD --> DH[("Docker Hub<br/>10 product repos (branch tags)<br/>+ 2 shared base repos")]:::pub
+    BD --> RG{"ref_name == main?"}:::gate
+    RG -- "develop" --> RGS(["no GitHub release<br/>(:develop images only)"]):::stop
+    RG -- "main" --> VPR{"github-release job<br/>SemVer2 has no prerelease '-'?<br/>(strip +buildmetadata)"}:::gate
+    VPR -- "prerelease suffix" --> VPRX(["fail ::error::<br/>refuse to publish"]):::stop
+    VPR -- "clean" --> EX{"tag exists AND not dispatch?"}:::gate
+    EX -- "yes" --> EXS(["skip release create<br/>(no-op republish)"]):::stop
+    EX -- "no" --> REL[("GitHub release<br/>tag = SemVer2 at GitCommitId<br/>prerelease: false, source zip + README + LICENSE")]:::pub
+    BD --> DRR["docker-readme-repos job<br/>derive repo list from Matrix.json"]
+    DRR --> DRM["docker-readme job (matrix)<br/>push README to each Docker Hub repo"]
+    DRM --> DRO[("Docker Hub overviews<br/>10 product + 2 base repos")]:::pub
+    classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef stop fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+```
+
+**Automation - codegen + Dependabot + merge-bot.** Daily codegen and Dependabot open in-repo bot PRs; the
+merge-bot enables auto-merge (or disables it on a maintainer push); the required check gates each merge
+(D8).
+
+```mermaid
+flowchart TD
+    SCH(["schedule daily 04:00 UTC<br/>(or workflow_dispatch)"]):::trig --> CG
+    subgraph CGT ["run-codegen-pull-request-task.yml (matrix: main, develop)"]
+        CG["codegen job per branch<br/>regenerate Version.json + Matrix.json<br/>(deterministic, forward-only guard)"] --> CGC{"data changed?"}:::gate
+        CGC -- "no" --> CGN(["no PR"]):::stop
+        CGC -- "yes" --> CPR["open codegen-&lt;branch&gt; PR<br/>(App token)"]
+    end
+    DEP(["Dependabot opens PR<br/>any ecosystem/tier"]):::trig --> MB
+    CPR --> MB
+    subgraph MBT ["merge-bot-pull-request.yml (pull_request_target)"]
+        MB{"event / author"}:::gate
+        MB -- "opened/reopened<br/>bot author" --> EN["enable auto-merge --delete-branch<br/>squash develop / merge main"]
+        MB -- "synchronize by maintainer" --> DIS["disable auto-merge"]
+    end
+    EN --> SM{"semver-major NuGet?"}:::gate
+    SM -- "yes" --> HUM(["wait for human review"]):::stop
+    SM -- "no" --> CK{"required check passes?"}:::gate
+    CK -- "yes" --> MRG(["PR merges (App token)"]):::pub
+    CK -- "no" --> BLK(["merge blocked<br/>maintainer notified"]):::stop
+    MRG -. "codegen-main Matrix.json change" .-> PUBR(["publisher pin-push auto-publishes main"]):::pub
+    classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef stop fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+```
+
+**Trigger chain - daily codegen to published release.** The recurring path that ships a new upstream Nx
+product version with no human in the loop: only a `codegen-main` matrix change reaches the publisher's
+pin push; the develop pin update is sync-only, and `:develop` / the weekly base refresh come from the
+schedule and dispatch (D4.1, D8.3).
+
+```mermaid
+flowchart TD
+    PER(["schedule daily 04:00 UTC<br/>run-periodic-codegen-pull-request.yml<br/>(or workflow_dispatch)"]):::trig --> CGM
+    CGM["codegen matrix: main + develop<br/>regenerate Version.json + Matrix.json"] --> DCH{"Matrix.json changed?"}:::gate
+    DCH -- "no" --> NOPR(["no PR, nothing ships"]):::stop
+    DCH -- "yes: main" --> PRM["codegen-main -> main PR<br/>(merge-bot auto-merges)"]
+    DCH -- "yes: develop" --> PRD["codegen-develop -> develop PR<br/>(merge-bot auto-merges)"]
+    PRD --> SYNC(["develop Matrix.json updated<br/>sync-only, push trigger is main-only<br/>:develop refreshed by dispatch"]):::stop
+    PRM --> PUSH(["push to main<br/>paths = Make/Matrix.json"]):::trig
+    PUSH --> PUB["publish-release.yml<br/>pin-push: build base + 12-image matrix"]
+    PUB --> SINK[("Docker Hub product + base images<br/>+ main GitHub release")]:::pub
+    SCHED(["weekly schedule (main)<br/>base refresh for CVEs"]):::trig --> PUB
+    DISP(["workflow_dispatch (main or develop)<br/>force publish that branch"]):::trig --> PUB
+    classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef stop fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+```
+
 ## 4. Behavioral contract - expected outcomes
 
 Each is a **MUST**, stated as input -> output plus the failure it prevents.
