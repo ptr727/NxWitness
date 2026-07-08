@@ -97,7 +97,7 @@ jobs:
     uses: ./.github/workflows/build-base-images-task.yml
     with:
       push: ${{ inputs.push }}
-      platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+      platforms: ${{ (!inputs.smoke && inputs.branch == 'main') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
       ref: ${{ inputs.ref }}
     secrets: inherit
 
@@ -117,6 +117,10 @@ jobs:
       matrix:
         images: ${{ fromJson(needs.get-matrix.outputs.matrix).Images }}
 
+    env:
+      # Multi-arch (amd64+arm64) only on a full main publish; smoke and develop build amd64 only.
+      PLATFORMS: ${{ (!inputs.smoke && inputs.branch == 'main') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+
     steps:
 
       - name: Checkout step
@@ -124,15 +128,17 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.ref }}
 
+      # arm64 is non-native on the amd64 runner, so install its QEMU emulator only when the build includes it.
       - name: Setup QEMU step
+        if: ${{ contains(env.PLATFORMS, 'arm64') }}
         uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
         with:
-          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          platforms: arm64
 
       - name: Setup Buildx step
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
         with:
-          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          platforms: ${{ env.PLATFORMS }}
 
       # Log in on every build (including smoke), for higher pull/cache rate limits against the branch-scoped
       # registry buildcache. DOCKER_HUB_USERNAME / DOCKER_HUB_ACCESS_TOKEN must be in both the Actions and
@@ -170,7 +176,7 @@ jobs:
           push: ${{ inputs.push }}
           context: Docker
           file: Docker/${{ matrix.images.Name }}.Dockerfile
-          platforms: ${{ inputs.smoke && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          platforms: ${{ env.PLATFORMS }}
           tags: ${{ steps.tagsargs.outputs.tags }}
           build-args: ${{ steps.tagsargs.outputs.args }}
           cache-from: |
