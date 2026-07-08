@@ -138,7 +138,7 @@ Applies to code and workflow (`#`) comments alike.
 
 ### Line Endings
 
-- [`.editorconfig`](./.editorconfig) defines the correct ending per file type (CRLF for `.md`, `.cs`, XML/`.csproj`/`.props`, `.yml`/`.yaml`, `.json`, `.slnx`, `.cmd`/`.bat`/`.ps1`; LF for `.sh`), and [`.gitattributes`](./.gitattributes) pins `Dockerfile`/`*.Dockerfile` and `*.sh` to LF (`text eol=lf`) and otherwise stops git from normalizing.
+- [`.editorconfig`](./.editorconfig) defines the correct ending per file type (CRLF for `.md`, `.cs`, XML/`.csproj`/`.props`, `.yml`/`.yaml`, `.json`, `.slnx`, `.cmd`/`.bat`/`.ps1`; LF for `.sh` and for workflow YAML under `.github/workflows/*.{yml,yaml}` - Dependabot and Actions rewrite workflow files with LF, so they are pinned LF while all other YAML stays CRLF, and CI's `editorconfig-checker` enforces it), and [`.gitattributes`](./.gitattributes) pins `Dockerfile`/`*.Dockerfile` and `*.sh` to LF (`text eol=lf`) and otherwise stops git from normalizing.
 - **Editing an existing file: preserve its current line endings** - do not reflow them as a side effect of a content change, even if the file is already non-compliant. After any programmatic edit, verify with `git diff --stat` (only changed lines) and `grep -c $'\r'` (CRLF count), since `file` does not report CRLF for JSON. Bring a non-compliant file to its `.editorconfig` ending only as a deliberate, isolated EOL-only change.
 
 ### Quantitative Claims
