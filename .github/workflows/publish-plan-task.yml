@@ -9,6 +9,8 @@ name: Publish plan task
 #             its identity - or dependabot[bot] - is the gate), a schedule, or a workflow_dispatch of main/develop.
 #             A human push (a merge/promotion to main) or a dispatch from any other branch is 'false'.
 #   stable  - 'true' when the target branch is main (stable channel); main-only jobs gate on publish && stable.
+#   Both outputs are the strings 'true'/'false' - gate with == 'true'; a bare `if: ${{ needs.plan.outputs.publish }}`
+#   is always truthy (a non-empty string is truthy in an Actions expression).
 #
 # Shared across repo types: a library/package repo triggers only push + dispatch and uses `publish`; a
 # Docker/wrapper repo also triggers the weekly schedule and gates main-only jobs on `stable`. A case a given
@@ -67,9 +69,12 @@ jobs:
               publish=true
               ;;
             push)
-              # A human merge never auto-publishes; only a bot merge does. The codegen App merges every
-              # Dependabot/codegen PR, so github.actor is its identity (dependabot[bot] allowed defensively).
-              [[ "$ACTOR" == "ptr727-codegen[bot]" || "$ACTOR" == "dependabot[bot]" ]] && publish=true
+              # A human merge never auto-publishes; only a bot merge to main does. The codegen App merges every
+              # Dependabot/codegen PR, so github.actor is its identity (dependabot[bot] allowed defensively). The
+              # ref==main guard keeps the task self-contained even if a caller's push trigger is not main-only.
+              if [[ "$REF" == "main" ]] && { [[ "$ACTOR" == "ptr727-codegen[bot]" ]] || [[ "$ACTOR" == "dependabot[bot]" ]]; }; then
+                publish=true
+              fi
               ;;
           esac
           stable=false
