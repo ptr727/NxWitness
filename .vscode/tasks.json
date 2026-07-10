@@ -113,6 +113,59 @@
                 "showReuseMessage": false,
                 "clear": false
             }
+        },
+        // Lint group - mirrors the CI lint job so a commit passes the same checks locally, and warms
+        // the Docker images the .husky/pre-commit hook reuses. Language-agnostic; every repo carries these.
+        {
+            "label": "Lint: Line Endings",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/check\" -w /check mstruebing/editorconfig-checker:latest",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Workflows",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/repo\" -w /repo rhysd/actionlint:latest -color",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Markdown",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir davidanson/markdownlint-cli2:latest \"**/*.md\"",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Spelling",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir ghcr.io/streetsidesoftware/cspell:latest --no-progress \"**/*.md\"",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: All",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Lint: Line Endings",
+                "Lint: Workflows",
+                "Lint: Markdown",
+                "Lint: Spelling"
+            ],
+            "problemMatcher": []
         }
     ]
 }

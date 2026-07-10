@@ -1,4 +1,39 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# Local lint parity with the CI lint job, so a commit never surprises the maintainer with a CI-only failure
+# (line endings, workflow YAML, Markdown, spelling). It runs the same tools CI runs, through Docker so they
+# behave identically across Windows, WSL, and Linux. To keep the hook reliable and never a false blocker it
+# only runs an image already present locally (never pulls) and skips when Docker or the image is unavailable -
+# CI enforces these regardless. Warm the images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV keeps the
+# bind mount correct under Git Bash on Windows; it is a no-op on Linux/WSL.
+
+# C# formatting + style (CSharpier + dotnet format) via task-runner.json. .NET repos only - drop this line otherwise.
 dotnet husky run
+
+lint() {
+    image="$1"
+    shift
+    if command -v docker >/dev/null 2>&1 && docker image inspect "$image" >/dev/null 2>&1; then
+        MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd):/check" -w /check "$image" "$@" || exit 1
+    else
+        echo "husky: $image not available (Docker not running or image absent), skipping - CI enforces it"
+    fi
+}
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# Line endings / charset across the tree - the editorconfig-checker gate that catches a mis-ended file (e.g. a
+# new codecov.yml committed with LF where the repo is CRLF).
+lint mstruebing/editorconfig-checker:latest
+
+# Workflow YAML (plus embedded run: shell via bundled shellcheck) when a workflow file is staged.
+if printf '%s\n' "$staged" | grep -Eq '^\.github/workflows/.*\.ya?ml$'; then
+    lint rhysd/actionlint:latest -color
+fi
+
+# Markdown lint + spelling (word list + exclusions from cspell.json) when a Markdown file is staged.
+if printf '%s\n' "$staged" | grep -q '\.md$'; then
+    lint davidanson/markdownlint-cli2:latest "**/*.md"
+    lint ghcr.io/streetsidesoftware/cspell:latest --no-progress "**/*.md"
+fi
