@@ -1,0 +1,75 @@
+name: Publish plan task
+
+# Single source of truth for the release-gate decision, reused by every publish-release.yml job so the policy
+# lives here, not scattered across job `if:` conditions. A human PR merge never auto-publishes; a release is a
+# deliberate dispatch, a bot (Dependabot/codegen) code-merge to main, or the Docker weekly schedule.
+#
+# Outputs:
+#   publish - 'true' when this run should publish: a bot-authored push (the codegen App merges every bot PR, so
+#             its identity - or dependabot[bot] - is the gate), a schedule, or a workflow_dispatch of main/develop.
+#             A human push (a merge/promotion to main) or a dispatch from any other branch is 'false'.
+#   stable  - 'true' when the target branch is main (stable channel); main-only jobs gate on publish && stable.
+
+on:
+  workflow_call:
+    inputs:
+      event_name:
+        description: The triggering event (github.event_name).
+        required: true
+        type: string
+      actor:
+        description: The actor that triggered the run (github.actor).
+        required: true
+        type: string
+      ref_name:
+        description: The short ref name (github.ref_name).
+        required: true
+        type: string
+    outputs:
+      publish:
+        description: "'true' when this run should publish."
+        value: ${{ jobs.plan.outputs.publish }}
+      stable:
+        description: "'true' when the target branch is main (stable channel)."
+        value: ${{ jobs.plan.outputs.stable }}
+
+jobs:
+
+  plan:
+    name: Plan release job
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.decide.outputs.publish }}
+      stable: ${{ steps.decide.outputs.stable }}
+
+    steps:
+
+      - name: Decide release plan step
+        id: decide
+        env:
+          EVENT: ${{ inputs.event_name }}
+          ACTOR: ${{ inputs.actor }}
+          REF: ${{ inputs.ref_name }}
+        run: |
+          set -euo pipefail
+          publish=false
+          case "$EVENT" in
+            workflow_dispatch)
+              # A human release: only the long-lived branches publish (a stray feature-branch dispatch is a no-op).
+              [[ "$REF" == "main" || "$REF" == "develop" ]] && publish=true
+              ;;
+            schedule)
+              # Docker weekly refresh (main-only by schedule config).
+              publish=true
+              ;;
+            push)
+              # A human merge never auto-publishes; only a bot merge does. The codegen App merges every
+              # Dependabot/codegen PR, so github.actor is its identity (dependabot[bot] allowed defensively).
+              [[ "$ACTOR" == "ptr727-codegen[bot]" || "$ACTOR" == "dependabot[bot]" ]] && publish=true
+              ;;
+          esac
+          stable=false
+          [[ "$REF" == "main" ]] && stable=true
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "stable=$stable" >> "$GITHUB_OUTPUT"
+          echo "Release plan: event=$EVENT actor=$ACTOR ref=$REF -> publish=$publish stable=$stable"
