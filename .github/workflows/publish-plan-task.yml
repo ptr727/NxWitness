@@ -9,6 +9,10 @@ name: Publish plan task
 #             its identity - or dependabot[bot] - is the gate), a schedule, or a workflow_dispatch of main/develop.
 #             A human push (a merge/promotion to main) or a dispatch from any other branch is 'false'.
 #   stable  - 'true' when the target branch is main (stable channel); main-only jobs gate on publish && stable.
+#
+# Shared across repo types: a library/package repo triggers only push + dispatch and uses `publish`; a
+# Docker/wrapper repo also triggers the weekly schedule and gates main-only jobs on `stable`. A case a given
+# caller never triggers (e.g. schedule for a library) is simply inert for it - expected of a single-source task.
 
 on:
   workflow_call:
