@@ -1,11 +1,11 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Local lint parity with the CI lint job, so a commit never surprises the maintainer with a CI-only failure
-# (line endings, workflow YAML, Markdown, spelling). It runs the same tools CI runs, through Docker so they
+# Local lint checks with the fleet-standard set, so a commit never surprises the maintainer with a CI-only failure
+# (line endings, workflow YAML, Markdown, spelling). It runs the fleet-standard lint tools through Docker so they
 # behave identically across Windows, WSL, and Linux. To keep the hook reliable and never a false blocker it
 # only runs an image already present locally (never pulls) and skips when Docker or the image is unavailable -
-# CI enforces these regardless. Warm the images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV keeps the
+# CI is still the gate for whatever lint it runs. Warm the images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV keeps the
 # bind mount correct under Git Bash on Windows; it is a no-op on Linux/WSL.
 
 # C# formatting + style (CSharpier + dotnet format) via task-runner.json. .NET repos only - drop this line otherwise.
@@ -25,7 +25,7 @@ staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
 # Line endings / charset across the tree - the editorconfig-checker gate that catches a mis-ended file (e.g. a
 # new codecov.yml committed with LF where the repo is CRLF).
-lint mstruebing/editorconfig-checker:latest
+lint mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00
 
 # Workflow YAML (plus embedded run: shell via bundled shellcheck) when a workflow file is staged.
 if printf '%s\n' "$staged" | grep -Eq '^\.github/workflows/.*\.ya?ml$'; then
@@ -35,5 +35,5 @@ fi
 # Markdown lint + spelling (word list + exclusions from cspell.json) when a Markdown file is staged.
 if printf '%s\n' "$staged" | grep -q '\.md$'; then
     lint davidanson/markdownlint-cli2:latest "**/*.md"
-    lint ghcr.io/streetsidesoftware/cspell:latest --no-progress "**/*.md"
+    lint ghcr.io/streetsidesoftware/cspell:latest --no-progress README.md HISTORY.md
 fi

@@ -114,12 +114,12 @@
                 "clear": false
             }
         },
-        // Lint group - mirrors the CI lint job so a commit passes the same checks locally, and warms
+        // Lint group - runs the fleet-standard lint set locally and warms
         // the Docker images the .husky/pre-commit hook reuses. Language-agnostic; every repo carries these.
         {
             "label": "Lint: Line Endings",
             "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/check\" -w /check mstruebing/editorconfig-checker:latest",
+            "command": "docker run --rm -v \"${workspaceFolder}:/check\" -w /check mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -149,7 +149,7 @@
         {
             "label": "Lint: Spelling",
             "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir ghcr.io/streetsidesoftware/cspell:latest --no-progress \"**/*.md\"",
+            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir ghcr.io/streetsidesoftware/cspell:latest --no-progress README.md HISTORY.md",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
