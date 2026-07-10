@@ -1,8 +1,7 @@
-# Codecov configuration. Coverage is reported and trended, never gated:
-# informational: true keeps Codecov's project and patch commit statuses
-# advisory (always pass) so a coverage delta can never block a PR - a distinct
-# knob from the upload step's fail_ci_if_error: false, which only guards upload
-# errors. A repo may override this to enforce a coverage threshold.
+# Codecov configuration. Coverage is reported and trended, never gated.
+# - informational: true makes project and patch statuses advisory (always pass), so a coverage delta never blocks a PR.
+# - Distinct from the upload step's fail_ci_if_error: false, which only guards upload errors.
+# - A repo may override this to enforce a coverage threshold.
 coverage:
   status:
     project:
@@ -12,8 +11,6 @@ coverage:
       default:
         informational: true
 
-# Exclude code intentionally not unit-tested from the coverage denominator -
-# e.g. an example/demo console app or a benchmark project, not the shipped
-# library. Add the repo's own paths.
+# Exclude code intentionally not unit-tested from the coverage denominator. Add the repo's own paths.
 # ignore:
 #   - "Sandbox/**"

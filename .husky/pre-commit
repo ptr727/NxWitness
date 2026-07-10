@@ -1,14 +1,12 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Local lint checks with the fleet-standard set, so a commit never surprises the maintainer with a CI-only failure
-# (line endings, workflow YAML, Markdown, spelling). It runs the fleet-standard lint tools through Docker so they
-# behave identically across Windows, WSL, and Linux. To keep the hook reliable and never a false blocker it
-# only runs an image already present locally (never pulls) and skips when Docker or the image is unavailable -
-# CI is still the gate for whatever lint it runs. Warm the images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV keeps the
-# bind mount correct under Git Bash on Windows; it is a no-op on Linux/WSL.
+# Local pre-commit lint with the fleet-standard set, so a commit never hits a CI-only lint failure.
+# - Tools: editorconfig-checker (line endings), actionlint, markdownlint, cspell, via Docker for cross-OS parity.
+# - Safe: runs only an already-present image (never pulls), skips when Docker or the image is absent. CI stays the gate.
+# - Warm images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV fixes the Git Bash bind mount (no-op elsewhere).
 
-# C# formatting + style (CSharpier + dotnet format) via task-runner.json. .NET repos only - drop this line otherwise.
+# C# formatting + style (CSharpier + dotnet format) via task-runner.json. .NET repos only, drop this line otherwise.
 dotnet husky run
 
 lint() {
@@ -23,8 +21,7 @@ lint() {
 
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
-# Line endings / charset across the tree - the editorconfig-checker gate that catches a mis-ended file (e.g. a
-# new codecov.yml committed with LF where the repo is CRLF).
+# Line endings and charset across the whole tree.
 lint mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00
 
 # Workflow YAML (plus embedded run: shell via bundled shellcheck) when a workflow file is staged.
