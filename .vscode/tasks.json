@@ -113,6 +113,59 @@
                 "showReuseMessage": false,
                 "clear": false
             }
+        },
+        // Lint group - runs the fleet-standard lint set locally and warms
+        // the Docker images the .husky/pre-commit hook reuses. Language-agnostic; every repo carries these.
+        {
+            "label": "Lint: Line Endings",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/check\" -w /check mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Workflows",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/repo\" -w /repo rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Markdown",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir davidanson/markdownlint-cli2@sha256:0ed9a5f4c77ef447da2a2ac6e67caf74b214a7f80288819565e8b7d2ac148fe5 \"**/*.md\"",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Spelling",
+            "type": "shell",
+            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir ghcr.io/streetsidesoftware/cspell@sha256:cb2eab4ec34956aca554e35615da65401d510fa5983cce2773391e2fd9f4fc20 --no-progress \"**/*.md\"",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: All",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Lint: Line Endings",
+                "Lint: Workflows",
+                "Lint: Markdown",
+                "Lint: Spelling"
+            ],
+            "problemMatcher": []
         }
     ]
 }

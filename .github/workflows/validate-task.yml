@@ -1,8 +1,10 @@
 name: Validate task
 
-# The single validation gate: Husky lint (CSharpier + dotnet format style) + dotnet test. Reused by
-# test-pull-request (produces the required check) and could be reused by the publisher, so the CI and publish
-# gates are the identical definition. Does not build images.
+# The single validation gate, reused by test-pull-request (the required check) and the publisher, so CI and
+# publish run the identical definition. Does not build images.
+# - Lint: Husky (CSharpier + dotnet format style), Markdown, spelling, workflow YAML, and line endings.
+# - Test: dotnet test with coverage, uploaded to Codecov (report-only).
+# - Linter parity: the Docker linters match the editor extensions and the pre-commit hook.
 
 on:
   workflow_call:
@@ -40,7 +42,16 @@ jobs:
           dotnet husky install
           dotnet husky run
 
-      # Docker image is digest-pinned (version in the trailing comment) so CI is reproducible.
+      # Docker images are digest-pinned (version in the trailing comment) so CI is reproducible.
+      - name: Lint Markdown step
+        run: docker run --rm -v "$PWD":/workdir davidanson/markdownlint-cli2@sha256:0ed9a5f4c77ef447da2a2ac6e67caf74b214a7f80288819565e8b7d2ac148fe5 "**/*.md" # markdownlint-cli2 v0.22.1
+
+      - name: Spell check step
+        run: docker run --rm -v "$PWD":/workdir --workdir /workdir ghcr.io/streetsidesoftware/cspell@sha256:cb2eab4ec34956aca554e35615da65401d510fa5983cce2773391e2fd9f4fc20 "**/*.md" # cspell v10.0.1
+
+      - name: Lint workflows step
+        run: docker run --rm -v "$PWD":/repo --workdir /repo rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color # actionlint v1.7.12
+
       - name: Check line endings step
         run: docker run --rm -v "$PWD":/check --workdir /check mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00 # editorconfig-checker v3.4.0
 
