@@ -1,36 +1,9 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Local pre-commit lint with the fleet-standard set, so a commit never hits a CI-only lint failure.
-# - Tools: editorconfig-checker (line endings), actionlint, markdownlint, cspell, via Docker for cross-OS parity.
-# - Safe: runs only an already-present image (never pulls), skips when Docker or the image is absent. CI stays the gate.
-# - Warm images once with the VS Code "Lint" tasks. MSYS_NO_PATHCONV fixes the Git Bash bind mount (no-op elsewhere).
+# Local pre-commit: language formatting and style only, kept fast with native tooling (no Docker).
+# Full linting (Markdown, spelling, workflow YAML, line endings) is not run here. It runs in CI (pinned action
+# wrappers) and on demand via the VS Code "Lint" tasks (Docker), so the hook stays simple.
 
-# C# formatting + style (CSharpier + dotnet format) via task-runner.json. .NET repos only, drop this line otherwise.
-dotnet husky run
-
-lint() {
-    image="$1"
-    shift
-    if command -v docker >/dev/null 2>&1 && docker image inspect "$image" >/dev/null 2>&1; then
-        MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd):/check" -w /check "$image" "$@" || exit 1
-    else
-        echo "husky: $image not available (Docker not running or image absent), skipping - CI enforces it"
-    fi
-}
-
-staged=$(git diff --cached --name-only --diff-filter=ACMR)
-
-# Line endings and charset across the whole tree.
-lint mstruebing/editorconfig-checker:latest
-
-# Workflow YAML (plus embedded run: shell via bundled shellcheck) when a workflow file is staged.
-if printf '%s\n' "$staged" | grep -Eq '^\.github/workflows/.*\.ya?ml$'; then
-    lint rhysd/actionlint:latest -color
-fi
-
-# Markdown lint + spelling when Markdown or its lint config is staged (a config-only change still affects every doc).
-if printf '%s\n' "$staged" | grep -qE '\.md$|(^|/)(cspell\.json|\.markdownlint-cli2\.jsonc)$'; then
-    lint davidanson/markdownlint-cli2:latest "**/*.md"
-    lint ghcr.io/streetsidesoftware/cspell:latest --no-progress "**/*.md"
-fi
+# .NET: CSharpier + dotnet format style via task-runner.json. A Python repo runs ruff here instead.
+command -v dotnet >/dev/null 2>&1 && dotnet husky run
