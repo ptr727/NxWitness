@@ -22,15 +22,15 @@ lint() {
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
 # Line endings and charset across the whole tree.
-lint mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00
+lint mstruebing/editorconfig-checker:latest
 
 # Workflow YAML (plus embedded run: shell via bundled shellcheck) when a workflow file is staged.
 if printf '%s\n' "$staged" | grep -Eq '^\.github/workflows/.*\.ya?ml$'; then
-    lint rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
+    lint rhysd/actionlint:latest -color
 fi
 
-# Markdown lint + spelling (word list + exclusions from cspell.json) when a Markdown file is staged.
-if printf '%s\n' "$staged" | grep -q '\.md$'; then
-    lint davidanson/markdownlint-cli2@sha256:0ed9a5f4c77ef447da2a2ac6e67caf74b214a7f80288819565e8b7d2ac148fe5 "**/*.md"
-    lint ghcr.io/streetsidesoftware/cspell@sha256:cb2eab4ec34956aca554e35615da65401d510fa5983cce2773391e2fd9f4fc20 --no-progress "**/*.md"
+# Markdown lint + spelling when Markdown or its lint config is staged (a config-only change still affects every doc).
+if printf '%s\n' "$staged" | grep -qE '\.md$|(^|/)(cspell\.json|\.markdownlint-cli2\.jsonc)$'; then
+    lint davidanson/markdownlint-cli2:latest "**/*.md"
+    lint ghcr.io/streetsidesoftware/cspell:latest --no-progress "**/*.md"
 fi
