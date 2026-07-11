@@ -117,9 +117,10 @@
         // Lint group - the local full doc-lint surface (Docker at :latest), matching the CI lint set.
         // Run on demand. The pre-commit hook does language formatting only. Every repo carries these.
         {
-            "label": "Lint: Line Endings",
-            "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/check\" -w /check mstruebing/editorconfig-checker:latest",
+            "label": "Lint: EditorConfig",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "-v", "${workspaceFolder}:/check", "-w", "/check", "mstruebing/editorconfig-checker:latest" ],
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -128,8 +129,9 @@
         },
         {
             "label": "Lint: Workflows",
-            "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/repo\" -w /repo rhysd/actionlint:latest -color",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "-v", "${workspaceFolder}:/repo", "-w", "/repo", "rhysd/actionlint:latest", "-color" ],
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -138,8 +140,9 @@
         },
         {
             "label": "Lint: Markdown",
-            "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir davidanson/markdownlint-cli2:latest \"**/*.md\"",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "davidanson/markdownlint-cli2:latest", "**/*.md" ],
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -148,8 +151,9 @@
         },
         {
             "label": "Lint: Spelling",
-            "type": "shell",
-            "command": "docker run --rm -v \"${workspaceFolder}:/workdir\" -w /workdir ghcr.io/streetsidesoftware/cspell:latest --no-progress \"**/*.md\"",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "ghcr.io/streetsidesoftware/cspell:latest", "--no-progress", "**/*.md" ],
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -160,7 +164,7 @@
             "label": "Lint: All",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "Lint: Line Endings",
+                "Lint: EditorConfig",
                 "Lint: Workflows",
                 "Lint: Markdown",
                 "Lint: Spelling"
