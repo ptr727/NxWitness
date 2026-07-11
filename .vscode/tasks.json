@@ -114,8 +114,8 @@
                 "clear": false
             }
         },
-        // Lint group - the local full doc-lint surface (Docker at :latest), matching the CI lint set. Run on
-        // demand. The pre-commit hook does language formatting only. Language-agnostic, every repo carries these.
+        // Lint group - the local full doc-lint surface (Docker at :latest), matching the CI lint set.
+        // Run on demand. The pre-commit hook does language formatting only. Every repo carries these.
         {
             "label": "Lint: Line Endings",
             "type": "shell",

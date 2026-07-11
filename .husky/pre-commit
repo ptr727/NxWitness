@@ -4,4 +4,6 @@
 # Local pre-commit: language formatting and style only (no Docker). Full lint runs in CI and the VS Code Lint tasks.
 
 # .NET: CSharpier + dotnet format style via task-runner.json. A Python repo runs ruff here instead.
-command -v dotnet >/dev/null 2>&1 && dotnet husky run
+if command -v dotnet >/dev/null 2>&1; then
+    dotnet husky run
+fi
