@@ -28,7 +28,7 @@ internal static class ReleaseVersionForward
         VersionInfo.LabelType label
     )
     {
-        // NOTE: Forward-only is intentional; a published tag must not regress to a lesser version.
+        // NOTE: Forward-only is intentional. A published tag must not regress to a lesser version.
         // If a label is released, then pulled, then re-released with a lesser version, we keep the
         // old (higher) version. This is harmless while the old build is still downloadable, and if
         // its files were actually removed the run fails loudly in VerifyUrlsAsync (404) for a human

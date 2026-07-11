@@ -9,10 +9,10 @@ name: Publish project release action
 #
 # Ordinary code merges do NOT publish: only a matrix pin change committed by the codegen App (push, branch-
 # filtered to main, gated to the App identity so a human pin edit does not publish) or a schedule/dispatch does.
-# develop's daily codegen pin update is sync-only (the push trigger is main-only);
-# refresh :develop by dispatching from develop. CI/validation runs separately on push (test-pull-request).
+# develop's daily codegen pin update is sync-only (the push trigger is main-only).
+# Refresh :develop by dispatching from develop. CI/validation runs separately on push (test-pull-request).
 #
-# The publish/stable decision is computed once by the plan job (publish-plan-task.yml); every job gates on its
+# The publish/stable decision is computed once by the plan job (publish-plan-task.yml). Every job gates on its
 # outputs instead of re-testing event/actor/branch.
 
 on:
@@ -20,7 +20,7 @@ on:
   schedule:
     # Weekly rebuild/publish of main (Mon 02:00 UTC) to pick up shared base-image updates.
     - cron: '0 2 * * MON'
-  # Publish main immediately when the codegen matrix changes; the daily codegen commits the new pin here.
+  # Publish main immediately when the codegen matrix changes. The daily codegen commits the new pin here.
   push:
     branches: [main]
     paths: [Make/Matrix.json]
@@ -50,7 +50,7 @@ jobs:
   # develop dispatch publishes a prerelease.
   get-version:
     name: Get version information job
-    # Only the long-lived branches publish; a stray dispatch from a feature branch is a no-op.
+    # Only the long-lived branches publish. A stray dispatch from a feature branch is a no-op.
     needs: [plan]
     if: ${{ needs.plan.outputs.publish == 'true' }}
     uses: ./.github/workflows/get-version-task.yml
@@ -59,7 +59,7 @@ jobs:
       ref: ${{ github.ref_name }}
 
   # Base images share a single tag (nx-base:ubuntu-noble) across branches. The main schedule/push/dispatch
-  # builds and refreshes it; a develop dispatch sets build_base: false (see build-docker below) and reuses
+  # builds and refreshes it. A develop dispatch sets build_base: false (see build-docker below) and reuses
   # main's published base so it can't overwrite the shared tag.
   build-base:
     name: Build base image job
@@ -89,7 +89,7 @@ jobs:
   build-docker:
     name: Build Docker image job
     needs: [plan, get-version, build-base, validate]
-    # always() so the job still runs when build-base is intentionally skipped on a develop dispatch; fail only
+    # always() so the job still runs when build-base is intentionally skipped on a develop dispatch. Fail only
     # if a prerequisite actually failed.
     if: >-
       ${{ always()
@@ -131,7 +131,7 @@ jobs:
           ref: ${{ needs.get-version.outputs.GitCommitId }}
 
       # Backstop (main only): a public release must not carry a prerelease '-', guarding against NBGV mis-versioning the
-      # public ref into a malformed "Latest" release. Strip '+buildmetadata' first - a '-' there is legitimate; only a
+      # public ref into a malformed "Latest" release. Strip '+buildmetadata' first - a '-' there is legitimate. Only a
       # '-' in the core/prerelease segment marks a prerelease.
       - name: Verify public release version step
         env:
