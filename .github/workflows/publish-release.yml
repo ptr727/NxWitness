@@ -7,9 +7,13 @@ name: Publish project release action
 # develop => :develop). Building only the trigger branch keeps github.ref aligned with the branch being
 # versioned, so NBGV classifies it natively with no cross-branch ref leak.
 #
-# Ordinary code merges do NOT publish: only a matrix pin change (push, branch-filtered to main) or a
-# schedule/dispatch does. develop's daily codegen pin update is sync-only (the push trigger is main-only);
+# Ordinary code merges do NOT publish: only a matrix pin change committed by the codegen App (push, branch-
+# filtered to main, gated to the App identity so a human pin edit does not publish) or a schedule/dispatch does.
+# develop's daily codegen pin update is sync-only (the push trigger is main-only);
 # refresh :develop by dispatching from develop. CI/validation runs separately on push (test-pull-request).
+#
+# The publish/stable decision is computed once by the plan job (publish-plan-task.yml); every job gates on its
+# outputs instead of re-testing event/actor/branch.
 
 on:
   workflow_dispatch:
@@ -31,13 +35,24 @@ concurrency:
 
 jobs:
 
+  # Single source of the release-gate decision (publish? stable?) - every job below gates on its outputs
+  # instead of re-testing event/actor/branch. See publish-plan-task.yml for the policy.
+  plan:
+    name: Plan release job
+    uses: ./.github/workflows/publish-plan-task.yml
+    with:
+      event_name: ${{ github.event_name }}
+      actor: ${{ github.actor }}
+      ref_name: ${{ github.ref_name }}
+
   # Compute the version once from the trigger branch and thread it to every consumer. github.ref already
   # equals the built branch (one branch per run), so NBGV classifies natively - main publishes clean, a
   # develop dispatch publishes a prerelease.
   get-version:
     name: Get version information job
     # Only the long-lived branches publish; a stray dispatch from a feature branch is a no-op.
-    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
+    needs: [plan]
+    if: ${{ needs.plan.outputs.publish == 'true' }}
     uses: ./.github/workflows/get-version-task.yml
     secrets: inherit
     with:
@@ -48,7 +63,8 @@ jobs:
   # main's published base so it can't overwrite the shared tag.
   build-base:
     name: Build base image job
-    if: ${{ github.ref_name == 'main' }}
+    needs: [plan]
+    if: ${{ needs.plan.outputs.publish == 'true' && needs.plan.outputs.stable == 'true' }}
     uses: ./.github/workflows/build-base-images-task.yml
     secrets: inherit
     with:
@@ -63,8 +79,8 @@ jobs:
   # exact commit the images and release are built from.
   validate:
     name: Validate job
-    needs: [get-version]
-    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' }}
+    needs: [plan, get-version]
+    if: ${{ needs.plan.outputs.publish == 'true' }}
     uses: ./.github/workflows/validate-task.yml
     secrets: inherit
     with:
@@ -72,11 +88,12 @@ jobs:
 
   build-docker:
     name: Build Docker image job
-    needs: [get-version, build-base, validate]
+    needs: [plan, get-version, build-base, validate]
     # always() so the job still runs when build-base is intentionally skipped on a develop dispatch; fail only
     # if a prerequisite actually failed.
     if: >-
       ${{ always()
+      && needs.plan.outputs.publish == 'true'
       && needs.get-version.result == 'success'
       && needs.validate.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
@@ -99,8 +116,8 @@ jobs:
   # main-only: a develop dispatch publishes images + the :develop tag but cuts no versioned GitHub release.
   github-release:
     name: Publish GitHub release job
-    needs: [get-version, build-docker]
-    if: ${{ github.ref_name == 'main' }}
+    needs: [plan, get-version, build-docker]
+    if: ${{ needs.plan.outputs.publish == 'true' && needs.plan.outputs.stable == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -172,8 +189,8 @@ jobs:
   # repos) for the readme matrix below.
   docker-readme-repos:
     name: Get docker hub readme repositories job
-    needs: [get-version, build-docker]
-    if: ${{ github.ref_name == 'main' }}
+    needs: [plan, get-version, build-docker]
+    if: ${{ needs.plan.outputs.publish == 'true' && needs.plan.outputs.stable == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       repositories: ${{ steps.list.outputs.repositories }}
@@ -198,8 +215,8 @@ jobs:
   # main-only: push the repository overview (README.md) to each Docker Hub repo derived above.
   docker-readme:
     name: Publish docker hub readme job
-    needs: [get-version, docker-readme-repos]
-    if: ${{ github.ref_name == 'main' }}
+    needs: [plan, get-version, docker-readme-repos]
+    if: ${{ needs.plan.outputs.publish == 'true' && needs.plan.outputs.stable == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
