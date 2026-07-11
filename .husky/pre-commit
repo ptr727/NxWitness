@@ -1,9 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Local pre-commit: language formatting and style only, kept fast with native tooling (no Docker).
-# Full linting (Markdown, spelling, workflow YAML, line endings) is not run here. It runs in CI (pinned action
-# wrappers) and on demand via the VS Code "Lint" tasks (Docker), so the hook stays simple.
+# Local pre-commit: language formatting and style only (no Docker). Full lint runs in CI and the VS Code Lint tasks.
 
 # .NET: CSharpier + dotnet format style via task-runner.json. A Python repo runs ruff here instead.
 command -v dotnet >/dev/null 2>&1 && dotnet husky run

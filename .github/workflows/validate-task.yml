@@ -2,8 +2,8 @@ name: Validate task
 
 # The single validation gate, reused by test-pull-request (the required check) and the publisher, so CI and
 # publish run the identical definition. Does not build images.
-# - Lint: Husky (CSharpier + dotnet format style), plus Markdown, spelling, and workflow YAML via pinned action
-#   wrappers, and line endings via editorconfig-checker.
+# - Lint: Husky (CSharpier + dotnet format style), plus Markdown, spelling, workflow YAML, and line endings via
+#   pinned action wrappers.
 # - Test: dotnet test with coverage, uploaded to Codecov (report-only).
 
 on:
@@ -42,8 +42,7 @@ jobs:
           dotnet husky install
           dotnet husky run
 
-      # Doc linters run as pinned action wrappers (Dependabot bumps the SHA). editorconfig-checker has no action, so
-      # it runs via Docker at :latest (Dependabot cannot bump a run-step digest, and a pin would only bitrot).
+      # All doc linters run as pinned action wrappers, which Dependabot bumps.
       - name: Lint Markdown step
         uses: DavidAnson/markdownlint-cli2-action@8de2aa07cae85fd17c0b35642db70cf5495f1d25 # v24.0.0
         with:
@@ -59,7 +58,7 @@ jobs:
         uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
 
       - name: Check line endings step
-        run: docker run --rm -v "$PWD":/check --workdir /check mstruebing/editorconfig-checker:latest
+        uses: editorconfig-checker/action-editorconfig-checker@840e866d93b8e032123c23bac69dece044d4d84c # v2.2.0
 
       # --collect drives coverlet.collector to emit Cobertura XML into ./coverage/<guid>/.
       - name: Run unit tests step
