@@ -2,7 +2,7 @@ name: Test pull request action
 
 # CI for every branch. Runs on push so the reusable tasks resolve from the pushed head: a PR that edits a
 # workflow tests its own copy, and the aggregator (the ruleset required check) is produced on the head SHA by
-# the sole producing run. validate (unit tests + lint) runs on every push; the image smoke build runs only
+# the sole producing run. validate (unit tests + lint) runs on every push. The image smoke build runs only
 # when image files changed (inline git diff change-gate), since a full product smoke is heavier than a
 # doc-only push warrants. CI never publishes (the publisher runs on schedule/push-on-Matrix.json/dispatch).
 #
@@ -23,7 +23,7 @@ concurrency:
 jobs:
 
   # Inline change-gate (no third-party action): diff the push against its before-commit to decide whether the
-  # image smoke build is needed. image => any Docker/Matrix/Version file changed; base => a base Dockerfile
+  # image smoke build is needed. image => any Docker/Matrix/Version file changed. Base => a base Dockerfile
   # changed. On a non-push event (workflow_dispatch) or a new branch (no before-commit), build everything.
   # !github.event.deleted skips a branch-deletion push (github.sha is all-zeros, so checkout would fail).
   changes:
@@ -47,14 +47,14 @@ jobs:
           AFTER: ${{ github.sha }}
         run: |
           set -euo pipefail
-          # A new branch or non-push event has no usable before-commit (all-zeros or empty); build everything.
+          # A new branch or non-push event has no usable before-commit (all-zeros or empty). Build everything.
           if [[ "$BEFORE" =~ ^0+$ || -z "$BEFORE" || "${{ github.event_name }}" != "push" ]]; then
             echo "image=true" >> "$GITHUB_OUTPUT"
             echo "base=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           if ! DIFF=$(git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null); then
-            # BEFORE is not in the fetched history (e.g. a force-push that rewrote it); build everything.
+            # BEFORE is not in the fetched history (e.g. a force-push that rewrote it). Build everything.
             echo "image=true" >> "$GITHUB_OUTPUT"
             echo "base=true" >> "$GITHUB_OUTPUT"
             exit 0
@@ -93,7 +93,7 @@ jobs:
     with:
       push: false
       smoke: true
-      # Map the push ref to a Matrix.json .Branch value: a main push checks main's rows; every other branch
+      # Map the push ref to a Matrix.json .Branch value: a main push checks main's rows. Every other branch
       # (develop, and feature branches that merge via develop) FALLS BACK to develop's rows. Passing
       # github.ref_name directly would be a feature-branch name matching no .Branch row -> empty smoke matrix.
       branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
@@ -112,7 +112,7 @@ jobs:
         run: |
           set -euo pipefail
           exit_on_result() {
-            # Pass on success or skipped (smoke-build is skipped when no image files changed); fail only on
+            # Pass on success or skipped (smoke-build is skipped when no image files changed). Fail only on
             # failure/cancelled.
             if [[ "$2" == "failure" || "$2" == "cancelled" ]]; then
               echo "::error::Job '$1' failed or was cancelled."

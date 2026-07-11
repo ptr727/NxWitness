@@ -3,7 +3,7 @@ name: Get version information task
 on:
   workflow_call:
     inputs:
-      # Git ref to check out and version. Empty falls back to the caller's default checkout ref (`github.ref`); the
+      # Git ref to check out and version. Empty falls back to the caller's default checkout ref (`github.ref`). The
       # publisher passes an explicit branch so a scheduled run can still compute versions for `develop`.
       ref:
         required: false

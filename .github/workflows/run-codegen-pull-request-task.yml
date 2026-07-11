@@ -20,7 +20,7 @@ jobs:
       contents: write
       pull-requests: write
     strategy:
-      # Each branch gets its own parallel codegen run + PR; one branch's failure doesn't affect the other.
+      # Each branch gets its own parallel codegen run + PR. One branch's failure doesn't affect the other.
       fail-fast: false
       matrix:
         target:
