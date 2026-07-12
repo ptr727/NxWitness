@@ -113,6 +113,63 @@
                 "showReuseMessage": false,
                 "clear": false
             }
+        },
+        // Lint group - the local full doc-lint surface (Docker at :latest), matching the CI lint set.
+        // Run on demand. The pre-commit hook does language formatting only. Every repo carries these.
+        {
+            "label": "Lint: EditorConfig",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/check", "-w", "/check", "mstruebing/editorconfig-checker:latest" ],
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Workflows",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/repo", "-w", "/repo", "rhysd/actionlint:latest", "-color" ],
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Markdown",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "davidanson/markdownlint-cli2:latest", "**/*.md" ],
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Spelling",
+            "type": "process",
+            "command": "docker",
+            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "ghcr.io/streetsidesoftware/cspell:latest", "--no-progress", "README.md", "HISTORY.md" ],
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: All",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Lint: EditorConfig",
+                "Lint: Workflows",
+                "Lint: Markdown",
+                "Lint: Spelling"
+            ],
+            "problemMatcher": []
         }
     ]
 }

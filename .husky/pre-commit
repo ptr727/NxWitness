@@ -1,4 +1,9 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-dotnet husky run
+# Local pre-commit: language formatting and style only (no Docker). Full lint runs in CI and the VS Code Lint tasks.
+
+# .NET: CSharpier + dotnet format style via Husky.Net. A Python repo runs ruff here instead.
+if command -v dotnet >/dev/null 2>&1; then
+    dotnet husky run
+fi

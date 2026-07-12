@@ -1,8 +1,10 @@
 name: Validate task
 
-# The single validation gate: Husky lint (CSharpier + dotnet format style) + dotnet test. Reused by
-# test-pull-request (produces the required check) and could be reused by the publisher, so the CI and publish
-# gates are the identical definition. Does not build images.
+# The single validation gate, reused by test-pull-request (the required check) and the publisher, so CI and
+# publish run the identical definition. Does not build images.
+# - Lint: Husky (CSharpier + dotnet format style), plus Markdown, spelling, and workflow YAML via pinned action
+#   wrappers, and line endings via editorconfig-checker (Docker).
+# - Test: dotnet test with coverage, uploaded to Codecov (report-only).
 
 on:
   workflow_call:
@@ -40,9 +42,23 @@ jobs:
           dotnet husky install
           dotnet husky run
 
-      # Docker image is digest-pinned (version in the trailing comment) so CI is reproducible.
-      - name: Check line endings step
-        run: docker run --rm -v "$PWD":/check --workdir /check mstruebing/editorconfig-checker@sha256:67b9e9b16a674e36f7c05919da789f03a01d343ca8423eb8797179399af07c00 # editorconfig-checker v3.4.0
+      # Doc linters run as pinned action wrappers. editorconfig-checker's action is install-only, so it runs via Docker.
+      - name: Lint Markdown step
+        uses: DavidAnson/markdownlint-cli2-action@8de2aa07cae85fd17c0b35642db70cf5495f1d25 # v24.0.0
+        with:
+          globs: '**/*.md'
+
+      - name: Spell check step
+        uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
+        with:
+          files: '**/*.md'
+          incremental_files_only: false
+
+      - name: Lint workflows step
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
+
+      - name: Check EditorConfig step
+        run: docker run --rm -v "$PWD":/check --workdir /check mstruebing/editorconfig-checker:latest
 
       # --collect drives coverlet.collector to emit Cobertura XML into ./coverage/<guid>/.
       - name: Run unit tests step

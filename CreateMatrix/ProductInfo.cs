@@ -82,8 +82,8 @@ internal sealed class ProductInfo
         };
 
     // Dockerfile name, excluding the .Dockerfile extension.
-    // This is the single source of the image/Dockerfile naming convention; ImageInfo derives its
-    // name from here. The base variant is a bool (Ubuntu vs LSIO); promote it to an enum only if a
+    // This is the single source of the image/Dockerfile naming convention. ImageInfo derives its
+    // name from here. The base variant is a bool (Ubuntu vs LSIO). Promote it to an enum only if a
     // third base type is ever added (which would also ripple through ComposeFile/DockerFile).
     public static string GetDocker(ProductType productType, bool lsio) =>
         $"{productType}{(lsio ? "-LSIO" : "")}";
