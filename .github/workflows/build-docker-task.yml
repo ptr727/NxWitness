@@ -144,7 +144,7 @@ jobs:
       # registry buildcache. DOCKER_HUB_USERNAME / DOCKER_HUB_ACCESS_TOKEN must be in both the Actions and
       # Dependabot secret stores so a Dependabot-triggered push CI run can log in too. Forks cannot push here.
       - name: Login to Docker Hub step
-        uses: docker/login-action@371161bbe7024a29a25c5e19bfcbc0804fe9ad2c # v4.5.2
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
