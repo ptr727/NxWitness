@@ -10,19 +10,19 @@ internal static class ComposeFile
         string composeFile = CreateComposefile(null);
         string filePath = Path.Combine(makePath, "Test.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n"));
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
 
         // Create develop Compose file
         composeFile = CreateComposefile("develop");
         filePath = Path.Combine(makePath, "Test-develop.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n"));
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
 
         // Create latest Compose file
         composeFile = CreateComposefile("latest");
         filePath = Path.Combine(makePath, "Test-latest.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n"));
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
     }
 
     private static string CreateComposefile(string? label)
