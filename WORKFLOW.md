@@ -85,8 +85,8 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
 - **Workflow `name:`.** Reusable names end in **"task"**, entry names in **"action"**.
 - **Job and step `name:`.** Every job `name:` ends in **"job"**, every step `name:` in **"step"**, the
   aggregator included (`Check pull request workflow status job`). A job name also bound as a ruleset
-  required-check `context:` is codified in [`repo-config/`](./repo-config/) and changed only **in lockstep**
-  with the live ruleset.
+  required-check `context:` is codified in the hub's repository-configuration payloads and changed only
+  **in lockstep** with the live ruleset.
 - **Concurrency.** Every entry workflow declares a `concurrency` group. CI uses
   `group: '${{ github.workflow }}-${{ github.ref }}'`, `cancel-in-progress: true`. The publisher overrides
   it: a ref-independent group with `cancel-in-progress: false`, so two publishes never overlap (a schedule, a
@@ -400,7 +400,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `X.Y.Z-g<sha>`. The release-version backstop names `main`; `publicReleaseRefSpec` is `^refs/heads/main$`.
 - **D3.3 Version floor + git height.** Output: `version.json` sets the major.minor floor, NBGV appends the git
   height as the patch, never bumped on a cadence. *(Who raises the floor and when is a human-process rule in
-  `AGENTS.md`.)*
+  [`GOVERNANCE.md` "Release Model"](./GOVERNANCE.md#release-model).)*
 
 ### D4 - Release / publish
 
@@ -499,7 +499,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   documented float, rationale inline in `get-version-task.yml`); an installed-tool version is left unpinned to
   track latest.
 - **D9.2** File/workflow/job/step names follow the suffix rules; a ruleset-bound `context:` name moves only in
-  lockstep with `repo-config/`.
+  lockstep with the live ruleset and the hub payload it is applied from.
 - **D9.3** Bash `run:` blocks start `set -Eeuo pipefail`; multi-line `if:` uses `>-`.
 - **D9.4** Line endings follow `.editorconfig`.
 - **D9.5 No decorative / dropped workflows.** No date-badge (`build-datebadge-*`), no standalone docker-readme
@@ -511,8 +511,8 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 ### D10 - Repository configuration
 
 - **D10.1 Required configuration is present.** Output: the secrets, branch rulesets, and repository settings
-  section 6 lists are all in place, codified in [`repo-config/`](./repo-config/) and audited by its
-  `configure.sh check` (the 5D audit). The detail is in section 6.
+  section 6 lists are all in place, codified in the hub's repository-configuration payloads and audited by the
+  hub's `configure.sh check` (the 5D audit). The detail is in section 6.
 
 ## 5. Test methodology
 
@@ -585,7 +585,8 @@ guarantee with a `file:line` citation:
 
 ### 5D. Configuration audit
 
-Run [`repo-config/configure.sh check`](./repo-config/). It confirms the listed secrets exist (in both
+Run the hub's `repo-config/configure.sh check <owner>/<repo> release` from a hub checkout at `main`. It
+confirms the listed secrets exist (in both
 stores), the `main`/`develop` rulesets enforce the required merge method + status check + signed commits +
 strict-off, and the repository settings are in place, exiting non-zero on drift. Secret *values* cannot be
 read back, so it asserts the names exist (failing if it cannot query them). The GitHub App installation is a
@@ -610,7 +611,7 @@ the configuration is part of "operational" (D10; audit 5D).
   in with to push the images and the repository overviews. Required in **both** the Actions and Dependabot
   secret stores: a Dependabot-triggered push runs CI whose Docker smoke build logs in too (when an image file
   changed), and that run gets the Dependabot store. The access token needs push scope on every product +
-  base repo under `docker.io/ptr727/` (derived from `Make/Matrix.json` - see `repo-config/README.md`). There
+  base repo under `docker.io/ptr727/` (derived from `Make/Matrix.json`). There
   is no NuGet/OIDC publishing.
 - `CODEGEN_APP_CLIENT_ID` / `CODEGEN_APP_PRIVATE_KEY` - the GitHub App credentials the merge-bot and the
   codegen PR-opener mint the App token from. Required in **both** the Actions and Dependabot secret stores (a
@@ -633,6 +634,6 @@ branch to one); rebase off; auto-delete-on-merge **off** (so `main`/`develop` su
 merge-bot deletes bot branches explicitly with `--delete-branch`). Dependabot version **and** security updates
 enabled. The GitHub App installed with the scopes above.
 
-**Validation.** This configuration is codified in [`repo-config/`](./repo-config/) and applied/audited by
-`repo-config/configure.sh`; `check` is the 5D audit. Secret values cannot be read back, so the audit asserts
+**Validation.** This configuration is codified in the hub's repository-configuration payloads and
+applied/audited by the hub's `configure.sh`; `check` is the 5D audit. Secret values cannot be read back, so the audit asserts
 the names exist (failing if they cannot be queried); the App installation is a best-effort check.

@@ -109,9 +109,9 @@ jobs:
       branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
       build_base: ${{ needs.changes.outputs.base == 'true' }}
 
-  # Single required status check. Its name is the ruleset-bound context in repo-config/ruleset-*.json. Do not
-  # rename it without updating those in lockstep. Skips on a branch deletion (when the other jobs also skip), so
-  # the deletion push does not fail this required check.
+  # Single required status check. Its name is the ruleset-bound context in the live branch ruleset.
+  # Do not rename it without updating the ruleset in lockstep.
+  # Skips on a branch deletion, when the other jobs also skip, so the deletion push does not fail it.
   check-workflow-status:
     name: Check pull request workflow status job
     runs-on: ubuntu-latest

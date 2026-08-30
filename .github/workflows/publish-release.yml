@@ -169,7 +169,7 @@ jobs:
       # Skip when the release already exists, but always let a manual `workflow_dispatch` through to refresh it.
       # Every release is a tag on the built commit plus the auto-attached source zip, README, and LICENSE. This is a
       # Docker-only repo: it ships no `release-asset-*` binaries/packages, so the release carries no extra files and
-      # `fail_on_unmatched_files` is omitted (see Template adaptations in AGENTS.md). The image is the published artifact
+      # `fail_on_unmatched_files` is omitted (see Template Adaptations in ARCHITECTURE.md). The image is the published artifact
       # on Docker Hub.
       - name: Create GitHub release step
         if: ${{ steps.release-exists.outputs.exists == 'false' || github.event_name == 'workflow_dispatch' }}
