@@ -54,7 +54,7 @@ internal sealed class LowercaseEnumConverter<T> : JsonConverter<T>
     ReadCommentHandling = JsonCommentHandling.Skip,
     UseStringEnumConverter = true,
     WriteIndented = true,
-    NewLine = "\r\n"
+    NewLine = "\n"
 )]
 [JsonSerializable(typeof(MatrixJsonSchema))]
 [JsonSerializable(typeof(MatrixJsonSchemaBase))]

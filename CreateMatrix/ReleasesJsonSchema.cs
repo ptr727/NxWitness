@@ -153,7 +153,7 @@ internal class ReleasesJsonSchema
     ReadCommentHandling = JsonCommentHandling.Skip,
     UseStringEnumConverter = true,
     WriteIndented = true,
-    NewLine = "\r\n"
+    NewLine = "\n"
 )]
 [JsonSerializable(typeof(ReleasesJsonSchema))]
 internal partial class ReleasesJsonContext : JsonSerializerContext;

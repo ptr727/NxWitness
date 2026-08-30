@@ -189,8 +189,8 @@ Note: Code snippets are illustrative examples only. Replace namespaces/types to 
    - JSON files: 4 spaces
 
 5. **Line endings**
-   - C#, XML, YAML, JSON, Windows scripts: CRLF
-   - Linux scripts (`.sh`): LF
+   - Everything: LF, per `.editorconfig`'s `[*]` default
+   - Windows batch and command scripts (`.bat`, `.cmd`): CRLF, the one exception
 
 6. **`#region`**: Do not use regions. Prefer logical file/folder/namespace organization.
 7. **Member ordering (StyleCop SA1201)**: const -> static readonly -> static fields -> instance readonly fields -> instance fields -> constructors -> public (events -> properties -> indexers -> methods -> operators) -> non-public in same order -> nested types

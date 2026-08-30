@@ -141,8 +141,8 @@ Applies to code and workflow (`#`) comments alike.
 
 ### Line Endings
 
-- [`.editorconfig`](./.editorconfig) defines the correct ending per file type (CRLF for `.md`, `.cs`, XML/`.csproj`/`.props`, `.yml`/`.yaml`, `.json`, `.slnx`, `.cmd`/`.bat`/`.ps1`; LF for `.sh` and for workflow YAML under `.github/workflows/*.{yml,yaml}` - Dependabot and Actions rewrite workflow files with LF, so they are pinned LF while all other YAML stays CRLF, and CI's `editorconfig-checker` enforces it), and [`.gitattributes`](./.gitattributes) pins `Dockerfile`/`*.Dockerfile` and `*.sh` to LF (`text eol=lf`) and otherwise stops git from normalizing.
-- **Editing an existing file: preserve its current line endings** - do not reflow them as a side effect of a content change, even if the file is already non-compliant. After any programmatic edit, verify with `git diff --stat` (only changed lines) and `grep -c $'\r'` (CRLF count), since `file` does not report CRLF for JSON. Bring a non-compliant file to its `.editorconfig` ending only as a deliberate, isolated EOL-only change.
+- **LF is the default, and `*.bat`/`*.cmd` are the one exception.** [`.editorconfig`](./.editorconfig) sets `end_of_line = lf` on `[*]` and declares only the CRLF exception Windows requires, so shell scripts, Dockerfiles, workflow YAML and every extensionless executable get LF without a path-specific pin. [`.gitattributes`](./.gitattributes) mirrors those two defaults as git's normalization fallback (`* text=auto eol=lf`, `text=auto` leaving binaries byte-preserved), so git enforces on checkout and `--renormalize` what the editor is told to write. CI's `editorconfig-checker` verifies the committed bytes.
+- **Editing an existing file: do not reflow its endings as a side effect of a content change.** A tool that rewrites a file in text mode can silently flip endings and turn a one-line change into a whole-file diff. After any programmatic edit, verify with `git diff --stat` (only the lines you changed) and a byte check for `\r`, since `file` does not report CRLF for JSON. Bring a non-compliant file to LF as a deliberate, isolated EOL-only change.
 
 ### Quantitative Claims
 

@@ -78,15 +78,15 @@ internal static class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLineCrlf(CreateFrom(productType, lsio));
+        _ = stringBuilder.AppendLineLf(CreateFrom(productType, lsio));
 
         // Args
-        _ = stringBuilder.AppendLineCrlf(CreateArgs(productType, versionInfo, lsio));
+        _ = stringBuilder.AppendLineLf(CreateArgs(productType, versionInfo, lsio));
         // Install
-        _ = stringBuilder.AppendLineCrlf(CreateInstall(lsio));
+        _ = stringBuilder.AppendLineLf(CreateInstall(lsio));
 
         // Entrypoint
-        _ = stringBuilder.AppendLineCrlf(CreateEntrypoint(productType, lsio));
+        _ = stringBuilder.AppendLineLf(CreateEntrypoint(productType, lsio));
 
         return stringBuilder.ToString();
     }
