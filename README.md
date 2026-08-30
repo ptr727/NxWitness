@@ -615,10 +615,10 @@ In this example the `/test` volume was accepted, but all other volumes on `/dev/
 Add the required filesystem types in the [advanced configuration][advanced-configuration] menu.
 Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
-Alternatively call the configuration API directly. The mediaserver ships a self-signed certificate, so a client that verifies certificates rejects it until a trusted certificate is installed on the server:\
-`wget --ask-password --user=[username] --no-check-certificate https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`
+Alternatively call the configuration API directly:\
+`wget --ask-password --user=[username] --ca-certificate=[server-cert.pem] https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`
 
-`--ask-password` prompts rather than taking the password as an argument, which would otherwise put it in the shell history and in the process list. `--no-check-certificate` disables certificate verification for the request, so the credentials are exposed to anyone able to intercept the connection: run this only across a network you trust, and prefer installing a trusted certificate on the server over making it a habit.
+The mediaserver presents a self-signed certificate, which a client validating against the system trust store rejects. `--ca-certificate` trusts that one certificate rather than switching validation off, so export the server's certificate once and point at the file. `--ask-password` prompts instead of taking the password as an argument, which keeps it out of the shell history and the process list. Do not reach for `--no-check-certificate` here: it sends the credentials over a connection nobody has authenticated, which an active man-in-the-middle can capture.
 
 To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nxsupport-link] and ask them to stop filtering filesystem types and devices.
 
