@@ -52,7 +52,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.sha }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           # A new branch or non-push event has no usable before-commit (all-zeros or empty). Build everything.
           if [[ "$BEFORE" =~ ^0+$ || -z "$BEFORE" || "${{ github.event_name }}" != "push" ]]; then
             echo "image=true" >> "$GITHUB_OUTPUT"
@@ -121,7 +121,7 @@ jobs:
     steps:
       - name: Check workflow results step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           exit_on_result() {
             # Pass on success or skipped (smoke-build is skipped when no image files changed). Fail only on
             # failure/cancelled.

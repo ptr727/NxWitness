@@ -53,7 +53,7 @@ For comprehensive coding and formatting standards, follow:
 
 ### Workspace and linting
 
-- VS Code settings, extension recommendations, and spell-check words live in the workspace file `NxWitness.code-workspace`; add new editor settings or recommended extensions there rather than in `.vscode/`. (Build/debug tasks still live in `.vscode/tasks.json` and `.vscode/launch.json`.) Open the workspace file in VS Code (not the folder) so its settings and recommendations apply.
+- VS Code settings and extension recommendations live in the workspace file `NxWitness.code-workspace`; add new editor settings or recommended extensions there rather than in `.vscode/`. Spell-check words live in `cspell.json`, which is the single source of truth for the word list. (Build/debug tasks still live in `.vscode/tasks.json` and `.vscode/launch.json`.) Open the workspace file in VS Code (not the folder) so its settings and recommendations apply.
 - Linting is editor-only (no CI lint job); the extensions recommended in `NxWitness.code-workspace` cover the project's structured files: C# (Roslyn + CSharpier), Markdown, Dockerfiles/Compose, GitHub Actions workflows, and spelling. Lint changed files and clear reported problems before pushing.
 - For workflow files, the GitHub Actions extension covers schema/expression checks in-editor; run the `actionlint` CLI for deeper checks (including shellcheck on `run:` steps).
 

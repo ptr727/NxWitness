@@ -137,7 +137,7 @@ jobs:
         env:
           SEMVER2: ${{ needs.get-version.outputs.SemVer2 }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           CORE_AND_PRE="${SEMVER2%%+*}"   # drop +buildmetadata; a '-' here is the genuine prerelease separator
           if [[ "$CORE_AND_PRE" == *-* ]]; then
             echo "::error::Public (main) release version '$SEMVER2' carries a prerelease suffix; refusing to publish."
@@ -152,7 +152,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.get-version.outputs.SemVer2 }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -205,7 +205,7 @@ jobs:
       - name: Resolve repository list step
         id: list
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           # shellcheck disable=SC2016  # the jq program is a literal, not a shell expansion
           REPOS=$(jq --compact-output \
             '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique' \
