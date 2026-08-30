@@ -40,6 +40,12 @@ For comprehensive coding and formatting standards, follow:
   - `version --versionpath=./Make/Version.json`.
   - `matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion`.
   - `make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta`.
+- Tests run on the native Microsoft.Testing.Platform runner, opted into by `global.json`. Locally that is
+  plain `dotnet test`; CI adds coverage with
+  `dotnet test --coverage --coverage-output-format cobertura --results-directory ./coverage`, then prefixes
+  each report to `coverage-<guid>.cobertura.xml` so codecov-cli's file finder matches it. Running an
+  MTP-based test project through the VSTest target is what fails, so the old
+  `--collect:"XPlat Code Coverage"` form is an error here specifically because this project opted in.
 - Formatting and style checks are enforced by Husky.Net and VS Code tasks.
 - Required tasks are documented in `CODESTYLE.md` and `.husky/task-runner.json`.
 - C# code should be formatted with CSharpier, then verified with `dotnet format` (style).
