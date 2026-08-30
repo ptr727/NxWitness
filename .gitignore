@@ -8,3 +8,9 @@
 .artifacts
 .DS_Store
 *.user
+
+# Coverage output (dotnet Microsoft.Testing.Extensions.CodeCoverage)
+coverage/
+[Tt]est[Rr]esults/
+*.cobertura.xml
+*.coverage
