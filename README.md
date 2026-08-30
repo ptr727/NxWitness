@@ -467,7 +467,7 @@ services:
 - [`CreateMatrix`][create-matrix] is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`][version-json] is updated using the mediaserver [Releases JSON API][nxwitnessreleases-link] and [Packages API][packages-link].
 - The logic follows the same pattern as used by the [Nx Open][releaseinfo-link] desktop client logic.
-- The "released" status of a build follows the same method Nx uses in [`isBuildPublished()`][isbuildpublished-link]. Both `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`.
+- The "released" status of a build follows the same method Nx uses in [`isBuildPublished()`][isbuildpublished-link]. From the [Releases JSON API][nxwitnessreleases-link], `release_date` must be greater than `0` and `release_delivery_days` must be `0` or greater.
 - [`Matrix.json`][matrix-json] is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
 - Automated builds use [GitHub Actions][github-actions-docs-link]:
   - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json]. A version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
