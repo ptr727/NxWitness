@@ -473,7 +473,7 @@ services:
   - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json]. A version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
   - Publishing runs on one branch at a time ([`publish-release.yml`][publish-release-workflow]). The weekly schedule publishes `main`. A manual dispatch publishes whichever branch it is started from, which is how `develop` is published.
   - A push to `main` that changes [`Matrix.json`][matrix-json] also publishes `main`, but only when the codegen App or Dependabot made it. A push by a person does not publish.
-  - Any other merge to `main` or `develop` does not publish. The next scheduled run picks it up, or a dispatch for `develop`.
+  - Any other merge does not publish. A merge to `main` ships on the next weekly run, and a merge to `develop` ships only when someone dispatches the publisher from `develop`.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62][issue-62-link] for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
 **Local testing**:
