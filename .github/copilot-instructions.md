@@ -2,7 +2,7 @@
 
 Repository conventions for GitHub Copilot (and any other AI agent reading this file).
 
-The **entry point is [AGENTS.md](../AGENTS.md)** at the repo root - read it first for where each rule lives, then the section it names in [`GOVERNANCE.md`](../GOVERNANCE.md), including the [PR Review Etiquette](../GOVERNANCE.md#pr-review-etiquette) review-loop contract this file's runbook implements. This file is intentionally narrow: commit/PR-title conventions (summarized inline so VS Code's commit-message and PR-title generators have them) plus the GitHub Copilot Review Runbook.
+The **entry point is [AGENTS.md](../AGENTS.md)** at the repo root - read it first for where each rule lives, then the section it names in [`GOVERNANCE.md`](../GOVERNANCE.md), including the [PR Review Etiquette](../GOVERNANCE.md#pr-review-etiquette) review-loop contract this file's runbook implements. When performing code review, load and follow the `code-review` skill in [`.github/skills/code-review/SKILL.md`](./skills/code-review/SKILL.md), then load every language, documentation, or workflow skill that it selects for the changed files. GitHub Copilot reads these files from the pull request's head branch, so review the instructions in that tree. This file is intentionally narrow: commit/PR-title conventions (summarized inline so VS Code's commit-message and PR-title generators have them) plus the GitHub Copilot Review Runbook.
 
 For code-style rules, see [`CODESTYLE.md`](../CODESTYLE.md) at the repo root - one guide with a General section plus per-language sections (.NET).
 

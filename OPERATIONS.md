@@ -8,7 +8,7 @@ Verifying a change here is two things: running the gates, and then running by ha
 
 The gates are the .NET clean-compile (the `.NET Format` VS Code task, per [CODESTYLE.md](./CODESTYLE.md)), the unit tests, and the document linters. [GOVERNANCE.md "Running the Linters Locally"](./GOVERNANCE.md#running-the-linters-locally-known-working-invocations) carries the known-working invocation of each linter, and CI runs the same set in [validate-task.yml](./.github/workflows/validate-task.yml), so a local lint run buys an earlier failure rather than a different one. **Linting is not editor-only here**: `validate-task.yml` runs markdownlint, CSpell, `actionlint`, and `editorconfig-checker` alongside the Husky style checks and `dotnet test`, all inside the required check.
 
-**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset: NxMeta and NxMeta-LSIO, amd64 only, never pushed, and only when `Docker/**`, `Make/Matrix.json`, or `Make/Version.json` changed. Eight of the ten product images, the arm64 leg of every image, the base image push path, and a container that actually starts and serves its web UI are all unbuilt at merge time. The publish run is the first thing that builds them, and a workflow-only edit is deliberately not smoke-built at all. So a change to a Dockerfile, a build arg, a base image, or the generated matrix is verified locally with `Make/Create.sh` and `Make/Build.sh`, which build every product image for both `linux/amd64` and `linux/arm64`, and, when the change can affect a running server, with `Make/Test.sh` followed by `Make/Instructions.sh` to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
+**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset: NxMeta and NxMeta-LSIO, amd64 only, never pushed, and only when `Docker/**`, `Make/Matrix.json`, or `Make/Version.json` changed. Eight of the ten product images, the arm64 leg of every image, the base image push path, and a container that actually starts and serves its web UI are all unbuilt at merge time. The publish run is the first thing that builds them, and a workflow-only edit is deliberately not smoke-built at all. So a change to a Dockerfile, a build arg, a base image, or the generated matrix is verified locally by running `./Create.sh` and `./Build.sh` from inside `Make/`, which build every product image for both `linux/amd64` and `linux/arm64`, and, when the change can affect a running server, `./Test.sh` followed by `./Instructions.sh` there to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
 
 ## Runbooks
 
@@ -19,10 +19,10 @@ The primary developer entry points are the `CreateMatrix` CLI commands, invoked 
 ```sh
 dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- version --versionpath=./Make/Version.json
 dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
-dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker
 ```
 
-`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`.
+`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`. `--versionlabel` is left off so this matches what `Make/Create.sh` runs, which takes the `Latest` default; passing a different label selects different product versions and so generates different Dockerfiles.
 
 `Docker/` and the Compose files in `Make/` are generated output, so a change to the generator is committed together with its regenerated output.
 
