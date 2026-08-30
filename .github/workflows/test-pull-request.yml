@@ -30,6 +30,8 @@ jobs:
     name: Detect image changes job
     if: ${{ !github.event.deleted }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       image: ${{ steps.filter.outputs.image }}
       base: ${{ steps.filter.outputs.base }}
@@ -105,6 +107,8 @@ jobs:
   check-workflow-status:
     name: Check pull request workflow status job
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [changes, validate, smoke-build]
     if: ${{ always() && !github.event.deleted }}
     steps:
