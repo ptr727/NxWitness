@@ -21,6 +21,8 @@ jobs:
   validate:
     name: Validate job
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
 
@@ -37,7 +39,7 @@ jobs:
       # Husky runs the same CSharpier + dotnet format style checks the editor and the pre-commit hook run.
       - name: Check code style step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           dotnet tool restore
           dotnet husky install
           dotnet husky run

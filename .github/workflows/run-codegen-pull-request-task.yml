@@ -52,13 +52,13 @@ jobs:
 
       - name: Run codegen step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- \
             matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
 
       - name: Format code step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           dotnet tool restore
           dotnet husky install
           dotnet csharpier format --log-level=debug .

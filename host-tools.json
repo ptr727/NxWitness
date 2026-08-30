@@ -1,0 +1,4 @@
+{
+    "note": "This repository's own host-tool declaration, layered over the fleet declaration in the hub's spec/host-tools.json by scripts/host_gate.py. Layering is tighten-only: an entry here may add a tool, raise a floor, or turn an optional tool required, and may not lower a floor or turn a required tool optional, because that would retire a fleet check from inside the repository it protects. The tools list is empty because this repository needs no tool the fleet declaration does not already carry, and the file is still present rather than absent so the declaration is somewhere a reader can find rather than somewhere they have to know to look.",
+    "tools": []
+}
