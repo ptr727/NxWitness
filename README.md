@@ -484,7 +484,7 @@ services:
   - Camera recording license keys are activated and bound to hardware attributes of the host server collected by the `root-tool` that is required to run as `root`.
   - Requiring the `root-tool` to run as root overly complicates running the `mediaserver` as a non-root user, and requires the container to run using `host` networking to not break the hardware license checks.
   - Docker containers are supposed to be portable, and moving containers between hosts will break license activation.
-  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [disabled `root-tool` in late 2025][nxvms-docker-roottool-link] by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change - licensed deployments would lose activation - and will revisit only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
+  - Nx's own [`nxvms-docker`][nxgithubcompose-link] reference image [disabled `root-tool` in late 2025][nxvms-docker-roottool-link] by setting `ignoreRootTool=true` in `mediaserver.conf` and dropping their separate `root-tool` container. This trades hardware-ID license enforcement for a simpler unprivileged container. NxWitness does **not** follow this change, because licensed deployments would lose activation. This will be revisited only if Nx publishes a clearer official position on Docker licensing without `root-tool`.
   - Nx to fix: Associate licenses with the [Cloud Account][nxcloud-link] not the local hardware.
 - Storage Management:
   - The mediaserver attempts to automatically decide what storage to use.
