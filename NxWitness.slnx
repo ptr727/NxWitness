@@ -10,13 +10,6 @@
         <File Path=".github/workflows/test-pull-request.yml" />
         <File Path=".github/workflows/validate-task.yml" />
     </Folder>
-    <Folder Name="/Repo Config/">
-        <File Path="repo-config/README.md" />
-        <File Path="repo-config/configure.sh" />
-        <File Path="repo-config/ruleset-develop.json" />
-        <File Path="repo-config/ruleset-main.json" />
-        <File Path="repo-config/settings.json" />
-    </Folder>
     <Folder Name="/Solution Items/">
         <File Path=".dockerignore" />
         <File Path=".editorconfig" />

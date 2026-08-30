@@ -1,243 +1,113 @@
 # Instructions for AI Coding Agents
 
-This repository builds and publishes Docker images for Network Optix VMS products (Nx Witness, Nx Meta, Nx Go, DW Spectrum, Wisenet WAVE). It includes base images (nx-base, nx-base-lsio) and derived product images that use the base images, plus a .NET tooling project (`CreateMatrix`) that generates Dockerfiles and build matrices and scripts/templates for packaging. There is **no NuGet publish**: the .NET project is a build-time matrix generator only; the published artifacts are exclusively the Docker Hub images.
+**NxWitness** builds and publishes Docker images for the Network Optix family of VMS products: Nx Witness, Nx Meta, Nx Go, DW Spectrum, and Wisenet WAVE, each in a standard and a LinuxServer.io variant. The published artifacts are exclusively the Docker Hub images; the C# in this repo is a codegen tool that tracks upstream product versions and writes the Dockerfiles, Compose files, and build matrix, and it is never packaged or published.
 
-This file is the canonical reference for cross-cutting AI-agent rules. The CI/CD workflow contract and conventions live in [`WORKFLOW.md`](./WORKFLOW.md); the repository configuration-as-code (branch rulesets, settings, required secrets) lives in [`repo-config/`](./repo-config/); C# code-style conventions live in [`CODESTYLE.md`](./CODESTYLE.md). Copilot review *mechanics* are owned by [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) - this file delegates them there explicitly (see "PR Review Etiquette" below).
+This file is the entry point every coding agent reads first, and it holds only three things: the bootstrap that says where the canonical rules live and which procedure to follow for the state this repository is actually in, the rules for managing context and delegation, which apply to every task, and a map of where every other rule lives. The rule text itself is in [`GOVERNANCE.md`](./GOVERNANCE.md), one section per topic. Code style lives in [`CODESTYLE.md`](./CODESTYLE.md), the CI/CD workflow contract in [`WORKFLOW.md`](./WORKFLOW.md), this repository's own design in [`ARCHITECTURE.md`](./ARCHITECTURE.md), and how it is run, verified locally, and debugged in [`OPERATIONS.md`](./OPERATIONS.md). The table below maps a task to its rule section; a task about this repository's own design or operation goes to those two files instead.
 
-**Where rules live.** A durable project, code, or style rule belongs in this file (or `WORKFLOW.md` / `CODESTYLE.md` as appropriate), so it is versioned and read by every session and every agent. An agent's own session memory or scratch state is private and lost on restart, so it is never the system of record for a rule: when you learn or are corrected on a rule, write it into the right doc in the same change. Memory may also note it, but the committed docs are the source of truth.
+Treat this file and `GOVERNANCE.md` as authoritative for cross-cutting rules, and do not restate their rules elsewhere. This repository's project-specific conventions live in `ARCHITECTURE.md` and `OPERATIONS.md`, **not** in [`.github/copilot-instructions.md`](./.github/copilot-instructions.md), because that file targets GitHub Copilot / VS Code specifically, while this file and `GOVERNANCE.md` are the agent-agnostic ones every coding agent is directed to read, so any rule a reviewer must honor has to live in one of those two files to be provider-independent.
 
-For comprehensive coding and formatting standards, follow:
+## Fleet Bootstrap
 
-- `CODESTYLE.md`
-- `.editorconfig`
-- `.husky/task-runner.json`
-- `.vscode/tasks.json`
+This repository is governed by a shared template, and the canonical rules, machine-readable spec, and procedures live in `github.com/ptr727/ProjectTemplate`, the repository these rules call the hub. Fetch that repository before acting on anything about conformance, carried content, repository settings, or standing a repository up, because a carried copy here can be stale or absent and the hub is the only authority on what this repository is supposed to hold. This section is byte-locked across every repository in the fleet, so it reads identically wherever it is found, and it is the entry point whenever nothing else present says where the rules are.
 
-## Solution Structure
+Route by what this repository currently holds rather than by what it is expected to hold, since the two differ exactly when this section matters most.
 
-### Projects
-
-- `CreateMatrix/CreateMatrix.csproj`
-  - .NET 10 console app.
-  - Fetches product release metadata and generates build inputs such as Dockerfiles and matrix data used by CI.
-- `CreateMatrixTests/CreateMatrixTests.csproj`
-  - xUnit v3 test project with AwesomeAssertions.
-
-### Key Directories
-
-- `Docker/`
-  - Generated and static Dockerfiles for base images and product variants.
-- `Make/`
-  - Build orchestration scripts and test compose files.
-- `Unraid/`
-  - Unraid container templates.
-- `version.json`, `Make/Version.json`, `Make/Matrix.json`
-  - Version and matrix inputs consumed by the build pipeline.
-
-## Build and Validation Workflow
-
-- Primary developer entry points are the `CreateMatrix` CLI commands invoked directly or via the scripts in `Make/`:
-  - `version --versionpath=./Make/Version.json`.
-  - `matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion`.
-  - `make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta`.
-- Tests run on the native Microsoft.Testing.Platform runner, opted into by `global.json`. Locally that is
-  plain `dotnet test`; CI adds coverage with
-  `dotnet test --coverage --coverage-output-format cobertura --results-directory ./coverage`, then prefixes
-  each report to `coverage-<guid>.cobertura.xml` so codecov-cli's file finder matches it. Running an
-  MTP-based test project through the VSTest target is what fails, so the old
-  `--collect:"XPlat Code Coverage"` form is an error here specifically because this project opted in.
-- Formatting and style checks are enforced by Husky.Net and VS Code tasks.
-- Required tasks are documented in `CODESTYLE.md` and `.husky/task-runner.json`.
-- C# code should be formatted with CSharpier, then verified with `dotnet format` (style).
-- The `.NET Format` VS Code task in `.vscode/tasks.json` must be clean and warning-free at all times.
-
-### Workspace and linting
-
-- VS Code settings, extension recommendations, and spell-check words live in the workspace file `NxWitness.code-workspace`; add new editor settings or recommended extensions there rather than in `.vscode/`. (Build/debug tasks still live in `.vscode/tasks.json` and `.vscode/launch.json`.) Open the workspace file in VS Code (not the folder) so its settings and recommendations apply.
-- Linting is editor-only (no CI lint job); the extensions recommended in `NxWitness.code-workspace` cover the project's structured files: C# (Roslyn + CSharpier), Markdown, Dockerfiles/Compose, GitHub Actions workflows, and spelling. Lint changed files and clear reported problems before pushing.
-- For workflow files, the GitHub Actions extension covers schema/expression checks in-editor; run the `actionlint` CLI for deeper checks (including shellcheck on `run:` steps).
-
-## Image Architecture
-
-- Base images (`nx-base`, `nx-base-lsio`) are built and pushed, then reused as `FROM` images for derived product Dockerfiles.
-- Derived product images should stay aligned with the base image changes and tags (for example, the Ubuntu distro tag).
-
-## CI Pipeline (GitHub Actions)
-
-The full CI/CD contract - triggers, jobs, the one-branch publish model, versioning, and the multi-image build layer - is specified in [`WORKFLOW.md`](./WORKFLOW.md), the canonical guide. The summary below is a pointer; do not duplicate those rules.
-
-- CI runs on **push to every branch** (`test-pull-request.yml`): it validates (`validate-task.yml`: Husky lint + `dotnet test`) on every push, and runs a fast smoke build (`build-docker-task.yml` with `smoke: true` - NxMeta + NxMeta-LSIO, amd64, no push) only when image files (`Docker/**`, `Make/Matrix.json`, `Make/Version.json`) change, via an inline `git diff` change-gate. One aggregator job, `Check pull request workflow status job`, is the ruleset-bound required check.
-- Publishing is **triggered-Docker, one branch per run** (`publish-release.yml`): triggers are the weekly schedule (rebuilds `main` only), a path-scoped push to `main` on `Make/Matrix.json` (publishes a new codegen product pin at once), and manual dispatch (publishes the started-from branch). One run computes the version once (`get-version-task.yml`), builds the shared base once (main only; develop reuses it with `build_base: false`), builds the full product matrix from `Make/Matrix.json`, and on `main` cuts the GitHub release and pushes the Docker Hub overviews.
-- Merges to `main`/`develop` do not build or publish images by themselves; only the matrix-pin push (main), a schedule, or a dispatch publishes. Auto-merged Dependabot and codegen PRs land commits the next publish picks up. Do not reintroduce a two-branch publish matrix, a nested `get-version` in the build task, the date-badge or standalone docker-readme workflows, or `dorny/paths-filter`.
-- Lint workflow edits before pushing (see [Workspace and linting](#workspace-and-linting)); `validate-task.yml` runs the unit tests + Husky style checks in CI.
-
-## Versioning
-
-The `version` (major.minor) in [version.json](./version.json) is the NBGV version floor; NBGV appends the git height. **`develop` leads `main` by a minor:** after a `develop -> main` release lands and main's publish completes, bump the minor in `version.json` on `develop` in an isolated `bump-version-X.Y` PR (X.Y = the new minor), so develop's NBGV prerelease version stays numerically above main's last stable. A **maintenance** `develop -> main` promotion (dependency bumps, CI/doc fixes, template re-syncs) holds main's version - `git checkout main -- version.json` on the promotion branch - so `main` advances only its NBGV height, not its minor. (NBGV's version is the GitHub release tag on `main` and the `LABEL_VERSION` build arg baked into the images; the Docker image *tags* carry the Nx product version from `Make/Matrix.json` - see [CI Pipeline](#ci-pipeline-github-actions).)
-
-- A significant one-time overhaul of the build/release process (such as the branch-scoped CI/CD migration) is a deliberate maintainer-directed floor bump in the PR that introduces it, distinct from the routine cadence above; routine dependency, CI/workflow, and doc edits leave `version.json` untouched.
-- **`dotnet/nbgv` is consumed via `@master`, never SHA-pinned.** Its tag stream lags `master` such that Dependabot tag-tracking would only propose downgrades to stale tags; this is the sole [`WORKFLOW.md`](./WORKFLOW.md) D9.1 action-pinning exception (rationale inline in `get-version-task.yml`). Do not SHA-pin it.
-
-## Git and Commit Rules
-
-- **Default to staging, not committing.** Stage changes with `git add` and leave `git commit` to the developer unless the developer has explicitly authorized the agent to commit for the current ask ("commit this", "open a PR", etc.). Authorization is scope-bound - it covers the commits needed for that specific task, not a blanket commit license for the rest of the session.
-- **All commits must be cryptographically signed (SSH or GPG).** Branch protection enforces this on both branches; unsigned commits are rejected on push. Signing depends on environment configuration - `git config commit.gpgsign true`, a configured `user.signingkey`, and a working signing agent (loaded `ssh-agent` for SSH, or `gpg-agent` for GPG). If signing is not configured in the environment, **do not commit** - surface the missing config to the developer and stop at `git add`. Verify before any agent-authored commit (`git config --get commit.gpgsign && ssh-add -L` or the GPG equivalent). **Signing must be live before the *first* commit, not retrofitted.** Turning on `Require signed commits` against a branch that already has unsigned commits forces a rewrite of that entire history to re-sign it - changing every commit SHA and making whoever does the rewrite the committer and signer of every commit (a rebase preserves the `author` field but not the original signatures; you cannot sign another contributor's commits for them). During new-repo setup, never create commits until signing is verified.
-- **Commit under the committing account's own GitHub `noreply` identity - never a private, personal, or invented address.** The `author` and `committer` on every agent-authored commit are the GitHub `noreply` address of the account whose key signs the commit (above) - GitHub issues these in a `username@users.noreply.github.com` or `ID+username@users.noreply.github.com` form, and for this single-maintainer fleet it is the owner's `ptr727@users.noreply.github.com`. Do not set `user.name`/`user.email` to a fabricated persona, bot name, or product name, and do not commit under whatever identity the environment happens to carry: verify `git config --get user.email` is that GitHub `noreply` address before committing, and fix it if not. A wrong identity is not cosmetic - a private email trips GitHub's email-privacy push protection (GH007), and an unrecognized or invented author pollutes history. Identity is separate from signing: a wrong author does not by itself fail the signature rule, but the ad-hoc identities that produce it are typically also unsigned, which the signing rule above then rejects on push.
-- **Never force push.** Do not run `git push --force` or `git push --force-with-lease` under any circumstances. Force pushing rewrites shared history and can cause data loss.
-- **Never run destructive git commands** (`git reset --hard`, `git checkout .`, `git restore .`, `git clean -f`) without explicit developer instruction.
-- **Mirror to `develop` any change that lands on `main` outside the feature -> develop -> main flow.** A reconciliation-branch fix made to resolve a `develop -> main` promotion conflict, or a security PR that merges only to `main`, leaves `develop` behind on that content - and forward-only `develop` never back-merges to catch up (the same parallel-target principle as the bots). Before basing new work on `develop`, or diagnosing a defect from it, check `git diff origin/develop origin/main`: a non-empty content diff means develop is stale and the defect may already be fixed on `main`.
-- **Put issue-closing keywords (`Closes #N`) in the `develop -> main` promotion PR, not the feature or develop PR.** GitHub auto-closes an issue only from the PR (or commit) that merges to the default branch (`main`); a `Closes #N` that merges only to `develop` does not fire on promotion and leaves the issue open. Tag the promotion PR's description, or close the issue manually once the fix reaches `main`.
-
-## Pull Request Title and Commit Message Conventions
-
-### Format
-
-- Imperative subject summarizing the change, <=72 characters, no trailing period. ("Add 24-hour PM2.5 average sensor", not "Added X" or "Adds X".)
-- Optional body, blank-line separated, explaining *why* the change is being made when that's non-obvious. The diff shows *what*.
-
-### Rules
-
-- Don't write `update stuff`, `wip`, or other vague titles. (Dependabot's default `Bump X from Y to Z` titles are fine - keep them.)
-- Don't add `Co-Authored-By:` lines unless the developer explicitly asks.
-- Don't put release-bump magnitude in the title - no "minor", "patch", "release v0.2.0", etc. Nerdbank.GitVersioning computes the next release version from `version.json` + git history. Dependency versions in dependency-bump titles are fine and expected.
-- Use US English spelling and match the existing heading style of the file you're editing: title case with lowercase short bind words (a, an, the, and, but, or, of, in, on, at, to, by, for, from); hyphenated compounds capitalize both parts unless the second is a short preposition (*Built-in*, *EPA-Corrected*, *24-Hour*).
-
-### Examples
-
-```text
-Add structured logging extensions to library
-Pin softprops/action-gh-release to commit SHA
-Drop net8.0 multi-targeting from console project
-Bump xunit.v3 from 3.2.2 to 3.3.0
-Clarify devcontainer setup steps in README
+```mermaid
+flowchart TD
+  state["what does this repository currently hold?"]
+  state -->|"no repo, or a local tree with no remote"| standup["hub STANDUP.md, from section 0"]
+  state -->|"no carried instruction set, or a partial one"| standup2["hub STANDUP.md sections 1A, 2"]
+  state -->|"instruction set present, current or stale"| resync["hub RESYNC.md"]
+  state -->|"believes it is conformant"| resync2["hub RESYNC.md, run the audit anyway"]
 ```
 
-## Documentation Style Conventions
+- **No repository yet, or a local tree with no remote.** Follow the hub's `STANDUP.md` from section 0. That file is hub-only and deliberately not carried, because a repository needing it cannot be relied on to hold a current copy. Note that nothing in it creates the GitHub repository, which is an outward-facing write requiring explicit permission, so section 0A is the list handed to the maintainer before anything else starts.
+- **A repository with no carried instruction set, or a partial one.** Carry the baseline per the hub's `STANDUP.md` sections 1A and 2, which resolve what this repository is owed from its declared types and workflow model. Absent files are not drift to re-vendor, they are a baseline that never arrived, and the two are fixed differently.
+- **A repository with the instruction set, current or stale.** Follow the hub's `RESYNC.md`, which runs `AUDIT.md` end to end for the findings and then applies each one in an order that matters, since the rules govern what comes after them, a deletion must precede the re-vendor that would otherwise refresh the file, and only some findings are mechanically detectable at all. An audit that reports drift and stops is half the procedure.
+- **A repository that believes it is conformant.** Run the audit anyway and commit the report, because conformance asserted without a report is conformance nobody can check. This is the same procedure as the case above and is listed separately only because it is the one most often skipped.
 
-### Markdown
+Three rules bound every path above. **Read the hub's `main` branch as ground truth**, since that is the promoted and gated state, and read `develop` only to detect divergence. **Reach the hub as a checkout of your own and fetch it immediately before reading it**, because a clone is whatever it last fetched rather than the branch it names, and work only in that checkout rather than in one that another task is using, per [`GOVERNANCE.md`](./GOVERNANCE.md) "Repository Boundaries and Write Safety" and "Hub-Hosted Tooling". And **the audit is read-only**: it produces a report and never edits the repository it measures, so a fix is a separate, reviewable change.
 
-- Use reference-style links for any URL referenced more than once or appearing in lists; alphabetize the reference definitions block.
-- Inline single-use relative links (e.g. `[CODESTYLE.md](./CODESTYLE.md)`) are fine.
-- One logical paragraph per line; no hard-wrap line-length limit. For an intentional hard line break within a block - stacked badges, status, or license lines - end the line with a trailing backslash (`\`); this explicit form is preferred over trailing whitespace and is not treated as a paragraph split.
-- Headings follow the title-case-with-short-bind-words rule from the PR-title section.
-- **Write docs in the current state, not as a change from a prior one.** The reader has no memory of the previous behavior, so describe what *is*: "X does Y", never "X *now* does Y", "X *no longer* does Z", or "changed/switched/restored to Y". Before/after framing belongs in changelogs, commit messages, and PR descriptions - not in `README.md` or other living docs.
+## Context and Delegation Discipline
 
-### Comments
+An agent session is billed on the context it carries, not the work it does. Every request re-reads the whole accumulated context, so a token added early is paid for again on every request that follows, and a long session bills its last task for every earlier one. These are cost rules. None of them licenses doing less work, skipping verification, or shipping something unreviewed.
 
-Applies to code and workflow (`#`) comments alike.
+### Session Scope
 
-- Comment only when the code is non-obvious or important. Self-evident code needs no comment.
-- Judge "obvious" in context, not line by line. A note that reads as redundant on its own line can be essential in the larger flow - a comment marking a workflow step's exit condition, for example, even though the line itself plainly does a `return` or `exit`.
-- State the non-obvious *why*, not what the code already shows. No cross-project references (do not name other repos), no historic or design narrative, no rule citations - governance lives in this file, not echoed inline.
-- **One line if it fits in ~120 columns.** Do not wrap a comment at 75-80 columns; a short two-line comment that would fit on one line looks sloppy - collapse it. Go multi-line only when the content genuinely exceeds ~120, filling each line rather than narrow-wrapping. For a multi-point comment, prefer short structured lines or `-` bullets over one prose paragraph.
-- **Workflows: prefer one short summary description at the top of the file** over scattering rationale across steps; comment an individual step only when its purpose is non-obvious.
-- **Do not accumulate comments.** When you change code or a comment, rewrite the whole comment fresh; never bolt a new comment onto an existing one or layer explanations across edits. Comment volume should stay flat or shrink over time, not grow.
-- **Leave human-authored comments and emojis exactly as written** - do not reword, trim, reflow, or "clean" them, even if they seem to bend a rule. Revise only agent-authored comments, and match the surrounding voice when you do.
+- **One deliverable, one session.** A session covers one branch and one deliverable, and ends when that work merges. A multi-step task is one deliverable and stays in one session. Two unrelated tasks are two sessions even when they run back to back.
+- **End a session at any of these, without being asked:** the branch changes, the pull request merges, or the next task is unrelated to the last. A review round is none of them. A loop still producing findings is the deliverable in progress, and a round count is not a reason to leave one open.
+- **Hand off in a file, never in context.** Close a session by writing at most 2 KB to a scratch file: branch, pull request link, what is done, the next command. A summary held in context is re-billed until the session ends, and a summary on disk is read once by whoever needs it.
+- **Re-derive state, do not carry it.** "This session already has the context" is the signal to split, not to continue. Context that has gone stale is worse than absent, because a file read hundreds of requests ago no longer describes the file.
+- **Compaction is a fallback, not the strategy.** It restarts context from a floor and climbs again, where a fresh session starts from zero.
 
-### Character Set
+### Reading
 
-- **Write ASCII in all agent-authored text** - documentation, code, comments, commit messages, and PR descriptions. The agent does not introduce non-ASCII characters. Replace typographic Unicode with its ASCII equivalent on sight:
-  - em dash (U+2014) and en dash (U+2013) -> hyphen `-` (use a spaced ` - ` for an em-dash-style clause break)
-  - right arrow (U+2192) -> `->`; double arrow (U+21D2) -> `=>`
-  - less-than-or-equal (U+2264) -> `<=`; greater-than-or-equal (U+2265) -> `>=`
-  - curly quotes (U+2018/U+2019/U+201C/U+201D) -> straight `'` and `"`; ellipsis (U+2026) -> `...`
-- **Allowed non-ASCII (two narrow exceptions):**
-  - **Scientific or technical symbols with no clean ASCII equivalent** - e.g. ohm, micro, degree, pi. Keep the symbol; do not approximate it away.
-  - **Unicode the developer deliberately typed** - emoji used for emphasis or as callout markers (for example the warning/info markers a maintainer placed in `README.md`). Preserve it; never strip the developer's own characters. This carve-out is for developer-authored text, not a license for the agent to add emoji.
+- **Map a large file, then read one range.** For anything over about 200 lines, list the headings with `grep -n '^## '` first and read only the range the task needs. Read the section, not the file that contains it.
+- **Prefer an in-place edit to a whole-file rewrite.** Rewriting a file bills its full content again on top of what the read already cost.
 
-### Line Endings
+### Commands
 
-- **LF is the default, and `*.bat`/`*.cmd` are the one exception.** [`.editorconfig`](./.editorconfig) sets `end_of_line = lf` on `[*]` and declares only the CRLF exception Windows requires, so shell scripts, Dockerfiles, workflow YAML and every extensionless executable get LF without a path-specific pin. [`.gitattributes`](./.gitattributes) mirrors those two defaults as git's normalization fallback (`* text=auto eol=lf`, `text=auto` leaving binaries byte-preserved), so git enforces on checkout and `--renormalize` what the editor is told to write. CI's `editorconfig-checker` verifies the committed bytes.
-- **Editing an existing file: do not reflow its endings as a side effect of a content change.** A tool that rewrites a file in text mode can silently flip endings and turn a one-line change into a whole-file diff. After any programmatic edit, verify with `git diff --stat` (only the lines you changed) and a byte check for `\r`, since `file` does not report CRLF for JSON. Bring a non-compliant file to LF as a deliberate, isolated EOL-only change.
+- **Bound output at the source.** Write every command so its output is the answer, not the haystack: a `--jq` projection on an API call, a count or files-only flag on a search, a summary flag on a diff, an explicit cap on anything unbounded. A command whose output you then skim is a command that should have been narrower.
+- **Keep a long query in a file, not in the command.** A heredoc re-typed on every call costs its own length in context each time, often more than the answer it retrieves.
+- **Keep generated caches outside the checkout when the executor restricts writes.** Give each task a cache directory under a writable temporary root. Point tools such as uv and ruff there through their own cache variables. Never repurpose `HOME` or an agent's configuration directory to make a tool run.
+- **Report an execution boundary separately from a check finding.** A denied path, network request, or Docker socket says the check did not run. Preserve that failure, then use the executor's approval mechanism for the required rerun. Request the narrowest reusable command prefix the executor supports. Report the rerun's result as the verification evidence.
 
-### Quantitative Claims
+### Delegation
 
-- Any quantitative claim in `README.md` (counts, sizes, version floors, supported products) must be verified against current code/config. If a doc number is derived from a code or matrix constant, mark the dependency in a source-code comment so the next editor knows to update both.
+- **Delegate exploration, keep judgment.** A subagent starts from an empty context and returns only its conclusion, so a wide search, a multi-file audit, or a "which of these is affected" question costs a fraction of the same work inline. Delegate when the finding compresses to a short answer, and stay inline when the intermediate detail drives the next edit.
+- **Match the model tier to the judgment, not to the diff size.** Mechanical work (a known-shape edit repeated across files, an extraction, a status check, a lint fix) runs on the cheapest model that does it correctly, at the lowest reasoning effort that holds. State the tier in the delegation itself rather than accepting the default. A change to a gate, a ruleset, a release condition, or a carried governance section is a design change however small it looks.
+- **Never tier down the seat holding the judgment.** Governance wording, spec logic, rulesets, repository visibility, and the decision to decline a review finding are fleet-wide and durable when wrong. Tier the subagents, not the main thread.
+- **Brief a subagent so it never needs a governance file.** A subagent inherits no context, so anything it must honor has to be in its prompt. Reading `GOVERNANCE.md` to find out costs it the same tokens the main thread would have paid. Brief on this shape:
 
-## PR Review Etiquette
+```text
+Task: <the one question or edit, stated so the answer compresses>
+Paths: <exact files or globs - never "find the relevant files">
+Rules that bind this task: <the specific rules, quoted, not a pointer to a doc>
+Return: <the shape of the answer - a list, a diff, a yes/no with evidence>
+Bounds: <what not to touch, and what to do when a rule looks incomplete>
+If a rule you were given does not cover what you find, stop and report it. Do not guess, and do not read a governance file to resolve it.
+```
 
-> **Mandatory in every derived repo.** This entire "PR Review Etiquette" section is the provider-agnostic review-loop *contract* and must be carried **verbatim** into every repo derived from this template, alongside the [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) "GitHub Copilot Review Runbook" that implements it. Without both in-repo, an agent working in the derived repo has no pointer to the reliable Copilot mechanics and falls back to ad-hoc (and known-broken) behavior.
+- **Wait in a background process, not in a poll loop.** A review or CI wait is a sequence of near-identical requests, each billed for whatever context it happens to carry. Run the wait as one backgrounded command that returns when the condition is met.
+- **A wait separates three outcomes, and says which one it reached.** The condition was met, it has not been met yet, and the wait cannot reach it at all are three different results, and a backgrounded wait that emits nothing renders all three identically. Run the command once in the foreground and read its output before backgrounding it, because a wait is only as good as the command inside it, and an unsupported flag on the installed tool version exits non-zero with an empty stdout that every naive test reads as "nothing yet". Never let a fallback stand in for a failed command, since `|| echo '[]'`, `|| true`, and `2>/dev/null` convert an error into that same reading, which is the suppression the write-safety rules already forbid on a mutation. Make the wait emit on failure as loudly as on success, so silence means "still running" and nothing else, and bound it, so a condition that is never coming ends in a report rather than in another wait.
 
-The repo runs a review loop on every PR: local agent iteration plus remote automated review (GitHub Copilot is the configured reviewer). Treat this as a contract regardless of which local agent authored the changes.
+## Where the Rules Live
 
-### Merge Gate (read this first)
+Every rule below is a level-two section of [`GOVERNANCE.md`](./GOVERNANCE.md). Read the section the task needs.
 
-**Do not merge - and do not enable auto-merge - unless ALL of these hold:**
+| Working on | Section |
+| --- | --- |
+| Why the rules are shaped this way | `Foundational Principles` |
+| Recording a durable lesson or updating governance | `Durable Knowledge and Self-Improvement`, surfaced at its decision moment by the `agent-conduct` Skill, and the section keeps the full rules |
+| Any push, API mutation, comment, label, or merge, or which checkout the work happens in | `Repository Boundaries and Write Safety`, its task-isolation rule surfaced at the task-start moment by the `repo-worktree` Skill, and the section keeps the full rules |
+| Quoting data into a comment, commit, test, or doc | `Representative Data in Agent-Authored Text` |
+| Committing, signing, rebasing, force-pushing | `Git and Commit Rules`, packaged as the `git-commit-conventions` Skill |
+| Branch choice, promotion, keeping branches in sync | `Branching Model`, packaged as the `operational-vs-release-workflow` Skill |
+| Releasing, version bumps, publishing | `Release Model`, packaged as the `operational-vs-release-workflow` Skill |
+| A live config repo rather than a code repo | `Operational Repositories`, packaged as the `operational-vs-release-workflow` Skill |
+| Onboarding a repo or running a conformance sweep | `Repository Onboarding and Conformance` (hub only, not carried). Standing up a new repo from a hub checkout is packaged as the `standup-a-repo` Skill, resyncing one already stood up the same way is `resync-a-repo`, and measuring a named repo against the fleet ground truth per `AUDIT.md` is `audit-a-repo`, all hub-context only |
+| Running a fleet gate, the review digest, or the config script | `Hub-Hosted Tooling` |
+| Running a lint or format check locally, or a lint tool missing from `command -v` | `Running the Linters Locally (Known-Working Invocations)` |
+| Running a test locally, or a test runner missing or failing to spawn | `Verification Discipline` |
+| Writing a commit message or pull request title | `Pull Request Title and Commit Message Conventions`, packaged as the `comment-and-doc-style` Skill |
+| Any prose, comment, doc, or line-ending change | `Documentation Style Conventions`, packaged as the `comment-and-doc-style` Skill |
+| Proving work actually happened | `Verification Discipline`, surfaced at its decision moment by the `agent-conduct` Skill, and the section keeps the full rules |
+| Opening a pull request, or requesting, monitoring, answering, or closing a review | `PR Review Etiquette`, packaged as the `pr-review-conduct` Skill |
+| Reviewing a pull request, patch, or change set | `code-review`, which routes to the applicable general, language, documentation, and workflow skills |
+| Reporting progress or asking the user something | `Communicating with the User`, surfaced at its decision moment by the `agent-conduct` Skill, and the section keeps the full rules |
+| Editing a workflow YAML file | `Workflow YAML Conventions`, surfaced with the full `WORKFLOW.md` contract by the `workflow-ci-contract` Skill, and this section and `WORKFLOW.md` keep the full rules |
+| Choosing an OS, runtime, or toolchain target | `Supported Development Platforms` |
+| The devcontainer | `Devcontainer` |
+| Editor settings and tasks | `Editor and Tasks` |
+| The About panel, description, or repo toggles | `Repository Details` |
+| Where a file belongs in the tree | `Repository Layout` |
 
-1. Required status checks are green (`mergeStateStatus: CLEAN`), **and**
-2. A Copilot review is confirmed on the **current head SHA** (not an earlier push), **and**
-3. **Every** Copilot finding on that head SHA is closed out - all review threads resolved, **and** any issue-level Copilot comments (which have no resolve action) triaged and replied to - so zero outstanding findings remain, **and**
-4. The maintainer has given **explicit** permission to merge.
+A row above with no Skill annotation is doc-only by decision, not by omission. A Skill surfaces rules at a trigger moment, and each unannotated section either binds always or carries no moment narrower than reading it: `Foundational Principles` is rationale read once rather than a procedure, `Repository Boundaries and Write Safety` and `Representative Data in Agent-Authored Text` are always-on law that must bind even when no Skill fires (the `gh-write-guard` hook and the host-wide instruction blocks the agent-safety installer maintains are their enforcement layer, and the one moment in the boundaries section narrow enough to surface, isolating into a worktree at task start, gets the `repo-worktree` Skill on top of that law rather than instead of it), and `Hub-Hosted Tooling`, `Supported Development Platforms`, `Devcontainer`, `Editor and Tasks`, `Repository Details`, and `Repository Layout` are short reference sections a task reads at the moment it touches their subject, each already routed to by the procedures and Skills that need it.
 
-`mergeStateStatus: CLEAN` reflects **only** required statuses - it never reflects open bot review comments, so `CLEAN` alone is **never** sufficient to merge. A green/`CLEAN` PR with an unresolved Copilot finding fails this gate; treat it as "not mergeable" no matter what the merge-state field says. The agent never merges on its own (consistent with "default to staging"; merging is maintainer-authorized).
+Some of the rules above are also packaged as Claude Code / opencode / Codex Skills, hand-authored at `.agents/skills/` in the hub (not a repo-relative link here, since that path is hub-local and not carried into every fleet repo), so they surface automatically instead of needing to be re-read every session. `scripts/` is hub-hosted and reached rather than carried, per "Hub-Hosted Tooling", so run the installer from a hub checkout: `python3 scripts/skills_install.py` (or the `.sh`/`.ps1` wrapper) once per machine, from `github.com/ptr727/ProjectTemplate`, installs them for every repo touched from that machine. `python3 scripts/skills_install.py --report`, also from a hub checkout, says whether this machine is current. A rule that keeps needing to be restated is a sign the install is missing or stale, not that the rule does not exist. Keeping a repo's own carried `.github/copilot-instructions.md` in sync with the hub, without losing that repo's own "Disproved Claims" ledger entries in the process, is `copilot-instructions-keeper`, a skill about maintaining that file rather than a rule extracted from it, since the file itself is read directly by the Copilot bot and stays fully intact everywhere it is carried. Checking, from inside this repo's own session with no operator watching, whether this repo and this machine are actually current against the hub is `fleet-conformance-check`, new content rather than a rule extracted from a section, the counterpart to `resync-a-repo` that needs no standing hub checkout or named target beyond the repo the session is already in, even though its own check fetches a hub checkout to reach `scripts/skills_install.py`. Opening a pull request against a repository outside this fleet, one the maintainer does not control, follows a different workflow entirely, new content rather than a rule extracted from a section, packaged as `upstream-contribution-workflow` and independent of the target repo's own type or workflow model. Isolating a task into its own worktree before its first file edit, with the base-branch choice, the layout convention, and the cleanup mechanics, is `repo-worktree`, the task-start surface of the `Repository Boundaries and Write Safety` law, which keeps the rule. Creating, changing, or retiring one of these skills is itself packaged as `skill-lifecycle`, hub-context only, since `.agents/skills/` exists only in the hub and the generated plugin tree is never hand-edited.
 
-**Merging is not releasing.** A merge to a release branch does **not** by itself publish; publishing is a separate, explicitly configured step in the repo's release pipeline (e.g. a scheduled run, a manual dispatch, or an opted-in publish-on-merge trigger), not an automatic consequence of merging. Never describe a merge as cutting a release, and never trigger a publish without explicit maintainer instruction.
+Adding or changing a managed host tool is packaged as `add-host-tool`. It keeps the cross-platform contract, installer, documentation, test, and native-verification surfaces together.
 
-### Expected Review Loop
+Driving a pull request through its review loop, from a feature branch into `develop` and, when asked, on to a mergeable `develop -> main` promotion PR, disposing of every reviewer finding along the way per `pr-review-conduct`, is packaged as `drive-pr`, new content rather than a rule extracted from a section. Merging a ready promotion PR and dispatching the release it unblocks, refreshing this machine's installed Skills first when the repo is this hub, is `merge-and-release`, its own new-content package, invoked separately from `drive-pr` so the promotion merge and the release dispatch each keep their own explicit go-ahead.
 
-1. Push changes to the PR branch.
-2. Re-request a review for the **current head SHA**. Auto-trigger is unreliable, so request it explicitly via the `requestReviews` GraphQL mutation (now reliable end-to-end - see the runbook); the UI is only a fallback.
-3. Wait for review activity on that head. A completed review that raises **no findings** is a valid terminal outcome for that head - proceed; do not re-trigger it or treat the absence of comments as a missing review.
-4. Triage findings.
-5. Apply fixes or write a rationale for declines.
-6. Reply to each thread and resolve what was addressed.
-7. Re-run the loop after every fix push until no actionable findings remain.
-
-Drive the loop to green - review confirmed on the latest head SHA and every actionable finding closed - then stop and apply the **Merge Gate** above: all four preconditions must hold, and `mergeStateStatus: CLEAN` alone never satisfies it.
-
-For provider-specific mechanics (how to request review, query review state, post replies, resolve threads), see the **GitHub Copilot Review Runbook** in [.github/copilot-instructions.md](./.github/copilot-instructions.md). This file owns the contract; that file owns the mechanics.
-
-### Triaging Review Comments
-
-For each comment, classify before responding:
-
-- **Bug** - wrong behavior, missing test coverage, or a real divergence between code and docs. Fix it. Reply with the fixing commit SHA when done.
-- **Style/convention** - the comment cites a rule from this file or a language-specific style guide. Two cases:
-  - The cited rule matches what the existing codebase already does -> fix the offending code.
-  - The cited rule contradicts what's in the tree, or industry norm -> **update the rule instead of the code**. The rule is wrong, not the code. Bouncing the same code across rounds is the symptom of a wrong rule. Heuristic: three rounds on the same style category means the rule needs adjusting and the user should authorize the rule change.
-- **Architectural opinion** - the comment proposes a different design ("constrain this to disabled-by-default", "move it elsewhere", "add a runtime guardrail"). This is judgment, not a bug. Surface it to the user with a recommendation; don't apply unilaterally.
-
-### Responding and Resolution Expectations
-
-Reply inline with either the fixing commit SHA (for accepted issues) or a concise rationale (for declines). Resolve review threads when addressed or intentionally declined with rationale. Issue-level comments (those at `repos/.../issues/<N>/comments` rather than tied to a specific line) have no resolution action - acknowledge with a reply if needed and move on.
-
-After the final push on a PR, sweep older threads from earlier rounds whose code paths no longer exist; otherwise stale unresolved markers remain in the review UI.
-
-### Escalating to the User
-
-Bring the user in when:
-
-- **Genuine design trade-off** surfaces (fail-open vs fail-closed, narrow vs broad refactor scope, "should we add a guardrail or trust the docstring"). Triage, recommend, ask.
-- **Repeated friction** across rounds without convergence - that's the rule-needs-updating signal. Stop, summarize the pattern, and let the user authorize the rule change.
-- **Architectural redesign** is requested rather than a bug fix. Surface with a recommendation; never apply unilaterally.
-
-Anti-pattern: don't keep flipping the code on the same style point. Flip the rule once and stick to the rule.
-
-## Coding Conventions (Highlights)
-
-- Do not use `var`; use explicit types.
-- File-scoped namespaces, Allman braces, and modern C# features are preferred.
-- No `#region` usage.
-- UTF-8 encoding without BOM.
-- Respect line ending rules in `.editorconfig`.
-
-## Notes for Changes
-
-- When modifying Dockerfiles or build scripts, ensure generated outputs stay in sync with `CreateMatrix` behavior.
-- Keep base image definitions and derived image Dockerfiles aligned, since derived images build on the base images.
-- Keep `README.md` and release documentation aligned with build outputs and product variants.
-
-## Template adaptations
-
-This repo derives its CI and conventions from [ptr727/ProjectTemplate](https://github.com/ptr727/ProjectTemplate). Carried artifacts are taken by full-file replacement; the deliberate deviations below are documented so they are not mistaken for drift.
-
-- **Triggered-Docker publisher, one branch per run.** `publish-release.yml` is `workflow_dispatch` + weekly `schedule` (main only) + a path-scoped `push` to `main` on `Make/Matrix.json` (publishes a new codegen product pin at once). It builds exactly one branch - the trigger ref (`github.ref_name`) - so NBGV classifies natively with no cross-branch leg and no `IGNORE_GITHUB_REF`. The jobs are a single `get-version` -> `build-base` (main only) -> `build-docker` -> `github-release` (main only) -> `docker-readme` (main only) -> `cleanup-artifacts` chain. A develop dispatch refreshes the `:develop` images only (no GitHub release); the earlier two-leg `build-main` / `build-develop` combined run is removed.
-- **Multi-image, shared-base build layer.** This is a multi-image Docker product: the shared `nx-base` / `nx-base-lsio` images are built once on the `main` run and reused by a develop dispatch (`build_base: false`, so it never overwrites the branch-agnostic `nx-base` tag), and `build-docker-task.yml` builds every product image (NxMeta, DWSpectrum, NxGo, WisenetWAVE, ...) from `Make/Matrix.json` (`max-parallel: 4`). The template's single-target branch matrix cannot express the shared-base fan-out, so the build layer stays repo-owned.
-- **Single NBGV run threaded to the build task.** `build-docker-task.yml` has no nested `get-version`; the orchestrator's single `get-version` run threads `semver2` down as the image `LABEL_VERSION`, so one classification feeds every product leg (no second NBGV run can reclassify or collide a tag).
-- **Docker-only GitHub release (no `release-asset-*` files).** The `github-release` job follows the template's generic release semantics (tag on the built commit, auto source zip + README + LICENSE, `target_commitish` pinned, skip-existing guard, main-only `Verify public release version` backstop), but this repo ships no binary/package release assets - the published artifacts are the Docker Hub images. So there is no `release-asset-*` download step and `fail_on_unmatched_files` is omitted (it has no files to guard).
-- **Folded Docker Hub readme.** The standalone docker-readme task is removed; `publish-release.yml` carries `docker-readme-repos` + `docker-readme` jobs gated to `main` that derive the repository list inline from `Make/Matrix.json` (lowercased `ptr727/<image>` plus the shared base repos) and matrix `peter-evans/dockerhub-description` over it.
-- **Dropped date badge.** The `build-datebadge-task.yml` workflow and its publisher job are removed, along with the README "Last Build" badge that pointed at the BYOB gist.
-- **Husky.Net pre-commit hooks.** This repo installs Husky.Net Git hooks (pre-commit formatting/codegen), inverting the template's no-hooks default. The hooks run the same checks CI enforces, surfaced earlier. `validate-task.yml` (the rename of `test-release-task.yml`) runs the same Husky lint + `dotnet test` in CI as the required-check's quality gate.
-- **.vscode Benchmark -> Husky.Net Run task.** The carried `.vscode/tasks.json` swaps the template's Benchmark task for a Husky.Net Run task, matching this repo's hook tooling.
-- **Build-layer leaves own build specifics but follow the shared action-pin + cache rules.** The build-layer leaves (`build-docker-task.yml`, `build-base-images-task.yml`) own their per-image Dockerfiles, build args, and target matrix, but their actions are **SHA-pinned** like the orchestration layer (Dependabot still bumps SHA pins, updating the SHA + version comment), and their Docker layer cache uses **registry-tag caches** (`docker.io/ptr727/<repo>:buildcache-<branch>`, plus the base image's own tag and inline cache) rather than `type=gha`, per the template's cache policy.
-- **No `merge-upstream-version` merge-bot job.** This repo tracks the upstream NX version through codegen (`run-codegen-pull-request-task.yml` updating `Make/Version.json` + `Make/Matrix.json`), so the merge-bot keeps `merge-codegen` and omits the template's `merge-upstream-version` job (it uses the separate `check-upstream-version-task.yml` mechanism this repo does not ship).
+Running one read-only, adversarial review pass against a branch's current diff against its target branch, full file context included, on the strongest model tier the session can reach, before a unit of PR-bound work is pushed toward a pull request or claimed done, is packaged as `local-strict-review`, new content rather than a rule extracted from a section. `drive-pr`, `pr-review-conduct`, and `agent-conduct` each reference it at the moment they already govern, rather than restating what it does.

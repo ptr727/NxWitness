@@ -2,7 +2,7 @@
 
 Repository conventions for GitHub Copilot (and any other AI agent reading this file).
 
-The **canonical guide is [AGENTS.md](../AGENTS.md)** at the repo root - read it first, including the [PR Review Etiquette](../AGENTS.md#pr-review-etiquette) review-loop contract this file's runbook implements. This file is intentionally narrow: commit/PR-title conventions (summarized inline so VS Code's commit-message and PR-title generators have them) plus the GitHub Copilot Review Runbook.
+The **canonical guide is [AGENTS.md](../AGENTS.md)** at the repo root - read it first, including the [PR Review Etiquette](../GOVERNANCE.md#pr-review-etiquette) review-loop contract this file's runbook implements. This file is intentionally narrow: commit/PR-title conventions (summarized inline so VS Code's commit-message and PR-title generators have them) plus the GitHub Copilot Review Runbook.
 
 For code-style rules, see [`CODESTYLE.md`](../CODESTYLE.md) at the repo root - one guide with a General section plus per-language sections (.NET).
 
@@ -10,17 +10,24 @@ Do not duplicate language-specific rules here. **Project-specific conventions an
 
 ## Commit Messages and Pull Request Titles
 
-Summarized for VS Code's generators; the full rules, rationale, and examples are in [AGENTS.md "Pull Request Title and Commit Message Conventions"](../AGENTS.md#pull-request-title-and-commit-message-conventions).
+Summarized for VS Code's generators; the full rules, rationale, and examples are in [GOVERNANCE.md "Pull Request Title and Commit Message Conventions"](../GOVERNANCE.md#pull-request-title-and-commit-message-conventions).
 
 - Imperative subject, <= 72 characters, no trailing period; optional blank-line-separated body for the non-obvious *why*.
 - US English, title case with lowercase short bind words; no vague titles, no `Co-Authored-By:` unless asked, no release-bump magnitude (NBGV handles versioning). Dependabot's `Bump X from Y to Z` titles are fine.
 - develop PRs squash-merge (`gh pr merge --squash`), main PRs merge-commit (`--merge`); a mismatched flag is rejected by branch protection.
 
+## Reviewing Carried Fleet Content
+
+Follow the fidelity declared for the file. A byte-locked reference to shared infrastructure that
+this repository does not carry is intentional, not a broken link. Raise substantive defects in
+canonical content, but locate the fix at its canonical source instead of proposing a local edit
+that its fidelity rejects.
+
 ## GitHub Copilot Review Runbook
 
-> This runbook implements the [AGENTS.md "PR Review Etiquette"](../AGENTS.md#pr-review-etiquette) review-loop contract for GitHub Copilot. Without it in-repo, an agent has no pointer to the reliable Copilot mechanics and falls back to known-broken paths (the no-op `POST /requested_reviewers`, the wrong bot-login filter). In the API snippets below, fill the `<N>` placeholder with the PR number.
+> This runbook implements the [GOVERNANCE.md "PR Review Etiquette"](../GOVERNANCE.md#pr-review-etiquette) review-loop contract for GitHub Copilot. Without it in-repo, an agent has no pointer to the reliable Copilot mechanics and falls back to known-broken paths (the no-op `POST /requested_reviewers`, the wrong bot-login filter). In the API snippets below, fill the `<N>` placeholder with the PR number.
 
-Use this section for provider-specific mechanics. The expected review loop *contract* (request review on every push, verify head-SHA coverage, triage findings, reply + resolve, escalate when stuck) is defined in [AGENTS.md -> PR Review Etiquette](../AGENTS.md#pr-review-etiquette). This section only describes how to make GitHub Copilot reliably execute it.
+Use this section for provider-specific mechanics. The expected review loop *contract* (request review on every push, verify head-SHA coverage, triage findings, reply + resolve, escalate when stuck) is defined in [GOVERNANCE.md -> PR Review Etiquette](../GOVERNANCE.md#pr-review-etiquette). This section only describes how to make GitHub Copilot reliably execute it.
 
 ### Triggering and Polling
 
@@ -149,6 +156,6 @@ After the final push, sweep-resolve stale older threads for removed code paths.
 
 ## When in Doubt
 
-Read [AGENTS.md](../AGENTS.md) for this repo's conventions. For code-style rules, [`CODESTYLE.md`](../CODESTYLE.md) (its General section plus the relevant language section) is authoritative. Don't restate any of these files' rules in commit bodies or PR descriptions - keep those focused on the change itself.
+Read [AGENTS.md](../AGENTS.md) for where each rule lives, and [`GOVERNANCE.md`](../GOVERNANCE.md) for the rule text itself. For code-style rules, [`CODESTYLE.md`](../CODESTYLE.md) (its General section plus the relevant language section) is authoritative. This repo's own design is in [`ARCHITECTURE.md`](../ARCHITECTURE.md) and how it is run in [`OPERATIONS.md`](../OPERATIONS.md). Don't restate any of these files' rules in commit bodies or PR descriptions - keep those focused on the change itself.
 
-**In a derived repo:** if you find a discrepancy that should be fixed in the template itself (this file or AGENTS.md is out of date, a rule is missing, something bit this repo and would bite the next), open an issue upstream in [`ptr727/ProjectTemplate`](https://github.com/ptr727/ProjectTemplate) rather than only fixing it locally - see the template's [AGENTS.md "Staying in Sync and Reporting Drift Upstream"](https://github.com/ptr727/ProjectTemplate/blob/main/AGENTS.md#staying-in-sync-and-reporting-drift-upstream).
+A rule that is missing, out of date, or that bit this repo and would bite the next is worth raising where the rule is maintained rather than only patching here, since a local fix leaves every other reader with the same gap.
