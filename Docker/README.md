@@ -1,6 +1,6 @@
 # NxWitness
 
-Docker images for Network Optix Nx Witness and OEM branded VMS products.
+Docker images for Network Optix Nx Witness and OEM-branded VMS products.
 
 ## License
 

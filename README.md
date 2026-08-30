@@ -1,6 +1,6 @@
 # NxWitness
 
-Docker images for Network Optix Nx Witness and OEM branded VMS products.
+Docker images for Network Optix Nx Witness and OEM-branded VMS products.
 
 This is a project to build and publish Docker images for various [Network Optix][networkoptix-link] VMS products, in an Ubuntu and a [LinuxServer][lsio-link] base image variant of each product.
 
@@ -243,8 +243,8 @@ The project supports the following product variants:
 - [Network Optix][networkoptix-link] [Nx Witness VMS][nxwitness-link] (not available for purchase in the US)
 - [Network Optix][networkoptix-link] [Nx Meta VMS][nxmeta-link] (developer and early access version of Nx Witness)
 - [Network Optix][networkoptix-link] [Nx Go VMS][nxgo-link] (version of Nx Witness targeted at transportation sector)
-- [Digital Watchdog][digitalwatchdog-link] [DW Spectrum IPVMS][dwspectrum-link] (US licensed and OEM branded version of Nx Witness)
-- [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][wisenetwave-link] (US licensed and OEM branded version of Nx Witness)
+- [Digital Watchdog][digitalwatchdog-link] [DW Spectrum IPVMS][dwspectrum-link] (US licensed and OEM-branded version of Nx Witness)
+- [Hanwha Vision][hanwhavision-link] [Wisenet WAVE VMS][wisenetwave-link] (US licensed and OEM-branded version of Nx Witness)
 
 ## Overview
 
@@ -465,7 +465,7 @@ services:
 - The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished-link] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`
 - [`Matrix.json`][matrix-json] is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
 - Automated builds use [GitHub Actions][github-actions-docs-link]:
-  - Pull requests run unit tests, and when image files change, a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The full matrix is not built on every PR.
+  - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json], so a version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
   - Publishing happens only on a weekly schedule or manual trigger ([`publish-release.yml`][publish-release-workflow]), which builds and pushes the full matrix for both the `main` and `develop` branches. Merges to `main`/`develop` (including auto-merged Dependabot and codegen updates) do not publish; the next scheduled run picks them up.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62][issue-62-link] for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
@@ -615,8 +615,10 @@ In this example the `/test` volume was accepted, but all other volumes on `/dev/
 Add the required filesystem types in the [advanced configuration][advanced-configuration] menu.
 Edit the `additionalLocalFsTypes` option and add the required filesystem types, e.g. `fuse.shfs,btrfs,zfs`, restart the server.
 
-Alternatively call the configuration API directly:\
-`wget --no-check-certificate --user=[username] --password=[password] https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`.
+Alternatively call the configuration API directly. The mediaserver ships a self-signed certificate, so a client that verifies certificates rejects it until a trusted certificate is installed on the server:\
+`wget --ask-password --user=[username] --no-check-certificate https://[hostname]:[port]/api/systemSettings?additionalLocalFsTypes=fuse.shfs,btrfs,zfs`
+
+`--ask-password` prompts rather than taking the password as an argument, which would otherwise put it in the shell history and in the process list. `--no-check-certificate` disables certificate verification for the request, so the credentials are exposed to anyone able to intercept the connection: run this only across a network you trust, and prefer installing a trusted certificate on the server over making it a habit.
 
 To my knowledge there is no solution to duplicate devices being filtered, please contact [Network Optix Support][nxsupport-link] and ask them to stop filtering filesystem types and devices.
 
