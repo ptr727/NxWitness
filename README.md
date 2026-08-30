@@ -306,8 +306,11 @@ Images are tagged as follows:
 Notes:
 
 - `latest` and `stable` may be the same version if all builds are released builds.
-- `rc` and `beta` tags are only built when RC and Beta builds are published by Nx, and may be older than current `latest` or `stable` builds.
-- One publish run covers one branch. The weekly schedule rebuilds `main`, picking up the latest upstream Ubuntu updates, and a push to `main` that changes `Make/Matrix.json` publishes immediately so a newly released Nx version ships without waiting for the schedule. The `develop` tags are published by starting the publisher manually from `develop`. Merging code or dependency updates does not republish images, so the published images only change when there is an actual content change.
+- `rc` and `beta` tags are only built when Nx publishes RC and Beta builds. They may be older than the current `latest` or `stable` builds.
+- One publish run covers one branch. The weekly schedule rebuilds `main` and picks up the latest upstream Ubuntu updates.
+- A push to `main` changing `Make/Matrix.json` publishes at once, so a new Nx version ships without waiting for the schedule. Only a push made by the codegen App triggers this, so editing the pin by hand does not publish.
+- The `develop` tags are published by starting the publisher manually from `develop`.
+- Merging code or dependency updates does not republish images. The published images change only when their content changes.
 - See [Build Process][build-process] for more details.
 
 ## Configuration
@@ -464,11 +467,12 @@ services:
 - [`CreateMatrix`][create-matrix] is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`][version-json] is updated using the mediaserver [Releases JSON API][nxwitnessreleases-link] and [Packages API][packages-link].
 - The logic follows the same pattern as used by the [Nx Open][releaseinfo-link] desktop client logic.
-- The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished-link] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`
+- The "released" status of a build follows the same method Nx uses in [`isBuildPublished()`][isbuildpublished-link]. Both `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`.
 - [`Matrix.json`][matrix-json] is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
 - Automated builds use [GitHub Actions][github-actions-docs-link]:
   - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json], so a version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
-  - Publishing runs on one branch at a time ([`publish-release.yml`][publish-release-workflow]): the weekly schedule and a `Make/Matrix.json` push both publish `main`, and a manual dispatch publishes whichever branch it is started from. Merges to `main`/`develop` (including auto-merged Dependabot and codegen updates) do not publish; the next scheduled run, or a dispatch for `develop`, picks them up.
+  - Publishing runs on one branch at a time ([`publish-release.yml`][publish-release-workflow]). The weekly schedule and a codegen `Make/Matrix.json` push both publish `main`. A manual dispatch publishes whichever branch it is started from.
+  - Merges to `main` or `develop`, including auto-merged Dependabot and codegen updates, do not publish. The next scheduled run picks them up, or a dispatch for `develop`.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62][issue-62-link] for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
 **Local testing**:
