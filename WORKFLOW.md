@@ -100,7 +100,7 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
   job needs valid permissions. Grant least privilege; a callee's extra scope is granted by the caller.
 - **Allowlist `success` and `skipped` explicitly** across an optional dependency: use
   `(needs.X.result == 'success' || needs.X.result == 'skipped')`, not `!= 'failure'`.
-- **Line endings.** Workflow YAML follows [`.editorconfig`](./.editorconfig) (CRLF). Preserve on every edit.
+- **Line endings.** Workflow YAML is LF, per [`.editorconfig`](./.editorconfig)'s `[*]` default (Actions and Dependabot rewrite it that way). Preserve endings on every edit.
 
 ## 3. Architecture
 

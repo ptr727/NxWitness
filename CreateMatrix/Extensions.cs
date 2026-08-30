@@ -30,14 +30,14 @@ internal static class StringBuilderExtensions
 {
     extension(StringBuilder sb)
     {
-        internal StringBuilder AppendLineCrlf(string? value = null)
+        internal StringBuilder AppendLineLf(string? value = null)
         {
             if (value is not null)
             {
                 _ = sb.Append(value);
             }
 
-            return sb.Append("\r\n");
+            return sb.Append('\n');
         }
     }
 }

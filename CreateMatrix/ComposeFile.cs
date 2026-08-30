@@ -10,19 +10,19 @@ internal static class ComposeFile
         string composeFile = CreateComposefile(null);
         string filePath = Path.Combine(makePath, "Test.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
 
         // Create develop Compose file
         composeFile = CreateComposefile("develop");
         filePath = Path.Combine(makePath, "Test-develop.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
 
         // Create latest Compose file
         composeFile = CreateComposefile("latest");
         filePath = Path.Combine(makePath, "Test-latest.yml");
         Log.Logger.Information("Writing Compose file to {Path}", filePath);
-        File.WriteAllText(filePath, composeFile);
+        File.WriteAllText(filePath, composeFile.ReplaceLineEndings("\n").TrimEnd('\n') + "\n");
     }
 
     private static string CreateComposefile(string? label)
@@ -32,7 +32,7 @@ internal static class ComposeFile
 
         // Compose file header
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLineCrlf(
+        _ = stringBuilder.AppendLineLf(
             """
             # Compose file created by CreateMatrix, do not modify by hand
 
@@ -40,9 +40,9 @@ internal static class ComposeFile
         );
 
         // Create volumes
-        _ = stringBuilder.AppendLineCrlf(CreateVolumes());
+        _ = stringBuilder.AppendLineLf(CreateVolumes());
         // Create services
-        _ = stringBuilder.AppendLineCrlf(CreateServices(label));
+        _ = stringBuilder.AppendLineLf(CreateServices(label));
 
         return stringBuilder.ToString();
     }
@@ -50,7 +50,7 @@ internal static class ComposeFile
     private static string CreateVolumes()
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLineCrlf(
+        _ = stringBuilder.AppendLineLf(
             """
             volumes:
 
@@ -61,10 +61,10 @@ internal static class ComposeFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, false));
+            _ = stringBuilder.AppendLineLf(CreateVolume(productType, false));
 
             // LSIO
-            _ = stringBuilder.AppendLineCrlf(CreateVolume(productType, true));
+            _ = stringBuilder.AppendLineLf(CreateVolume(productType, true));
         }
 
         return stringBuilder.ToString();
@@ -94,7 +94,7 @@ internal static class ComposeFile
     private static string CreateServices(string? label)
     {
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLineCrlf(
+        _ = stringBuilder.AppendLineLf(
             """
             services:
 
@@ -107,11 +107,11 @@ internal static class ComposeFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Standard
-            _ = stringBuilder.AppendLineCrlf(
+            _ = stringBuilder.AppendLineLf(
                 CreateService(productType, false, standardPort++, label)
             );
             // LSIO
-            _ = stringBuilder.AppendLineCrlf(CreateService(productType, true, lsioPort++, label));
+            _ = stringBuilder.AppendLineLf(CreateService(productType, true, lsioPort++, label));
         }
 
         return stringBuilder.ToString();

@@ -13,9 +13,12 @@
 # Root config
 root = true
 
-# Defaults
+# Defaults: LF is the default, and only the CRLF exception below is declared.
+# `.gitattributes` mirrors these two defaults as Git's normalization fallback.
+# CI verifies the committed bytes against this file.
 [*]
 charset = utf-8
+end_of_line = lf
 indent_size = 4
 indent_style = space
 insert_final_newline = true
@@ -23,34 +26,18 @@ trim_trailing_whitespace = true
 
 # Markdown files
 [*.md]
-end_of_line = crlf
 trim_trailing_whitespace = false
 
 # Xml files
 [*.{xml,csproj,props,targets}]
-end_of_line = crlf
 indent_size = 2
 
 # Yaml files
 [*.{yml,yaml}]
-end_of_line = crlf
 indent_size = 2
 
-# Workflow YAML is LF: Dependabot and Actions rewrite it with LF, so declaring LF keeps it consistent instead of
-# mixed. git still leaves endings alone (`* -text`). This and CI (editorconfig-checker) enforce it. Other YAML is CRLF.
-[.github/workflows/*.{yml,yaml}]
-end_of_line = lf
-
-# JSON and JSONC files
-[*.{json,jsonc}]
-end_of_line = crlf
-
-# Linux scripts
-[*.sh]
-end_of_line = lf
-
-# Windows scripts
-[*.{cmd,bat,ps1}]
+# Windows batch and command scripts: the one CRLF exception to the `[*]` LF default above.
+[*.{bat,cmd}]
 end_of_line = crlf
 
 # .NET-only below: C# and ReSharper style. Everything above is the line-ending governance
@@ -58,7 +45,6 @@ end_of_line = crlf
 
 # C# files
 [*.cs]
-end_of_line = crlf
 # Suppressions follow CODESTYLE.md "Analyzer Diagnostics and Suppressions": prefer a
 # [SuppressMessage] attribute or the owning project's .editorconfig. Relax a rule
 # repo-wide here only when it applies to every project (never a brownfield batch).
