@@ -53,7 +53,7 @@ jobs:
           (steps.metadata.outputs.package-ecosystem != 'nuget') ||
           (steps.metadata.outputs.update-type != 'version-update:semver-major')
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           case "${{ github.event.pull_request.base.ref }}" in
             develop) method=--squash ;;
             main) method=--merge ;;
@@ -97,7 +97,7 @@ jobs:
 
       - name: Merge pull request step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           case "${{ github.event.pull_request.base.ref }}" in
             develop) method=--squash ;;
             main) method=--merge ;;
