@@ -400,7 +400,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `X.Y.Z-g<sha>`. The release-version backstop names `main`; `publicReleaseRefSpec` is `^refs/heads/main$`.
 - **D3.3 Version floor + git height.** Output: `version.json` sets the major.minor floor, NBGV appends the git
   height as the patch, never bumped on a cadence. *(Who raises the floor and when is a human-process rule in
-  [`GOVERNANCE.md`](./GOVERNANCE.md) "Release Model".)*
+  [`GOVERNANCE.md` "Release Model"](./GOVERNANCE.md#release-model).)*
 
 ### D4 - Release / publish
 

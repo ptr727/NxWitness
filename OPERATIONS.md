@@ -17,10 +17,12 @@ The gates are the .NET clean-compile (the `.NET Format` VS Code task, per [CODES
 The primary developer entry points are the `CreateMatrix` CLI commands, invoked directly or through the scripts in `Make/`:
 
 ```sh
-version --versionpath=./Make/Version.json
-matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
-make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- version --versionpath=./Make/Version.json
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta
 ```
+
+`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`.
 
 `Docker/` and the Compose files in `Make/` are generated output, so a change to the generator is committed together with its regenerated output.
 
@@ -43,7 +45,7 @@ There is no state to back up. The repository is the record and GitHub holds it, 
 
 Workflow runs are the log for anything that happened in CI or in a publish. `gh run list --branch <branch>` and `gh run view <id> --log-failed` reach them. A gate failure reproduces locally, because CI runs the same commands against the same committed configuration, so reproduce it locally before reading workflow logs.
 
-A failure that appears only in a built image needs a running container instead. Bring the stack up with `Make/Up.sh`, find the product's web UI with `Make/Instructions.sh`, read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one: set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
+A failure that appears only in a built image needs a running container instead. Bring the stack up with `./Up.sh` from inside `Make/`, find the product's web UI with `./Instructions.sh` there, read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one: set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
 
 ## Tool Usage
 
