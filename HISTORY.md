@@ -4,6 +4,8 @@ Docker images for Network Optix Nx Witness and OEM branded VMS products.
 
 ## Release History
 
+- Version 2.15:
+  - Build, CI, and repository tooling changes only. No functional change to the published images.
 - Version 2.14:
   - Fixed an LSIO permissions race where the startup `chown` could run before the `PUID`/`PGID` remap, leaving `/config` and `/media` owned by the wrong user and breaking media writes.
 - Version 2.13:
