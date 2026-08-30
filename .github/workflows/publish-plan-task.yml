@@ -57,7 +57,7 @@ jobs:
           ACTOR: ${{ inputs.actor }}
           REF: ${{ inputs.ref_name }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           publish=false
           case "$EVENT" in
             workflow_dispatch)

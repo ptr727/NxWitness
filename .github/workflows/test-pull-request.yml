@@ -20,6 +20,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Deny by default: every job below grants only what its own steps need.
+# A job added later inherits nothing rather than the repository default, which is write on this repo.
+permissions: {}
+
 jobs:
 
   # Inline change-gate (no third-party action): diff the push against its before-commit to decide whether the
@@ -30,6 +34,8 @@ jobs:
     name: Detect image changes job
     if: ${{ !github.event.deleted }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       image: ${{ steps.filter.outputs.image }}
       base: ${{ steps.filter.outputs.base }}
@@ -46,7 +52,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.sha }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           # A new branch or non-push event has no usable before-commit (all-zeros or empty). Build everything.
           if [[ "$BEFORE" =~ ^0+$ || -z "$BEFORE" || "${{ github.event_name }}" != "push" ]]; then
             echo "image=true" >> "$GITHUB_OUTPUT"
@@ -74,6 +80,8 @@ jobs:
   validate:
     name: Validate job
     if: ${{ !github.event.deleted }}
+    permissions:
+      contents: read
     uses: ./.github/workflows/validate-task.yml
     secrets: inherit
 
@@ -88,6 +96,8 @@ jobs:
     name: Smoke build job
     needs: [changes, validate]
     if: ${{ !github.event.deleted && needs.changes.outputs.image == 'true' }}
+    permissions:
+      contents: read
     uses: ./.github/workflows/build-docker-task.yml
     secrets: inherit
     with:
@@ -99,18 +109,19 @@ jobs:
       branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
       build_base: ${{ needs.changes.outputs.base == 'true' }}
 
-  # Single required status check. Its name is the ruleset-bound context in the live branch ruleset, applied
-  # from the hub's repository-configuration payloads. Do not rename it without updating those in lockstep. Skips on a branch deletion (when the other jobs also skip), so
-  # the deletion push does not fail this required check.
+  # Single required status check. Its name is the ruleset-bound context in the live branch ruleset.
+  # Do not rename it without updating the ruleset in lockstep.
+  # Skips on a branch deletion, when the other jobs also skip, so the deletion push does not fail it.
   check-workflow-status:
     name: Check pull request workflow status job
     runs-on: ubuntu-latest
+    permissions: {}
     needs: [changes, validate, smoke-build]
     if: ${{ always() && !github.event.deleted }}
     steps:
       - name: Check workflow results step
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           exit_on_result() {
             # Pass on success or skipped (smoke-build is skipped when no image files changed). Fail only on
             # failure/cancelled.

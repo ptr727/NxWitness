@@ -92,7 +92,7 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
   it: a ref-independent group with `cancel-in-progress: false`, so two publishes never overlap (a schedule, a
   dispatch, and a `Make/Matrix.json` pin push, or back-to-back dispatches against the shared Docker tags) and
   none is cancelled mid-release. Codegen keys on the workflow only (it writes fixed `codegen-*` branches).
-- **Shells.** Every multi-line bash `run:` starts with `set -euo pipefail`.
+- **Shells.** Every multi-line bash `run:` starts with `set -Eeuo pipefail`.
 - **Conditionals.** Multi-line `if:` uses the folded scalar `if: >-`.
 - **Boolean inputs.** A boolean used by both `workflow_call` and `workflow_dispatch` is declared in both
   trigger blocks and compared against `true` and `'true'`.
@@ -400,7 +400,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `X.Y.Z-g<sha>`. The release-version backstop names `main`; `publicReleaseRefSpec` is `^refs/heads/main$`.
 - **D3.3 Version floor + git height.** Output: `version.json` sets the major.minor floor, NBGV appends the git
   height as the patch, never bumped on a cadence. *(Who raises the floor and when is a human-process rule in
-  [`GOVERNANCE.md`](./GOVERNANCE.md) "Release Model".)*
+  [`GOVERNANCE.md` "Release Model"](./GOVERNANCE.md#release-model).)*
 
 ### D4 - Release / publish
 
@@ -500,7 +500,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   track latest.
 - **D9.2** File/workflow/job/step names follow the suffix rules; a ruleset-bound `context:` name moves only in
   lockstep with the live ruleset and the hub payload it is applied from.
-- **D9.3** Bash `run:` blocks start `set -euo pipefail`; multi-line `if:` uses `>-`.
+- **D9.3** Bash `run:` blocks start `set -Eeuo pipefail`; multi-line `if:` uses `>-`.
 - **D9.4** Line endings follow `.editorconfig`.
 - **D9.5 No decorative / dropped workflows.** No date-badge (`build-datebadge-*`), no standalone docker-readme
   task (folded into the publisher), no `PUBLISH_ON_MERGE` variable, no `dorny/paths-filter` (replaced by the

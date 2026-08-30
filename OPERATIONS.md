@@ -8,7 +8,7 @@ Verifying a change here is two things: running the gates, and then running by ha
 
 The gates are the .NET clean-compile (the `.NET Format` VS Code task, per [CODESTYLE.md](./CODESTYLE.md)), the unit tests, and the document linters. [GOVERNANCE.md "Running the Linters Locally"](./GOVERNANCE.md#running-the-linters-locally-known-working-invocations) carries the known-working invocation of each linter, and CI runs the same set in [validate-task.yml](./.github/workflows/validate-task.yml), so a local lint run buys an earlier failure rather than a different one. **Linting is not editor-only here**: `validate-task.yml` runs markdownlint, CSpell, `actionlint`, and `editorconfig-checker` alongside the Husky style checks and `dotnet test`, all inside the required check.
 
-**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset: NxMeta and NxMeta-LSIO, amd64 only, never pushed, and only when `Docker/**`, `Make/Matrix.json`, or `Make/Version.json` changed. Eight of the ten product images, the arm64 leg of every image, the base image push path, and a container that actually starts and serves its web UI are all unbuilt at merge time. The publish run is the first thing that builds them, and a workflow-only edit is deliberately not smoke-built at all. So a change to a Dockerfile, a build arg, a base image, or the generated matrix is verified locally with `Make/Create.sh` and `Make/Build.sh`, which build every product image for both `linux/amd64` and `linux/arm64`, and, when the change can affect a running server, with `Make/Test.sh` followed by `Make/Instructions.sh` to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
+**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset: NxMeta and NxMeta-LSIO, amd64 only, never pushed, and only when `Docker/**`, `Make/Matrix.json`, or `Make/Version.json` changed. Eight of the ten product images, the arm64 leg of every image, the base image push path, and a container that actually starts and serves its web UI are all unbuilt at merge time. The publish run is the first thing that builds them, and a workflow-only edit is deliberately not smoke-built at all. So a change to a Dockerfile, a build arg, a base image, or the generated matrix is verified locally by running `./Create.sh` and `./Build.sh` from inside `Make/`, which build every product image for both `linux/amd64` and `linux/arm64`, and, when the change can affect a running server, `./Test.sh` followed by `./Instructions.sh` there to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
 
 ## Runbooks
 
@@ -17,10 +17,12 @@ The gates are the .NET clean-compile (the `.NET Format` VS Code task, per [CODES
 The primary developer entry points are the `CreateMatrix` CLI commands, invoked directly or through the scripts in `Make/`:
 
 ```sh
-version --versionpath=./Make/Version.json
-matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
-make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker --versionlabel=Beta
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- version --versionpath=./Make/Version.json
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion
+dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker
 ```
+
+`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`. `--versionlabel` is left off so this matches what `Make/Create.sh` runs, which takes the `Latest` default; passing a different label selects different product versions and so generates different Dockerfiles.
 
 `Docker/` and the Compose files in `Make/` are generated output, so a change to the generator is committed together with its regenerated output.
 
@@ -43,7 +45,7 @@ There is no state to back up. The repository is the record and GitHub holds it, 
 
 Workflow runs are the log for anything that happened in CI or in a publish. `gh run list --branch <branch>` and `gh run view <id> --log-failed` reach them. A gate failure reproduces locally, because CI runs the same commands against the same committed configuration, so reproduce it locally before reading workflow logs.
 
-A failure that appears only in a built image needs a running container instead. Bring the stack up with `Make/Up.sh`, find the product's web UI with `Make/Instructions.sh`, read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one: set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
+A failure that appears only in a built image needs a running container instead. Bring the stack up with `./Up.sh` from inside `Make/`, find the product's web UI with `./Instructions.sh` there, read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one: set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
 
 ## Tool Usage
 
