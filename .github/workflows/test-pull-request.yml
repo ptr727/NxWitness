@@ -20,8 +20,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Deny by default: every job below grants only what its own steps need. A job added later
-# inherits nothing rather than the repository default, which is write on this repo.
+# Deny by default: every job below grants only what its own steps need.
+# A job added later inherits nothing rather than the repository default, which is write on this repo.
 permissions: {}
 
 jobs:
