@@ -1,9 +1,11 @@
-# Docker Projects for Network Optix VMS Products
+# NxWitness
 
-This is a project to build and publish docker images for various [Network Optix][networkoptix-link] VMS products.
+Docker images for Network Optix Nx Witness and OEM-branded VMS products.
 
 ## Release History
 
+- Version 2.15:
+  - Build, CI, and repository tooling changes only. No functional change to the published images.
 - Version 2.14:
   - Fixed an LSIO permissions race where the startup `chown` could run before the `PUID`/`PGID` remap, leaving `/config` and `/media` owned by the wrong user and breaking media writes.
 - Version 2.13:
@@ -54,7 +56,6 @@ This is a project to build and publish docker images for various [Network Optix]
 [filedepends-link]: https://github.com/ptr727/NxWitness/issues/142
 [hanwhavision-link]: https://hanwhavisionamerica.com/
 [hanwhawave-link]: https://wavevms.com/
-[networkoptix-link]: https://www.networkoptix.com/
 [nxgo-link]: https://www.networkoptix.com/nx-go
 [nxgopr-link]: https://github.com/ptr727/NxWitness/pull/172
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support

@@ -77,7 +77,7 @@ COPY s6-overlay /etc/s6-overlay
 EXPOSE 7001
 
 # Create mount points
-# Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+# Config links will be created at runtime, see Docker/s6-overlay/s6-rc.d/init-nx-relocate/run
 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
 # /root/.config/nx_ini links -> /config/ini
