@@ -98,7 +98,7 @@ internal sealed class PackagesJsonSchema
     ReadCommentHandling = JsonCommentHandling.Skip,
     UseStringEnumConverter = true,
     WriteIndented = true,
-    NewLine = "\r\n"
+    NewLine = "\n"
 )]
 [JsonSerializable(typeof(PackagesJsonSchema))]
 internal partial class PackagesJsonContext : JsonSerializerContext;

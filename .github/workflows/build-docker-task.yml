@@ -153,7 +153,7 @@ jobs:
       - name: Create tags and args step
         id: tagsargs
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           TAGS=$(jq -r '.[]' <<< '${{ toJson(matrix.images.Tags) }}')
           ARGS=$(jq -r '.[]' <<< '${{ toJson(matrix.images.Args) }}')
           CACHE_REPO=$(jq -r '.[0]' <<< '${{ toJson(matrix.images.Tags) }}' | sed 's/:[^:]*$//')

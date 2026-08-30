@@ -1,13 +1,15 @@
-# Docker Projects for Network Optix VMS Products
+# NxWitness
 
-This is a project to build and publish docker images for various [Network Optix][networkoptix-link] VMS products.
+Docker images for Network Optix Nx Witness and OEM-branded VMS products.
 
 ## Release History
 
+- Version 2.15:
+  - Build, CI, and repository tooling changes only. No functional change to the published images.
 - Version 2.14:
   - Fixed an LSIO permissions race where the startup `chown` could run before the `PUID`/`PGID` remap, leaving `/config` and `/media` owned by the wrong user and breaking media writes.
 - Version 2.13:
-  - Fixed a regression bug that surfaced when Nx released an older version under the same tag, triggering the version-forward-release only logic.
+  - Fixed a regression bug that surfaced when Nx released an older version under the same tag, triggering the version-forward-release-only logic.
 - Version 2.12:
   - Reworked the CI pipeline: pull requests run a fast representative amd64 smoke build (NxMeta and NxMeta-LSIO) instead of the full matrix, publishing moved to a weekly schedule (and manual trigger) that builds both the `main` and `develop` branches in one run, and merges no longer republish images. This speeds up PR feedback, reduces GH Actions usage, and stops no-op image updates for consumers.
 - Version 2.11:
@@ -54,7 +56,6 @@ This is a project to build and publish docker images for various [Network Optix]
 [filedepends-link]: https://github.com/ptr727/NxWitness/issues/142
 [hanwhavision-link]: https://hanwhavisionamerica.com/
 [hanwhawave-link]: https://wavevms.com/
-[networkoptix-link]: https://www.networkoptix.com/
 [nxgo-link]: https://www.networkoptix.com/nx-go
 [nxgopr-link]: https://github.com/ptr727/NxWitness/pull/172
 [nxossupport-link]: https://support.networkoptix.com/hc/en-us/articles/205313168-Nx-Witness-Operating-System-Support

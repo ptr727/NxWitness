@@ -65,7 +65,7 @@ internal class VersionJsonSchema : VersionJsonSchemaBase
     ReadCommentHandling = JsonCommentHandling.Skip,
     UseStringEnumConverter = true,
     WriteIndented = true,
-    NewLine = "\r\n"
+    NewLine = "\n"
 )]
 [JsonSerializable(typeof(VersionJsonSchema))]
 [JsonSerializable(typeof(VersionJsonSchemaBase))]

@@ -78,15 +78,15 @@ internal static class DockerFile
     {
         // From
         StringBuilder stringBuilder = new();
-        _ = stringBuilder.AppendLineCrlf(CreateFrom(productType, lsio));
+        _ = stringBuilder.AppendLineLf(CreateFrom(productType, lsio));
 
         // Args
-        _ = stringBuilder.AppendLineCrlf(CreateArgs(productType, versionInfo, lsio));
+        _ = stringBuilder.AppendLineLf(CreateArgs(productType, versionInfo, lsio));
         // Install
-        _ = stringBuilder.AppendLineCrlf(CreateInstall(lsio));
+        _ = stringBuilder.AppendLineLf(CreateInstall(lsio));
 
         // Entrypoint
-        _ = stringBuilder.AppendLineCrlf(CreateEntrypoint(productType, lsio));
+        _ = stringBuilder.AppendLineLf(CreateEntrypoint(productType, lsio));
 
         return stringBuilder.ToString();
     }
@@ -293,7 +293,7 @@ internal static class DockerFile
                 EXPOSE 7001
 
                 # Create mount points
-                # Config links will be created at runtime, see LSIO/etc/s6-overlay/s6-rc.d/init-nx-relocate/run
+                # Config links will be created at runtime, see Docker/s6-overlay/s6-rc.d/init-nx-relocate/run
                 # /opt/${COMPANY_NAME}/mediaserver/etc -> /config/etc
                 # /opt/${COMPANY_NAME}/mediaserver/var -> /config/var
                 # /root/.config/nx_ini links -> /config/ini
