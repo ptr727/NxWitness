@@ -472,8 +472,8 @@ services:
 **Local testing**:
 
 - Run `cd ./Make` and [`./Test.sh`][test-sh], the following will be executed:
-  - [`Create.sh`][create-sh]: Create `Dockerfile`'s and update the latest version information using `CreateMatrix`.
-  - [`Build.sh`][build-sh]: Builds the `Dockerfile`'s using `docker buildx build`.
+  - [`Create.sh`][create-sh]: Creates the Dockerfiles and updates the latest version information using `CreateMatrix`.
+  - [`Build.sh`][build-sh]: Builds the Dockerfiles using `docker buildx build`.
   - [`Up.sh`][up-sh]: Launch a docker compose stack [`Test.yml`][test-yml] to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.
 - Run [`Clean.sh`][clean-sh] to shutdown the compose stack and cleanup images.
