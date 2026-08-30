@@ -2,7 +2,7 @@
 
 Docker images for Network Optix Nx Witness and OEM branded VMS products.
 
-This is a project to build and publish docker images for various [Network Optix][networkoptix-link] VMS products, in an Ubuntu and a [LinuxServer][lsio-link] base image variant of each product.
+This is a project to build and publish Docker images for various [Network Optix][networkoptix-link] VMS products, in an Ubuntu and a [LinuxServer][lsio-link] base image variant of each product.
 
 ## Build and Distribution
 
@@ -474,7 +474,7 @@ services:
 - Run `cd ./Make` and [`./Test.sh`][test-sh], the following will be executed:
   - [`Create.sh`][create-sh]: Creates the Dockerfiles and updates the latest version information using `CreateMatrix`.
   - [`Build.sh`][build-sh]: Builds the Dockerfiles using `docker buildx build`.
-  - [`Up.sh`][up-sh]: Launch a docker compose stack [`Test.yml`][test-yml] to run all product variants.
+  - [`Up.sh`][up-sh]: Launch a Docker Compose stack [`Test.yml`][test-yml] to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.
 - Run [`Clean.sh`][clean-sh] to shutdown the compose stack and cleanup images.
 
@@ -510,7 +510,7 @@ services:
   - Recording storage is typically high speed low latency high cost low capacity SSD/NVMe arrays, while archival playback storage is very high capacity low cost magnetic media arrays.
   - Nx to fix: Implement something akin to archiving in [Milestone XProtect VMS][milestone-link] where recording storage is separate from long term archival storage.
 - Image Publication:
-  - Nx relies on end-users or projects like this one to create and publish docker images.
+  - Nx relies on end-users or projects like this one to create and publish Docker images.
   - Nx to fix: Publish up-to-date images for all product variants and release channels.
 - Break-Fix-Version-Forward:
   - Nx product versions published via their releases API occasionally go backwards, e.g. `release`: v4.3 -> v5.0 -> v4.3.
@@ -623,7 +623,7 @@ To my knowledge there is no solution to duplicate devices being filtered, please
 ## Questions or Issues
 
 I am not affiliated with Network Optix, I cannot provide support for their products, please contact [Network Optix Support][nxsupport-link] for product support issues.\
-If there are issues with the docker build scripts used in this project, please create a [GitHub Issue][issues-link].\
+If there are issues with the Docker build scripts used in this project, please create a [GitHub Issue][issues-link].\
 Note that I only test and run `nxmeta-lsio:stable` in my home lab, other images get very little to no testing, please test accordingly.
 
 Read [Troubleshooting][troubleshooting] before filing an issue about missing or ignored storage, as the cause is almost always the mediaserver filesystem and device filtering described there.
