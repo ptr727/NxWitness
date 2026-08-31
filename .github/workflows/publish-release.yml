@@ -137,7 +137,7 @@ jobs:
         env:
           SEMVER2: ${{ needs.get-version.outputs.SemVer2 }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           CORE_AND_PRE="${SEMVER2%%+*}"   # drop +buildmetadata; a '-' here is the genuine prerelease separator
           if [[ "$CORE_AND_PRE" == *-* ]]; then
             echo "::error::Public (main) release version '$SEMVER2' carries a prerelease suffix; refusing to publish."
@@ -152,7 +152,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.get-version.outputs.SemVer2 }}
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -169,7 +169,7 @@ jobs:
       # Skip when the release already exists, but always let a manual `workflow_dispatch` through to refresh it.
       # Every release is a tag on the built commit plus the auto-attached source zip, README, and LICENSE. This is a
       # Docker-only repo: it ships no `release-asset-*` binaries/packages, so the release carries no extra files and
-      # `fail_on_unmatched_files` is omitted (see Template adaptations in AGENTS.md). The image is the published artifact
+      # `fail_on_unmatched_files` is omitted (see Template Adaptations in ARCHITECTURE.md). The image is the published artifact
       # on Docker Hub.
       - name: Create GitHub release step
         if: ${{ steps.release-exists.outputs.exists == 'false' || github.event_name == 'workflow_dispatch' }}
@@ -205,7 +205,7 @@ jobs:
       - name: Resolve repository list step
         id: list
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           # shellcheck disable=SC2016  # the jq program is a literal, not a shell expansion
           REPOS=$(jq --compact-output \
             '[.Images[].Name | ascii_downcase | "ptr727/\(.)"] + ["ptr727/nx-base","ptr727/nx-base-lsio"] | sort | unique' \

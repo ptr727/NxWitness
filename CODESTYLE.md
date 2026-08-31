@@ -2,7 +2,7 @@
 
 This is the single code-style guide for the repo. The **General** section applies to every language. Each **language section** (.NET, Python) is self-contained: a repo reads only the section(s) for the languages it ships and ignores the rest. The whole file is carried, not trimmed - an unused-language section costs nothing and keeps re-sync a clean overwrite, the same carry-whole model as [`.editorconfig`](./.editorconfig), whose inert `[*.cs]` block a non-.NET repo keeps.
 
-Cross-cutting *process* rules (PR titles, branching, US English, markdown style, comments philosophy, workflow YAML, PR review etiquette) live in [AGENTS.md](./AGENTS.md) and are not repeated here.
+Cross-cutting *process* rules (PR titles, branching, US English, markdown style, comments philosophy, workflow YAML, PR review etiquette) live in [GOVERNANCE.md](./GOVERNANCE.md) and are not repeated here.
 
 ## General
 
@@ -22,7 +22,7 @@ Each language defines a **clean-compile** verification - the combination of buil
 
 ### Analyzer Diagnostics and Suppressions
 
-- **A new port is not a license to silence diagnostics.** Brownfield / just-ported status never justifies relaxing analyzer or linter severities or muting newly surfaced warnings - fix them. (The only brownfield allowance in this template is the one-time git-signing / line-ending migration described in [AGENTS.md](./AGENTS.md) and [README.md](./README.md), which has nothing to do with code analysis.)
+- **A new port is not a license to silence diagnostics.** Brownfield / just-ported status never justifies relaxing analyzer or linter severities or muting newly surfaced warnings - fix them. (The only brownfield allowance in this template is the one-time git-signing / line-ending migration described in [GOVERNANCE.md](./GOVERNANCE.md) and [README.md](./README.md), which has nothing to do with code analysis.)
 - **Suppress only genuine false-positives or deliberate, documented exceptions**, always at the **narrowest scope that fits**, in this order of preference:
   1. An **in-code annotation on the specific symbol**, with a justification - the language's attribute/comment form, never a blanket pragma spanning a region.
   2. The **owning project's local config** when the exception is project-wide for one project (e.g. a test project's own `.editorconfig` / `pyproject.toml`).
@@ -34,7 +34,7 @@ Each language defines a **clean-compile** verification - the combination of buil
 These apply repo-wide, in every directory:
 
 1. **Markdown linting**: All `.md` files must be lint-clean (error and warning free) via the VS Code `markdownlint` extension. [`.markdownlint-cli2.jsonc`](./.markdownlint-cli2.jsonc) at the repo root is the single source of truth - the davidanson `markdownlint` extension and a command-line `markdownlint-cli2` run both read it, so the IDE and CLI stay in lock-step. Rules it deliberately disables (e.g. `MD013` line-length, `MD033` inline HTML) are **intentional** - do not "fix" them. Fix violations at the source rather than disabling rules.
-2. **Spelling**: All spelling must be clean via the CSpell VS Code integration; words must be correctly spelled in **US English** (the repo-wide convention - see [AGENTS.md](./AGENTS.md)). Project-specific terms go in the workspace CSpell config.
+2. **Spelling**: All spelling must be clean via the CSpell VS Code integration; words must be correctly spelled in **US English** (the repo-wide convention - see [GOVERNANCE.md](./GOVERNANCE.md)). Project-specific terms go in [`cspell.json`](./cspell.json), which is the single source of truth for the word list; the workspace file carries no word list of its own.
 3. **Spelling CI scope**: The enforced CI spell-check gate covers **`README.md` and `HISTORY.md` only** - these are the files every repo visitor sees, so they must be clean. It is deliberately **not** all `**/*.md`: repos carry many markdown files full of technical terms, and gating every one of them would mean endlessly padding `cspell.json` just to keep CI green. Broad, live spell-checking across any file (source, markdown, text) is the **cspell editor extension's** job, so typos still surface to whoever is editing. A repo owner **may** widen their own CI file list, but the template ships README + HISTORY as the default; keep every surface that runs cspell - the CI workflow and any local VS Code task or one-liner the repo has - on the same file list. The list is explicit (not a glob), so a repo that ships no `HISTORY.md` (e.g. one with no changelog) must drop it from all three surfaces and gate on `README.md` alone - cspell errors on a listed file that does not exist. Markdown *linting* (item 1) stays repo-wide `**/*.md` - it does not choke on technical terms.
 
 ## .NET
@@ -189,11 +189,13 @@ Note: Code snippets are illustrative examples only. Replace namespaces/types to 
    - JSON files: 4 spaces
 
 5. **Line endings**
-   - C#, XML, YAML, JSON, Windows scripts: CRLF
-   - Linux scripts (`.sh`): LF
+   - Everything: LF, per `.editorconfig`'s `[*]` default
+   - Windows batch and command scripts (`.bat`, `.cmd`): CRLF, the one exception
 
-6. **`#region`**: Do not use regions. Prefer logical file/folder/namespace organization.
-7. **Member ordering (StyleCop SA1201)**: const -> static readonly -> static fields -> instance readonly fields -> instance fields -> constructors -> public (events -> properties -> indexers -> methods -> operators) -> non-public in same order -> nested types
+6. **Encoding**: UTF-8 without a BOM, per `.editorconfig`'s `charset = utf-8`.
+
+7. **`#region`**: Do not use regions. Prefer logical file/folder/namespace organization.
+8. **Member ordering (StyleCop SA1201)**: const -> static readonly -> static fields -> instance readonly fields -> instance fields -> constructors -> public (events -> properties -> indexers -> methods -> operators) -> non-public in same order -> nested types
 
 #### Comments and Documentation
 
@@ -225,6 +227,8 @@ Note: Code snippets are illustrative examples only. Replace namespaces/types to 
    /// </exception>
    public async Task<string> GetQuoteOfTheDayAsync(string category, CancellationToken cancellationToken) {}
    ```
+
+2. **Leave human-authored comments exactly as written**: do not reword, trim, reflow, or "clean" a comment a person wrote, even where it bends a rule above. Revise only agent-authored comments, and match the surrounding voice when you do. The comment-growth rule that says to rewrite a comment fresh rather than bolt onto it governs agent-authored comments; it does not license collapsing a maintainer's.
 
 #### Analyzer Suppressions (.NET)
 
