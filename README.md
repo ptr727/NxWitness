@@ -299,13 +299,18 @@ Images are tagged as follows:
 - `rc`: Latest RC version, e.g. `docker pull docker.io/ptr727/nxmeta:rc`.
 - `beta`: Latest Beta version, e.g. `docker pull docker.io/ptr727/nxmeta:beta`
 - `develop`: Builds created from the develop branch, e.g. `docker pull docker.io/ptr727/nxmeta:develop`.
+- `develop-stable`: The develop branch's stable build, e.g. `docker pull docker.io/ptr727/nxmeta:develop-stable`.
+- `develop-[version]`: A develop build at a specific version, e.g. `docker pull docker.io/ptr727/nxmeta:develop-6.1.3.43301`.
 - `[version]`: Release version number, e.g. `docker pull docker.io/ptr727/nxmeta:5.2.2.37996`.
 
 Notes:
 
 - `latest` and `stable` may be the same version if all builds are released builds.
-- `rc` and `beta` tags are only built when RC and Beta builds are published by Nx, and may be older than current `latest` or `stable` builds.
-- Images are published once a week on a schedule (and on-demand via manual trigger), picking up the latest upstream Ubuntu updates and newly released Nx product versions. A single scheduled run publishes both the `main` tags (`latest`, `stable`, version numbers) and the `develop` tags. Merging code or dependency updates does not republish images, so the published images only change when there is an actual content change.
+- `rc` and `beta` tags are only built when Nx publishes RC and Beta builds. They may be older than the current `latest` or `stable` builds.
+- One publish run covers one branch. The weekly schedule rebuilds `main` and picks up the latest upstream Ubuntu updates.
+- A push to `main` changing `Make/Matrix.json` publishes at once, so a new Nx version ships without waiting for the schedule. Only a push by the codegen App or Dependabot triggers this. A push by a person does not publish.
+- The `develop` tags are published by starting the publisher manually from `develop`.
+- Merging code or dependency updates does not republish images. The published images change only when their content changes.
 - See [Build Process][build-process] for more details.
 
 ## Configuration
@@ -462,11 +467,13 @@ services:
 - [`CreateMatrix`][create-matrix] is used to update available product versions, and to create Docker files for all product permutations.
 - [`Version.json`][version-json] is updated using the mediaserver [Releases JSON API][nxwitnessreleases-link] and [Packages API][packages-link].
 - The logic follows the same pattern as used by the [Nx Open][releaseinfo-link] desktop client logic.
-- The "released" status of a build follows the same method as Nx uses in [`isBuildPublished()`][isbuildpublished-link] where `release_date` and `release_delivery_days` from the [Releases JSON API][nxwitnessreleases-link] must be greater than `0`
+- The "released" status of a build follows the same method Nx uses in [`isBuildPublished()`][isbuildpublished-link]. From the [Releases JSON API][nxwitnessreleases-link], `release_date` must be greater than `0` and `release_delivery_days` must be `0` or greater.
 - [`Matrix.json`][matrix-json] is created from the `Version.json` file and is used during pipeline builds using a [Matrix][matrix-link] strategy.
 - Automated builds use [GitHub Actions][github-actions-docs-link]:
-  - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json], so a version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
-  - Publishing happens only on a weekly schedule or manual trigger ([`publish-release.yml`][publish-release-workflow]), which builds and pushes the full matrix for both the `main` and `develop` branches. Merges to `main`/`develop` (including auto-merged Dependabot and codegen updates) do not publish; the next scheduled run picks them up.
+  - Pull requests run unit tests, and a fast representative amd64 smoke build of `NxMeta` and `NxMeta-LSIO` ([`test-pull-request.yml`][test-pull-request-workflow]). The smoke build is gated on a change under `Docker/`, or to [`Matrix.json`][matrix-json] or [`Version.json`][version-json]. A version or matrix change is covered rather than skipped. The full matrix is not built on every PR.
+  - Publishing runs on one branch at a time ([`publish-release.yml`][publish-release-workflow]). The weekly schedule publishes `main`. A manual dispatch publishes whichever branch it is started from, which is how `develop` is published.
+  - A push to `main` that changes [`Matrix.json`][matrix-json] also publishes `main`, but only when the codegen App or Dependabot made it. A push by a person does not publish.
+  - Any other merge does not publish. A merge to `main` ships on the next weekly run, and a merge to `develop` ships only when someone dispatches the publisher from `develop`.
 - Version history is maintained and used by `CreateMatrix` such that generic tags, e.g. `latest`, will never result in a lesser version number, i.e. break-fix-forward only, see [Issue #62][issue-62-link] for details on Nx re-publishing "released" builds using an older version breaking already upgraded systems.
 
 **Local testing**:
