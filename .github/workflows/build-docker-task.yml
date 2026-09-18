@@ -131,12 +131,12 @@ jobs:
       # arm64 is non-native on the amd64 runner, so install its QEMU emulator only when the build includes it.
       - name: Setup QEMU step
         if: ${{ contains(env.PLATFORMS, 'arm64') }}
-        uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4.3.0
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
           platforms: arm64
 
       - name: Setup Buildx step
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        uses: docker/setup-buildx-action@594f3bf4285d9ea8dc53c9a0c9c4092420091003 # v4.4.0
         with:
           platforms: ${{ env.PLATFORMS }}
 
@@ -169,7 +169,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Docker build and push step
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           # Matrix is already filtered to the target branch, so push when asked.
           # Smoke callers pass push:false.
