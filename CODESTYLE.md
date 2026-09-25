@@ -457,7 +457,7 @@ The Python clean-compile (see [Clean-Compile Verification](#clean-compile-verifi
 
 ### Versioning
 
-`_version.py` ships with `__version__ = "0.0.0"` as a placeholder. Until you wire `_version.py` to something that increments (the usual options are `hatch-vcs`, a version.json bridge, or manual bumps), no new PyPI versions will land - publishing with `skip-existing: true` keeps a stuck placeholder version from failing the run.
+`_version.py` ships with `__version__` set to the all-zero placeholder version. Until you wire `_version.py` to something that increments (the usual options are `hatch-vcs`, a version.json bridge, or manual bumps), no new PyPI versions will land - publishing with `skip-existing: true` keeps a stuck placeholder version from failing the run.
 
 ### Linter Cleanliness
 
