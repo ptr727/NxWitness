@@ -269,7 +269,7 @@ Every repo's GitHub repository details (the About panel) follow a fixed conventi
 
 - [`AGENTS.md`](./AGENTS.md): the agent entry point, carrying context and delegation rules plus the map to the sections below.
 - [`CLAUDE.md`](./CLAUDE.md): imports `AGENTS.md`, since Claude Code reads `CLAUDE.md` and never `AGENTS.md` on its own. Carries no rule of its own.
-- [`GOVERNANCE.md`](./GOVERNANCE.md), [`CODESTYLE.md`](./CODESTYLE.md), [`WORKFLOW.md`](./WORKFLOW.md): the governance docs. This file is the cross-cutting-rules authority.
+- [`GOVERNANCE.md`](./GOVERNANCE.md), [`CODESTYLE.md`](./CODESTYLE.md), [`WORKFLOW.md`](./WORKFLOW.md), [`AUDIT.md`](./AUDIT.md): the governance and audit docs. This file is the cross-cutting-rules authority.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md): how this repo is built, its module layout, its data flow, and the deviations it deliberately keeps from the fleet template.
 - [`OPERATIONS.md`](./OPERATIONS.md): how this repo is run, verified locally, and debugged.
 - [`CreateMatrix/`](./CreateMatrix/): the codegen console app that reads upstream product versions and writes this repo's Dockerfiles, Compose files, and build matrix. Not a shipped package.
