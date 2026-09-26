@@ -31,12 +31,12 @@ test -f "${ADDUSER_RUN}" || {
     exit 1
 }
 # shellcheck disable=SC2016 # The LSIO script's own literal text is matched, not an expansion.
-grep -q 'groupmod -o -g "${PGID}" abc' "${ADDUSER_RUN}" || {
+grep -qF 'groupmod -o -g "${PGID}" abc' "${ADDUSER_RUN}" || {
     echo "ERROR: init-adduser groupmod signature changed" >&2
     exit 1
 }
 # shellcheck disable=SC2016 # The LSIO script's own literal text is matched, not an expansion.
-grep -q 'usermod -o -u "${PUID}" abc' "${ADDUSER_RUN}" || {
+grep -qF 'usermod -o -u "${PUID}" abc' "${ADDUSER_RUN}" || {
     echo "ERROR: init-adduser usermod signature changed" >&2
     exit 1
 }
@@ -59,7 +59,7 @@ if getent passwd abc >/dev/null; then
     echo "ERROR: abc user still present after rename" >&2
     exit 1
 fi
-grep -q "usermod -o -u \"\${PUID}\" ${COMPANY_NAME}" "${ADDUSER_RUN}" || {
+grep -qF "usermod -o -u \"\${PUID}\" ${COMPANY_NAME}" "${ADDUSER_RUN}" || {
     echo "ERROR: init-adduser not repointed to ${COMPANY_NAME}" >&2
     exit 1
 }

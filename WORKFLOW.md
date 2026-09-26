@@ -2,8 +2,8 @@
 
 The single guide for this repo's CI/CD **workflows** (GitHub Actions): **code style**, **architecture**, a
 **behavioral contract** (expected inputs and outputs), and a **test methodology**. Source code style lives
-in [`CODESTYLE.md`](./CODESTYLE.md). This file covers everything under
-[`.github/workflows/`](./.github/workflows/).
+in [`CODESTYLE.md`][codestyle]. This file covers everything under
+[`.github/workflows/`][workflows].
 
 It **describes required outcomes, not a required implementation.** A workflow is correct when it satisfies
 the contract (section 4), whatever shape its YAML takes. Section 2 keeps workflows legible. Section 3 is
@@ -39,7 +39,7 @@ once their checks pass.
 - **Reusable workflow (task)** - a `workflow_call` workflow invoked through a `uses:` reference, never
   triggered directly. File ends in `-task.yml`. Every task this repo runs is **hub-hosted** in
   `ptr727/ProjectTemplate` and reached by a SHA-pinned `uses:`, so this repo carries entry workflows only.
-- **Hook** - a composite action under [`.github/actions/`](./.github/actions/) that a hub task runs from this
+- **Hook** - a composite action under [`.github/actions/`][actions] that a hub task runs from this
   repo's checkout for the repo-specific step: `docker-prepare` (the image matrix), `docker-build-base` (the
   shared bases), and `codegen` (the generator invocation).
 - **Product image** - one shipped image built from a `Make/Matrix.json` row's Dockerfile (e.g. `NxMeta`,
@@ -109,18 +109,18 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
   job needs valid permissions. Grant least privilege; a callee's extra scope is granted by the caller.
 - **Allowlist `success` and `skipped` explicitly** across an optional dependency: use
   `(needs.X.result == 'success' || needs.X.result == 'skipped')`, not `!= 'failure'`.
-- **Line endings.** Workflow YAML is LF, per [`.editorconfig`](./.editorconfig)'s `[*]` default (Actions and Dependabot rewrite it that way). Preserve endings on every edit.
+- **Line endings.** Workflow YAML is LF, per [`.editorconfig`][editorconfig]'s `[*]` default (Actions and Dependabot rewrite it that way). Preserve endings on every edit.
 
 ## 3. Architecture
 
 ### Three workflows: CI on push, publishing on schedule/pin-push/dispatch, codegen daily
 
-CI ([`test-pull-request.yml`](./.github/workflows/test-pull-request.yml)) and the publisher
-([`publish-release.yml`](./.github/workflows/publish-release.yml)) are separate workflows with separate
+CI ([`test-pull-request.yml`][test-pull-request]) and the publisher
+([`publish-release.yml`][publish-release]) are separate workflows with separate
 concurrency, so they never race. CI re-tests every pushed tree and never publishes; the publisher releases on
 its own triggers and never runs on an ordinary merge. Codegen
-([`run-periodic-codegen-pull-request.yml`](./.github/workflows/run-periodic-codegen-pull-request.yml) -> the
-hub's `run-codegen-pull-request-task.yml` -> the [`codegen`](./.github/actions/codegen/action.yml) hook) keeps
+([`run-periodic-codegen-pull-request.yml`][run-periodic-codegen-pull-request] -> the
+hub's `run-codegen-pull-request-task.yml` -> the [`codegen`][actions-codegen] hook) keeps
 the version/matrix data current. *Prevents a merge from silently cutting a release, and a CI run from racing a
 publish on the same ref.*
 
@@ -151,11 +151,11 @@ base image for CVEs.
 
 The publisher is a `plan` -> `validate` -> `build-base` -> `publish` -> `publish-docker-readme` chain (a
 multi-product Docker repo, the matrix and `build-base` case of the hub's Docker family). The `build-base` job
-logs in to Docker Hub and runs the [`docker-build-base`](./.github/actions/docker-build-base/action.yml) hook
+logs in to Docker Hub and runs the [`docker-build-base`][actions-docker-build-base] hook
 to build and push the two shared bases. It is this repo's own job rather than the hub's `build-base` leg,
 since that leg carries no Docker Hub login and a composite hook cannot read secrets. The `publish` job calls
 the hub's `build-release-task.yml`, whose Docker leg (the hub's `build-docker-task.yml`) takes the product
-matrix from the [`docker-prepare`](./.github/actions/docker-prepare/action.yml) hook, which maps the
+matrix from the [`docker-prepare`][actions-docker-prepare] hook, which maps the
 branch's `Make/Matrix.json` rows onto the hub's matrix shape. The shared base is built **once** (on the
 `main` run) and reused: a `develop` dispatch skips `build-base` and pulls main's published base, so it never
 overwrites the branch-agnostic `nx-base` tag. The hub core owns the cache policy: the product build reads both
@@ -210,7 +210,7 @@ README + LICENSE; `target_commitish` pinned to `GitCommitId`; skip-existing guar
 `release-asset-*` binaries or packages - the published artifacts are the Docker Hub images - so it sets
 `expect_release_assets: false`, which skips the release-asset download and relaxes
 `fail_on_unmatched_files`. The GitHub release exists only as the version anchor / tag. The Docker Hub
-repository overview ([`Docker/README.md`](./Docker/README.md), the hub default's first choice) is pushed to
+repository overview ([`Docker/README.md`][docker-readme], the hub default's first choice) is pushed to
 every product + base repo on a `main` publish by the hub's `publish-docker-readme-task.yml`, since Docker
 Hub does not read the GitHub README; the repo list is derived from `Make/Matrix.json` by the task's
 `manifest-jq` input.
@@ -424,7 +424,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `X.Y.Z-g<sha>`. The release-version backstop names `main`; `publicReleaseRefSpec` is `^refs/heads/main$`.
 - **D3.3 Version floor + git height.** Output: `version.json` sets the major.minor floor, NBGV appends the git
   height as the patch, never bumped on a cadence. *(Who raises the floor and when is a human-process rule in
-  [`GOVERNANCE.md` "Release Model"](./GOVERNANCE.md#release-model).)*
+  [`GOVERNANCE.md` "Release Model"][governance-release-model].)*
 
 ### D4 - Release / publish
 
@@ -667,3 +667,18 @@ enabled. The GitHub App installed with the scopes above.
 **Validation.** This configuration is codified in the hub's repository-configuration payloads and
 applied/audited by the hub's `configure.sh`; `check` is the 5D audit. Secret values cannot be read back, so the audit asserts
 the names exist (failing if they cannot be queried); the App installation is a best-effort check.
+
+<!-- Repo -->
+
+[actions]: ./.github/actions/
+[actions-codegen]: ./.github/actions/codegen/action.yml
+[actions-docker-build-base]: ./.github/actions/docker-build-base/action.yml
+[actions-docker-prepare]: ./.github/actions/docker-prepare/action.yml
+[codestyle]: ./CODESTYLE.md
+[docker-readme]: ./Docker/README.md
+[editorconfig]: ./.editorconfig
+[governance-release-model]: ./GOVERNANCE.md#release-model
+[publish-release]: ./.github/workflows/publish-release.yml
+[run-periodic-codegen-pull-request]: ./.github/workflows/run-periodic-codegen-pull-request.yml
+[test-pull-request]: ./.github/workflows/test-pull-request.yml
+[workflows]: ./.github/workflows/
