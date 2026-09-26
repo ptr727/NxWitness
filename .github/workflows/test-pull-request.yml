@@ -1,7 +1,6 @@
 name: Test pull request action
 
-# CI for every branch. Runs on push so the reusable tasks resolve from the pushed head: a PR that edits a
-# workflow tests its own copy, and the aggregator (the ruleset required check) is produced on the head SHA by
+# CI for every branch. Runs on push so the aggregator (the ruleset required check) is produced on the head SHA by
 # the sole producing run. validate (unit tests + lint) runs on every push. The image smoke build runs only
 # when image files changed (inline git diff change-gate), since a full product smoke is heavier than a
 # doc-only push warrants. CI never publishes (the publisher runs on schedule/push-on-Matrix.json/dispatch).
@@ -27,8 +26,8 @@ permissions: {}
 jobs:
 
   # Inline change-gate (no third-party action): diff the push against its before-commit to decide whether the
-  # image smoke build is needed. image => any Docker/Matrix/Version file changed. Base => a base Dockerfile
-  # changed. On a non-push event (workflow_dispatch) or a new branch (no before-commit), build everything.
+  # image smoke build is needed. image => any Docker/Matrix/Version file or Docker hook changed. Base => a base
+  # Dockerfile or the base hook changed. On a non-push event (workflow_dispatch) or a new branch (no before-commit), build everything.
   # !github.event.deleted skips a branch-deletion push (github.sha is all-zeros, so checkout would fail).
   changes:
     name: Detect image changes job
@@ -65,49 +64,57 @@ jobs:
             echo "base=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if grep -qE '^(Docker/|Make/Matrix\.json$|Make/Version\.json$)' <<<"$DIFF"; then
+          if grep -qE '^(Docker/|Make/Matrix\.json$|Make/Version\.json$|\.github/actions/docker-)' <<<"$DIFF"; then
             echo "image=true" >> "$GITHUB_OUTPUT"
           else
             echo "image=false" >> "$GITHUB_OUTPUT"
           fi
-          if grep -qE '^Docker/(NxBase\.Dockerfile|NxBase-LSIO\.Dockerfile)$' <<<"$DIFF"; then
+          if grep -qE '^(Docker/(NxBase\.Dockerfile|NxBase-LSIO\.Dockerfile)$|\.github/actions/docker-build-base/)' <<<"$DIFF"; then
             echo "base=true" >> "$GITHUB_OUTPUT"
           else
             echo "base=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The same unit-test + lint gate the publisher runs, so the PR gate and the publish gate are identical.
+  # The hub's reusable gate, the same one the publisher runs, so the push gate and the publish gate are identical.
   validate:
     name: Validate job
     if: ${{ !github.event.deleted }}
+    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@456694681ae76ff162a9bd784b5376901957feae # 2.0.685
     permissions:
       contents: read
-    uses: ./.github/workflows/validate-task.yml
-    secrets: inherit
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # Fast smoke build in place of the full matrix: only runs when image files changed, and builds just NxMeta +
-  # NxMeta-LSIO on amd64 (no push). branch targets the pushed branch so a push to develop validates the develop
-  # image rows and a push to main validates the main rows. ref is left unset so checkout uses the pushed head.
-  # build_base is enabled only when a base Dockerfile changed (otherwise the product smoke pulls the published
-  # base from Docker Hub). It also `needs: validate`, and the `if` carries no `always()`, so an unsuccessful
-  # validate skips this job via GitHub's implicit needs-success rule - the smoke build is not spent when
-  # validation already failed.
+  # Fast smoke build in place of the full matrix, only when image files changed, through the hub's release chain with smoke set, which never pushes.
+  # It builds one NxMeta and one NxMeta-LSIO row on amd64, the image input naming them as the docker-prepare hook's filter.
+  # The base images build first only when a base Dockerfile changed, and otherwise the product smoke pulls the published base from Docker Hub.
+  # It needs validate with no always() in its if, so an unsuccessful validate skips it through the implicit needs-success rule.
+  # The Docker Hub secrets are mapped even on smoke, since the hub task logs in on every build for the higher rate limit.
   smoke-build:
     name: Smoke build job
     needs: [changes, validate]
     if: ${{ !github.event.deleted && needs.changes.outputs.image == 'true' }}
+    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@456694681ae76ff162a9bd784b5376901957feae # 2.0.685
     permissions:
       contents: read
-    uses: ./.github/workflows/build-docker-task.yml
-    secrets: inherit
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
     with:
-      push: false
       smoke: true
-      # Map the push ref to a Matrix.json .Branch value: a main push checks main's rows. Every other branch
-      # (develop, and feature branches that merge via develop) FALLS BACK to develop's rows. Passing
-      # github.ref_name directly would be a feature-branch name matching no .Branch row -> empty smoke matrix.
+      github: false
+      dockerhub: false
+      enable_docker: true
+      enable_dotnet_publish: false
+      enable_nuget: false
+      enable_pypi: false
+      expect_release_assets: false
+      docker_image: NxMeta,NxMeta-LSIO
+      docker_build_base: ${{ needs.changes.outputs.base == 'true' }}
+      # Map the push ref to a Make/Matrix.json Branch value: a main push checks main's rows.
+      # Every other branch, develop and the feature branches that merge through it, falls back to develop's rows.
+      # Passing github.ref_name directly would name a feature branch that matches no row, an empty smoke matrix.
       branch: ${{ github.ref_name == 'main' && 'main' || 'develop' }}
-      build_base: ${{ needs.changes.outputs.base == 'true' }}
 
   # Single required status check. Its name is the ruleset-bound context in the live branch ruleset.
   # Do not rename it without updating the ruleset in lockstep.

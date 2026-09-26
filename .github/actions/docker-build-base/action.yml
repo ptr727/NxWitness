@@ -1,0 +1,78 @@
+# The docker-build-base hook the hub's build-docker-task.yml runs before the product images when build-base is set.
+# It builds the two shared base images every product Dockerfile starts from, nx-base and nx-base-lsio.
+# The base carries one branch-agnostic tag, so only a main publish pushes it, and a develop publish reuses main's.
+# The publisher's own build-base job runs it for that push, and the smoke build reaches it through the hub without one.
+# No branch reaches the hook, so push stands in for it: a push is a main publish, built multi-arch with a main cache.
+# Anything else is a smoke build, amd64 only and never pushed.
+name: NxWitness docker-build-base hook
+description: Build and optionally push the shared nx-base and nx-base-lsio images.
+
+inputs:
+  push:
+    description: Push the base images, which only a main publish sets.
+    required: true
+  ref:
+    description: Accepted because the hub passes it, and unused, since the hub job has already checked it out.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Select platforms step
+      id: platforms
+      shell: bash
+      env:
+        PUSH: ${{ inputs.push }}
+      run: |
+        set -Eeuo pipefail
+        if [[ "$PUSH" == "true" ]]; then
+          echo "platforms=linux/amd64,linux/arm64" >> "$GITHUB_OUTPUT"
+        else
+          echo "platforms=linux/amd64" >> "$GITHUB_OUTPUT"
+        fi
+
+    # An arm64 build is non-native on the amd64 runner, so its QEMU emulator is installed only when the build includes it.
+    - name: Setup QEMU step
+      if: ${{ contains(steps.platforms.outputs.platforms, 'arm64') }}
+      uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+      with:
+        platforms: arm64
+
+    - name: Setup Buildx step
+      uses: docker/setup-buildx-action@594f3bf4285d9ea8dc53c9a0c9c4092420091003 # v4.4.0
+      with:
+        platforms: ${{ steps.platforms.outputs.platforms }}
+
+    # The hook holds no login, since a composite action cannot read secrets, so the job running it with push set logs in first.
+    # The hub's own docker-build-base job carries no login, which is why only the smoke build reaches this hook through the hub.
+    # The inline cache on the pushed tag is what the first cache-from entry reads back on the next publish.
+    - name: Build and push nx-base step
+      uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      with:
+        push: ${{ inputs.push == 'true' }}
+        context: Docker
+        file: Docker/NxBase.Dockerfile
+        platforms: ${{ steps.platforms.outputs.platforms }}
+        tags: docker.io/ptr727/nx-base:ubuntu-noble
+        cache-from: |
+          type=registry,ref=docker.io/ptr727/nx-base:ubuntu-noble
+          type=registry,ref=docker.io/ptr727/nx-base:buildcache-main
+        cache-to: |
+          ${{ inputs.push == 'true' && 'type=registry,ref=docker.io/ptr727/nx-base:buildcache-main,mode=max,ignore-error=true' || '' }}
+          ${{ inputs.push == 'true' && 'type=inline' || '' }}
+
+    - name: Build and push nx-base-lsio step
+      uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      with:
+        push: ${{ inputs.push == 'true' }}
+        context: Docker
+        file: Docker/NxBase-LSIO.Dockerfile
+        platforms: ${{ steps.platforms.outputs.platforms }}
+        tags: docker.io/ptr727/nx-base-lsio:ubuntu-noble
+        cache-from: |
+          type=registry,ref=docker.io/ptr727/nx-base-lsio:ubuntu-noble
+          type=registry,ref=docker.io/ptr727/nx-base-lsio:buildcache-main
+        cache-to: |
+          ${{ inputs.push == 'true' && 'type=registry,ref=docker.io/ptr727/nx-base-lsio:buildcache-main,mode=max,ignore-error=true' || '' }}
+          ${{ inputs.push == 'true' && 'type=inline' || '' }}

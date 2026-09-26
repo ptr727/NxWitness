@@ -1,14 +1,12 @@
 <Solution>
     <Folder Name="/GitHub Actions/">
-        <File Path=".github/workflows/build-base-images-task.yml" />
-        <File Path=".github/workflows/build-docker-task.yml" />
-        <File Path=".github/workflows/get-version-task.yml" />
+        <File Path=".github/actions/codegen/action.yml" />
+        <File Path=".github/actions/docker-build-base/action.yml" />
+        <File Path=".github/actions/docker-prepare/action.yml" />
         <File Path=".github/workflows/merge-bot-pull-request.yml" />
         <File Path=".github/workflows/publish-release.yml" />
-        <File Path=".github/workflows/run-codegen-pull-request-task.yml" />
         <File Path=".github/workflows/run-periodic-codegen-pull-request.yml" />
         <File Path=".github/workflows/test-pull-request.yml" />
-        <File Path=".github/workflows/validate-task.yml" />
     </Folder>
     <Folder Name="/Solution Items/">
         <File Path=".dockerignore" />

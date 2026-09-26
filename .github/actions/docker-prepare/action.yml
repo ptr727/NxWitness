@@ -1,0 +1,56 @@
+# The docker-prepare hook the hub's build-docker-task.yml runs in place of its single-image default.
+# It turns the Make/Matrix.json rows for one branch into the hub's {name, tags, build-args, context, dockerfile, cache-repo} matrix shape.
+# The hub core adds LABEL_VERSION from semver2 itself, so the entries carry only the product tags and download args codegen wrote.
+name: NxWitness docker-prepare hook
+description: Emit the build-docker-task.yml matrix from the Make/Matrix.json rows of one branch.
+
+inputs:
+  # This hook reads image as an optional filter rather than as a Docker Hub repository.
+  # The smoke build names the one Ubuntu and one LSIO product it builds, and a publish leaves it empty to build every row.
+  image:
+    description: Comma-separated Make/Matrix.json image names to keep, one row per name, or empty for every row of the branch.
+    required: false
+    default: ''
+  branch:
+    description: The Make/Matrix.json Branch value whose rows to build.
+    required: true
+  semver2:
+    description: Accepted because the hub passes it, and unused, since the hub core adds LABEL_VERSION itself.
+    required: false
+    default: ''
+
+outputs:
+  matrix:
+    description: Compact JSON array of {name, tags, build-args, context, dockerfile, cache-repo} entries.
+    value: ${{ steps.emit.outputs.matrix }}
+
+runs:
+  using: composite
+  steps:
+    - name: Emit Make/Matrix.json matrix step
+      id: emit
+      shell: bash
+      env:
+        NAMES: ${{ inputs.image }}
+        BRANCH: ${{ inputs.branch }}
+      run: |
+        set -Eeuo pipefail
+        # The cache repository is the first tag without its :tag suffix, the image's own Docker Hub repository.
+        # A name filter keeps one row per name, since the rows of one product differ only in the upstream version they pin.
+        # shellcheck disable=SC2016 # $b and $n are jq variables, not shell expansions
+        matrix=$(jq --compact-output --arg b "$BRANCH" --arg n "$NAMES" '
+          [.Images[] | select(.Branch == $b)]
+          | if $n == "" then . else map(select(.Name as $name | $n | split(",") | index($name))) | unique_by(.Name) end
+          | map({
+              name: .Name,
+              tags: .Tags,
+              "build-args": .Args,
+              context: "Docker",
+              dockerfile: "Docker/\(.Name).Dockerfile",
+              "cache-repo": (.Tags[0] | sub(":[^:]*$"; ""))
+            })' ./Make/Matrix.json)
+        if [[ "$(jq 'length' <<<"$matrix")" == "0" ]]; then
+          echo "::error::Make/Matrix.json holds no rows for branch '$BRANCH' and names '$NAMES'."
+          exit 1
+        fi
+        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
