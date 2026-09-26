@@ -19,6 +19,7 @@
         <File Path=".markdownlint-cli2.jsonc" />
         <File Path="AGENTS.md" />
         <File Path="ARCHITECTURE.md" />
+        <File Path="AUDIT.md" />
         <File Path="CLAUDE.md" />
         <File Path="CODESTYLE.md" />
         <File Path="GOVERNANCE.md" />
