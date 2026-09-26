@@ -2,8 +2,8 @@
 
 The single guide for this repo's CI/CD **workflows** (GitHub Actions): **code style**, **architecture**, a
 **behavioral contract** (expected inputs and outputs), and a **test methodology**. Source code style lives
-in [`CODESTYLE.md`](./CODESTYLE.md). This file covers everything under
-[`.github/workflows/`](./.github/workflows/).
+in [`CODESTYLE.md`][codestyle]. This file covers everything under
+[`.github/workflows/`][workflows].
 
 It **describes required outcomes, not a required implementation.** A workflow is correct when it satisfies
 the contract (section 4), whatever shape its YAML takes. Section 2 keeps workflows legible. Section 3 is
@@ -37,7 +37,11 @@ once their checks pass.
 - **Entry workflow** - has `push` / `schedule` / `workflow_dispatch` triggers. The orchestrator that an event
   or a person starts.
 - **Reusable workflow (task)** - a `workflow_call` workflow invoked through a `uses:` reference, never
-  triggered directly. File ends in `-task.yml`.
+  triggered directly. File ends in `-task.yml`. Every task this repo runs is **hub-hosted** in
+  `ptr727/ProjectTemplate` and reached by a SHA-pinned `uses:`, so this repo carries entry workflows only.
+- **Hook** - a composite action under [`.github/actions/`][actions] that a hub task runs from this
+  repo's checkout for the repo-specific step: `docker-prepare` (the image matrix), `docker-build-base` (the
+  shared bases), and `codegen` (the generator invocation).
 - **Product image** - one shipped image built from a `Make/Matrix.json` row's Dockerfile (e.g. `NxMeta`,
   `NxMeta-LSIO`), pushed to its own Docker Hub repo (`docker.io/ptr727/<image>`).
 - **Shared base image** - `nx-base` / `nx-base-lsio`, built once and reused as the `FROM` for the product
@@ -48,8 +52,9 @@ once their checks pass.
   prove the Dockerfiles still build, publishing and pushing nothing. Driven by a `smoke: true` input.
 - **Transfer artifact** - a workflow artifact handing data between jobs of one run. The durable copy lives on
   the GitHub release / Docker Hub.
-- **Threaded version** - the single NBGV `SemVer2` (plus `GitCommitId`) computed once in `get-version-task`
-  and passed down as `semver2` / `ref` inputs to every consumer, never recomputed in a build task.
+- **Threaded version** - the single NBGV `SemVer2` (plus `GitCommitId`) computed once in the hub's
+  `get-version-task.yml`, which `build-release-task.yml` calls, and passed down as `semver2` / `ref` inputs to
+  every consumer, never recomputed in a build task.
 - **GitHub App token** - a short-lived installation token from `actions/create-github-app-token`, minted from
   the App credentials (`CODEGEN_APP_CLIENT_ID` / `CODEGEN_APP_PRIVATE_KEY`). The merge-bot and the codegen
   PR-opener use it, not `GITHUB_TOKEN`: a `GITHUB_TOKEN` push does not trigger downstream workflows, and that
@@ -77,11 +82,15 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
 - **Action pinning.** Pin every action to a commit SHA with a trailing `# vX.Y.Z` comment. Use `# vX` only
   when the upstream floating major tag has no specific patch SHA. **Sole exception: `dotnet/nbgv@master`** is
   consumed via the floating `@master` ref, never SHA-pinned - its tag stream lags `master` substantially, so
-  Dependabot tag-tracking would only propose downgrades to stale tags. The rationale lives in an inline
-  comment in [`get-version-task.yml`](./.github/workflows/get-version-task.yml); leave that comment intact. A
-  tool an action *installs* (not a `uses:` ref) is left unpinned to track latest.
+  Dependabot tag-tracking would only propose downgrades to stale tags. That `uses:` lives in the hub's
+  `get-version-task.yml`, with its rationale inline. A tool an action *installs* (not a `uses:` ref) is left
+  unpinned to track latest.
+- **Hub task pinning.** A hub task is reached as
+  `ptr727/ProjectTemplate/.github/workflows/<task>.yml@<commit-sha> # <release-tag>`, every call at the same
+  hub release, and Dependabot bumps the pin. A hub-side change reaches this repo only through a pin bump.
 - **Filename.** Reusable workflows end in `-task.yml`; entry workflows end in what they do
-  (`-pull-request.yml`, `-release.yml`). A `-task.yml` is `uses:`-d, never triggered directly.
+  (`-pull-request.yml`, `-release.yml`). A `-task.yml` is `uses:`-d, never triggered directly, and none is
+  carried here.
 - **Workflow `name:`.** Reusable names end in **"task"**, entry names in **"action"**.
 - **Job and step `name:`.** Every job `name:` ends in **"job"**, every step `name:` in **"step"**, the
   aggregator included (`Check pull request workflow status job`). A job name also bound as a ruleset
@@ -100,33 +109,34 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
   job needs valid permissions. Grant least privilege; a callee's extra scope is granted by the caller.
 - **Allowlist `success` and `skipped` explicitly** across an optional dependency: use
   `(needs.X.result == 'success' || needs.X.result == 'skipped')`, not `!= 'failure'`.
-- **Line endings.** Workflow YAML is LF, per [`.editorconfig`](./.editorconfig)'s `[*]` default (Actions and Dependabot rewrite it that way). Preserve endings on every edit.
+- **Line endings.** Workflow YAML is LF, per [`.editorconfig`][editorconfig]'s `[*]` default (Actions and Dependabot rewrite it that way). Preserve endings on every edit.
 
 ## 3. Architecture
 
 ### Three workflows: CI on push, publishing on schedule/pin-push/dispatch, codegen daily
 
-CI ([`test-pull-request.yml`](./.github/workflows/test-pull-request.yml)) and the publisher
-([`publish-release.yml`](./.github/workflows/publish-release.yml)) are separate workflows with separate
+CI ([`test-pull-request.yml`][test-pull-request]) and the publisher
+([`publish-release.yml`][publish-release]) are separate workflows with separate
 concurrency, so they never race. CI re-tests every pushed tree and never publishes; the publisher releases on
 its own triggers and never runs on an ordinary merge. Codegen
-([`run-periodic-codegen-pull-request.yml`](./.github/workflows/run-periodic-codegen-pull-request.yml) ->
-[`run-codegen-pull-request-task.yml`](./.github/workflows/run-codegen-pull-request-task.yml)) keeps the
-version/matrix data current. *Prevents a merge from silently cutting a release, and a CI run from racing a
+([`run-periodic-codegen-pull-request.yml`][run-periodic-codegen-pull-request] -> the
+hub's `run-codegen-pull-request-task.yml` -> the [`codegen`][actions-codegen] hook) keeps
+the version/matrix data current. *Prevents a merge from silently cutting a release, and a CI run from racing a
 publish on the same ref.*
 
 ### The publisher builds one branch: the trigger ref
 
 A publish builds exactly **one** branch - the run's trigger ref. The **schedule** and the **pin push** both
 run on `main`; a **dispatch** runs on the branch it is started from (`main` or `develop`). The jobs pass
-`github.ref_name` as both `ref` and `branch`, so the branch built, versioned, and tagged is always the run's
-own ref. *No matrix and no cross-branch ref mixing - `github.ref` is the branch being published.* The jobs
-are guarded to the long-lived branches (`main` / `develop`); a stray dispatch from a feature branch is a
-no-op. To refresh `:develop`, dispatch the workflow from `develop`.
+`github.ref_name` as `branch` and the triggering commit `github.sha` as `ref`, so the branch built, versioned,
+and tagged is always the run's own ref, pinned to one commit even if the branch advances mid-run. *No matrix and no cross-branch ref mixing - `github.ref` is the branch being published.* The hub's
+`publish-plan-task.yml` publishes only the long-lived branches (`main` / `develop`); a dispatch from a feature
+branch fails the plan job with an `::error::` and publishes nothing. To refresh `:develop`, dispatch the
+workflow from `develop`.
 
-Because the run's ref **is** the built branch, GitHub resolves the local `uses: ./...` reusable workflows
-from that same branch's commit - so a `develop` dispatch runs develop's own task definitions, and the
-schedule runs main's.
+Because the run's ref **is** the built branch, the hooks run from that same branch's commit - so a `develop`
+dispatch builds develop's own `Make/Matrix.json` rows with develop's hooks, and the schedule runs main's. The
+hub tasks themselves resolve at the pinned hub commit on every branch.
 
 ### The publisher's pin-push trigger
 
@@ -139,21 +149,25 @@ base image for CVEs.
 
 ### The multi-image build layer
 
-The publisher decomposes into a single `get-version` -> `build-base` -> `build-docker` ->
-`github-release` -> `docker-readme` -> `cleanup-artifacts` chain (a multi-product Docker repo, not the
-template's single-target branch matrix). [`build-base-images-task.yml`](./.github/workflows/build-base-images-task.yml)
-builds the two shared bases; [`build-docker-task.yml`](./.github/workflows/build-docker-task.yml) builds the
-product matrix from `Make/Matrix.json` (`max-parallel: 4`). The shared base is built **once** (on the `main`
-run) and reused: a `develop` dispatch sets `build_base: false` and pulls main's published base, so it never
-overwrites the branch-agnostic `nx-base` tag. The product build reads both branches' registry buildcaches
-(`buildcache-main`, `buildcache-develop`) and writes only its own branch's cache, only when pushing.
+The publisher is a `plan` -> `validate` -> `build-base` -> `publish` -> `publish-docker-readme` chain (a
+multi-product Docker repo, the matrix and `build-base` case of the hub's Docker family). The `build-base` job
+logs in to Docker Hub and runs the [`docker-build-base`][actions-docker-build-base] hook
+to build and push the two shared bases. It is this repo's own job rather than the hub's `build-base` leg,
+since that leg carries no Docker Hub login and a composite hook cannot read secrets. The `publish` job calls
+the hub's `build-release-task.yml`, whose Docker leg (the hub's `build-docker-task.yml`) takes the product
+matrix from the [`docker-prepare`][actions-docker-prepare] hook, which maps the
+branch's `Make/Matrix.json` rows onto the hub's matrix shape. The shared base is built **once** (on the
+`main` run) and reused: a `develop` dispatch skips `build-base` and pulls main's published base, so it never
+overwrites the branch-agnostic `nx-base` tag. The hub core owns the cache policy: the product build reads both
+branches' registry buildcaches (`buildcache-main`, `buildcache-develop`) and writes only its own branch's
+cache, only when pushing.
 
 ### Versioning: compute once, thread everywhere
 
-NBGV runs once (in [`get-version-task.yml`](./.github/workflows/get-version-task.yml)), classifying from
+NBGV runs once (in the hub's `get-version-task.yml`, called by `build-release-task.yml`), classifying from
 `github.ref`, and its outputs (`SemVer2`, `GitCommitId`) thread to every consumer via `outputs:` / `needs:` /
-`semver2` inputs. `build-docker-task` accepts the threaded `semver2` as the image `LABEL_VERSION` and never
-re-runs NBGV - one classification feeds every product leg, so no second NBGV run can reclassify or collide a
+`semver2` inputs. The hub's `build-docker-task.yml` accepts the threaded `semver2` as the image
+`LABEL_VERSION` and never re-runs NBGV - one classification feeds every product leg, so no second NBGV run can reclassify or collide a
 tag. A build job may check out a specific commit to compile it (main pins to `GitCommitId`) but consumes the
 threaded version. `main` (the public ref, `publicReleaseRefSpec = ^refs/heads/main$`) builds a clean
 `X.Y.<height>`; every other branch a prerelease `X.Y.<height>-g<sha>`. *Keeps each image's embedded version
@@ -171,41 +185,48 @@ NBGV build version.
 
 ### Validate at entry
 
-A run that carries a cross-input invariant (`main` must not carry a prerelease suffix) asserts it once with
-`::error::` before the release is published. The `github-release` job `needs:` the version job and runs the
-backstop step first.
+A run that carries a cross-input invariant (`main` must not carry a prerelease suffix, and any other branch
+must carry one) asserts it once with `::error::` before anything builds. The hub's `build-release-task.yml`
+runs that check in its `validate-release` job, which every build job `needs:`.
 
 ### Fast CI feedback, head-resolved
 
-CI runs on push to every branch, so GitHub head-resolves the reusable `./...` workflows from the pushed head:
-a pull request that edits a reusable task tests its own copy. CI validates (the reusable `validate-task`:
-Husky lint + `dotnet test`) on every push, and smoke-builds a representative image subset only when image
-files changed (an inline `git diff` change-gate, no `dorny/paths-filter`), uploading and pushing nothing. One
+CI runs on push to every branch, and the hooks resolve from the pushed head, so a pull request that edits a
+hook tests its own copy. The hub tasks resolve at their pinned commit, so a hub-side change is tested by the
+pull request that bumps the pin, which touches `.github/workflows/` and so runs the smoke build too. CI validates (the hub's `validate-task.yml`: the document linters, CSharpier
+and `dotnet format style`, the repo gates, and `dotnet test`) on every push, and smoke-builds a
+representative image subset only when image files, the Docker hooks, or the workflows changed (an inline `git diff`
+change-gate, no `dorny/paths-filter`), through the hub's `build-release-task.yml` with `smoke: true`,
+uploading and pushing nothing. One
 aggregator job, the ruleset-bound required check, gates the merge. A branch-deletion push (all-zeros
 `github.sha`) is skipped by a `!github.event.deleted` guard on every job, so a deletion never runs a failing
 build.
 
 ### The Docker-only release
 
-The `github-release` job tags the built commit and creates the GitHub release (auto source zip + README +
-LICENSE; `target_commitish` pinned to `GitCommitId`; skip-existing guard; main-only). This repo ships **no**
-`release-asset-*` binaries or packages - the published artifacts are the Docker Hub images - so there is no
-release-asset download step and `fail_on_unmatched_files` is omitted. The GitHub release exists only as the
-version anchor / tag. The Docker Hub repository overview (the repo `README.md`) is pushed to every product +
-base repo on a `main` Docker publish (the `docker-readme` jobs), since Docker Hub does not read the GitHub
-README; the repo list is derived inline from `Make/Matrix.json`.
+The hub's `github-release` job tags the built commit and creates the GitHub release (auto source zip +
+README + LICENSE; `target_commitish` pinned to `GitCommitId`; skip-existing guard). The caller sets
+`github: true` only on `main`, so a `develop` dispatch cuts no release. This repo ships **no**
+`release-asset-*` binaries or packages - the published artifacts are the Docker Hub images - so it sets
+`expect_release_assets: false`, which skips the release-asset download and relaxes
+`fail_on_unmatched_files`. The GitHub release exists only as the version anchor / tag. The Docker Hub
+repository overview ([`Docker/README.md`][docker-readme], the hub default's first choice) is pushed to
+every product + base repo on a `main` publish by the hub's `publish-docker-readme-task.yml`, since Docker
+Hub does not read the GitHub README; the repo list is derived from `Make/Matrix.json` by the task's
+`manifest-jq` input.
 
 ### Resource lifecycle
 
-Workflow artifacts are an intra-run handoff; the durable copy lives on the GitHub release / Docker Hub. The
-publisher and CI both run a terminal `cleanup-artifacts` job that deletes the run's transfer artifacts so
-they do not accumulate against the small account-wide storage quota; it is `continue-on-error` so housekeeping
-never reds the run.
+Workflow artifacts are an intra-run handoff; the durable copy lives on the GitHub release / Docker Hub. This
+repo uploads none: the images go straight to Docker Hub and the release carries no `release-asset-*` files.
+The hub's `github-release` job still owns the consume-then-delete cleanup, `continue-on-error` so
+housekeeping never reds the run, should a target that uploads one ever be enabled.
 
 ### Self-sufficiency: automatic updates
 
-Every Dependabot pull request, any ecosystem and any tier, auto-merges once the required checks pass, except
-a **semver-major NuGet** bump, which waits for human review. Codegen opens a `codegen-main` -> `main` and a
+Every Dependabot pull request, any ecosystem and any tier, auto-merges once the required checks pass, a
+semver-major NuGet bump included, since the required checks are the gate (D8.2). The merge-bot is the hub's
+`merge-bot-task.yml`. Codegen opens a `codegen-main` -> `main` and a
 `codegen-develop` -> `develop` PR daily; the merge-bot auto-merges each independently (`--delete-branch`).
 A merged dependency bump does not itself publish; a merged matrix pin on `main` does (the pin-push trigger).
 A person steps in only for a breaking change (a red check) or to dispatch a release.
@@ -218,8 +239,7 @@ the same outcomes that the section 4 contract specifies, drawn from the workflow
 a guarantee disagree, one of them is a defect. Triggers are blue, gates yellow, durable/published
 outputs green, and stop/skip outcomes red.
 
-**Pull request (CI) - `test-pull-request.yml`.** Every push head-resolves the reusable tasks, runs the
-validate gate, smoke-builds a representative image subset only when image files changed, and a single
+**Pull request (CI) - `test-pull-request.yml`.** Every push runs the hub's validate gate, smoke-builds a representative image subset only when image files changed, and a single
 aggregator produces the ruleset-bound required check (D1, D6).
 
 ```mermaid
@@ -228,14 +248,14 @@ flowchart TD
     T --> D{"github.event.deleted?"}:::gate
     D -- "yes: branch deletion" --> X(["all jobs + aggregator skip<br/>no failed run, no pending check"]):::stop
     D -- "no" --> CH["changes job<br/>inline git diff change-gate<br/>image? base?"]
-    D -- "no" --> V["validate job<br/>(validate-task.yml)"]
-    subgraph VT ["validate-task.yml"]
-        VU["Husky lint (CSharpier,<br/>dotnet format style)<br/>+ dotnet test"]
+    D -- "no" --> V["validate job<br/>(hub validate-task.yml)"]
+    subgraph VT ["hub validate-task.yml"]
+        VU["doc linters, CSharpier,<br/>dotnet format style, repo gates<br/>+ dotnet test"]
     end
     V --> VT
-    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json)"}:::gate
+    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json,<br/>.github/actions/docker-*, .github/workflows/**)"}:::gate
     SG -- "no" --> SS(["smoke-build skipped<br/>(aggregator allows skip)"]):::stop
-    SG -- "yes" --> S["smoke-build job<br/>build-docker-task.yml<br/>smoke: true, push: false<br/>NxMeta + NxMeta-LSIO, amd64"]
+    SG -- "yes" --> S["smoke-build job<br/>hub build-release-task.yml<br/>smoke: true, never pushes<br/>NxMeta + NxMeta-LSIO, amd64"]
     CH --> A
     VT --> A
     S --> A
@@ -250,37 +270,37 @@ flowchart TD
 ```
 
 **Publish - `publish-release.yml`.** A weekly schedule (main), a `Make/Matrix.json` pin push (main), or a
-dispatch versions once with NBGV, builds the shared base (main only), validates, builds the 12-image
-product matrix with the threaded SemVer2, then cuts the main-only GitHub release and refreshes the Docker
-Hub overviews (D0, D2, D3, D4).
+dispatch plans, validates, builds the shared base (main only), then calls the hub release chain, which
+versions once with NBGV, builds the branch's product matrix with the threaded SemVer2, and cuts the main-only
+GitHub release; the Docker Hub overviews refresh last (D0, D2, D3, D4).
 
 ```mermaid
 flowchart TD
-    P1(["schedule: weekly Mon 02:00 UTC<br/>(main only)"]):::trig --> GV
-    P2(["push: main<br/>paths = Make/Matrix.json (codegen pin)"]):::trig --> GV
-    P3(["workflow_dispatch<br/>(main or develop)"]):::trig --> GV
-    GV{"get-version job<br/>ref_name in (main, develop)?"}:::gate
-    GV -- "feature branch" --> GVS(["all jobs skip<br/>no publish"]):::stop
-    GV -- "yes" --> GVR["get-version job<br/>(get-version-task.yml)<br/>NBGV @master, runs once<br/>SemVer2 + GitCommitId"]
-    GVR --> BB{"ref_name == main?"}:::gate
+    P1(["schedule: weekly Mon 02:00 UTC<br/>(main only)"]):::trig --> PL
+    P2(["push: main<br/>paths = Make/Matrix.json (codegen pin)"]):::trig --> PL
+    P3(["workflow_dispatch<br/>(main or develop)"]):::trig --> PL
+    PL{"plan job (hub publish-plan-task.yml)<br/>publish? stable?"}:::gate
+    PL -- "no: human push, or<br/>feature-branch dispatch" --> PLS(["all jobs skip or plan fails<br/>no publish"]):::stop
+    PL -- "publish" --> VAL["validate job<br/>(hub validate-task.yml)"]
+    VAL --> BB{"stable (main)?"}:::gate
     BB -- "develop dispatch" --> BBS(["build-base skipped<br/>reuse main's nx-base"]):::stop
-    BB -- "main" --> BBJ["build-base job<br/>(build-base-images-task.yml)<br/>nx-base + nx-base-lsio<br/>amd64 + arm64, branch ref (github.ref_name)"]
-    GVR --> VAL["validate job<br/>(validate-task.yml)<br/>main: pinned to GitCommitId"]
-    VAL --> BD
-    BBJ --> BD
-    BBS --> BD
-    BD["build-docker job<br/>(build-docker-task.yml, build_base: false)<br/>12-image matrix from Make/Matrix.json<br/>amd64 + arm64, max-parallel 4<br/>LABEL_VERSION = threaded SemVer2"]
-    BD --> DH[("Docker Hub<br/>10 product repos (branch tags)<br/>+ 2 shared base repos")]:::pub
-    BD --> RG{"ref_name == main?"}:::gate
+    BB -- "main" --> BBJ["build-base job<br/>docker login + docker-build-base hook<br/>nx-base + nx-base-lsio<br/>amd64 + arm64, buildcache-main"]
+    BBJ --> PUB
+    BBS --> PUB
+    subgraph PUB ["publish job: hub build-release-task.yml"]
+        GVR["get-version<br/>NBGV @master, runs once<br/>SemVer2 + GitCommitId"] --> VR{"validate-release<br/>main: no prerelease '-'<br/>other: has one"}:::gate
+        VR -- "clean" --> BD["build-docker (hub build-docker-task.yml)<br/>matrix from the docker-prepare hook<br/>= the branch's Make/Matrix.json rows<br/>amd64 + arm64 on main<br/>LABEL_VERSION = threaded SemVer2"]
+        BD --> RG{"github: true (main)?"}:::gate
+    end
+    VR -- "mismatch" --> VRX(["fail ::error::<br/>refuse to publish"]):::stop
+    BD --> DH[("Docker Hub<br/>10 product repos (branch tags)")]:::pub
+    BBJ --> DHB[("Docker Hub<br/>2 shared base repos")]:::pub
     RG -- "develop" --> RGS(["no GitHub release<br/>(:develop images only)"]):::stop
-    RG -- "main" --> VPR{"github-release job<br/>SemVer2 has no prerelease '-'?<br/>(strip +buildmetadata)"}:::gate
-    VPR -- "prerelease suffix" --> VPRX(["fail ::error::<br/>refuse to publish"]):::stop
-    VPR -- "clean" --> EX{"tag exists AND not dispatch?"}:::gate
+    RG -- "main" --> EX{"tag exists AND not dispatch?"}:::gate
     EX -- "yes" --> EXS(["skip release create<br/>(no-op republish)"]):::stop
     EX -- "no" --> REL[("GitHub release<br/>tag = SemVer2 at GitCommitId<br/>prerelease: false, source zip + README + LICENSE")]:::pub
-    BD --> DRR["docker-readme-repos job<br/>derive repo list from Matrix.json"]
-    DRR --> DRM["docker-readme job (matrix)<br/>push README to each Docker Hub repo"]
-    DRM --> DRO[("Docker Hub overviews<br/>10 product + 2 base repos")]:::pub
+    PUB --> DRM["publish-docker-readme job (main)<br/>hub publish-docker-readme-task.yml<br/>repo list from Make/Matrix.json"]
+    DRM --> DRO[("Docker Hub overviews (Docker/README.md)<br/>10 product + 2 base repos")]:::pub
     classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
     classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
     classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
@@ -294,21 +314,19 @@ merge-bot enables auto-merge (or disables it on a maintainer push); the required
 ```mermaid
 flowchart TD
     SCH(["schedule daily 04:00 UTC<br/>(or workflow_dispatch)"]):::trig --> CG
-    subgraph CGT ["run-codegen-pull-request-task.yml (matrix: main, develop)"]
-        CG["codegen job per branch<br/>regenerate Version.json + Matrix.json<br/>(deterministic, forward-only guard)"] --> CGC{"data changed?"}:::gate
+    subgraph CGT ["hub run-codegen-pull-request-task.yml (matrix: main, develop)"]
+        CG["codegen job per branch<br/>codegen hook: regenerate Version.json + Matrix.json<br/>(deterministic, forward-only guard)"] --> CGC{"data changed?"}:::gate
         CGC -- "no" --> CGN(["no PR"]):::stop
         CGC -- "yes" --> CPR["open codegen-&lt;branch&gt; PR<br/>(App token)"]
     end
     DEP(["Dependabot opens PR<br/>any ecosystem/tier"]):::trig --> MB
     CPR --> MB
-    subgraph MBT ["merge-bot-pull-request.yml (pull_request_target)"]
+    subgraph MBT ["merge-bot-pull-request.yml -> hub merge-bot-task.yml (pull_request_target)"]
         MB{"event / author"}:::gate
         MB -- "opened/reopened<br/>bot author" --> EN["enable auto-merge --delete-branch<br/>squash develop / merge main"]
         MB -- "synchronize by maintainer" --> DIS["disable auto-merge"]
     end
-    EN --> SM{"semver-major NuGet?"}:::gate
-    SM -- "yes" --> HUM(["wait for human review"]):::stop
-    SM -- "no" --> CK{"required check passes?"}:::gate
+    EN --> CK{"required check passes?"}:::gate
     CK -- "yes" --> MRG(["PR merges (App token)"]):::pub
     CK -- "no" --> BLK(["merge blocked<br/>maintainer notified"]):::stop
     MRG -. "codegen-main Matrix.json change" .-> PUBR(["publisher pin-push auto-publishes main"]):::pub
@@ -332,7 +350,7 @@ flowchart TD
     DCH -- "yes: develop" --> PRD["codegen-develop -> develop PR<br/>(merge-bot auto-merges)"]
     PRD --> SYNC(["develop Matrix.json updated<br/>sync-only, push trigger is main-only<br/>:develop refreshed by dispatch"]):::stop
     PRM --> PUSH(["push to main<br/>paths = Make/Matrix.json"]):::trig
-    PUSH --> PUB["publish-release.yml<br/>pin-push: build base + 12-image matrix"]
+    PUSH --> PUB["publish-release.yml<br/>pin-push: build base + main's product matrix"]
     PUB --> SINK[("Docker Hub product + base images<br/>+ main GitHub release")]:::pub
     SCHED(["weekly schedule (main)<br/>base refresh for CVEs"]):::trig --> PUB
     DISP(["workflow_dispatch (main or develop)<br/>force publish that branch"]):::trig --> PUB
@@ -351,10 +369,12 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D0.1 CI is one run, one branch.** Input: any push. Output: `test-pull-request` builds/validates exactly
   `github.ref_name` and publishes nothing. *Prevents cross-branch ref mixing in CI.*
 - **D0.2 The publisher builds one branch: the trigger ref.** Output: the publisher passes `github.ref_name`
-  as `ref` and `branch`, so it checks out, versions, and tags exactly the run's own branch (the schedule/pin
-  push's `main`, or a dispatch's branch). No branch matrix; the jobs are guarded to `main`/`develop`.
+  as `branch` and the triggering `github.sha` as `ref`, so it checks out, versions, and tags exactly the run's own branch (the schedule/pin
+  push's `main`, or a dispatch's branch). No branch matrix; the hub's `publish-plan-task.yml` publishes only
+  `main`/`develop`.
   *Prevents cross-branch ref mixing - `github.ref` is the branch being published.*
-- **D0.3 One version, threaded.** Output: NBGV runs once (`get-version-task`); every consumer reads it via
+- **D0.3 One version, threaded.** Output: NBGV runs once (the hub's `get-version-task.yml`, inside
+  `build-release-task.yml`); every consumer reads it via
   `needs:` outputs / the `semver2` input; no consumer recomputes it. *Allowed:* checking out a specific
   commit to compile it, and recording the built commit as the release `target_commitish`. *Prevents an
   image's embedded version diverging from its tag, and a second NBGV run colliding image tags.*
@@ -362,15 +382,19 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 ### D1 - CI fast feedback
 
 - **D1.1 Every push validates; image changes smoke-build.** Output: on any push the `validate` job (the
-  reusable `validate-task`) runs with no paths filter; `smoke-build` (NxMeta + NxMeta-LSIO, amd64, no push)
+  hub's `validate-task.yml`) runs with no paths filter; `smoke-build` (NxMeta + NxMeta-LSIO, amd64, no push)
   runs when the inline change-gate detects an image-file change (`Docker/**`, `Make/Matrix.json`,
-  `Make/Version.json`). *Prevents a reusable-workflow or Dockerfile break shipping untested.*
-- **D1.2 Unit tests always run.** Output: `validate-task` runs `dotnet test` (the codegen tool + its tests).
-- **D1.3 Lint enforces the editor checks in CI.** Output: `validate-task` runs Husky (`dotnet husky run`:
-  CSharpier + `dotnet format style --verify-no-changes`) - the same checks the editor and the pre-commit
-  hook run. Workflow YAML is lint-checked by `actionlint` (run from the editor / locally).
+  `Make/Version.json`, `.github/actions/docker-*`, `.github/workflows/**`, the last covering a hub pin bump).
+  *Prevents a hook, Dockerfile, or hub-task break shipping untested.*
+- **D1.2 Unit tests always run.** Output: the hub's `validate-task.yml` runs `dotnet test` (the codegen tool +
+  its tests).
+- **D1.3 Lint enforces the editor checks in CI.** Output: the hub's `validate-task.yml` runs `dotnet
+  csharpier check` and `dotnet format style --verify-no-changes` - the same checks the editor and the Husky
+  pre-commit hook run - plus the document linters, `actionlint`, the composite-action schema check,
+  `shellcheck`, `editorconfig-checker`, and the hub's repo gates.
 - **D1.4 Smoke never publishes and never uploads a release asset.** Output: a smoke build compiles the image
-  subset but makes no GitHub release and no Docker push (`push: false`, `smoke: true`). The Docker login runs
+  subset but makes no GitHub release and no Docker push (`smoke: true`, which disables every push in the hub's
+  `build-release-task.yml`, and `github: false`). The Docker login runs
   on every build including smoke (for higher pull/cache rate limits against the registry buildcache), so a
   Dependabot-triggered push-CI smoke build needs the Docker Hub credentials in both secret stores; fork PRs do
   not run this push-CI.
@@ -381,13 +405,13 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 ### D2 - Validation at entry
 
-- **D2.1 Validate the cross-input invariant before publishing.** Output: the `github-release` job asserts each
-  cross-input invariant with `::error::` (the main-version backstop, D2.2) before the release is created;
-  downstream steps `needs:` the version job. The publish run also re-runs `validate-task` (the `validate` job
-  gates `build-docker`), so a publish can never ship a tree that would fail the same lint + `dotnet test` gate
+- **D2.1 Validate the cross-input invariant before publishing.** Output: the hub's `validate-release` job
+  asserts each cross-input invariant with `::error::` (the version backstop, D2.2) before anything builds;
+  every build job `needs:` it. The publish run also re-runs the hub's `validate-task.yml` (the `validate` job
+  gates `build-base` and `publish`), so a publish can never ship a tree that would fail the same lint + `dotnet test` gate
   CI enforces on push - on the trigger branch CI already validated, re-checked at publish time.
-- **D2.2 Main matches version classification.** Input: a real publish run for `main`. Output: the release
-  fails loudly if `main` carries a prerelease suffix. It strips `+buildmetadata` before testing for the
+- **D2.2 Main matches version classification.** Input: a real publish run. Output: the run fails loudly if
+  `main` carries a prerelease suffix, or if any other branch carries none. It strips `+buildmetadata` before testing for the
   prerelease `-`. *Prevents a develop build published as the stable `latest`.*
 
 ### D3 - Versioning and classification
@@ -400,15 +424,15 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `X.Y.Z-g<sha>`. The release-version backstop names `main`; `publicReleaseRefSpec` is `^refs/heads/main$`.
 - **D3.3 Version floor + git height.** Output: `version.json` sets the major.minor floor, NBGV appends the git
   height as the patch, never bumped on a cadence. *(Who raises the floor and when is a human-process rule in
-  [`GOVERNANCE.md` "Release Model"](./GOVERNANCE.md#release-model).)*
+  [`GOVERNANCE.md` "Release Model"][governance-release-model].)*
 
 ### D4 - Release / publish
 
 - **D4.1 Publish only on schedule, the matrix-pin push, or dispatch - never on an ordinary merge.** Output:
   `publish-release` triggers are `schedule` (weekly), `workflow_dispatch`, and a `push` **branch-filtered to
   `main` and path-filtered to `Make/Matrix.json`**. There is no other `push` trigger and no `PUBLISH_ON_MERGE`
-  variable. The jobs are guarded to `github.ref_name` in (`main`, `develop`), so a stray dispatch from a
-  feature branch is a no-op. *Prevents per-merge release churn while still shipping a new product pin at once.*
+  variable. The hub's `publish-plan-task.yml` publishes only `main` and `develop`, and fails a dispatch from a
+  feature branch with an `::error::`, publishing nothing. *Prevents per-merge release churn while still shipping a new product pin at once.*
 - **D4.2 A publish builds the one trigger branch in full.** Output: the run builds the shared base (main run
   only) + the full product matrix and creates the GitHub release for `github.ref_name` - the schedule/pin push
   rebuilds `main` (stable / `latest`); a dispatch publishes its own branch (`main` stable / `latest`,
@@ -418,24 +442,27 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `main`), and main's images are built from that pinned commit, never the moving ref. *Prevents the tag /
   embedded version landing on the wrong commit.*
 - **D4.4 Release contents and gate.** Output: a release is a tag on the built commit plus the auto source zip,
-  README, and LICENSE - no binary release assets (`fail_on_unmatched_files` omitted; the images are the
-  artifact). The release is `main`-only (`github.ref_name == 'main'`); `prerelease: false`. *Prevents
+  README, and LICENSE - no binary release assets (`expect_release_assets: false`; the images are the
+  artifact). The release is `main`-only (`github: true` only when the plan says stable); `prerelease: false`. *Prevents
   publishing a develop build as a stable GitHub release.*
 - **D4.5 No-op republish.** Input: a weekly re-run whose version is unchanged. Output: the release-create step
   is skipped when the tag already exists (refreshed only on `workflow_dispatch`), while the Docker push still
   runs - re-pushing the same tags refreshes the shared base image. *Prevents duplicate releases while still
   refreshing the images.*
 - **D4.6 Publish is built from the tree CI validated.** Output: the run's ref **is** the published branch, so
-  the reusable-task definitions and the built tree resolve from that branch - the same tree CI validated on
-  push (the required check gates every merge to it) with the identical `validate-task` definition - and the publish run re-runs that `validate-task` (the
-  `validate` job gates `build-docker`). The main-version backstop (D2.2) is the additional in-publisher gate.
-- **D4.7 Docker publishing authenticates with Docker Hub credentials.** Output: the base and product builds
-  log in via `docker/login-action` with `DOCKER_HUB_USERNAME` + `DOCKER_HUB_ACCESS_TOKEN` and push with
-  `docker/build-push-action`; the Docker Hub overview is pushed with the same token. There is **no NuGet/OIDC
+  the hooks and the built tree resolve from that branch - the same tree CI validated on push (the required
+  check gates every merge to it) - and the hub tasks resolve at the same pinned commit CI used. The publish
+  run re-runs the hub's `validate-task.yml` (the `validate` job gates `build-base` and `publish`). The version
+  backstop (D2.2) is the additional in-publisher gate.
+- **D4.7 Docker publishing authenticates with Docker Hub credentials.** Output: the publisher's `build-base`
+  job and the hub's product build each log in via `docker/login-action` with `DOCKER_HUB_USERNAME` +
+  `DOCKER_HUB_ACCESS_TOKEN` and push with `docker/build-push-action`; the hub's readme task pushes the Docker
+  Hub overview with the same token, mapped by name to each hub task. There is **no NuGet/OIDC
   publishing** in this repo. *Prevents a missing-credential publish failure.*
-- **D4.8 Branch-scoped Docker buildcache.** Output: the base and product builds read both branches' registry
-  caches (`buildcache-main`, `buildcache-develop`) and write only their own branch's cache, only when pushing,
-  so a `main` and a `develop` publish never overwrite each other's cache. *Prevents one branch's publish
+- **D4.8 Branch-scoped Docker buildcache.** Output: the product build reads both branches' registry caches
+  (`buildcache-main`, `buildcache-develop`) and writes only its own branch's cache, only when pushing, so a
+  `main` and a `develop` publish never overwrite each other's cache. The shared base, pushed only by a `main`
+  publish, reads and writes `buildcache-main` alone. *Prevents one branch's publish
   destroying the other's cache hit-rate.*
 - **D4.9 Multi-arch, multi-product, shared-base fan-out.** Output: the publish builds every product image from
   `Make/Matrix.json` for `linux/amd64` + `linux/arm64`, on the shared base built once and reused; each product
@@ -444,9 +471,10 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 ### D5 - Resource cleanup
 
-- **D5.1 Terminal cleanup, best-effort.** The publisher and CI each run a terminal `cleanup-artifacts` job
-  (`always()`, `continue-on-error`) that deletes the run's transfer artifacts, independent of the required
-  aggregator so housekeeping never gates the merge.
+- **D5.1 No dangling transfer artifacts.** Output: neither the publisher nor CI uploads a transfer
+  artifact - the images push straight to Docker Hub and the release carries no `release-asset-*` files - so a
+  run leaves none behind. The hub's `github-release` job owns the consume-then-delete cleanup
+  (`continue-on-error`) for a target that does upload one.
 - **D5.2 Never red the run on cleanup.** Cleanup failures warn, never fail.
 
 ### D6 - Self-testing workflows
@@ -454,7 +482,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D6.1 A change is testable on its own branch.** Output: a workflow or build change is exercised by CI on
   the branch that introduces it, no dependency on reaching `main` first.
 - **D6.2 Head-resolution, single producer, fork exception.** Output: CI runs on `push` to every branch so
-  reusable `./...` logic resolves from the head, and the aggregator's ruleset-bound `context:` is produced by
+  the `./.github/actions/` hooks resolve from the head (the hub tasks resolve at their pin), and the aggregator's ruleset-bound `context:` is produced by
   that push run as the sole producer of that name. Dependabot and codegen PRs are in-repo branches, validated
   the same way. A fork cannot push, so it has no run and is validated by maintainer action - the one
   exception. *Prevents a dual-producer context race and a false self-test claim for forks.*
@@ -473,15 +501,16 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 ### D8 - Bots and automation
 
-- **D8.1 Merge-bot.** Output: runs on `pull_request_target`, holds the App token, merges the PR by URL without
-  checking out its code. Enables auto-merge on `opened`/`reopened` with `--delete-branch`; squash on
+- **D8.1 Merge-bot.** Output: a thin caller onto the hub's `merge-bot-task.yml`, run on
+  `pull_request_target`, holding the App token, merging the PR by URL without checking out its code. Enables
+  auto-merge on `opened`/`reopened` with `--delete-branch` (the `delete-branch: true` input); squash on
   `develop`, merge-commit on `main` by the PR's base ref; disables auto-merge when a maintainer pushes to a
   bot branch (no `--delete-branch` on the disable path). Concurrency keyed on PR number.
-- **D8.2 Dependabot auto-merges on green, semver-major NuGet excepted.** Output: every Dependabot PR
-  auto-merges once the required checks pass, except a semver-major NuGet bump (human review). A failing check
-  blocks the merge. A merged dependency bump does **not** itself publish (it ships in the next scheduled run
+- **D8.2 Dependabot auto-merges on green.** Output: every Dependabot PR, any ecosystem and any tier,
+  auto-merges once the required checks pass. A failing check blocks the merge. A merged dependency bump does **not** itself publish (it ships in the next scheduled run
   or the next matrix-pin push).
-- **D8.3 Codegen dual-targets `main` AND `develop`.** Output: the daily codegen matrix opens a
+- **D8.3 Codegen dual-targets `main` AND `develop`.** Output: the daily codegen matrix (the hub's
+  `run-codegen-pull-request-task.yml`, running the `codegen` hook) opens a
   `codegen-main` -> `main` and a `codegen-develop` -> `develop` PR (strict head/base pairing in the merge-bot),
   regenerating `Make/Version.json` + `Make/Matrix.json` **only** (not the Dockerfiles - those are a separate
   human-driven `Make/Create.sh` path). The merge-bot auto-merges each independently. develop's matrix update
@@ -496,17 +525,17 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 - **D9.1** Every action SHA-pinned with a version comment (sole exception: `dotnet/nbgv@master`, whose tag
   stream lags master so Dependabot tag-tracking would only propose downgrades to stale tags - a deliberate
-  documented float, rationale inline in `get-version-task.yml`); an installed-tool version is left unpinned to
+  documented float, rationale inline in the hub's `get-version-task.yml`); an installed-tool version is left unpinned to
   track latest.
 - **D9.2** File/workflow/job/step names follow the suffix rules; a ruleset-bound `context:` name moves only in
   lockstep with the live ruleset and the hub payload it is applied from.
 - **D9.3** Bash `run:` blocks start `set -Eeuo pipefail`; multi-line `if:` uses `>-`.
 - **D9.4** Line endings follow `.editorconfig`.
-- **D9.5 No decorative / dropped workflows.** No date-badge (`build-datebadge-*`), no standalone docker-readme
-  task (folded into the publisher), no `PUBLISH_ON_MERGE` variable, no `dorny/paths-filter` (replaced by the
+- **D9.5 No decorative / dropped workflows.** No date-badge (`build-datebadge-*`), no carried `-task.yml`
+  (every task is hub-hosted), no `PUBLISH_ON_MERGE` variable, no `dorny/paths-filter` (replaced by the
   inline change-gate). Their presence is a defect to remove.
-- **D9.6** Style is enforced in CI by `validate-task` (D1.3), from the same config files the editor and Husky
-  hook use.
+- **D9.6** Style is enforced in CI by the hub's `validate-task.yml` (D1.3), from the same config files the
+  editor and Husky hook use.
 
 ### D10 - Repository configuration
 
@@ -521,34 +550,35 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 Read the workflow files plus `version.json` and `Make/Matrix.json` and assert the fact behind each applicable
 guarantee with a `file:line` citation:
 
-- **D0:** CI has no branch matrix; the publisher passes `github.ref_name` as `ref`/`branch` and is guarded to
-  `main`/`develop`; NBGV invoked once in `get-version-task`, `build-docker-task` has no nested `get-version`
-  and consumes the `semver2` input; the run builds the trigger ref so `GITHUB_REF` matches the versioned
+- **D0:** CI has no branch matrix; the publisher passes `github.ref_name` as `branch` and `github.sha` as
+  `ref`, and the plan task publishes only `main`/`develop`; NBGV invoked once in the hub's
+  `build-release-task.yml`, whose Docker leg consumes the threaded `semver2`; the run builds the trigger ref so `GITHUB_REF` matches the versioned
   branch.
 - **D1:** CI runs on `push` with no paths filter on `validate`; the inline `changes` gate sets `image`/`base`;
-  `smoke-build` is `smoke: true`, `push: false`, amd64 NxMeta subset; the aggregator `needs:` `changes` +
+  `smoke-build` is `smoke: true`, `github: false`, `dockerhub: false`, the NxMeta subset named by
+  `docker_image`; the aggregator `needs:` `changes` +
   `validate` + `smoke-build`, blocks on non-success, treats `changes` failure as blocking.
-- **D2:** the main release backstop checks the prerelease `-`, strips `+buildmetadata`; `validate-task` is the
-  shared gate.
+- **D2:** the hub's `validate-release` checks the prerelease `-`, strips `+buildmetadata`; the hub's
+  `validate-task.yml` is the shared gate.
 - **D3:** `main` appears in the backstop and the release `prerelease: false`/guard; `publicReleaseRefSpec` is
   `^refs/heads/main$`; `semver2` threads to `LABEL_VERSION`.
 - **D4:** `publish-release` triggers are `schedule` + `workflow_dispatch` + `push` (branches `[main]`, paths
-  `[Make/Matrix.json]`) only (no other push, no `PUBLISH_ON_MERGE`); jobs guarded to `github.ref_name` in
-  (`main`, `develop`); `target_commitish` = `GitCommitId`; main pins `ref` to `GitCommitId`, develop reuses
-  the base (`build_base: false`); the build logs in with `DOCKER_HUB_*`; buildcache branch-scoped and
-  write-gated on push; release-create gated `exists == false || workflow_dispatch`; release + docker-readme
-  gated to `main`; the product matrix builds amd64+arm64 from `Make/Matrix.json`.
-- **D5:** the publisher and CI each have a terminal `cleanup-artifacts` (`always()`, `continue-on-error`),
-  independent of the aggregator.
-- **D6:** CI is `push` on every branch; the aggregator context has exactly one producer; no `pull_request`
+  `[Make/Matrix.json]`) only (no other push, no `PUBLISH_ON_MERGE`); every job gates on the plan outputs;
+  `ref` is `github.sha`, which the hub versions and tags as `GitCommitId`; `build-base` runs only when stable
+  and develop reuses the base (`docker_build_base: false`); the builds log in with `DOCKER_HUB_*`; buildcache
+  branch-scoped and write-gated on push; release-create gated `exists == false || workflow_dispatch`;
+  `github` and `publish-docker-readme` gated to stable; the `docker-prepare` hook emits the branch's
+  `Make/Matrix.json` rows, built amd64+arm64 on `main`.
+- **D5:** no job uploads a transfer artifact; `expect_release_assets: false`.
+- **D6:** CI is `push` on every branch; the hooks resolve from the checkout; the aggregator context has exactly one producer; no `pull_request`
   trigger; every CI job has the `!github.event.deleted` guard.
 - **D7:** the publisher group is ref-independent with `cancel-in-progress: false`; the merge-bot keys on PR
-  number; codegen keys on the workflow; CI uses the standard group + deletion guard; reusable jobs declare
-  permissions.
-- **D8/D9:** the merge-bot runs on `pull_request_target` with the App token, keyed on PR number, both merge
-  jobs use `--delete-branch`; Dependabot auto-merge excepts semver-major NuGet only; codegen dual-targets
-  main+develop and regenerates only `Version.json`/`Matrix.json`; no date-badge, standalone docker-readme
-  task, `PUBLISH_ON_MERGE`, or `dorny/paths-filter`; actions SHA-pinned except `nbgv@master`;
+  number; codegen keys on the workflow; CI uses the standard group + deletion guard; every entry workflow
+  declares `permissions: {}` and each calling job grants its task's scope.
+- **D8/D9:** the merge-bot calls the hub's `merge-bot-task.yml` on `pull_request_target`, keyed on PR number,
+  with `delete-branch: true`; Dependabot auto-merges every tier; codegen dual-targets main+develop and its
+  hook regenerates only `Version.json`/`Matrix.json`; no date-badge, carried `-task.yml`,
+  `PUBLISH_ON_MERGE`, or `dorny/paths-filter`; actions and hub tasks SHA-pinned except `nbgv@master`;
   names/shells/conditionals per section 2.
 
 ### 5B. End-to-end trace scenarios (deterministic from the YAML)
@@ -557,17 +587,17 @@ guarantee with a `file:line` citation:
 | --- | --- | --- | --- |
 | S1 | push touching `Docker/**` | `validate` + `smoke-build` (NxMeta amd64) run, **no push, no release**; aggregator success; no dangling artifacts | D0.1, D1 |
 | S2 | push changing only docs | `validate` runs; the `changes` gate sets `image=false`; `smoke-build` skipped; aggregator success (skip allowed) | D1, D1.5 |
-| S3 | push changing only `.github/workflows/**` | `validate` runs head-resolved; `smoke-build` skipped (no image files); aggregator success | D1.1, D6.1 |
+| S3 | push changing only `.github/workflows/**` (a hub pin bump included) | `validate` + `smoke-build` run, **no push, no release**; aggregator success | D1.1, D6.1 |
 | S4 | weekly `schedule` | builds + publishes `main` only: shared base refresh + full product matrix (amd64+arm64) + stable release + `latest`; `target_commitish` = main's SHA; develop untouched; no dangling artifacts | D4.1, D4.2, D4.9 |
 | S5 | push to `main` changing `Make/Matrix.json` (codegen pin) | publishes `main` with the new product versions immediately | D4.1, D8.3 |
-| S6 | `workflow_dispatch` from `develop` | builds + publishes `develop`: `:develop` images, prerelease classification, `build_base: false` (reuses main's base), **no GitHub release** | D4.1, D4.2, D3.2 |
+| S6 | `workflow_dispatch` from `develop` | builds + publishes `develop`: `:develop` images, prerelease classification, `build-base` skipped (reuses main's base), **no GitHub release** | D4.1, D4.2, D3.2 |
 | S7 | `workflow_dispatch` re-run on `main`, no new commits | release-create refreshed on dispatch (skipped on schedule if the tag exists); Docker re-pushed (base refresh); no duplicate release | D4.5 |
-| S8 | `workflow_dispatch` from a feature branch | the `github.ref_name in (main, develop)` guard skips every job -> no publish | D4.1 |
+| S8 | `workflow_dispatch` from a feature branch | the plan job fails with an `::error::` and every later job skips -> no publish | D4.1 |
 | S9 | merged dependency bump (any) | not a matrix-pin change; merges don't publish -> **no release**; ships in the next scheduled run | D4.1, D8.2 |
 | S10 | merged develop codegen PR (`Matrix.json` change on develop) | sync-only; the pin push is main-only -> **no publish** | D8.3 |
 | S11 | PR with a CSharpier / format / unit-test failure | `validate` fails -> aggregator blocks the merge | D1.2, D1.3, D1.5 |
 | S12 | `version.json` floor bump merged | merges don't publish -> no immediate release; the new floor ships in the next publish | D3.3, D4.1 |
-| S13 | Dependabot semver-major NuGet bump | gated on human review -> does not auto-merge; other majors auto-merge on green | D8.2 |
+| S13 | Dependabot semver-major NuGet bump | auto-merges on green like every other tier; a red check blocks it | D8.2 |
 | S14 | branch-deletion push | every CI job + the aggregator skip (`!github.event.deleted`) -> no failing required check | D7.4 |
 | S15 | `develop` -> `main` promotion (merge commit) | the merge itself does not publish; if it changed `Matrix.json` the pin push publishes main, else the next schedule does | D4.1, D8.1 |
 
@@ -631,9 +661,24 @@ the configuration is part of "operational" (D10; audit 5D).
 
 **Repository settings.** Auto-merge enabled; squash and merge-commit both allowed (each ruleset narrows its
 branch to one); rebase off; auto-delete-on-merge **off** (so `main`/`develop` survive a promotion; the
-merge-bot deletes bot branches explicitly with `--delete-branch`). Dependabot version **and** security updates
+merge-bot deletes bot branches explicitly through its `delete-branch: true` input). Dependabot version **and** security updates
 enabled. The GitHub App installed with the scopes above.
 
 **Validation.** This configuration is codified in the hub's repository-configuration payloads and
 applied/audited by the hub's `configure.sh`; `check` is the 5D audit. Secret values cannot be read back, so the audit asserts
 the names exist (failing if they cannot be queried); the App installation is a best-effort check.
+
+<!-- Repo -->
+
+[actions]: ./.github/actions/
+[actions-codegen]: ./.github/actions/codegen/action.yml
+[actions-docker-build-base]: ./.github/actions/docker-build-base/action.yml
+[actions-docker-prepare]: ./.github/actions/docker-prepare/action.yml
+[codestyle]: ./CODESTYLE.md
+[docker-readme]: ./Docker/README.md
+[editorconfig]: ./.editorconfig
+[governance-release-model]: ./GOVERNANCE.md#release-model
+[publish-release]: ./.github/workflows/publish-release.yml
+[run-periodic-codegen-pull-request]: ./.github/workflows/run-periodic-codegen-pull-request.yml
+[test-pull-request]: ./.github/workflows/test-pull-request.yml
+[workflows]: ./.github/workflows/

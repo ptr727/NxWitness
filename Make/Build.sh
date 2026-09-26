@@ -6,7 +6,6 @@ set -euo pipefail
 # sudo apt update && sudo apt upgrade --yes
 # sudo apt install dotnet-sdk-10.0 docker-compose docker-buildx --yes
 
-
 ## Test installing in container:
 # docker run -it --rm ubuntu:noble /bin/bash
 # docker run -it --rm lsiobase/ubuntu:noble /bin/bash
@@ -37,13 +36,12 @@ set -euo pipefail
 # Test.sh : Create and build and launch compose Test.yml compose stack.
 # Clean.sh : Shutdown compose stack and delete images.
 
-
 # Build Dockerfile
 function BuildDockerfile {
     # Build x64 and ARM64 targets
-	docker buildx build --platform linux/amd64,linux/arm64 --tag test_${1,,} --file ../Docker/$1.Dockerfile ../Docker
+    docker buildx build --platform linux/amd64,linux/arm64 --tag "test_${1,,}" --file "../Docker/$1.Dockerfile" ../Docker
     # Build and load x64 target
-	docker buildx build --platform linux/amd64 --load --tag test_${1,,} --file ../Docker/$1.Dockerfile ../Docker
+    docker buildx build --platform linux/amd64 --load --tag "test_${1,,}" --file "../Docker/$1.Dockerfile" ../Docker
 }
 
 # Build base Dockerfile
@@ -54,12 +52,12 @@ function BuildBaseDockerfile {
     RegistryCacheFrom="--cache-from=type=registry,ref=$2"
     # Build x64 and ARM64 targets
     if [[ "${PushBaseImages}" == "true" ]]; then
-        docker buildx build --platform linux/amd64,linux/arm64 --push --cache-to=type=inline ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+        docker buildx build --platform linux/amd64,linux/arm64 --push --cache-to=type=inline "${RegistryCacheFrom}" --tag "$2" --file "../Docker/$1.Dockerfile" ../Docker
     else
-        docker buildx build --platform linux/amd64,linux/arm64 ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+        docker buildx build --platform linux/amd64,linux/arm64 "${RegistryCacheFrom}" --tag "$2" --file "../Docker/$1.Dockerfile" ../Docker
     fi
     # Build and load x64 target
-	docker buildx build --platform linux/amd64 --load ${RegistryCacheFrom} --tag $2 --file ../Docker/$1.Dockerfile ../Docker
+    docker buildx build --platform linux/amd64 --load "${RegistryCacheFrom}" --tag "$2" --file "../Docker/$1.Dockerfile" ../Docker
 }
 
 # Create and use multi platform build environment
