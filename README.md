@@ -733,7 +733,6 @@ Licensed under the [MIT License][license]\
 [dwspectrum-docker-hub-link]: https://hub.docker.com/r/ptr727/dwspectrum
 [dwspectrum-lsio-docker-hub-link]: https://hub.docker.com/r/ptr727/dwspectrum-lsio
 [github-link]: https://github.com/ptr727/NxWitness
-[hub-link]: https://hub.docker.com/u/ptr727
 [issue-62-link]: https://github.com/ptr727/NxWitness/issues/62
 [issues-link]: https://github.com/ptr727/NxWitness/issues
 [nxgo-docker-hub-link]: https://hub.docker.com/r/ptr727/nxgo
@@ -792,6 +791,7 @@ Licensed under the [MIT License][license]\
 [github-actions-docs-link]: https://docs.github.com/en/actions
 [github-actions-link]: https://github.com/actions
 [hanwhavision-link]: https://hanwhavisionamerica.com/
+[hub-link]: https://hub.docker.com/u/ptr727
 [husky-link]: https://alirezanet.github.io/Husky.Net/
 [iniconfig-link]: https://meta.nxvms.com/docs/developers/knowledgebase/241-configuring-via-ini-files--iniconfig
 [isbuildpublished-link]: https://github.com/networkoptix/nx_open/blob/526967920636d3119c92a5220290ecc10957bf12/vms/libs/nx_vms_update/src/nx/vms/update/releases_info.cpp#L31
