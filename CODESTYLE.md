@@ -54,7 +54,7 @@ The conventions below are this repo's own, beyond the carried rules.
 
 - **The clean-compile is the `.NET Format` VS Code task**, which chains `CSharpier Format` -> `.NET Build` -> `dotnet format style --verify-no-changes --severity=info`. The task definitions in [`.vscode/tasks.json`][tasks] are the canonical command spec, and `Lint: All` runs the document linters locally.
 - **This repo wires Husky.Net as its local commit gate.** `.husky/pre-commit` runs `dotnet husky run`, which runs the `.husky/task-runner.json` task set: CSharpier on the staged `.cs` files, then the `dotnet format style` verify. The hook runs no Docker, and CI enforces everything regardless.
-- **AOT is opt-in.** `<PublishAot>false</PublishAot>` is the default in `CreateMatrix.csproj`, and publishing with `-p:PublishAot=true` builds an AOT binary.
+- **AOT is opt-in.** `<PublishAot>false</PublishAot>` is the default in `CreateMatrix.csproj`, and publishing with `-p:PublishAot=true` builds an AOT binary. `IsAotCompatible` holds for every build, while `VerifyReferenceAotCompatibility` applies only to an AOT publish, since `System.CommandLine`, the Serilog sinks, and the Polly assemblies that `Microsoft.Extensions.Http.Resilience` brings in are not built as AOT-compatible, and verifying them on every build fails it with `IL3058`.
 - **Internals are visible to the test project.** `CreateMatrix.csproj` declares `<InternalsVisibleTo Include="CreateMatrixTests" />`.
 
 ## Python
