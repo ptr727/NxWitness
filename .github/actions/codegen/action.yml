@@ -1,0 +1,14 @@
+# The codegen hook the hub's run-codegen-pull-request-task.yml runs on each of main and develop.
+# The hub task owns the .NET setup, the CSharpier format, and the pull request, so this carries only the generator invocation.
+name: NxWitness codegen hook
+description: Refresh Make/Version.json and Make/Matrix.json from the upstream product releases.
+
+runs:
+  using: composite
+  steps:
+    - name: Run CreateMatrix codegen step
+      shell: bash
+      run: |
+        set -Eeuo pipefail
+        dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- \
+          matrix --versionpath=./Make/Version.json --matrixpath=./Make/Matrix.json --updateversion

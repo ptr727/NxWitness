@@ -24,29 +24,29 @@ echo "Download Filename: ${DOWNLOAD_FILENAME}"
 wget --no-verbose --tries=5 --timeout=30 --retry-connrefused "${DOWNLOAD_URL}"
 
 case "${DOWNLOAD_FILENAME}" in
-    *.zip)
-        echo "Downloaded ZIP: ${DOWNLOAD_FILENAME}"
-        DOWNLOAD_DIR="./download_zip"
-        rm -rf "${DOWNLOAD_DIR}"
-        mkdir -p "${DOWNLOAD_DIR}"
-        unzip -q -d "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"
-        DEB_ZIP_FILE="$(find "${DOWNLOAD_DIR}" -maxdepth 1 -type f -name "*.deb" -print -quit)"
-        if [ -z "${DEB_ZIP_FILE}" ]; then
-            echo "No .deb found in ${DOWNLOAD_DIR}" >&2
-            exit 1
-        fi
-        echo "DEB in ZIP: ${DEB_ZIP_FILE}"
-        mv "${DEB_ZIP_FILE}" "${DEB_FILE}"
-        rm -rf "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"
-        ;;
-    *.deb)
-        echo "Downloaded DEB: ${DOWNLOAD_FILENAME}"
-        mv "${DOWNLOAD_FILENAME}" "${DEB_FILE}"
-        ;;
-    *)
-        echo "Unsupported download type: ${DOWNLOAD_FILENAME}" >&2
+*.zip)
+    echo "Downloaded ZIP: ${DOWNLOAD_FILENAME}"
+    DOWNLOAD_DIR="./download_zip"
+    rm -rf "${DOWNLOAD_DIR}"
+    mkdir -p "${DOWNLOAD_DIR}"
+    unzip -q -d "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"
+    DEB_ZIP_FILE="$(find "${DOWNLOAD_DIR}" -maxdepth 1 -type f -name "*.deb" -print -quit)"
+    if [ -z "${DEB_ZIP_FILE}" ]; then
+        echo "No .deb found in ${DOWNLOAD_DIR}" >&2
         exit 1
-        ;;
+    fi
+    echo "DEB in ZIP: ${DEB_ZIP_FILE}"
+    mv "${DEB_ZIP_FILE}" "${DEB_FILE}"
+    rm -rf "${DOWNLOAD_DIR}" "${DOWNLOAD_FILENAME}"
+    ;;
+*.deb)
+    echo "Downloaded DEB: ${DOWNLOAD_FILENAME}"
+    mv "${DOWNLOAD_FILENAME}" "${DEB_FILE}"
+    ;;
+*)
+    echo "Unsupported download type: ${DOWNLOAD_FILENAME}" >&2
+    exit 1
+    ;;
 esac
 
 echo "DEB File: ${DEB_FILE}"

@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Delete images
 function DeleteImage {
-    docker image rm test_${1,,} || true
+    docker image rm "test_${1,,}" || true
 }
 
 # Down stack
