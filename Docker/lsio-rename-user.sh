@@ -19,21 +19,26 @@ ADDUSER_RUN="/etc/s6-overlay/s6-rc.d/init-adduser/run"
 
 # Verify the LSIO base still matches the expected signature before patching
 getent passwd abc >/dev/null || {
-    echo "ERROR: expected LSIO user abc not found" >&2; exit 1
+    echo "ERROR: expected LSIO user abc not found" >&2
+    exit 1
 }
 getent group abc >/dev/null || {
-    echo "ERROR: expected LSIO group abc not found" >&2; exit 1
+    echo "ERROR: expected LSIO group abc not found" >&2
+    exit 1
 }
 test -f "${ADDUSER_RUN}" || {
-    echo "ERROR: ${ADDUSER_RUN} not found" >&2; exit 1
+    echo "ERROR: ${ADDUSER_RUN} not found" >&2
+    exit 1
 }
 # shellcheck disable=SC2016 # The LSIO script's own literal text is matched, not an expansion.
 grep -q 'groupmod -o -g "${PGID}" abc' "${ADDUSER_RUN}" || {
-    echo "ERROR: init-adduser groupmod signature changed" >&2; exit 1
+    echo "ERROR: init-adduser groupmod signature changed" >&2
+    exit 1
 }
 # shellcheck disable=SC2016 # The LSIO script's own literal text is matched, not an expansion.
 grep -q 'usermod -o -u "${PUID}" abc' "${ADDUSER_RUN}" || {
-    echo "ERROR: init-adduser usermod signature changed" >&2; exit 1
+    echo "ERROR: init-adduser usermod signature changed" >&2
+    exit 1
 }
 
 # Rename abc to the mediaserver account and repoint init-adduser at the new name
@@ -43,17 +48,22 @@ sed -i "s/abc/${COMPANY_NAME}/g" "${ADDUSER_RUN}"
 
 # Verify the rename took effect and no stray abc reference remains
 getent passwd "${COMPANY_NAME}" >/dev/null || {
-    echo "ERROR: rename to ${COMPANY_NAME} user failed" >&2; exit 1
+    echo "ERROR: rename to ${COMPANY_NAME} user failed" >&2
+    exit 1
 }
 getent group "${COMPANY_NAME}" >/dev/null || {
-    echo "ERROR: rename to ${COMPANY_NAME} group failed" >&2; exit 1
+    echo "ERROR: rename to ${COMPANY_NAME} group failed" >&2
+    exit 1
 }
 if getent passwd abc >/dev/null; then
-    echo "ERROR: abc user still present after rename" >&2; exit 1
+    echo "ERROR: abc user still present after rename" >&2
+    exit 1
 fi
 grep -q "usermod -o -u \"\${PUID}\" ${COMPANY_NAME}" "${ADDUSER_RUN}" || {
-    echo "ERROR: init-adduser not repointed to ${COMPANY_NAME}" >&2; exit 1
+    echo "ERROR: init-adduser not repointed to ${COMPANY_NAME}" >&2
+    exit 1
 }
 if grep -qw abc "${ADDUSER_RUN}"; then
-    echo "ERROR: stray abc token remains in init-adduser" >&2; exit 1
+    echo "ERROR: stray abc token remains in init-adduser" >&2
+    exit 1
 fi

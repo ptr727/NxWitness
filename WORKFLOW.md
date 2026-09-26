@@ -128,8 +128,8 @@ publish on the same ref.*
 
 A publish builds exactly **one** branch - the run's trigger ref. The **schedule** and the **pin push** both
 run on `main`; a **dispatch** runs on the branch it is started from (`main` or `develop`). The jobs pass
-`github.ref_name` as both `ref` and `branch`, so the branch built, versioned, and tagged is always the run's
-own ref. *No matrix and no cross-branch ref mixing - `github.ref` is the branch being published.* The hub's
+`github.ref_name` as `branch` and the triggering commit `github.sha` as `ref`, so the branch built, versioned,
+and tagged is always the run's own ref, pinned to one commit even if the branch advances mid-run. *No matrix and no cross-branch ref mixing - `github.ref` is the branch being published.* The hub's
 `publish-plan-task.yml` publishes only the long-lived branches (`main` / `develop`); a dispatch from a feature
 branch fails the plan job with an `::error::` and publishes nothing. To refresh `:develop`, dispatch the
 workflow from `develop`.
@@ -193,9 +193,9 @@ runs that check in its `validate-release` job, which every build job `needs:`.
 
 CI runs on push to every branch, and the hooks resolve from the pushed head, so a pull request that edits a
 hook tests its own copy. The hub tasks resolve at their pinned commit, so a hub-side change is tested by the
-pull request that bumps the pin. CI validates (the hub's `validate-task.yml`: the document linters, CSharpier
+pull request that bumps the pin, which touches `.github/workflows/` and so runs the smoke build too. CI validates (the hub's `validate-task.yml`: the document linters, CSharpier
 and `dotnet format style`, the repo gates, and `dotnet test`) on every push, and smoke-builds a
-representative image subset only when image files or the Docker hooks changed (an inline `git diff`
+representative image subset only when image files, the Docker hooks, or the workflows changed (an inline `git diff`
 change-gate, no `dorny/paths-filter`), through the hub's `build-release-task.yml` with `smoke: true`,
 uploading and pushing nothing. One
 aggregator job, the ruleset-bound required check, gates the merge. A branch-deletion push (all-zeros
@@ -253,7 +253,7 @@ flowchart TD
         VU["doc linters, CSharpier,<br/>dotnet format style, repo gates<br/>+ dotnet test"]
     end
     V --> VT
-    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json,<br/>.github/actions/docker-*)"}:::gate
+    CH --> SG{"image files changed?<br/>(Docker/**, Make/Matrix.json, Make/Version.json,<br/>.github/actions/docker-*, .github/workflows/**)"}:::gate
     SG -- "no" --> SS(["smoke-build skipped<br/>(aggregator allows skip)"]):::stop
     SG -- "yes" --> S["smoke-build job<br/>hub build-release-task.yml<br/>smoke: true, never pushes<br/>NxMeta + NxMeta-LSIO, amd64"]
     CH --> A
@@ -369,7 +369,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D0.1 CI is one run, one branch.** Input: any push. Output: `test-pull-request` builds/validates exactly
   `github.ref_name` and publishes nothing. *Prevents cross-branch ref mixing in CI.*
 - **D0.2 The publisher builds one branch: the trigger ref.** Output: the publisher passes `github.ref_name`
-  as `ref` and `branch`, so it checks out, versions, and tags exactly the run's own branch (the schedule/pin
+  as `branch` and the triggering `github.sha` as `ref`, so it checks out, versions, and tags exactly the run's own branch (the schedule/pin
   push's `main`, or a dispatch's branch). No branch matrix; the hub's `publish-plan-task.yml` publishes only
   `main`/`develop`.
   *Prevents cross-branch ref mixing - `github.ref` is the branch being published.*
@@ -384,7 +384,8 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D1.1 Every push validates; image changes smoke-build.** Output: on any push the `validate` job (the
   hub's `validate-task.yml`) runs with no paths filter; `smoke-build` (NxMeta + NxMeta-LSIO, amd64, no push)
   runs when the inline change-gate detects an image-file change (`Docker/**`, `Make/Matrix.json`,
-  `Make/Version.json`, `.github/actions/docker-*`). *Prevents a hook or Dockerfile break shipping untested.*
+  `Make/Version.json`, `.github/actions/docker-*`, `.github/workflows/**`, the last covering a hub pin bump).
+  *Prevents a hook, Dockerfile, or hub-task break shipping untested.*
 - **D1.2 Unit tests always run.** Output: the hub's `validate-task.yml` runs `dotnet test` (the codegen tool +
   its tests).
 - **D1.3 Lint enforces the editor checks in CI.** Output: the hub's `validate-task.yml` runs `dotnet
@@ -586,7 +587,7 @@ guarantee with a `file:line` citation:
 | --- | --- | --- | --- |
 | S1 | push touching `Docker/**` | `validate` + `smoke-build` (NxMeta amd64) run, **no push, no release**; aggregator success; no dangling artifacts | D0.1, D1 |
 | S2 | push changing only docs | `validate` runs; the `changes` gate sets `image=false`; `smoke-build` skipped; aggregator success (skip allowed) | D1, D1.5 |
-| S3 | push changing only `.github/workflows/**` | `validate` runs; `smoke-build` skipped (no image files); aggregator success | D1.1, D6.1 |
+| S3 | push changing only `.github/workflows/**` (a hub pin bump included) | `validate` + `smoke-build` run, **no push, no release**; aggregator success | D1.1, D6.1 |
 | S4 | weekly `schedule` | builds + publishes `main` only: shared base refresh + full product matrix (amd64+arm64) + stable release + `latest`; `target_commitish` = main's SHA; develop untouched; no dangling artifacts | D4.1, D4.2, D4.9 |
 | S5 | push to `main` changing `Make/Matrix.json` (codegen pin) | publishes `main` with the new product versions immediately | D4.1, D8.3 |
 | S6 | `workflow_dispatch` from `develop` | builds + publishes `develop`: `:develop` images, prerelease classification, `build-base` skipped (reuses main's base), **no GitHub release** | D4.1, D4.2, D3.2 |

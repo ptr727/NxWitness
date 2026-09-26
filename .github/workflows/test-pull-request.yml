@@ -26,7 +26,8 @@ permissions: {}
 jobs:
 
   # Inline change-gate (no third-party action): diff the push against its before-commit to decide whether the
-  # image smoke build is needed. image => any Docker/Matrix/Version file or Docker hook changed. Base => a base
+  # image smoke build is needed. image => any Docker/Matrix/Version file, Docker hook, or workflow changed, the last
+  # covering a hub pin bump, whose tasks a pull request otherwise never exercises. Base => a base
   # Dockerfile or the base hook changed. On a non-push event (workflow_dispatch) or a new branch (no before-commit), build everything.
   # !github.event.deleted skips a branch-deletion push (github.sha is all-zeros, so checkout would fail).
   changes:
@@ -64,7 +65,7 @@ jobs:
             echo "base=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if grep -qE '^(Docker/|Make/Matrix\.json$|Make/Version\.json$|\.github/actions/docker-)' <<<"$DIFF"; then
+          if grep -qE '^(Docker/|Make/Matrix\.json$|Make/Version\.json$|\.github/actions/docker-|\.github/workflows/)' <<<"$DIFF"; then
             echo "image=true" >> "$GITHUB_OUTPUT"
           else
             echo "image=false" >> "$GITHUB_OUTPUT"
