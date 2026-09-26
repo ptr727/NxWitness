@@ -79,14 +79,16 @@ jobs:
           push: true
 
   # Version, build, and push every Make/Matrix.json row of the trigger branch, then cut the GitHub release on main.
-  # The !failure() && !cancelled() pair lets a develop publish run past the build-base job it skips, while a failed base build still stops it.
+  # build-base is an optional dependency, skipped on a develop publish, so its result is allowlisted as success or skipped explicitly.
+  # The !cancelled() replaces the implicit success() that would otherwise skip this job whenever build-base is skipped.
   publish:
     name: Publish project release job
     needs: [plan, validate, build-base]
     if: >-
-      ${{ !failure() && !cancelled()
+      ${{ !cancelled()
       && needs.plan.outputs.publish == 'true'
-      && needs.validate.result == 'success' }}
+      && needs.validate.result == 'success'
+      && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
     uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@456694681ae76ff162a9bd784b5376901957feae # 2.0.685
     permissions:
       contents: write
