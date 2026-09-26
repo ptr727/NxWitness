@@ -8,7 +8,7 @@
 # https://github.com/dotnet/runtime/blob/main/.editorconfig
 
 # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format
-# dotnet format style --verify-no-changes --severity=info --verbosity=detailed
+# Verify with: dotnet format style --verify-no-changes --severity=info --verbosity=detailed
 
 # Root config
 root = true
@@ -40,14 +40,14 @@ indent_size = 2
 [*.{bat,cmd}]
 end_of_line = crlf
 
-# .NET-only below: C# and ReSharper style. Everything above is the line-ending governance
-# every derived repo carries. A non-.NET repo may drop from here down.
+# .NET-only below, covering C# and ReSharper style.
+# Everything above is the line-ending governance every derived repo carries, and a non-.NET repo carries this section unused, per CODESTYLE.md's whole-file model.
 
 # C# files
 [*.cs]
-# Suppressions follow CODESTYLE.md "Analyzer Diagnostics and Suppressions": prefer a
-# [SuppressMessage] attribute or the owning project's .editorconfig. Relax a rule
-# repo-wide here only when it applies to every project (never a brownfield batch).
+# Suppressions follow CODESTYLE.md "Analyzer Diagnostics and Suppressions".
+# Prefer a [SuppressMessage] attribute, or the owning project's .editorconfig.
+# Relax a rule repo-wide here only when it applies to every project, never for a brownfield batch.
 dotnet_diagnostic.IDE0055.severity = none
 dotnet_analyzer_diagnostic.severity = suggestion
 csharp_indent_block_contents = true
