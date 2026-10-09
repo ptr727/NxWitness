@@ -34,7 +34,7 @@ jobs:
   # Single source of the release-gate decision (publish or not, stable or not), reused by every job below.
   plan:
     name: Plan release job
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@95cc8b14471ca93ec1bbbdd6d63d021455749354 # 2.0.850
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@45399462fff1f706efac3777a0ad3eeb562b13fb # 2.0.855
     with:
       event_name: ${{ github.event_name }}
       actor: ${{ github.actor }}
@@ -45,7 +45,7 @@ jobs:
     name: Validate job
     needs: [plan]
     if: ${{ needs.plan.outputs.publish == 'true' }}
-    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@95cc8b14471ca93ec1bbbdd6d63d021455749354 # 2.0.850
+    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@45399462fff1f706efac3777a0ad3eeb562b13fb # 2.0.855
     permissions:
       contents: read
     secrets:
@@ -89,7 +89,7 @@ jobs:
       && needs.plan.outputs.publish == 'true'
       && needs.validate.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
-    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@95cc8b14471ca93ec1bbbdd6d63d021455749354 # 2.0.850
+    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@45399462fff1f706efac3777a0ad3eeb562b13fb # 2.0.855
     permissions:
       contents: write
       # Lets the hub github-release job delete its transfer artifacts (D5.1), though a Docker-only release uploads none.
@@ -122,7 +122,7 @@ jobs:
     if: ${{ needs.plan.outputs.stable == 'true' && needs.publish.result == 'success' }}
     permissions:
       contents: read
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@95cc8b14471ca93ec1bbbdd6d63d021455749354 # 2.0.850
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@45399462fff1f706efac3777a0ad3eeb562b13fb # 2.0.855
     with:
       ref: ${{ github.sha }}
       branch: ${{ github.ref_name }}
