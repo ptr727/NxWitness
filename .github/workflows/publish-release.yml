@@ -34,7 +34,7 @@ jobs:
   # Single source of the release-gate decision (publish or not, stable or not), reused by every job below.
   plan:
     name: Plan release job
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@098016c83723e384c9da0088c13a00ca14e02fd5 # 2.0.1004
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@ae63f7bf971dfac46c727d1005a822f0a957dd1e # 2.0.1020
     with:
       event_name: ${{ github.event_name }}
       actor: ${{ github.actor }}
@@ -45,7 +45,7 @@ jobs:
     name: Validate job
     needs: [plan]
     if: ${{ needs.plan.outputs.publish == 'true' }}
-    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@098016c83723e384c9da0088c13a00ca14e02fd5 # 2.0.1004
+    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@ae63f7bf971dfac46c727d1005a822f0a957dd1e # 2.0.1020
     permissions:
       contents: read
     secrets:
@@ -89,7 +89,7 @@ jobs:
       && needs.plan.outputs.publish == 'true'
       && needs.validate.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
-    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@098016c83723e384c9da0088c13a00ca14e02fd5 # 2.0.1004
+    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@ae63f7bf971dfac46c727d1005a822f0a957dd1e # 2.0.1020
     permissions:
       contents: write
       # Lets the hub github-release job delete its transfer artifacts (D5.1), though a Docker-only release uploads none.
@@ -122,7 +122,7 @@ jobs:
     if: ${{ needs.plan.outputs.stable == 'true' && needs.publish.result == 'success' }}
     permissions:
       contents: read
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@098016c83723e384c9da0088c13a00ca14e02fd5 # 2.0.1004
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@ae63f7bf971dfac46c727d1005a822f0a957dd1e # 2.0.1020
     with:
       ref: ${{ github.sha }}
       branch: ${{ github.ref_name }}
