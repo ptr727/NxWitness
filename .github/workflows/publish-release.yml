@@ -34,7 +34,7 @@ jobs:
   # Single source of the release-gate decision (publish or not, stable or not), reused by every job below.
   plan:
     name: Plan release job
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@4b10111c29a2b6200cf270e44e39846614f4a1c0 # 2.0.1120
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-plan-task.yml@f610e4229f2acbb60d69f6d9386b341c81514534 # 2.0.1148
     with:
       event_name: ${{ github.event_name }}
       actor: ${{ github.actor }}
@@ -45,7 +45,7 @@ jobs:
     name: Validate job
     needs: [plan]
     if: ${{ needs.plan.outputs.publish == 'true' }}
-    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@4b10111c29a2b6200cf270e44e39846614f4a1c0 # 2.0.1120
+    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@f610e4229f2acbb60d69f6d9386b341c81514534 # 2.0.1148
     permissions:
       contents: read
     secrets:
@@ -68,7 +68,7 @@ jobs:
           ref: ${{ github.sha }}
 
       - name: Login to Docker Hub step
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
       && needs.plan.outputs.publish == 'true'
       && needs.validate.result == 'success'
       && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') }}
-    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@4b10111c29a2b6200cf270e44e39846614f4a1c0 # 2.0.1120
+    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@f610e4229f2acbb60d69f6d9386b341c81514534 # 2.0.1148
     permissions:
       contents: write
       # Lets the hub github-release job delete its transfer artifacts (D5.1), though a Docker-only release uploads none.
@@ -122,7 +122,7 @@ jobs:
     if: ${{ needs.plan.outputs.stable == 'true' && needs.publish.result == 'success' }}
     permissions:
       contents: read
-    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@4b10111c29a2b6200cf270e44e39846614f4a1c0 # 2.0.1120
+    uses: ptr727/ProjectTemplate/.github/workflows/publish-docker-readme-task.yml@f610e4229f2acbb60d69f6d9386b341c81514534 # 2.0.1148
     with:
       ref: ${{ github.sha }}
       branch: ${{ github.ref_name }}
