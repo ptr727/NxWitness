@@ -80,7 +80,7 @@ jobs:
   validate:
     name: Validate job
     if: ${{ !github.event.deleted }}
-    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@1faf16c708bbe5fe6c4e053de0e327dd07b05b8c # 2.0.1209
+    uses: ptr727/ProjectTemplate/.github/workflows/validate-task.yml@5540e3839ea85f3e8ad3b9af54b0aac8e7ea5519 # 2.0.1286
     permissions:
       contents: read
     secrets:
@@ -95,7 +95,7 @@ jobs:
     name: Smoke build job
     needs: [changes, validate]
     if: ${{ !github.event.deleted && needs.changes.outputs.image == 'true' }}
-    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@1faf16c708bbe5fe6c4e053de0e327dd07b05b8c # 2.0.1209
+    uses: ptr727/ProjectTemplate/.github/workflows/build-release-task.yml@5540e3839ea85f3e8ad3b9af54b0aac8e7ea5519 # 2.0.1286
     permissions:
       contents: read
     secrets:
