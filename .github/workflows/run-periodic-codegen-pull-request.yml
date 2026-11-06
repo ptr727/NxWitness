@@ -17,7 +17,7 @@ jobs:
 
   run-codegen:
     name: Run codegen and pull request job
-    uses: ptr727/ProjectTemplate/.github/workflows/run-codegen-pull-request-task.yml@320713d9d491f578b5604a8d67b82478717d7b05 # 2.0.1319
+    uses: ptr727/ProjectTemplate/.github/workflows/run-codegen-pull-request-task.yml@df04adaee6c5928177535e40eb5b9310638f501e # 2.0.1343
     secrets:
       CODEGEN_APP_CLIENT_ID: ${{ secrets.CODEGEN_APP_CLIENT_ID }}
       CODEGEN_APP_PRIVATE_KEY: ${{ secrets.CODEGEN_APP_PRIVATE_KEY }}
