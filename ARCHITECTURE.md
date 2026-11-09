@@ -53,7 +53,7 @@ Two version streams reach the images, and confusing them is the common error:
 
 ## Template Adaptations
 
-This repo derives its CI and conventions from the fleet template, `ptr727/ProjectTemplate`. Carried artifacts are taken by full-file replacement, and the deliberate deviations below are documented so they are not mistaken for drift.
+This repo derives its CI and conventions from the fleet template, `ptr727/ProjectTemplate`. Carried artifacts are converged per the hub's `RESYNC.md`, which replaces only declared verbatim content and keeps this repo's own sections. The deliberate deviations below are documented so they are not mistaken for drift.
 
 - **Triggered-Docker publisher, one branch per run.** `publish-release.yml` is `workflow_dispatch` plus a weekly `schedule` (main only) plus a path-scoped `push` to `main` on `Make/Matrix.json`, where the hub's Docker shape is dispatch plus schedule alone. It builds exactly one branch, the trigger ref (`github.ref_name`), so NBGV classifies natively with no cross-branch leg and no `IGNORE_GITHUB_REF`. The jobs are a `plan` -> `validate` -> `build-base` (main only) -> `publish` -> `publish-docker-readme` (main only) chain. A develop dispatch refreshes the `:develop` images only, with no GitHub release.
 - **Multi-image, shared-base build layer through hooks.** This repo is the hub Docker family's matrix and `build-base` case. The `docker-prepare` hook emits the branch's `Make/Matrix.json` rows as the hub's matrix, and takes the smoke build's `docker_image` input as a name filter rather than as a Docker Hub repository. The hub core owns the cache policy, the platform selection, and the login, and runs the matrix without the `max-parallel: 4` cap the carried copy had.
