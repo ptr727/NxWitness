@@ -8,7 +8,7 @@ Verifying a change here is two things: running the gates, and then running by ha
 
 The gates are the .NET clean-compile (the `.NET Format` VS Code task, per [CODESTYLE.md](./CODESTYLE.md)), the unit tests, and the document linters. `GOVERNANCE.md` "Running the Linters Locally (Known-Working Invocations)", a hub-only section read in a hub checkout rather than carried here, carries the known-working invocation of each linter, and CI runs the same set in the hub's `validate-task.yml`, so a local lint run buys an earlier failure rather than a different one. **Linting is not editor-only here**: `validate-task.yml` runs markdownlint, CSpell, `actionlint`, `editorconfig-checker`, `shellcheck`, `shfmt`, the composite-action schema check, and the hub's repo gates alongside `dotnet csharpier check`, `dotnet format style`, and `dotnet test`, all inside the required check.
 
-**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset: NxMeta and NxMeta-LSIO, amd64 only, never pushed, and only when `Docker/**`, `Make/Matrix.json`, `Make/Version.json`, a Docker hook, or a workflow changed. Eight of the ten product images, the arm64 leg of every image, the base image push path, and a container that actually starts and serves its web UI are all unbuilt at merge time. The publish run is the first thing that builds them, and a workflow edit reaches only the same smoke subset. So a change to a Dockerfile, a build arg, a base image, or the generated matrix is verified locally by running `./Create.sh` and `./Build.sh` from inside `Make/`, which build every product image for both `linux/amd64` and `linux/arm64`, and, when the change can affect a running server, `./Test.sh` followed by `./Instructions.sh` there to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
+**What CI structurally cannot exercise is the product image matrix.** The pull-request pipeline builds a deliberate smoke subset. That is NxMeta and NxMeta-LSIO, amd64 only and never pushed. It runs only when `Docker/**`, `Make/Matrix.json`, `Make/Version.json`, a Docker hook, or a workflow changed. Several images go unbuilt at merge time. Those are eight of the ten product images, the arm64 leg of every image, and the base image push path. Nothing starts a container that serves its web UI either. The publish run is the first thing that builds them, and a workflow edit reaches only the same smoke subset. So verify a change to a Dockerfile, a build arg, a base image, or the generated matrix locally. Run `./create.sh` and `./build.sh` from inside `Make/`, which build every product image for both `linux/amd64` and `linux/arm64`. Where the change can affect a running server, also run `./test.sh` there, then `./instructions.sh` to reach each product's web UI. Reading a green pipeline as coverage of the full matrix is the mistake this section exists to name.
 
 ## Runbooks
 
@@ -22,7 +22,7 @@ dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- matrix --versionpath=
 dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./Make/Version.json --makedirectory=./Make --dockerdirectory=./Docker
 ```
 
-`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`. `--versionlabel` is left off so this matches what `Make/Create.sh` runs, which takes the `Latest` default; passing a different label selects different product versions and so generates different Dockerfiles.
+`version`, `matrix` and `make` are subcommands of the `CreateMatrix` executable rather than programs on `PATH`, so they are reached through `dotnet run` from the repository root. `make` in particular is not the system `make`. `--versionlabel` is left off so this matches what `Make/create.sh` runs, which takes the `Latest` default. Passing a different label selects different product versions, and so generates different Dockerfiles.
 
 `Docker/` and the Compose files in `Make/` are generated output, so a change to the generator is committed together with its regenerated output.
 
@@ -30,22 +30,22 @@ dotnet run --project ./CreateMatrix/CreateMatrix.csproj -- make --versionpath=./
 
 The scripts in `Make/` wrap the generator and the Docker build, and each is run from inside `Make/`:
 
-- `Create.sh` updates `Version.json` and `Matrix.json` and writes the Dockerfiles.
-- `Build.sh` builds the base images and every product image for `linux/amd64` and `linux/arm64`, and loads the amd64 targets. Setting `PUSH_BASE_IMAGES=true` pushes the base images, which needs a Docker Hub login.
-- `Test.sh` runs `Create.sh`, then `Build.sh`, then `Up.sh`.
-- `Up.sh`, `Up-latest.sh`, and `Up-develop.sh` bring up the locally built (`Test.yml`), released, and develop Compose stacks. `Down.sh`, `Down-latest.sh`, and `Down-develop.sh` bring the matching stack back down.
-- `Instructions.sh` prints the web UI URL of each product in the running stack.
-- `Clean.sh` shuts the stack down and deletes the images.
+- `create.sh` updates `Version.json` and `Matrix.json` and writes the Dockerfiles.
+- `build.sh` builds the base images and every product image for `linux/amd64` and `linux/arm64`, and loads the amd64 targets. Setting `PUSH_BASE_IMAGES=true` pushes the base images, which needs a Docker Hub login.
+- `test.sh` runs `create.sh`, then `build.sh`, then `up.sh`.
+- `up.sh`, `up-latest.sh`, and `up-develop.sh` bring up the locally built (`Test.yml`), released, and develop Compose stacks. `down.sh`, `down-latest.sh`, and `down-develop.sh` bring the matching stack back down.
+- `instructions.sh` prints the web UI URL of each product in the running stack.
+- `clean.sh` shuts the stack down and deletes the images.
 
 ## Backup and Recovery
 
-There is no state to back up. The repository is the record and GitHub holds it, every published image is rebuilt from the pinned inputs in `Make/Matrix.json` and `Make/Version.json`, and a local Compose stack is disposable by design, since `Clean.sh` deletes it outright. Recovering a published image means re-running the publisher against the commit that carries that pin, not restoring anything.
+There is no state to back up. The repository is the record and GitHub holds it. Every published image is rebuilt from the pinned inputs in `Make/Matrix.json` and `Make/Version.json`. A local Compose stack is disposable by design, since `clean.sh` deletes it outright. Recovering a published image means re-running the publisher against the commit that carries that pin, not restoring anything.
 
 ## Logs and Debugging
 
 Workflow runs are the log for anything that happened in CI or in a publish. `gh run list --branch <branch>` and `gh run view <id> --log-failed` reach them. A gate failure reproduces locally, because CI runs the same commands against the same committed configuration, so reproduce it locally before reading workflow logs.
 
-A failure that appears only in a built image needs a running container instead. Bring the stack up with `./Up.sh` from inside `Make/`, find the product's web UI with `./Instructions.sh` there, read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one: set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
+A failure that appears only in a built image needs a running container instead. Bring the stack up with `./up.sh` from inside `Make/`, and find the product's web UI with `./instructions.sh` there. Then read `docker logs <container>`, and attach a shell with `docker exec --interactive --tty <container> /bin/bash`. The mediaserver's own logging is a product setting rather than a container one. Set `logLevel=verbose` in `mediaserver.conf`, restart the server, and read `/config/var/log/log_file.log` inside the container.
 
 ## Tool Usage
 
