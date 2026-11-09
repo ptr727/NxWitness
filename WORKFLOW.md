@@ -370,8 +370,10 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 ### D0 - Architecture
 
-- **D0.1 CI is one run, one branch.** Input: any push. Output: `test-pull-request` builds/validates exactly
-  `github.ref_name` and publishes nothing. *Prevents cross-branch ref mixing in CI.*
+- **D0.1 CI is one run, one branch.** Input: any CI run, meaning a pull request, a `develop` push, or a
+  dispatch. Output: `test-pull-request` validates the run's own tree and publishes nothing. The smoke build
+  reads `main`'s `Make/Matrix.json` rows when the pull request's base, or else the run's own branch, is
+  `main`, and `develop`'s rows otherwise. *Prevents cross-branch ref mixing in CI.*
 - **D0.2 The publisher builds one branch: the trigger ref.** Output: the publisher passes `github.ref_name`
   as `branch` and the triggering `github.sha` as `ref`, so it checks out, versions, and tags exactly the run's own branch (the schedule/pin
   push's `main`, or a dispatch's branch). No branch matrix; the hub's `publish-plan-task.yml` publishes only
