@@ -529,11 +529,11 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D8.2 Dependabot auto-merges on green.** Output: every Dependabot PR, any ecosystem and any tier,
   auto-merges once the required checks pass. A failing check blocks the merge. A merged dependency bump does **not** itself publish (it ships in the next scheduled run
   or the next matrix-pin push).
-- **D8.3 Codegen dual-targets `main` AND `develop`.** Output: the daily codegen matrix (the hub's
-  `run-codegen-pull-request-task.yml`, running the `codegen` hook) opens a
-  `codegen-main` -> `main` and a `codegen-develop` -> `develop` PR (strict head/base pairing in the merge-bot),
-  regenerating `Make/Version.json` + `Make/Matrix.json` **only** (not the Dockerfiles - those are a separate
-  human-driven `Make/Create.sh` path). The merge-bot auto-merges each independently. develop's matrix update
+- **D8.3 Codegen dual-targets `main` AND `develop`.** Output: the daily codegen matrix runs the hub's
+  `run-codegen-pull-request-task.yml` with the `codegen` hook. It opens a `codegen-main` -> `main` and a
+  `codegen-develop` -> `develop` PR, with strict head/base pairing in the merge-bot. Each regenerates
+  `Make/Version.json` + `Make/Matrix.json` **only**. The Dockerfiles are a separate,
+  human-driven `Make/create.sh` path. The merge-bot auto-merges each independently. develop's matrix update
   is sync-only; a merged `codegen-main` matrix change fires the publisher's pin push. *Prevents non-linear
   rebase/merge-block conflicts (the rejected single-target scheme) and keeps both branches current with
   upstream Nx versions.*

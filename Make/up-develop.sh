@@ -6,6 +6,6 @@ set -euo pipefail
 docker compose --file Test-develop.yml up --detach
 
 # Instructions
-./Instructions.sh
+./instructions.sh
 
-echo "Run 'Down-develop.sh' to stop stack"
+echo "Run 'down-develop.sh' to stop stack"
