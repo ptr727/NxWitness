@@ -114,12 +114,12 @@ Legibility rules. Necessary but not sufficient: a perfectly styled workflow can 
 
 ## 3. Architecture
 
-### Three workflows: CI on push, publishing on schedule/pin-push/dispatch, codegen daily
+### Three workflows: CI on pull requests, publishing on schedule/pin-push/dispatch, codegen daily
 
 CI ([`test-pull-request.yml`][test-pull-request]) and the publisher
 ([`publish-release.yml`][publish-release]) are separate workflows with separate
-concurrency, so they never race. CI re-tests every pushed tree and never publishes; the publisher releases on
-its own triggers and never runs on an ordinary merge. Codegen
+concurrency, so they never race. CI tests every pull request's tree and every `develop` push, and never
+publishes. The publisher releases on its own triggers and never runs on an ordinary merge. Codegen
 ([`run-periodic-codegen-pull-request.yml`][run-periodic-codegen-pull-request] -> the
 hub's `run-codegen-pull-request-task.yml` -> the [`codegen`][actions-codegen] hook) keeps
 the version/matrix data current. *Prevents a merge from silently cutting a release, and a CI run from racing a
@@ -241,8 +241,9 @@ the same outcomes that the section 4 contract specifies, drawn from the workflow
 a guarantee disagree, one of them is a defect. Triggers are blue, gates yellow, durable/published
 outputs green, and stop/skip outcomes red.
 
-**Pull request (CI) - `test-pull-request.yml`.** Every push runs the hub's validate gate, smoke-builds a representative image subset only when image files changed, and a single
-aggregator produces the ruleset-bound required check (D1, D6).
+**Pull request (CI), `test-pull-request.yml`.** Every run executes the hub's validate gate. It smoke-builds a
+representative image subset only when image files changed. A single aggregator gates the merge, and only its
+`pull_request` run produces the ruleset-bound required check (D1, D6).
 
 ```mermaid
 flowchart TD
@@ -262,9 +263,10 @@ flowchart TD
     VT --> A
     S --> A
     SS --> A
-    A{"Check pull request workflow status job<br/>changes AND validate AND smoke-build<br/>succeeded or skipped?"}:::gate
-    A -- "yes" --> G(["required check passes<br/>merge unblocked"]):::pub
-    A -- "no" --> R(["required check fails<br/>merge blocked"]):::stop
+    A{"aggregator<br/>changes AND validate AND smoke-build<br/>succeeded or skipped?"}:::gate
+    A -- "yes, pull_request run" --> G(["required check passes<br/>merge unblocked"]):::pub
+    A -- "no, pull_request run" --> R(["required check fails<br/>merge blocked"]):::stop
+    A -- "push or dispatch run" --> N(["non-required check<br/>gates nothing"]):::stop
     classDef trig fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
     classDef gate fill:#fef9c3,stroke:#ca8a04,color:#713f12
     classDef pub fill:#dcfce7,stroke:#16a34a,color:#14532d
@@ -383,10 +385,12 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 
 ### D1 - CI fast feedback
 
-- **D1.1 Every push validates; image changes smoke-build.** Output: on any push the `validate` job (the
-  hub's `validate-task.yml`) runs with no paths filter; `smoke-build` (NxMeta + NxMeta-LSIO, amd64, no push)
-  runs when the inline change-gate detects an image-file change (`Docker/**`, `Make/Matrix.json`,
-  `Make/Version.json`, `.github/actions/docker-*`, `.github/workflows/**`, the last covering a hub pin bump).
+- **D1.1 Every CI run validates, and image changes smoke-build.** Output: on every pull request, `develop`
+  push, and dispatch, the `validate` job (the hub's `validate-task.yml`) runs with no paths filter. A push to
+  any other branch starts no CI run, so a branch is validated once it has a pull request. The `smoke-build`
+  job (NxMeta + NxMeta-LSIO, amd64, no push) runs when the inline change-gate detects an image-file change.
+  Those are `Docker/**`, `Make/Matrix.json`, `Make/Version.json`, `.github/actions/docker-*`, and
+  `.github/workflows/**`, the last covering a hub pin bump.
   *Prevents a hook, Dockerfile, or hub-task break shipping untested.*
 - **D1.2 Unit tests always run.** Output: the hub's `validate-task.yml` runs `dotnet test` (the codegen tool +
   its tests).
@@ -399,7 +403,7 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   the hub's `build-release-task.yml`, and `github: false`. The Docker login runs on every build including smoke.
   That buys higher pull and cache rate limits against the registry buildcache. So a Dependabot pull request's smoke
   build needs the Docker Hub credentials in both secret stores. A fork pull request gets no secrets, so its
-  smoke build fails and it is landed by maintainer action (D6.2).
+  smoke build fails where an image file changed (D6.2).
 - **D1.5 One required aggregator gates merge.** Output: a single aggregator job must **succeed**. That is
   success, or skipped for the conditionally-skipped `smoke-build`, and never failure or cancelled. It
   `needs:` `changes`, `validate`, and `smoke-build`, and treats a `changes` failure as blocking. So an
@@ -414,8 +418,8 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D2.1 Validate the cross-input invariant before publishing.** Output: the hub's `validate-release` job
   asserts each cross-input invariant with `::error::` (the version backstop, D2.2) before anything builds;
   every build job `needs:` it. The publish run also re-runs the hub's `validate-task.yml` (the `validate` job
-  gates `build-base` and `publish`), so a publish can never ship a tree that would fail the same lint + `dotnet test` gate
-  CI enforces on push - on the trigger branch CI already validated, re-checked at publish time.
+  gates `build-base` and `publish`). So a publish can never ship a tree that fails the same lint and
+  `dotnet test` gate CI enforces on each pull request. That gate is re-checked on the published commit itself.
 - **D2.2 Main matches version classification.** Input: a real publish run. Output: the run fails loudly if
   `main` carries a prerelease suffix, or if any other branch carries none. It strips `+buildmetadata` before testing for the
   prerelease `-`. *Prevents a develop build published as the stable `latest`.*
@@ -455,10 +459,11 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   is skipped when the tag already exists (refreshed only on `workflow_dispatch`), while the Docker push still
   runs - re-pushing the same tags refreshes the shared base image. *Prevents duplicate releases while still
   refreshing the images.*
-- **D4.6 Publish is built from the tree CI validated.** Output: the run's ref **is** the published branch, so
-  the hooks and the built tree resolve from that branch - the same tree CI validated on push (the required
-  check gates every merge to it) - and the hub tasks resolve at the same pinned commit CI used. The publish
-  run re-runs the hub's `validate-task.yml` (the `validate` job gates `build-base` and `publish`). The version
+- **D4.6 Publish is built from the branch CI gated.** Output: the run's ref **is** the published branch, so
+  the hooks and the built tree resolve from that branch. The required check gates every merge to it, and the
+  hub tasks resolve at the same pinned commit CI used. CI does not run on a `main` push, so the merged tree
+  can differ from every merge ref a pull request run tested. The publish run therefore re-runs the hub's
+  `validate-task.yml` on that commit (the `validate` job gates `build-base` and `publish`). The version
   backstop (D2.2) is the additional in-publisher gate.
 - **D4.7 Docker publishing authenticates with Docker Hub credentials.** Output: the publisher's `build-base`
   job and the hub's product build each log in via `docker/login-action` with `DOCKER_HUB_USERNAME` +
@@ -490,8 +495,9 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D6.2 Head-resolution, single producer, fork exception.** Output: CI runs on `pull_request`, so the
   `./.github/actions/` hooks resolve from the head (the hub tasks resolve at their pin). Only that run yields
   the aggregator's ruleset-bound `context:`, so it is the sole producer of that name. Dependabot and codegen
-  PRs are in-repo branches, validated the same way. A fork pull request runs without secrets, so its smoke
-  build fails, and it is landed through an in-repo branch by maintainer action. That is the one exception.
+  PRs are in-repo branches, validated the same way. A fork pull request runs without secrets. Where it
+  changes an image file its smoke build fails, and it is landed through an in-repo branch by maintainer
+  action. That is the one exception.
   *Prevents a dual-producer context race and a false self-test claim for forks.*
 
 ### D7 - Concurrency, permissions, safety
@@ -649,8 +655,8 @@ the configuration is part of "operational" (D10; audit 5D).
 
 - `DOCKER_HUB_USERNAME` / `DOCKER_HUB_ACCESS_TOKEN` - Docker Hub credentials the base and product builds log
   in with to push the images and the repository overviews. Required in **both** the Actions and Dependabot
-  secret stores: a Dependabot-triggered push runs CI whose Docker smoke build logs in too (when an image file
-  changed), and that run gets the Dependabot store. The access token needs push scope on every product +
+  secret stores. A Dependabot pull request's CI run gets the Dependabot store, and its Docker smoke build logs
+  in too when an image file changed. The access token needs push scope on every product +
   base repo under `docker.io/ptr727/` (derived from `Make/Matrix.json`). There
   is no NuGet/OIDC publishing.
 - `CODEGEN_APP_CLIENT_ID` / `CODEGEN_APP_PRIVATE_KEY` - the GitHub App credentials the merge-bot and the
