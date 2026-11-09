@@ -200,9 +200,9 @@ and `dotnet format style`, the repo gates, and `dotnet test`. It smoke-builds a 
 only when image files, the Docker hooks, or the workflows changed. The check is an inline `git diff`
 change-gate rather than `dorny/paths-filter`. The smoke build runs the hub's `build-release-task.yml` with
 `smoke: true`, uploading and pushing nothing. One aggregator job gates the merge. Only its `pull_request`
-run takes the ruleset-bound required check name. A branch-deletion push (all-zeros
-`github.sha`) is skipped by a `!github.event.deleted` guard on every job, so a deletion never runs a failing
-build.
+run takes the ruleset-bound required check name. Deleting any branch but `develop` starts no CI run. A
+`develop` deletion push (all-zeros `github.sha`) is skipped by a `!github.event.deleted` guard on every job,
+so a deletion never runs a failing build.
 
 ### The Docker-only release
 
@@ -249,7 +249,7 @@ representative image subset only when image files changed. A single aggregator g
 flowchart TD
     T(["pull_request, push: develop<br/>(or workflow_dispatch)"]):::trig
     T --> D{"github.event.deleted?"}:::gate
-    D -- "yes: branch deletion" --> X(["all jobs + aggregator skip<br/>no failed run, no pending check"]):::stop
+    D -- "yes: develop deleted" --> X(["all jobs + aggregator skip<br/>no failed run"]):::stop
     D -- "no" --> CH["changes job<br/>inline git diff change-gate<br/>image? base?"]
     D -- "no" --> V["validate job<br/>(hub validate-task.yml)"]
     subgraph VT ["hub validate-task.yml"]
@@ -514,8 +514,9 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
   `permissions:`; a callee's extra scope is granted by the caller.
 - **D7.3 Boolean inputs both forms.** Declared in both trigger blocks, compared against `true` and `'true'`.
 - **D7.4 Branch-deletion guard.** Output: every CI job carries `if: !github.event.deleted` and the aggregator
-  `always() && !github.event.deleted`, so a branch-deletion push (all-zeros `github.sha`) runs no failing
-  build and does not fail the required check.
+  `always() && !github.event.deleted`. Deleting a feature or bot branch starts no CI run, since only a
+  `develop` push triggers one. So the guard matters only for a deletion of `develop` itself, where the
+  all-zeros `github.sha` would otherwise fail checkout. *Prevents a failing run on that deletion.*
 
 ### D8 - Bots and automation
 
@@ -616,7 +617,7 @@ guarantee with a `file:line` citation:
 | S11 | PR with a CSharpier / format / unit-test failure | `validate` fails -> aggregator blocks the merge | D1.2, D1.3, D1.5 |
 | S12 | `version.json` floor bump merged | merges don't publish -> no immediate release; the new floor ships in the next publish | D3.3, D4.1 |
 | S13 | Dependabot semver-major NuGet bump | auto-merges on green like every other tier; a red check blocks it | D8.2 |
-| S14 | branch-deletion push | every CI job + the aggregator skip (`!github.event.deleted`) -> no failing required check | D7.4 |
+| S14 | branch deletion | a feature or bot branch deletion starts no CI run. A `develop` deletion starts one in which every job and the aggregator skip (`!github.event.deleted`), so nothing fails | D7.4 |
 | S15 | `develop` -> `main` promotion (merge commit) | the merge itself does not publish; if it changed `Matrix.json` the pin push publishes main, else the next schedule does | D4.1, D8.1 |
 
 ### 5C. Live probe (where warranted, never publishing)
