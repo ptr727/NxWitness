@@ -201,8 +201,8 @@ only when image files, the Docker hooks, or the workflows changed. The check is 
 change-gate rather than `dorny/paths-filter`. The smoke build runs the hub's `build-release-task.yml` with
 `smoke: true`, uploading and pushing nothing. One aggregator job gates the merge. Only its `pull_request`
 run takes the ruleset-bound required check name. Deleting any branch but `develop` starts no CI run. A
-`develop` deletion push (all-zeros `github.sha`) is skipped by a `!github.event.deleted` guard on every job,
-so a deletion never runs a failing build.
+`develop` deletion push is skipped by a `!github.event.deleted` guard on every job. Its run's `github.sha`
+reverts to the default branch's tip, so without the guard it would test `main`'s tree under the deleted ref.
 
 ### The Docker-only release
 
@@ -515,8 +515,9 @@ Each is a **MUST**, stated as input -> output plus the failure it prevents.
 - **D7.3 Boolean inputs both forms.** Declared in both trigger blocks, compared against `true` and `'true'`.
 - **D7.4 Branch-deletion guard.** Output: every CI job carries `if: !github.event.deleted` and the aggregator
   `always() && !github.event.deleted`. Deleting a feature or bot branch starts no CI run, since only a
-  `develop` push triggers one. So the guard matters only for a deletion of `develop` itself, where the
-  all-zeros `github.sha` would otherwise fail checkout. *Prevents a failing run on that deletion.*
+  `develop` push triggers one. So the guard matters only for a deletion of `develop` itself. That run's
+  `github.sha` reverts to the default branch's tip, so it would otherwise validate and smoke-build `main`'s
+  tree under the deleted `develop` ref. *Prevents a run that tests the wrong tree under a deleted ref.*
 
 ### D8 - Bots and automation
 

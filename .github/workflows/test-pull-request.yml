@@ -30,7 +30,7 @@ jobs:
   # The workflows count because a hub pin bump changes tasks a pull request otherwise never exercises.
   # The base output is set when a base Dockerfile or the base hook changed.
   # On a dispatch or a new branch (no before-commit), build everything.
-  # !github.event.deleted skips a branch-deletion push (github.sha is all-zeros, so checkout would fail).
+  # The !github.event.deleted guard skips a develop deletion push, whose github.sha reverts to the default branch's tip.
   changes:
     name: Detect image changes job
     if: ${{ !github.event.deleted }}
