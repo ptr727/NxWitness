@@ -478,12 +478,12 @@ services:
 
 **Local testing**:
 
-- Run `cd ./Make` and [`./Test.sh`][test-sh], the following will be executed:
-  - [`Create.sh`][create-sh]: Creates the Dockerfiles and updates the latest version information using `CreateMatrix`.
-  - [`Build.sh`][build-sh]: Builds the Dockerfiles using `docker buildx build`.
-  - [`Up.sh`][up-sh]: Launch a Docker Compose stack [`Test.yml`][test-yml] to run all product variants.
+- Run `cd ./Make` and [`./test.sh`][test-sh], the following will be executed:
+  - [`create.sh`][create-sh]: Creates the Dockerfiles and updates the latest version information using `CreateMatrix`.
+  - [`build.sh`][build-sh]: Builds the Dockerfiles using `docker buildx build`.
+  - [`up.sh`][up-sh]: Launch a Docker Compose stack [`Test.yml`][test-yml] to run all product variants.
 - Ctrl-Click on the links to launch the web UI for each of the product variants.
-- Run [`Clean.sh`][clean-sh] to shutdown the compose stack and cleanup images.
+- Run [`clean.sh`][clean-sh] to shutdown the compose stack and cleanup images.
 
 ## Known Issues
 
@@ -681,7 +681,7 @@ Licensed under the [MIT License][license]\
 
 <!-- Shields -->
 
-[github-pre-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?include_prereleases&logo=github&label=GitHub%20Pre-Release
+[github-pre-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?include_prereleases&filter=*-g*&logo=github&label=GitHub%20Pre-Release
 [github-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?logo=github&label=GitHub%20Release
 [hubdwspectrumbeta-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
 [hubdwspectrumlatest-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
@@ -747,20 +747,20 @@ Licensed under the [MIT License][license]\
 
 <!-- Repo -->
 
-[build-sh]: ./Make/Build.sh
-[clean-sh]: ./Make/Clean.sh
+[build-sh]: ./Make/build.sh
+[clean-sh]: ./Make/clean.sh
 [create-matrix]: ./CreateMatrix/
-[create-sh]: ./Make/Create.sh
+[create-sh]: ./Make/create.sh
 [history]: ./HISTORY.md
 [init-nx-relocate]: ./Docker/s6-overlay/s6-rc.d/init-nx-relocate/run
 [license]: ./LICENSE
 [matrix-json]: ./Make/Matrix.json
 [publish-release-workflow]: ./.github/workflows/publish-release.yml
 [test-pull-request-workflow]: ./.github/workflows/test-pull-request.yml
-[test-sh]: ./Make/Test.sh
+[test-sh]: ./Make/test.sh
 [test-yml]: ./Make/Test.yml
 [unraid]: ./Unraid
-[up-sh]: ./Make/Up.sh
+[up-sh]: ./Make/up.sh
 [version-json]: ./Make/Version.json
 
 <!-- External -->

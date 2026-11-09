@@ -31,10 +31,10 @@ set -euo pipefail
 # docker exec --interactive --tty [containername] /bin/bash
 
 ## Usage:
-# Create.sh : Update Version.json and Matrix.json and create Dockerfiles.
-# PUSH_BASE_IMAGES=true ./Build.sh : Build docker images from Dockerfiles and push base images.
-# Test.sh : Create and build and launch compose Test.yml compose stack.
-# Clean.sh : Shutdown compose stack and delete images.
+# ./create.sh : Update Version.json and Matrix.json and create Dockerfiles.
+# PUSH_BASE_IMAGES=true ./build.sh : Build docker images from Dockerfiles and push base images.
+# ./test.sh : Create and build and launch compose Test.yml compose stack.
+# ./clean.sh : Shutdown compose stack and delete images.
 
 # Build Dockerfile
 function BuildDockerfile {

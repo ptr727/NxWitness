@@ -5,4 +5,4 @@ set -euo pipefail
 # Stop stack and cleanup volumes
 docker compose --file Test.yml down --volumes
 
-echo "Run 'Clean.sh' to delete images"
+echo "Run 'clean.sh' to delete images"

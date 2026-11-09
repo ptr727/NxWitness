@@ -8,7 +8,7 @@ function DeleteImage {
 }
 
 # Down stack
-./Down.sh
+./down.sh
 
 # Delete images
 DeleteImage "NxGo"
