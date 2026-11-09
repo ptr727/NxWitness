@@ -3,10 +3,10 @@
 set -euo pipefail
 
 # Create Dockerfiles
-./Create.sh
+./create.sh
 
 # Build Dockerfiles
-./Build.sh
+./build.sh
 
 # Launch compose stack
-./Up.sh
+./up.sh
