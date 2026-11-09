@@ -681,7 +681,7 @@ Licensed under the [MIT License][license]\
 
 <!-- Shields -->
 
-[github-pre-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?include_prereleases&logo=github&label=GitHub%20Pre-Release
+[github-pre-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?include_prereleases&filter=*-g*&logo=github&label=GitHub%20Pre-Release
 [github-release-shield]: https://img.shields.io/github/v/release/ptr727/NxWitness?logo=github&label=GitHub%20Release
 [hubdwspectrumbeta-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/beta?label=beta&logo=docker
 [hubdwspectrumlatest-shield]: https://img.shields.io/docker/v/ptr727/dwspectrum/latest?label=latest&logo=docker
