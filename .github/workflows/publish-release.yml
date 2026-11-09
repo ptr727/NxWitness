@@ -20,10 +20,13 @@ on:
     branches: [main]
     paths: [Make/Matrix.json]
 
-# One global group rather than a ref-scoped one, since every run pushes shared tags (the base images, the product images, the readme).
-# A schedule, a dispatch, and a pin push must queue rather than race on them, and cancel-in-progress is false so a queued run never cancels a partial push.
+# A ref-scoped group, per WORKFLOW.md D7.1, so a schedule, a dispatch, and a pin push on one ref queue rather than race.
+# The main and develop runs push disjoint tags, since a develop publish pushes only the develop tags and no base image or readme.
+# A push the plan does not publish takes its own group, so it never replaces a pending publish.
+# That is a push off main, or one by an actor off publish-plan-task.yml's allowlist.
+# With cancel-in-progress false, a queued run never cancels a partial push.
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.event_name == 'push' && (github.ref != 'refs/heads/main' || (github.actor != 'ptr727-codegen[bot]' && github.actor != 'dependabot[bot]')) && format('-{0}', github.run_id) || '' }}
   cancel-in-progress: false
 
 # GITHUB_TOKEN gets no scope by default, and each job below grants only what its task writes with.
