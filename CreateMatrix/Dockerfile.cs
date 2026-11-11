@@ -18,8 +18,7 @@ internal static class DockerFile
         foreach (ProductInfo.ProductType productType in ProductInfo.GetProductTypes())
         {
             // Find the matching product
-            ProductInfo productInfo =
-                productList.Find(item => item.Product == productType)
+            ProductInfo productInfo = productList.Find(item => item.Product == productType)
                 ?? throw new InvalidOperationException($"Product not found: {productType}");
 
             // Get the version for the label, not all releases include Beta and RC labels
