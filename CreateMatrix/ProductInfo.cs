@@ -134,8 +134,7 @@ internal sealed class ProductInfo
                     .ConfigureAwait(false);
 
                 // Get the x64 and arm64 server ubuntu server packages
-                Package packageX64 =
-                    packageList.Find(item => item.IsX64Server())
+                Package packageX64 = packageList.Find(item => item.IsX64Server())
                     ?? throw new InvalidOperationException(
                         $"{Product}: No x64 Ubuntu server package found for build {buildNumber} (version {versionInfo.Version})"
                     );
@@ -145,8 +144,7 @@ internal sealed class ProductInfo
                         $"{Product}: x64 Ubuntu server package for build {buildNumber} (version {versionInfo.Version}) has no file name"
                     );
                 }
-                Package packageArm64 =
-                    packageList.Find(item => item.IsArm64Server())
+                Package packageArm64 = packageList.Find(item => item.IsArm64Server())
                     ?? throw new InvalidOperationException(
                         $"{Product}: No arm64 Ubuntu server package found for build {buildNumber} (version {versionInfo.Version})"
                     );
@@ -284,24 +282,20 @@ internal sealed class ProductInfo
         // If no Latest label is set, use Stable or RC or Beta as Latest
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Latest)))
         {
-            VersionInfo latest =
-                FindMissingLabel(
-                    VersionInfo.LabelType.Latest,
-                    [
-                        VersionInfo.LabelType.Stable,
-                        VersionInfo.LabelType.RC,
-                        VersionInfo.LabelType.Beta,
-                    ]
-                ) ?? throw new InvalidOperationException("Latest label could not be resolved.");
+            VersionInfo latest = FindMissingLabel(
+                VersionInfo.LabelType.Latest,
+                [VersionInfo.LabelType.Stable, VersionInfo.LabelType.RC, VersionInfo.LabelType.Beta]
+            ) ?? throw new InvalidOperationException("Latest label could not be resolved.");
             latest.Labels.Add(VersionInfo.LabelType.Latest);
         }
 
         // If no Stable label is set, use Latest as stable
         if (!Versions.Any(item => item.Labels.Contains(VersionInfo.LabelType.Stable)))
         {
-            VersionInfo stable =
-                FindMissingLabel(VersionInfo.LabelType.Stable, [VersionInfo.LabelType.Latest])
-                ?? throw new InvalidOperationException("Stable label could not be resolved.");
+            VersionInfo stable = FindMissingLabel(
+                VersionInfo.LabelType.Stable,
+                [VersionInfo.LabelType.Latest]
+            ) ?? throw new InvalidOperationException("Stable label could not be resolved.");
             stable.Labels.Add(VersionInfo.LabelType.Stable);
         }
 
