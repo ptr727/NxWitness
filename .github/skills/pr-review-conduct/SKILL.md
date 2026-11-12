@@ -54,14 +54,17 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
    whose own file table names exactly the changed files covers it, `coverage=table`. That is the
    reading a Copilot round at Balanced review effort gives. Where no round covering the head carries a table of its own, the newest round
    that does stands in as `coverage=carried:table`. Its table has to name exactly the changed files.
-   Either table may leave out an added, modified, or deleted file with no changed line, such as a
-   binary. That holds while some changed file has one.
+   Either table may leave out an added, modified, renamed, or deleted file with no changed line,
+   such as a binary. That holds while some changed file has one. On a develop -> main promotion, a
+   file that only green Dependabot bumps changed is taken out of that comparison. The head reads
+   `coverage=dependabot`, which satisfies this item, where that covers every changed file or the
+   table names the rest.
    A table stands in only where no Copilot round on the pull request, on any commit, states
    partial coverage. So a pull request that ever had a partial round goes to the maintainer.
    `coverage=none` and `coverage=UNKNOWN` leave this item unsatisfied and decide no exit code,
    so read the field rather than the exit.
-   The coverage this item requires is Copilot's, or the attested local pass above, and CodeRabbit
-   and Qodo are advisory. That is because the hub's `docs/pr-reviewer-evaluation.md` "Status"
+   The coverage this item requires is Copilot's, the attested local pass above, or that green
+   Dependabot reading, and CodeRabbit and Qodo are advisory. That is because the hub's `docs/pr-reviewer-evaluation.md` "Status"
    names Copilot the incumbent and says no candidate is a required reviewer. An advisory
    reviewer's absence blocks nothing, while its findings owe item 3 exactly as Copilot's do.
    A review of the head it has started and not finished is not an absence. While a CodeRabbit
@@ -117,7 +120,15 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
      later one. The attestation counts only from an owner, member, or collaborator, with the marker
      on its own line outside any code span or fence. The attestation's base has to be the one the
      pull request merged into. A local receipt does not count, since removing its worktree deletes
-     it.
+     it. A path `git diff -M100%` against the merge base reports as `R100` needs no read evidence,
+     since no byte of it changed. A Dependabot pull request counts as covered where it changed only
+     dependency manifests and lockfiles and merged into `develop` with its head's checks green.
+     `pr_review.py` reads it off the promotion's commits. Where it reads `coverage=dependabot`,
+     this case is not reached.
+     A change pushed directly to `develop` has no feature pull request. So an attestation published
+     on the promotion counts for each file in the attested head's diff, under the same conditions.
+     Its base is `main`. A Copilot round on the final head is still required, with
+     item 3 closed.
    - Every review thread on the promotion is resolved, and every check passes.
    - `coverage=none` is the only reason `pr_review.py` does not report the promotion ready, read
      from the digest's lines. A `VERDICT WITH NO COUNTED FINDING` headline, exit `50`, is a second
@@ -181,7 +192,8 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
    What closing a finding owes turns on whether it is `pre-existing`, under the classes
    `local-strict-review` "Disposing of Findings" defines, applied here to a PR-hosted finding. A
    `pre-existing` finding on text inside a canonical Markdown unit takes the tracker bullet of
-   outcome 4 of "Every finding ends in a listed outcome" below. Such a unit is one the hub's
+   outcome 4 of "Every finding ends in a listed outcome" below. An observed-data finding there
+   takes that outcome's observed-data bullet instead. Such a unit is one the hub's
    `scripts/canonical_review.py list` names. The tracker bullet applies once per unit rather than once
    per finding. The round gathers that unit's such findings onto the unit's tracker, an open hub
    issue whose title carries the unit key. The change that moves the key retitles it, and
@@ -193,6 +205,7 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
    since a resync writes the whole text there. It declines the finding under
    that section's outcome 2, ownership sitting elsewhere, and files it on the same tracker.
    A finding on an intent unit is filed there too, since the defect is still fixed at the source.
+   An observed-data finding on either kind of unit takes outcome 4's observed-data bullet instead.
    The carrier adapts its own copy of an intent unit meanwhile. Every other finding, a `style`
    remark on untouched text included, takes its own outcome in that section.
 
@@ -209,6 +222,16 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
 4. Every part of a round covering the head that the tooling could not place is answered. The
    digest prints an excerpt of each under `UNPLACED ON THE HEAD` with a fingerprint for the set.
    It reads `shapes=HELD`, and `status` and `wait` exit `50`.
+   - Take an unplaced part that holds observed data while its hold or key still stands. That is
+     one on the head, or one from an earlier round now printed under `REVIEWER OUTPUT NOTED`. No
+     agent acknowledges such a part, nor the rest of its set or key, until the maintainer answers.
+     That holds whatever outcome 4 does with the data. The agent tells the maintainer, or its
+     dispatcher, naming the repository, the pull request, and the kind of data, and nothing finer.
+     It then stops that unit of work. Once the maintainer answers, the agent posts the
+     acknowledgment carrying that answer. Nothing the agent writes quotes or locates the data. That
+     holds ahead of the `REVIEWER OUTPUT NOTED` paragraph below and of "Answering a suppressed
+     finding". A nested label, in a list, a quote, or a placed part, is not such a part. "Answering
+     a suppressed finding" routes it.
    - Read each part whole in the review body, since the excerpt only locates it. Give every item
      in it item 3's outcome: fixed with its SHA, declined with evidence, or listed as pre-existing
      in the pull request body.
@@ -217,8 +240,8 @@ visible comments, routinely still carries a finding nobody has answered. Treatin
      `shapes=ACKNOWLEDGED`. New unplaced text on a new head owes a new acknowledgment.
    - The spelling is a data edit to the matching `scripts/reviewers/*.json` in the hub plus one
      fixture. Whoever acknowledged the part makes it in a pull request of its own, never an issue.
-   - An item that reads as neither a finding nor not one goes to the maintainer with its raw text
-     quoted, per "Escalate to the maintainer when" below.
+   - An item that reads as neither a finding nor not one goes to the maintainer, per "Escalate to
+     the maintainer when" below. Its raw text is quoted unless its part holds observed data.
 
    A part on an earlier round prints under `REVIEWER OUTPUT NOTED` and decides no exit code. So
    does a label nested in a list, a quote, or a placed part. Read that block rather than the
@@ -338,6 +361,10 @@ After an authorized merge, run the `repo-worktree` post-merge cleanup procedure 
 
 ## Every finding ends in a listed outcome
 
+A finding that committed text holds observed data takes outcome 4's observed-data bullet,
+whatever its class, ahead of every other outcome. That applies once the data is confirmed as
+observed. A value the repository constructed is disproved under outcome 2 instead.
+
 1. **Real, so fix it, and fix the class rather than the instance.** A reviewer samples rather
    than enumerates, so sweep for the finding's siblings before replying. Fix each one sitting
    in a file the diff already touches or that this change itself made wrong. Each of the rest takes
@@ -371,13 +398,29 @@ After an authorized merge, run the `repo-worktree` post-merge cleanup procedure 
    and say so, rather than treating the intention to ask as the asking.
 4. **Deferred past this pull request, or on text it did not touch, so record it by its class.**
    An `introduced` finding fixable here and deliberately left as is takes outcome 3 instead.
-   An `introduced` finding leads to an issue only where `pr-review-conduct` "Triaging findings"
-   or the last bullet below says so. A spent edit budget hands any other `introduced` finding to this pull request's review loop, never past the
+   An `introduced` finding leads to an issue only where the last bullet below says so. A spent edit budget hands any other `introduced` finding to this pull request's review loop, never past the
    pull request. An edge case on code this change wrote is `introduced`. Where `GOVERNANCE.md`
    "Trust Boundaries and Hardening Effort" lets it earn a fix or an issue, it takes the fix.
    Otherwise it is declined under outcome 2 with that section's reason.
    The class is the one `local-strict-review` "Disposing of Findings" defines, and the first
    bullet that fits decides:
+   - A finding that committed text holds observed data takes the route `GOVERNANCE.md`
+     "Representative Data in Agent-Authored Text" sets, and the first case that fits decides.
+     Sweep for its siblings as outcome 1 does, since a reviewer samples, and give each one the
+     route its own case sets. Read the visibility live. Data no pushed commit holds is removed from the unpushed commits
+     before the push, and needs no record. A spent edit budget does not end that case, since the
+     push waits on it. Two kinds are escalated per "Escalate to the maintainer when", and their
+     threads stay open. One is data in a public repository's pushed history, the hub's included.
+     The other is data in a carrying repository's copy of hub-authored text. In a private repository, pushed data is
+     replaced here, even in a file this change does not otherwise touch. Where the current text
+     no longer holds it, nothing is replaced, and the record below is still owed. On a develop ->
+     main promotion pull request, a replacement lands in a feature pull request of its own, with
+     its record. Where nothing is replaced, the record goes in the promotion's own body. Its body line goes under an `Observed data recorded` heading with the location
+     and the kind, never the value. Where another pull request's review raised it, the line names
+     that one too. The pull request holding the record takes the `history-data` label, and so
+     does the one whose review raised it. Where the repository lacks that label, the maintainer is
+     told. A thread raising a recorded finding is answered with a pointer to its body line and
+     resolved.
    - A local pass before the push that opens the pull request can raise a `pre-existing`
      correctness defect in a file the diff already touches. That defect is fixed here under
      outcome 1. That covers wrong behavior and a false or unfollowable instruction, and not a
@@ -396,7 +439,10 @@ After an authorized merge, run the `repo-worktree` post-merge cleanup procedure 
      as its own issue, labeled `pre-existing`. Such a finding names an input or a state and the
      wrong output or the crash it produces. Its body line goes under a `Pre-existing findings,
      filed` heading and links that issue. A thread raising it is answered with that issue's link
-     and resolved.
+     and resolved. Where its class has other sites, that one issue names each. An open issue for that class takes the new sites instead of a new one, unless a
+     fix for it is already merged or claimed.
+     A near-duplicate with no defect behind it is a consolidation finding, which the dropped
+     bullet below takes.
    - A `style`, wording, consolidation, or restatement finding on text this change did not touch
      is dropped. It gets one line under a `Dropped findings` heading and nothing else. It gets no
      decline text, no issue, and no reply beyond a pointer to that line, which resolves any
@@ -414,7 +460,7 @@ After an authorized merge, run the `repo-worktree` post-merge cleanup procedure 
      a blocker filed elsewhere. A deferral noted only in a thread is lost the
      moment the PR merges, so each of these leaves its record where its outcome says.
 
-   The body keeps every other unfiled `pre-existing` line, the fifth bullet's, under one
+   The body keeps every other unfiled `pre-existing` line, the "Any other" bullet's, under one
    heading, `Pre-existing findings, not filed`. Each line under these headings carries its
    location and its class. The headings stay apart from the open `introduced` findings a spent
    edit budget puts in the body, per `local-strict-review` "Disposing of Findings". A reviewer's
@@ -455,8 +501,9 @@ never against its confidence label. Classify before responding:
 - **Design finding that `GOVERNANCE.md` "Design Before Code" backs**, such as logic an existing
   helper provides or a per-site fix for a class seen elsewhere. It is not an architectural
   opinion. Fix it, extending the existing helper where this repository holds it, and move the
-  class's sites in the touched files onto it. File the other sites as one issue naming each, and
-  an extension a helper in another repository needs as an issue in that repository.
+  class's sites in the touched files onto it. The other sites take outcome 1's class sweep, as
+  any sibling does. An extension a helper in another
+  repository needs takes outcome 4's last bullet.
 - **Style or convention**. If the cited rule matches the existing tree, fix the code. If the rule
   contradicts the tree or industry norm, **fix the rule, not the code**. Take such a rule to the
   maintainer (outcome 5) rather than bouncing the same code across rounds.
@@ -466,7 +513,12 @@ never against its confidence label. Classify before responding:
 ## Answering a suppressed finding
 
 A suppressed finding has no thread and no resolved or unresolved state, so an answer needs to
-carry its own context. Quote the finding with its `file:line` anchor and enough of the reviewer's
+carry its own context. An observed-data finding is the exception. A `REVIEWER OUTPUT NOTED` key
+for a part Merge Gate item 4's lead bullet covers takes no answer until the maintainer answers, per
+Merge Gate item 4. Otherwise an
+observed-data finding's answer names only the kind of data, per outcome 4's observed-data bullet.
+It reads `Listed in the body` for a recorded one and `Awaiting maintainer` for an escalation. Where another pull request holds the record, as on a
+promotion, the answer names it. For every other finding, quote it with its `file:line` anchor and enough of the reviewer's
 own words to identify it. Give one bold verdict per finding: `Fixed in <SHA>`, `Disproven`,
 `No change needed`, `Deferred to <issue>`, `Listed in the body`, or `Awaiting maintainer`. An
 `Awaiting maintainer` answer leaves the finding open until a later answer records the
@@ -479,7 +531,8 @@ body. Then post one `--ack <key>=<outcome>` per key, the outcome following the v
 `Fixed in <SHA>` is `fixed`, `Disproven` and `No change needed` are `declined`, and `Deferred to
 <issue>` is `filed`. `Listed in the body` is `listed`, or `dropped` for a line under `Dropped
 findings`. `Awaiting maintainer` has no outcome, so a key holding such a finding takes no
-`--ack` until the maintainer decides. The record counts only from an owner, member, or
+`--ack` until the maintainer decides. A `REVIEWER OUTPUT NOTED` key for a part Merge Gate
+item 4's lead bullet covers takes no `--ack` until the maintainer answers, per Merge Gate item 4. The record counts only from an owner, member, or
 collaborator. Code checks that each item carries an outcome, never that the outcome is right,
 which stays this section's.
 **Read every round, not only the head.** A suppressed finding does not retire when a later push
@@ -494,7 +547,14 @@ from a hub checkout. Do not use a provider connector or reconstruct the GitHub m
 - A finding is judged real but should not be fixed. That decision is never the agent's alone.
 - An architectural redesign is proposed rather than a bug fix.
 - An item in a part the digest prints under `UNPLACED ON THE HEAD` cannot be told to be a finding
-  or not. Quote its raw text in the escalation.
+  or not. Quote its raw text in the escalation, unless its part holds observed data, which
+  the escalation names by kind only.
+- A part that Merge Gate item 4's lead bullet covers holds observed data while its hold or key
+  still stands. The escalation names the repository, the pull request, and the kind of data, and nothing finer.
+- A finding shows observed data in a public repository's pushed history, or in a carrying
+  repository's copy of hub-authored text, per outcome 4's observed-data bullet. The escalation
+  names the repository and the kind of data. In any mode, it and any issue, comment, or answer
+  it writes name no commit, file, line, or value. They quote none of the reviewer's words.
 
 An agent that cannot reach the maintainer directly escalates to whoever dispatched it and stops
 that unit of work there. A dispatched subagent is the ordinary case. Such an agent never substitutes its own
@@ -519,5 +579,4 @@ answer after it reads the PR node ID. `merge` squash-merges a feature pull reque
 words instead of a line number a fix push can move. It resolves the thread only when `--resolve`
 is given. A finding posted twice on one file, as two threads with the same text, is answered with
 `--all-identical`, which the refusal names. The repository's
-`.github/copilot-instructions.md` bootstraps Copilot into the `fleet-code-review` skill and its stable
-coverage marker. Do not reconstruct the API operations by hand.
+`.github/copilot-instructions.md` bootstraps Copilot into the `fleet-code-review` skill. Do not reconstruct the API operations by hand.
