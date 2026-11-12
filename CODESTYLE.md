@@ -91,6 +91,7 @@ The conventions below are this repo's own, beyond the carried rules.
 
 - **Encoding is UTF-8 without a BOM**, per the root [`.editorconfig`][root] `charset = utf-8`.
 - **Leave human-authored comments exactly as written.** Do not reword, trim, reflow, or "clean" a comment a person wrote, even where it bends a carried comment rule. Revise only agent-authored comments, and match the surrounding voice when you do. The comment-growth rule that says to rewrite a comment fresh rather than bolt onto it governs agent-authored comments, and it does not license collapsing a maintainer's.
+- **A script that ends by `exec`-ing its daemon keeps the `exec`.** These are `Docker/entrypoint.sh` and the `svc-nx-*` s6 `run` scripts. The `exec` hands the supervisor's SIGTERM straight to the daemon, so it shuts down cleanly. "Interrupts" and "Interrupts in Shell" do not apply to them, since no shell remains to trap a signal. Adding traps would mean dropping the `exec`, and then the daemon is killed at the grace timeout instead. This bullet goes once the hub's carried rule states the same exemption.
 
 ## .NET
 
