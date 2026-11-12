@@ -114,13 +114,22 @@
                 "clear": false
             }
         },
-        // Lint group - the local full doc-lint surface (Docker at :latest), matching the CI lint set.
-        // Run on demand. The pre-commit hook does language formatting only. Every repo carries these.
+        // Lint group, run on demand.
+        // The EditorConfig, Workflows, Markdown, and Spelling tasks go through the hub's scripts/docker_lint.py, fetched by hub_fetch_run.py.
+        // Each container therefore sees a read-only snapshot of the tracked and unignored files, with no network.
+        // It mirrors the CI lint gate.
+        // Broad live spell-checking is the cspell extension's job.
+        // Pre-commit already runs the prose gate diff-scoped and the EOL gate over the whole tree.
+        // Lint: Prose below adds the prose gate in whole-repo mode, and Lint: EOL runs the hook's own EOL check on demand.
         {
             "label": "Lint: EditorConfig",
             "type": "process",
-            "command": "docker",
-            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/check", "-w", "/check", "mstruebing/editorconfig-checker:latest" ],
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "editorconfig-checker" ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "editorconfig-checker" ]
+            },
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -130,8 +139,12 @@
         {
             "label": "Lint: Workflows",
             "type": "process",
-            "command": "docker",
-            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/repo", "-w", "/repo", "rhysd/actionlint:latest", "-color" ],
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "actionlint" ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "actionlint" ]
+            },
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -141,8 +154,12 @@
         {
             "label": "Lint: Markdown",
             "type": "process",
-            "command": "docker",
-            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "davidanson/markdownlint-cli2:latest", "**/*.md" ],
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "markdownlint" ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "markdownlint" ]
+            },
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -152,8 +169,42 @@
         {
             "label": "Lint: Spelling",
             "type": "process",
-            "command": "docker",
-            "args": [ "run", "--rm", "--pull=always", "-v", "${workspaceFolder}:/workdir", "-w", "/workdir", "ghcr.io/streetsidesoftware/cspell:latest", "--no-progress", "README.md", "HISTORY.md" ],
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "cspell" ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", "scripts/docker_lint.py", "--linter", "cspell" ]
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: Prose",
+            "type": "process",
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", ".github/actions/prose-gate/prose_lint.py", "." ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", ".github/actions/prose-gate/prose_lint.py", "." ]
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Lint: EOL",
+            "type": "process",
+            "command": "python3",
+            "args": [ "${workspaceFolder}/hub_fetch_run.py", ".github/actions/repo-gate/repo_gate.py", "--check", "eol" ],
+            "windows": {
+                "command": "py",
+                "args": [ "-3", "${workspaceFolder}/hub_fetch_run.py", ".github/actions/repo-gate/repo_gate.py", "--check", "eol" ]
+            },
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -167,7 +218,9 @@
                 "Lint: EditorConfig",
                 "Lint: Workflows",
                 "Lint: Markdown",
-                "Lint: Spelling"
+                "Lint: Spelling",
+                "Lint: Prose",
+                "Lint: EOL"
             ],
             "problemMatcher": []
         }
