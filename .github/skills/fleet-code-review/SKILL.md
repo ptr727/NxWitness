@@ -60,7 +60,7 @@ A change is cheapest to shape before it is written. Hardening nothing calls for,
 
 - **Model the threat before the first edit.** Name the change's inputs, the class of each under "Trust Boundaries and Hardening Effort", and the deployment the code runs in. That model sets the hardening budget, so hardening it does not call for is never written, rather than written and then declined in review.
 - **Reuse before building.** Search this repository and the hub for a primitive that already does the job. Start from the list of consolidated primitives this repository's `OPERATIONS.md` keeps under `Configuration Layout` once it has consolidated any. Extend one that exists rather than adding a sibling that does almost the same thing. A near-duplicate splits every later fix between two copies.
-- **A defect class seen a second time gets one primitive, and every site moves onto it.** A check written at each site repeats its own platform and edge-case defects at every site. A read that can block on a named pipe, for one, meets a new platform difference at each site that guards it alone. One reader that opens without blocking and judges the open descriptor closes that class everywhere. Sites in files a change does not touch move in a change of their own, filed as one issue naming each.
+- **A defect class seen a second time gets one primitive, and every site in a file the change touches moves onto it.** A check written at each site repeats its own platform and edge-case defects at every site. A read that can block on a named pipe, for one, meets a new platform difference at each site that guards it alone. One reader that opens without blocking and judges the open descriptor closes that class everywhere. Every other site takes the outcome the class-sweep bullet of "Verification Discipline" gives it.
 - **Complexity is a cost that needs a reason.** Code that answers no requirement and no realistic threat is removed rather than maintained, since each later review and each later change reads it again.
 
 `GOVERNANCE.md` "Design Before Code" keeps the full rules. The `fleet-code-review` Skill at `.agents/skills/fleet-code-review/SKILL.md` in the hub carries it whole as a generated include and surfaces it wherever a change is reviewed. That path is not a repo-relative link, since it is hub-local and not carried into every fleet repo.
@@ -105,14 +105,5 @@ Each finding states:
 - Why the change causes the failure, or the duplication or excess.
 - A bounded direction for the fix when one is known.
 
-Do not report a clean review until every changed file has been read. End the review body with
-exactly one ASCII marker, replacing the numbers with measured counts:
-
-```text
-<!-- fleet-review: reviewed=N changed=N findings=N -->
-```
-
-`reviewed` is the number of changed files actually reviewed. `changed` is the total number of
-changed files. `findings` is the number of published findings, including body-only findings.
-Never emit `reviewed=changed` as a placeholder. If full coverage is impossible, emit the actual
-counts and explain the limitation in the review body.
+Do not report a clean review until every changed file has been read. If full coverage is
+impossible, say so and explain the limitation in the review body.
