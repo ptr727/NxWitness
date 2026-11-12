@@ -64,6 +64,6 @@ A failure that appears only in a built image needs a running container instead. 
 - `.vscode/tasks.json` and `.vscode/launch.json` hold the build, debug, and lint tasks, including the `.NET Format` chain and the Husky.Net Run task.
 - `.husky/task-runner.json` defines the pre-commit hook's .NET task set, and `.husky/pre-commit` adds the prose and EOL gates.
 - `.markdownlint-cli2.jsonc` configures markdownlint, and `.editorconfig-checker.json` scopes the line-ending and whitespace check.
-- `global.json` opts into the Microsoft.Testing.Platform test runner. It deliberately carries no `sdk` section, so SDK resolution and roll-forward stay at their defaults. `.codecov.yml` configures the report-only coverage upload.
+- `global.json` selects the .NET 10 SDK line, per the carried `dotnet-codestyle` skill. With `rollForward` `latestFeature` and `allowPrerelease` `false`, it takes the newest installed release 10.0.x SDK. A host that also has a newer major installed then builds, formats, and tests on the same line as CI. A host with no release 10.0.x SDK fails with "A compatible .NET SDK was not found" rather than running another major. The file also opts into the Microsoft.Testing.Platform test runner. `.codecov.yml` configures the report-only coverage upload.
 - `version.json` is the Nerdbank.GitVersioning input. `Make/Version.json` and `Make/Matrix.json` are the product version and build matrix inputs, and [ARCHITECTURE.md](./ARCHITECTURE.md) describes how they reach the images.
 - `host-tools.json` declares the host tooling a development machine needs.
