@@ -33,8 +33,8 @@ internal sealed class LowercaseEnumConverter<T> : JsonConverter<T>
         JsonSerializerOptions options
     )
     {
-        string? value =
-            reader.GetString() ?? throw new JsonException($"Expected {typeof(T).Name} value.");
+        string? value = reader.GetString()
+            ?? throw new JsonException($"Expected {typeof(T).Name} value.");
 
         return !Enum.TryParse(value, true, out T result)
             ? throw new JsonException($"Invalid {typeof(T).Name} value '{value}'.")

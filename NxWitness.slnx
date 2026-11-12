@@ -28,7 +28,7 @@
         <File Path="OPERATIONS.md" />
         <File Path="README.md" />
         <File Path="WORKFLOW.md" />
-        <File Path="codecov.yml" />
+        <File Path=".codecov.yml" />
         <File Path="cspell.json" />
         <File Path="global.json" />
         <File Path="host-tools.json" />
