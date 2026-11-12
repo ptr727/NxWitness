@@ -180,7 +180,15 @@ skill covers all of it, scoped down by what the maintainer actually asks for.
    the causes, report that to the maintainer rather than working around it. This step only runs
    the installer, and never edits the kit's files or this machine's settings by hand. Where the
    install ran, also report that sessions on this machine need a restart to load the new hooks
-   and `CLAUDE.md`. Then remove the worktree with
+   and `CLAUDE.md`. Run the rules refresh only where the kit read CURRENT in this step, or was
+   installed here and then read CURRENT. From the same worktree, run
+   `python3 host-setup/agent-safety/global_rules.py --report`, the writer of the Codex and opencode
+   global rules. Where the kit was left alone, its commit not an ancestor of `main` or carrying
+   `-dirty`, leave the rules alone too. They come from the same tree. Report both to the
+   maintainer together. Where the rules are not current, run `python3 host-setup/agent-safety/global_rules.py`, then
+   `--report` again. A SHADOWED Codex is reported to the maintainer and not fixed, since the override
+   is theirs. An EDITED file is rewritten after its backup, and that is reported. A failure is reported
+   with its output, never retried. Then remove the worktree with
    `git worktree remove <worktree>`, whatever any report said. Removing it leaves the skills
    snapshot, the installed kit, and their stamps unchanged. A result that does not read current
    is reported to the maintainer. The skills `--report` exits on the snapshot alone. This step runs whether step 5
